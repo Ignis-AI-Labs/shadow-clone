@@ -108,13 +108,21 @@ teams = configure_teams(
 ### Phase 3: Wave Planning
 ```python
 # Load wave coordination rules
-wave_rules = load_module(".shadow/coordination_rules/wave_coordination.md")
+wave_rules = read_file(".shadow/coordination_rules/wave_coordination.md")
 waves = plan_waves(
     teams=teams,
     wave_strategy=wave_strategy,
     wave_count=wave_count,
     rules=wave_rules
 )
+
+# CREATE CLEAR WAVE EXECUTION PLAN FOR USER REVIEW
+wave_plan_content = generate_wave_execution_plan(waves, teams)
+save_file(f"{workspace_dir}/WAVE_EXECUTION_PLAN.md", wave_plan_content)
+
+# ORGANIZE WORKSPACE - Keep it simple and clean
+create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime
+# DO NOT create multiple team directories or complex structures
 ```
 
 ### Phase 4: Agent Deployment with Rule Injection
@@ -152,12 +160,29 @@ for wave in waves:
 ```
 
 ### Phase 5: Mode-Specific Execution
+
+**🚨 USER GUIDANCE AFTER DEPLOYMENT:**
+When the system completes deployment and shows the summary, you have two options:
+
+1. **To Execute Immediately** (Recommended):
+   Simply respond: `"Execute"` or `"Start"` or `"Begin audit"`
+   
+2. **To Modify Before Execution**:
+   Specify changes: `"Execute but with only 3 teams"` or `"Execute but focus on authentication only"`
+
+**IMPORTANT**: All agents in a wave MUST be deployed simultaneously for parallel execution.
+
 ```python
 # Execute based on loaded configuration and mode
 if mode == "EXECUTION":
-    execute_waves(waves, wave_rules)
+    # Deploy ALL agents in each wave SIMULTANEOUSLY
+    for wave in waves:
+        deploy_all_agents_in_parallel(wave)  # NOT one by one
+        execute_wave_in_parallel(wave, wave_rules)
+        convergence_session(wave)
 elif mode == "PLANNING":
     generate_execution_plan(waves)
+    print("\n🎯 NEXT STEP: Reply 'Execute' to start, or specify any changes needed")
 elif mode == "RESEARCH":
     execute_research_protocol(teams)
 # ... other modes
@@ -271,6 +296,33 @@ QUALITY COMMITMENT:
 3. **No Weak Links**: Universal rule injection ensures consistency
 4. **Modular Flexibility**: Easy to extend and customize
 5. **Clear Responsibility**: Each module has focused purpose
+
+## Deployment Complete - User Action Required
+
+When deployment is complete, the system will:
+1. Create `DEPLOYMENT_SUMMARY.md` with system configuration
+2. Create `WAVE_EXECUTION_PLAN.md` with detailed wave breakdown
+3. Show a summary and wait for your command
+
+**📁 SIMPLE ORGANIZATION** - Only these key files/directories:
+```
+your-project/
+├── DEPLOYMENT_SUMMARY.md      # System configuration overview
+├── WAVE_EXECUTION_PLAN.md     # Detailed wave-by-wave plan
+├── .shadow/                   # System modules (don't modify)
+└── .waves/                    # Runtime data (auto-managed)
+    └── wave_[n]_results.md    # Results after each wave
+```
+
+**🎯 DEFAULT ACTION**: Simply reply **"Execute"** to begin with the created plan.
+
+**Alternative Commands**:
+- `"Execute"` - Start with current configuration
+- `"Execute but [modification]"` - Start with changes
+- `"Show plan"` - Review the WAVE_EXECUTION_PLAN.md
+- `"Status"` - Check current state
+
+**⚡ CRITICAL**: All agents in a wave must deploy SIMULTANEOUSLY for parallel execution!
 
 ## Remember
 
