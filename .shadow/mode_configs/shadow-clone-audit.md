@@ -308,12 +308,29 @@ claude "Load shadow-clone-prompt.md and execute with project_type=audit - React/
 - Practical exploitation testing and proof-of-concept development
 - Audit quality metrics tracking and continuous improvement
 
+**Code Quality & Performance Master**
+- Monolithic file detection (files >1000 lines flagged as critical issues)
+- God object/class identification (classes doing too much)
+- Single Responsibility Principle violations
+- Code modularity and proper separation of concerns
+- Duplicate/copy-paste code detection across entire codebase
+- Function complexity analysis (cyclomatic complexity >10 flagged)
+- Performance bottlenecks and inefficient algorithms (O(n²) or worse)
+- Memory leaks and excessive resource consumption
+- Database query optimization (N+1 queries, missing indexes)
+- Proper error handling and logging practices
+- Dead code detection and removal opportunities
+- Circular dependencies and architectural violations
+- Code smell detection (long parameter lists, feature envy, etc.)
+- Maintainability index scoring and technical debt quantification
+- Bundle size analysis and code splitting opportunities
+
 ### Enhanced Audit Execution Templates
 
 #### Comprehensive Security Assessment Agent Template
 ```
 SECURITY AUDIT AGENT: [Security Master Specialization]
-SECURITY DOMAIN: [Authentication/Data/Infrastructure/Application/Supply Chain/Compliance/QA-Validation]
+SECURITY DOMAIN: [Authentication/Data/Infrastructure/Application/Supply Chain/Compliance/QA-Validation/Code Quality-Performance]
 AUDIT WAVE: [Wave Number]
 ASSESSMENT FRAMEWORKS: [OWASP/NIST SSDF/CWE/Industry-Specific]
 
@@ -353,6 +370,8 @@ AUTOMATED TOOLS TO INTEGRATE WITH VALIDATION:
 - Dependency Scanner: [OWASP Dependency-Check/Snyk/npm audit]
 - Configuration Scanner: [Cloud/container-specific tools]
 - Compliance Scanner: [Industry-specific tools]
+- Code Quality Tools: [SonarQube/ESLint/Pylint for complexity and duplication]
+- Performance Profilers: [Language-specific profilers for bottleneck detection]
 
 QUALITY ASSURANCE REQUIREMENTS:
 1. **Multi-Tool Validation**: Cross-reference findings with at least 2 tools
@@ -371,7 +390,7 @@ DELIVERABLES:
 1. **Master Security Audit Report:** `[workspace_dir]/.waves/SECURITY_AUDIT_REPORT.md`
    - **Template:** `.shadow/templates/security-audit-report-template.md`
    - **Purpose:** Comprehensive findings from all teams in one unified document
-   - **Sections**: Executive Summary, Critical Findings, Detailed Analysis by Domain, Remediation Roadmap
+   - **Sections**: Executive Summary, Critical Findings, Detailed Analysis by Domain, Code Quality & Performance Analysis, Remediation Roadmap
    - **Contributors**: All teams add their validated findings to their assigned sections
 
 2. **Vulnerability Register:** `[workspace_dir]/.waves/VULNERABILITY_REGISTER.md`
