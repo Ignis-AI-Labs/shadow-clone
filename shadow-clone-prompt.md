@@ -21,10 +21,25 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 - **Proper Injection**: Role and project rules enhance but never override core
 - **Synchronized Operation**: Constitutional coordination ensures harmony
 
+## Base Arguments Configuration
+
+**Customize these defaults to your preferences:**
+```
+ARGUMENTS:
+project_plan=./project-plan.md
+workspace_dir=./
+num_teams=dynamic
+team_composition=auto
+wave_strategy=auto
+wave_count=dynamic
+project_type=auto
+git_strategy=auto
+```
+
 ## Initialization Protocol
 
 ### 1. Parse Arguments
-Extract from $ARGUMENTS with smart defaults:
+Extract from $ARGUMENTS with smart defaults (can be overridden by command line):
 - `project_plan` (default: "./project-plan.md")
 - `workspace_dir` (default: "./")
 - `num_teams` (default: "dynamic")
@@ -33,6 +48,11 @@ Extract from $ARGUMENTS with smart defaults:
 - `wave_count` (default: "dynamic")
 - `project_type` (default: "auto")
 - `git_strategy` (default: "auto")
+
+**Note**: Command line arguments override the base defaults above. For example:
+- Base default: `project_type=auto`
+- Command: `"Load shadow-clone-prompt.md and execute with project_type=audit"`
+- Result: `project_type=audit` (command line wins)
 
 ### 2. Mode Detection
 Detect operational mode from prompt:
