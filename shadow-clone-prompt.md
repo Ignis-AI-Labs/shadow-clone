@@ -141,7 +141,7 @@ elif mode == "RESEARCH":
 ### Phase 6: Integration & Quality Assurance
 ```python
 # Load integration protocols
-integration_rules = load_module(".shadow/coordination_rules/integration.md")
+integration_rules = load_module(".shadow/coordination_rules/integration_rules.md")
 quality_gates = load_module(".shadow/coordination_rules/quality_gates.md")
 
 # Execute integration with quality checks
