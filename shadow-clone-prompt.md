@@ -102,9 +102,9 @@ waves = plan_waves(
 **CRITICAL: This is where we ensure no weak links**
 
 ```python
-# Load agent templates and rules
-agent_templates = load_module(".shadow/templates/agent_templates.md")
-core_rules = load_module(".shadow/agent_rules/core_agent_rules.md")
+# Load agent templates and rules - READ existing files, DO NOT CREATE
+agent_templates = read_file(".shadow/templates/agent_templates.md")  # Already exists
+core_rules = read_file(".shadow/agent_rules/core_agent_rules.md")  # Already exists with No Weak Links protocol
 
 for wave in waves:
     for team in wave.teams:
@@ -115,10 +115,10 @@ for wave in waves:
                 core_rules=core_rules,
                 
                 # 2. Role Specialization (MANDATORY)
-                role_rules=load_module(f".shadow/agent_rules/{agent.role}_rules.md"),
+                role_rules=read_file(f".shadow/agent_rules/{agent.role}_rules.md"),  # Read existing role rules
                 
-                # 3. Project Context (CONDITIONAL)
-                project_rules=load_module(f".shadow/agent_rules/{project_type}_rules.md"),
+                # 3. Project Context (CONDITIONAL) 
+                project_rules=read_file(f".shadow/agent_rules/{project_type}_rules.md") if exists(f".shadow/agent_rules/{project_type}_rules.md") else None,
                 
                 # 4. Team Context (MANDATORY)
                 team_context=team.context,
