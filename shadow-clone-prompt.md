@@ -13,13 +13,20 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 - **`.shadow/templates/`** - Reusable templates maintaining standards
 - **`.shadow/execution_phases/`** - Phase implementations
 
-**IMPORTANT**: All module files are pre-created. When the system references "load_module" or similar, it means READ the existing file at that path. Never create new files in .shadow/ directories unless explicitly adding new functionality.
+**CRITICAL FILE OPERATIONS**:
+- **ALL module files in .shadow/ ALREADY EXIST - READ them, DO NOT CREATE**
+- **"load_module" = READ the existing file at that path**
+- **"load" = READ the existing file**
+- **"apply" = READ the file and use its contents**
+- **NEVER create new files in .shadow/ directories**
+- **ONLY create files in workspace directories for project deliverables**
 
 **🎯 Core Principles**:
 - **Universal Excellence**: Every agent receives core behavioral rules
-- **No Weak Links**: All agents operate at master craftsman level
+- **No Weak Links**: All agents operate at master craftsman level  
 - **Proper Injection**: Role and project rules enhance but never override core
 - **Synchronized Operation**: Constitutional coordination ensures harmony
+- **Focused Delivery**: Create only requested deliverables (no unsolicited documentation)
 
 ## Base Arguments Configuration
 
@@ -85,7 +92,7 @@ else:
 if not exists(project_plan):
     project_plan = generate_from_user_request($ARGUMENTS)
     
-# Load project analysis module - READ existing file
+# READ the existing project analysis module (DO NOT CREATE)
 analysis = read_file(".shadow/execution_phases/phase1_analysis.md")
 project_context = analyze_project(project_plan, workspace_dir)
 
@@ -95,7 +102,7 @@ apply_safety_measures(workspace_dir, git_strategy)
 
 ### Phase 2: Team Configuration
 ```python
-# Load team templates based on project type - READ existing file
+# READ the existing team templates file (DO NOT CREATE)
 team_templates = read_file(".shadow/templates/team_templates.md")
 teams = configure_teams(
     project_type=project_context.type,
@@ -107,7 +114,7 @@ teams = configure_teams(
 
 ### Phase 3: Wave Planning
 ```python
-# Load wave coordination rules
+# READ the existing wave coordination rules (DO NOT CREATE)
 wave_rules = read_file(".shadow/coordination_rules/wave_coordination.md")
 waves = plan_waves(
     teams=teams,
@@ -130,9 +137,9 @@ create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime
 **CRITICAL: This is where we ensure no weak links**
 
 ```python
-# Load agent templates and rules - READ existing files, DO NOT CREATE
-agent_templates = read_file(".shadow/templates/agent_templates.md")  # Already exists
-core_rules = read_file(".shadow/agent_rules/core_agent_rules.md")  # Already exists with No Weak Links protocol
+# READ existing agent templates and rules (ALL FILES ALREADY EXIST)
+agent_templates = read_file(".shadow/templates/agent_templates.md")
+core_rules = read_file(".shadow/agent_rules/core_agent_rules.md")
 
 for wave in waves:
     for team in wave.teams:
@@ -161,6 +168,27 @@ for wave in waves:
 
 ### Phase 5: Mode-Specific Execution
 
+**🚨 CRITICAL EXECUTION REQUIREMENT - PARALLEL DEPLOYMENT**
+
+All agents in a wave MUST be deployed SIMULTANEOUSLY, not sequentially!
+
+```
+CORRECT ✅ - Parallel Deployment:
+Wave 1: Deploying 6 agents...
+├── Agent 1: DEPLOYED (working on auth)
+├── Agent 2: DEPLOYED (working on data)  
+├── Agent 3: DEPLOYED (working on API)
+├── Agent 4: DEPLOYED (working on infra)
+├── Agent 5: DEPLOYED (working on config)
+└── Agent 6: DEPLOYED (working on logs)
+ALL 6 AGENTS WORKING SIMULTANEOUSLY
+
+WRONG ❌ - Sequential Deployment:
+Agent 1 deployed... wait... done
+Agent 2 deployed... wait... done
+[This is TOO SLOW and violates the system design]
+```
+
 **🚨 USER GUIDANCE AFTER DEPLOYMENT:**
 When the system completes deployment and shows the summary, you have two options:
 
@@ -170,7 +198,7 @@ When the system completes deployment and shows the summary, you have two options
 2. **To Modify Before Execution**:
    Specify changes: `"Execute but with only 3 teams"` or `"Execute but focus on authentication only"`
 
-**IMPORTANT**: All agents in a wave MUST be deployed simultaneously for parallel execution.
+**REMEMBER**: This is a PARALLEL system. All agents work at the same time!
 
 ```python
 # Execute based on loaded configuration and mode
@@ -190,9 +218,9 @@ elif mode == "RESEARCH":
 
 ### Phase 6: Integration & Quality Assurance
 ```python
-# Load integration protocols
-integration_rules = load_module(".shadow/coordination_rules/integration_rules.md")
-quality_gates = load_module(".shadow/coordination_rules/quality_gates.md")
+# READ existing integration protocols (DO NOT CREATE)
+integration_rules = read_file(".shadow/coordination_rules/integration_rules.md")
+quality_gates = read_file(".shadow/coordination_rules/quality_gates.md")
 
 # Execute integration with quality checks
 results = integrate_deliverables(waves, integration_rules)
@@ -304,15 +332,20 @@ When deployment is complete, the system will:
 2. Create `WAVE_EXECUTION_PLAN.md` with detailed wave breakdown
 3. Show a summary and wait for your command
 
-**📁 SIMPLE ORGANIZATION** - Only these key files/directories:
+**📁 SIMPLE ORGANIZATION** - Key files/directories created:
 ```
 your-project/
 ├── DEPLOYMENT_SUMMARY.md      # System configuration overview
-├── WAVE_EXECUTION_PLAN.md     # Detailed wave-by-wave plan
-├── .shadow/                   # System modules (don't modify)
-└── .waves/                    # Runtime data (auto-managed)
-    └── wave_[n]_results.md    # Results after each wave
+├── WAVE_EXECUTION_PLAN.md     # Detailed wave-by-wave plan  
+├── [PROJECT_DELIVERABLES]     # Actual project files (src/, docs/, etc.)
+├── .shadow/                   # System modules (READ ONLY - don't modify)
+└── .waves/                    # Runtime coordination (auto-managed)
+    ├── constitution.md        # Central coordination authority
+    ├── file_reservations.md   # CRITICAL: File lock management
+    └── wave_[n]/             # Wave-specific coordination
 ```
+
+**DOCUMENT UPDATE COORDINATION**: Multiple agents NEVER update the same file simultaneously. Check `.waves/file_reservations.md` for the coordination protocol.
 
 **🎯 DEFAULT ACTION**: Simply reply **"Execute"** to begin with the created plan.
 
@@ -322,7 +355,15 @@ your-project/
 - `"Show plan"` - Review the WAVE_EXECUTION_PLAN.md
 - `"Status"` - Check current state
 
-**⚡ CRITICAL**: All agents in a wave must deploy SIMULTANEOUSLY for parallel execution!
+## ⚡ CRITICAL EXECUTION REQUIREMENT
+
+**PARALLEL DEPLOYMENT IS MANDATORY**:
+- All agents in a wave MUST deploy SIMULTANEOUSLY
+- NO sequential deployment (one agent at a time)
+- Every agent starts working at the same time
+- This is NOT optional - it's essential for system performance
+
+**Example**: Wave with 6 agents = 6 parallel deployments, NOT 6 sequential deployments
 
 ## Remember
 

@@ -362,49 +362,75 @@ QUALITY ASSURANCE REQUIREMENTS:
 5. **Peer Review**: Secondary security master validation
 6. **False Positive Documentation**: Document and track false positive patterns
 
-DELIVERABLES (Using Standardized Templates):
+DELIVERABLES:
 
-**Template Reference:** All templates are located in `[workspace_dir]/.shadow/templates/`
+**CRITICAL**: ALL teams contribute to exactly 3 SHARED deliverables. NO individual team reports!
 
-- **Comprehensive Security Assessment Report:** [workspace_dir/.waves/security_assessment_[domain].md]
-  - **Template:** `.shadow/templates/security-audit-report-template.md`
-  - **Purpose:** Executive summary and comprehensive security findings
+**The 3 Master Deliverables (Created in Project Root)**:
 
-- **Individual Vulnerability Reports:** [workspace_dir/.waves/vulnerabilities/VULN-[ID].md]
-  - **Template:** `.shadow/templates/vulnerability-report-template.md`
-  - **Purpose:** Detailed technical documentation for each finding
+1. **Master Security Audit Report:** `[workspace_dir]/SECURITY_AUDIT_REPORT.md`
+   - **Template:** `.shadow/templates/security-audit-report-template.md`
+   - **Purpose:** Comprehensive findings from all teams in one unified document
+   - **Sections**: Executive Summary, Critical Findings, Detailed Analysis by Domain, Remediation Roadmap
+   - **Contributors**: All teams add their validated findings to their assigned sections
 
-- **Framework Compliance Matrix:** [workspace_dir/.waves/compliance_matrix_[domain].md]
-  - **Template:** `.shadow/templates/compliance-matrix-template.md`
-  - **Purpose:** OWASP Top Ten, NIST SSDF, and industry compliance tracking
+2. **Vulnerability Register:** `[workspace_dir]/VULNERABILITY_REGISTER.md`
+   - **Template:** `.shadow/templates/vulnerability-register-template.md`
+   - **Purpose:** Centralized tracking of all confirmed vulnerabilities
+   - **Format**: ID, Severity, Domain, Description, Evidence, Remediation, Status
+   - **Contributors**: All teams register findings using consistent format
 
-- **Validated Vulnerability Register:** [workspace_dir/.waves/vulnerability_register_[domain].md]
-  - **Template:** `.shadow/templates/vulnerability-register-template.md`
-  - **Purpose:** Central registry of all vulnerabilities with validation status
+3. **Compliance Matrix:** `[workspace_dir]/COMPLIANCE_MATRIX.md`
+   - **Template:** `.shadow/templates/compliance-matrix-template.md`
+   - **Purpose:** Single source of truth for all compliance requirements
+   - **Coverage**: OWASP, NIST, Industry Standards, Regulatory Requirements
+   - **Contributors**: Compliance team consolidates inputs from all security teams
 
-- **False Positive Analysis:** [workspace_dir/.waves/false_positive_analysis_[domain].md]
-  - **Template:** `.shadow/templates/false-positive-analysis-template.md`
-  - **Purpose:** Detailed analysis of false positive patterns and tool accuracy
+**Working Documents (Internal Use Only - NOT Deliverables)**:
+- Team findings in `.waves/[team]_findings.md` - Draft findings before convergence
+- Tool outputs in `.waves/scans/` - Raw scan data
+- Validation checklists in `.waves/` - Process tracking
 
-- **Risk Assessment Matrix:** [workspace_dir/.waves/risk_assessment_[domain].md]
-  - **Template:** `.shadow/templates/risk-assessment-matrix-template.md`
-  - **Purpose:** Business risk evaluation and prioritization matrix
+**REMEMBER**: Only the 3 master deliverables are client-facing. All other files are internal working documents.
 
-- **Remediation Roadmap:** [workspace_dir/.waves/remediation_plan_[domain].md]
-  - **Template:** `.shadow/templates/remediation-roadmap-template.md`
-  - **Purpose:** Strategic vulnerability remediation and improvement plan
+## 🔄 CRITICAL: Document Update Coordination Protocol
 
-- **Automated Scan Results:** [workspace_dir/.waves/automated_scans_[domain].md]
-  - **Template:** `.shadow/templates/automated-scan-results-template.md`
-  - **Purpose:** Comprehensive automated tool results with cross-tool correlation
+**MANDATORY**: Multiple agents MUST NEVER update the same document simultaneously!
 
-- **Quality Assurance Report:** [workspace_dir/.waves/qa_validation_[domain].md]
-  - **Template:** `.shadow/templates/quality-assurance-report-template.md`
-  - **Purpose:** Assessment quality metrics and validation effectiveness analysis
+1. **Update Sequence Protocol**:
+   - Each team works in their `.waves/[team]_findings.md` file FIRST
+   - Updates to shared documents happen during CONVERGENCE SESSIONS only
+   - One designated "Document Master" per wave consolidates updates
 
-- **False Positive Validation Checklist:** [workspace_dir/.waves/validation_checklist_[domain].md]
-  - **Template:** `.shadow/templates/false-positive-validation-checklist.md`
-  - **Purpose:** Step-by-step validation protocol for quality assurance
+2. **Convergence Session Updates**:
+   ```
+   Wave 1 Convergence (Hour 2):
+   ├── Team 1 presents findings
+   ├── Team 2 presents findings  
+   ├── Team 3 presents findings
+   └── Document Master updates shared reports sequentially
+   ```
+
+3. **Sequential Update Protocol** (Like humans taking turns to speak):
+   ```
+   Agent A: "REQUESTING UPDATE ACCESS: SECURITY_AUDIT_REPORT.md - Authentication section"
+   Agent B: "ACCESS GRANTED - Standing by"
+   Agent C: "ACCESS GRANTED - Standing by"
+   Agent A: "UPDATING NOW - Authentication findings"
+   [Agent A completes update]
+   Agent A: "UPDATE COMPLETE - SECURITY_AUDIT_REPORT.md released"
+   ```
+
+4. **Section Ownership**:
+   - SECURITY_AUDIT_REPORT.md sections assigned by domain
+   - Each team owns their domain section exclusively
+   - Executive Summary updated by Wave Lead only
+   - Vulnerability Register updates done in ID sequence
+
+5. **Conflict Resolution**:
+   - If overlap detected: Higher severity finding takes precedence
+   - Duplicate findings: First reporter maintains ownership
+   - Disputed findings: QA Master makes final decision
 
 VALIDATION PROTOCOL:
 1. **Layer 1**: Automated tool correlation and confidence analysis

@@ -1,5 +1,15 @@
 # Wave Coordination Rules
 
+## 🔒 CRITICAL: File Reservation System
+
+**BEFORE ANY FILE MODIFICATION**:
+1. Check `.waves/file_reservations.md` for current locks
+2. Only modify files YOU have reserved
+3. Request reservation through team lead for new files
+4. Release reservations when work is complete
+
+**This prevents ALL file conflicts and ensures clean parallel execution.**
+
 ## Constitutional Authority Structure
 
 ### Central Coordination Authority (Project Constitution)
@@ -110,4 +120,69 @@ workspace_dir/.waves/
 - Combine all wave outputs into cohesive deliverable
 - Perform comprehensive system integration testing
 - Ensure workspace reflects final integrated state
-- Prepare final constitutional project report 
+- Prepare final constitutional project report
+
+## Document Update Coordination Protocol
+
+### 🔄 Sequential Update Principle  
+**FUNDAMENTAL RULE**: Multiple agents must NEVER update the same document simultaneously. Like humans in conversation, agents must take turns to maintain clarity and prevent conflicts.
+
+**Why This Matters**: 
+- Prevents merge conflicts
+- Ensures document integrity
+- Maintains clear communication
+- Enables true parallel work (each agent works on different files)
+
+### Update Coordination Rules
+
+1. **Request-Grant-Update-Release Cycle**:
+   ```
+   Agent A: "REQUESTING UPDATE ACCESS: [filename]"
+   Agent B: "ACCESS GRANTED - Standing by"
+   Agent C: "ACCESS GRANTED - Standing by"
+   Agent A: "UPDATING [filename] - Section [X]"
+   [Agent A performs updates]
+   Agent A: "UPDATE COMPLETE - [filename] released"
+   ```
+
+2. **Private Working Documents**:
+   - Each team maintains `.waves/[team]_working_notes.md`
+   - All findings drafted in private documents first
+   - Shared documents updated only during convergence
+
+3. **Convergence Session Updates**:
+   - Teams present findings verbally (in sequence)
+   - Designated "Document Master" consolidates updates
+   - One update stream at a time
+   - Clear completion signals before next update
+
+4. **Section Ownership Protocol**:
+   - Shared documents divided into clear sections
+   - Each team owns specific sections
+   - No cross-section editing without coordination
+   - Executive sections updated by Wave Lead only
+
+5. **Conflict Prevention**:
+   - File reservation system prevents simultaneous access
+   - Update queue managed by Constitutional Authority
+   - Clear ownership boundaries established
+   - Version tracking through sequential updates
+
+### Communication Clarity Rules
+
+1. **One Voice at a Time**:
+   - Only one agent "speaks" (updates) at any moment
+   - Other agents remain in "listening" mode
+   - Clear turn-taking protocol enforced
+
+2. **Update Announcements**:
+   - Before: "PREPARING TO UPDATE [document] - [section]"
+   - During: "CURRENTLY UPDATING [document] - [estimated time]"
+   - After: "UPDATE COMPLETE - [summary of changes]"
+
+3. **Acknowledgment Protocol**:
+   - All agents must acknowledge update requests
+   - Silence interpreted as system issue
+   - Explicit confirmation required
+
+This coordination ensures clean, conflict-free document updates and maintains the high quality standards of the Shadow Clone System. 
