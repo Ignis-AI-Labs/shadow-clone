@@ -1,4 +1,4 @@
-# Shadow Clone System - Optimized Orchestrator
+# Shadow Clone System
 
 This streamlined orchestrator manages the Shadow Clone System through modular components, ensuring every agent receives proper rule injection for consistent excellence. No weak links allowed.
 
@@ -6,12 +6,14 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 
 ## System Architecture
 
-**📂 Modular Components**:
+**📂 Modular Components** (ALL FILES ALREADY EXIST - READ THEM, DO NOT CREATE):
 - **`.shadow/agent_rules/`** - Behavioral DNA injected into every agent
 - **`.shadow/coordination_rules/`** - Wave coordination ensuring synchronized excellence  
 - **`.shadow/mode_configs/`** - Project-type specific methodologies
 - **`.shadow/templates/`** - Reusable templates maintaining standards
-- **`.shadow/execution_phases/`** - Phase implementations (if needed)
+- **`.shadow/execution_phases/`** - Phase implementations
+
+**IMPORTANT**: All module files are pre-created. When the system references "load_module" or similar, it means READ the existing file at that path. Never create new files in .shadow/ directories unless explicitly adding new functionality.
 
 **🎯 Core Principles**:
 - **Universal Excellence**: Every agent receives core behavioral rules
@@ -48,8 +50,11 @@ Detect operational mode from prompt:
 # Based on project_type, load specialized configuration
 config_path = f"{workspace_dir}/.shadow/mode_configs/shadow-clone-{project_type}.md"
 if exists(config_path):
-    mode_config = load_module(config_path)
+    # READ the existing mode configuration file - DO NOT CREATE
+    mode_config = read_file(config_path)  # Read existing config
     apply_specialized_methodology(mode_config)
+else:
+    print(f"Warning: Mode config not found at {config_path}, using default behavior")
 ```
 
 ## Execution Flow
@@ -60,8 +65,8 @@ if exists(config_path):
 if not exists(project_plan):
     project_plan = generate_from_user_request($ARGUMENTS)
     
-# Load project analysis module
-analysis = load_module(".shadow/execution_phases/phase1_analysis.md")
+# Load project analysis module - READ existing file
+analysis = read_file(".shadow/execution_phases/phase1_analysis.md")
 project_context = analyze_project(project_plan, workspace_dir)
 
 # Safety assessment and git strategy
@@ -70,8 +75,8 @@ apply_safety_measures(workspace_dir, git_strategy)
 
 ### Phase 2: Team Configuration
 ```python
-# Load team templates based on project type
-team_templates = load_module(".shadow/templates/team_templates.md")
+# Load team templates based on project type - READ existing file
+team_templates = read_file(".shadow/templates/team_templates.md")
 teams = configure_teams(
     project_type=project_context.type,
     num_teams=num_teams,
