@@ -335,7 +335,6 @@ AUDIT WAVE: [Wave Number]
 ASSESSMENT FRAMEWORKS: [OWASP/NIST SSDF/CWE/Industry-Specific]
 
 WORKSPACE: [workspace_dir]
-SECURITY WORKING DIRECTORY: [workspace_dir/.waves/security_audit_[domain]]
 REPORT TEMPLATES: [workspace_dir/.shadow/templates/]
 VALIDATION CHECKLIST: [workspace_dir/.shadow/templates/false-positive-validation-checklist.md]
 
