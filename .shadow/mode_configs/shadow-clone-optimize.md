@@ -153,10 +153,10 @@ AUDIT FINDING INTEGRATION:
 
 DELIVERABLES:
 - Optimized Secure Code: [workspace_dir/src/[optimized_areas]]
-- Security Improvement Report: [workspace_dir/.waves/security_improvements_[optimize].md]
-- Vulnerability Remediation Log: [workspace_dir/.waves/vulnerability_fixes_[optimize].md]
-- Performance Security Report: [workspace_dir/.waves/performance_security_[optimize].md]
-- Compliance Achievement Report: [workspace_dir/.waves/compliance_status_[optimize].md]
+- Security Improvement Report: [workspace_dir]/.waves/security_improvements_[optimize].md
+- Vulnerability Remediation Log: [workspace_dir]/.waves/vulnerability_fixes_[optimize].md
+- Performance Security Report: [workspace_dir]/.waves/performance_security_[optimize].md
+- Compliance Achievement Report: [workspace_dir]/.waves/compliance_status_[optimize].md
 
 SECURITY COORDINATION:
 - Cross-team security improvement validation

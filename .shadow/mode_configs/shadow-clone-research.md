@@ -104,11 +104,11 @@ RESEARCH SECURITY PROTOCOLS:
 - Document security implications of findings
 
 DELIVERABLES:
-- Security-Informed Research Report: [workspace_dir/.waves/research_security_[domain].md]
-- Technology Security Assessment: [workspace_dir/.waves/technology_security_[domain].md]
-- Risk Analysis Matrix: [workspace_dir/.waves/risk_analysis_[domain].md]
-- Compliance Impact Report: [workspace_dir/.waves/compliance_impact_[domain].md]
-- Security Recommendations: [workspace_dir/.waves/security_recommendations_[domain].md]
+- Security-Informed Research Report: [workspace_dir]/.waves/research_security_[domain].md
+- Technology Security Assessment: [workspace_dir]/.waves/technology_security_[domain].md
+- Risk Analysis Matrix: [workspace_dir]/.waves/risk_analysis_[domain].md
+- Compliance Impact Report: [workspace_dir]/.waves/compliance_impact_[domain].md
+- Security Recommendations: [workspace_dir]/.waves/security_recommendations_[domain].md
 
 SECURITY COORDINATION:
 - Cross-team security research validation

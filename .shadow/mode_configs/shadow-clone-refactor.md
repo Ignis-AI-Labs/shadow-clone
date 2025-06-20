@@ -141,8 +141,8 @@ SECURITY VALIDATION REQUIREMENTS:
 
 DELIVERABLES:
 - Refactored Secure Code: [workspace_dir/src/[refactored_areas]]
-- Security Control Documentation: [workspace_dir/.waves/security_controls_[refactor].md]
-- Security Enhancement Report: [workspace_dir/.waves/security_improvements_[refactor].md]
+- Security Control Documentation: [workspace_dir]/.waves/security_controls_[refactor].md
+- Security Enhancement Report: [workspace_dir]/.waves/security_improvements_[refactor].md
 - Security Test Updates: [workspace_dir/tests/security/[refactored_areas]]
 - Security Configuration Updates: [workspace_dir/config/security/[refactored_areas]]
 

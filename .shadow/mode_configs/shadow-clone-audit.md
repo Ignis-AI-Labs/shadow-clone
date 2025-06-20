@@ -366,21 +366,21 @@ DELIVERABLES:
 
 **CRITICAL**: ALL teams contribute to exactly 3 SHARED deliverables. NO individual team reports!
 
-**The 3 Master Deliverables (Created in Project Root)**:
+**The 3 Master Deliverables (Created in .waves Directory)**:
 
-1. **Master Security Audit Report:** `[workspace_dir]/SECURITY_AUDIT_REPORT.md`
+1. **Master Security Audit Report:** `[workspace_dir]/.waves/SECURITY_AUDIT_REPORT.md`
    - **Template:** `.shadow/templates/security-audit-report-template.md`
    - **Purpose:** Comprehensive findings from all teams in one unified document
    - **Sections**: Executive Summary, Critical Findings, Detailed Analysis by Domain, Remediation Roadmap
    - **Contributors**: All teams add their validated findings to their assigned sections
 
-2. **Vulnerability Register:** `[workspace_dir]/VULNERABILITY_REGISTER.md`
+2. **Vulnerability Register:** `[workspace_dir]/.waves/VULNERABILITY_REGISTER.md`
    - **Template:** `.shadow/templates/vulnerability-register-template.md`
    - **Purpose:** Centralized tracking of all confirmed vulnerabilities
    - **Format**: ID, Severity, Domain, Description, Evidence, Remediation, Status
    - **Contributors**: All teams register findings using consistent format
 
-3. **Compliance Matrix:** `[workspace_dir]/COMPLIANCE_MATRIX.md`
+3. **Compliance Matrix:** `[workspace_dir]/.waves/COMPLIANCE_MATRIX.md`
    - **Template:** `.shadow/templates/compliance-matrix-template.md`
    - **Purpose:** Single source of truth for all compliance requirements
    - **Coverage**: OWASP, NIST, Industry Standards, Regulatory Requirements

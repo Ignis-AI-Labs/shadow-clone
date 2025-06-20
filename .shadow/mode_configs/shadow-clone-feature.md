@@ -151,8 +151,8 @@ SECURITY TESTING REQUIREMENTS:
 
 DELIVERABLES:
 - Secure Feature Implementation: [workspace_dir/src/[feature_area]]
-- Security Design Documentation: [workspace_dir/.waves/security_design_[feature].md]
-- Threat Model Updates: [workspace_dir/.waves/threat_model_updates_[feature].md]
+- Security Design Documentation: [workspace_dir]/.waves/security_design_[feature].md
+- Threat Model Updates: [workspace_dir]/.waves/threat_model_updates_[feature].md
 - Security Test Suite: [workspace_dir/tests/security/[feature]]
 - Security Configuration: [workspace_dir/config/security/[feature]]
 

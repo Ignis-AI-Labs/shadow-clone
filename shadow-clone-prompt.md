@@ -128,7 +128,7 @@ wave_plan_content = generate_wave_execution_plan(waves, teams)
 save_file(f"{workspace_dir}/WAVE_EXECUTION_PLAN.md", wave_plan_content)
 
 # ORGANIZE WORKSPACE - Keep it simple and clean
-create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime
+create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime and all deliverables
 # DO NOT create multiple team directories or complex structures
 ```
 
@@ -339,10 +339,11 @@ your-project/
 ├── WAVE_EXECUTION_PLAN.md     # Detailed wave-by-wave plan  
 ├── [PROJECT_DELIVERABLES]     # Actual project files (src/, docs/, etc.)
 ├── .shadow/                   # System modules (READ ONLY - don't modify)
-└── .waves/                    # Runtime coordination (auto-managed)
+└── .waves/                    # Runtime coordination and all deliverables
     ├── constitution.md        # Central coordination authority
     ├── file_reservations.md   # CRITICAL: File lock management
-    └── wave_[n]/             # Wave-specific coordination
+    ├── wave_[n]/             # Wave-specific coordination
+    └── [ALL_REPORTS]         # All audit reports and deliverables
 ```
 
 **DOCUMENT UPDATE COORDINATION**: Multiple agents NEVER update the same file simultaneously. Check `.waves/file_reservations.md` for the coordination protocol.
