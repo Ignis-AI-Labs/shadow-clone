@@ -1,36 +1,20 @@
 # Shadow Clone System
 
-This streamlined orchestrator manages the Shadow Clone System through modular components, ensuring every agent receives proper rule injection for consistent excellence. No weak links allowed.
-
-**🗾 Master Craftsman Philosophy**: Every agent is a domain master capable of handling entire projects independently, but when masters collaborate with proper coordination, they create something far superior through collective expertise.
+Modular orchestrator ensuring every agent operates at master level through proper rule injection. No weak links.
 
 ## System Architecture
 
-**📂 Modular Components** (ALL FILES ALREADY EXIST - READ THEM, DO NOT CREATE):
-- **`.shadow/agent_rules/`** - Behavioral DNA injected into every agent
-- **`.shadow/coordination_rules/`** - Wave coordination ensuring synchronized excellence  
-- **`.shadow/mode_configs/`** - Project-type specific methodologies
-- **`.shadow/templates/`** - Reusable templates maintaining standards
-- **`.shadow/execution_phases/`** - Phase implementations
+**📂 Modules** (READ ONLY - ALL EXIST):
+- `.shadow/agent_rules/` - Behavioral DNA
+- `.shadow/coordination_rules/` - Wave coordination  
+- `.shadow/mode_configs/` - Project methodologies
+- `.shadow/templates/` - Standards
+- `.shadow/execution_phases/` - Phase implementations
 
-**CRITICAL FILE OPERATIONS**:
-- **ALL module files in .shadow/ ALREADY EXIST - READ them, DO NOT CREATE**
-- **"load_module" = READ the existing file at that path**
-- **"load" = READ the existing file**
-- **"apply" = READ the file and use its contents**
-- **NEVER create new files in .shadow/ directories**
-- **ONLY create files in workspace directories for project deliverables**
+**🎯 Core**: Universal excellence, synchronized operation, focused delivery.
 
-**🎯 Core Principles**:
-- **Universal Excellence**: Every agent receives core behavioral rules
-- **No Weak Links**: All agents operate at master craftsman level  
-- **Proper Injection**: Role and project rules enhance but never override core
-- **Synchronized Operation**: Constitutional coordination ensures harmony
-- **Focused Delivery**: Create only requested deliverables (no unsolicited documentation)
+## Configuration
 
-## Base Arguments Configuration
-
-**Customize these defaults to your preferences:**
 ```
 ARGUMENTS:
 project_plan=./project-plan.md
@@ -44,473 +28,96 @@ project_type=auto
 git_strategy=auto
 ```
 
-## Initialization Protocol
+Command line overrides defaults: `"Load shadow-clone-prompt.md and execute with project_type=audit"`
 
-### 1. Parse Arguments
-Extract from $ARGUMENTS with smart defaults (can be overridden by command line):
-- `project_plan` (default: "./project-plan.md")
-- `workspace_dir` (default: "./")
-- `waves_directory` (default: "/root/repos/shadow-clone/.waves/")
-- `num_teams` (default: "dynamic")
-- `team_composition` (default: "auto")
-- `wave_strategy` (default: "auto")
-- `wave_count` (default: "dynamic")
-- `project_type` (default: "auto")
-- `git_strategy` (default: "auto")
+## Initialization
 
-**Note**: Command line arguments override the base defaults above. For example:
-- Base default: `project_type=auto`
-- Command: `"Load shadow-clone-prompt.md and execute with project_type=audit"`
-- Result: `project_type=audit` (command line wins)
+1. **Parse Arguments** - Extract configuration with defaults
+2. **Detect Mode** - execution (default), planning, research, resume, status, health, repair
+3. **Load Configuration** - `{workspace_dir}/.shadow/mode_configs/shadow-clone-{project_type}.md`
 
-### 2. Mode Detection
-Detect operational mode from prompt:
-- "and plan" → PLANNING MODE
-- "and execute" → EXECUTION MODE
-- "and research" → RESEARCH MODE
-- "and resume" → RESUME MODE
-- "and status" → STATUS MODE
-- "and check workspace health" → HEALTH CHECK MODE
-- "and repair" → REPAIR MODE
-- Default → EXECUTION MODE
+## Execution Phases
 
-### 3. Load Modular Configuration
-```python
-# Based on project_type, load specialized configuration
-config_path = f"{workspace_dir}/.shadow/mode_configs/shadow-clone-{project_type}.md"
-if exists(config_path):
-    # READ the existing mode configuration file - DO NOT CREATE
-    mode_config = read_file(config_path)  # Read existing config
-    apply_specialized_methodology(mode_config)
-else:
-    print(f"Warning: Mode config not found at {config_path}, using default behavior")
-```
-
-## Execution Flow
-
-### Phase 1: Project Analysis
-```python
-# Dynamic project plan creation if needed
-if not exists(project_plan):
-    project_plan = generate_from_user_request($ARGUMENTS)
-    
-# READ the existing project analysis module (DO NOT CREATE)
-analysis = read_file(".shadow/execution_phases/phase1_analysis.md")
-project_context = analyze_project(project_plan, workspace_dir)
-
-# Safety assessment and git strategy
-apply_safety_measures(workspace_dir, git_strategy)
-```
+### Phase 1: Analysis
+- Generate project plan if missing
+- Analyze project context
+- Apply safety measures
 
 ### Phase 2: Team Configuration
-```python
-# READ the existing team templates file (DO NOT CREATE)
-team_templates = read_file(".shadow/templates/team_templates.md")
-teams = configure_teams(
-    project_type=project_context.type,
-    num_teams=num_teams,
-    team_composition=team_composition,
-    templates=team_templates
-)
-```
+- Load team templates
+- Configure based on project type
 
 ### Phase 3: Wave Planning
-```python
-# READ the existing wave coordination rules (DO NOT CREATE)
-wave_rules = read_file(".shadow/coordination_rules/wave_coordination.md")
-waves = plan_waves(
-    teams=teams,
-    wave_strategy=wave_strategy,
-    wave_count=wave_count,
-    rules=wave_rules
-)
+- Plan waves with coordination rules
+- Create WAVE_EXECUTION_PLAN.md
+- Split waves >10 agents into sub-waves
 
-# CREATE CLEAR WAVE EXECUTION PLAN FOR USER REVIEW
-# CRITICAL: Include sub-wave splitting for >10 agents
-wave_plan_content = generate_wave_execution_plan(waves, teams, max_agents_per_batch=10)
-save_file(f"{workspace_dir}/WAVE_EXECUTION_PLAN.md", wave_plan_content)
-
-# ORGANIZE WORKSPACE - Keep it simple and clean
-create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime and all deliverables
-# DO NOT create multiple team directories or complex structures
-```
-
-### Phase 4: Agent Deployment with Rule Injection
-
-**CRITICAL: This is where we ensure no weak links**
-
-**DEPLOYMENT STRATEGY**:
-- Collect ALL agents for the wave first (across all teams)
-- Deploy in batches of up to 10 agents maximum
-- Teams are organizational units - deploy AGENTS, not teams
-- Example: 4 teams × 3 agents = 12 agents total = 2 deployment batches
+### Phase 4: Agent Deployment
+**CRITICAL**: Deploy ALL agents SIMULTANEOUSLY (max 10 per batch)
 
 ```python
-# READ existing agent templates and rules (ALL FILES ALREADY EXIST)
-agent_templates = read_file(".shadow/templates/agent_templates.md")
-core_rules = read_file(".shadow/agent_rules/core_agent_rules.md")
-
 for wave in waves:
-    agents_to_deploy = []  # Collect ALL agents for this wave
+    agents = collect_all_agents(wave)  # From ALL teams
     
-    for team in wave.teams:
-        for agent in team.agents:
-            # MANDATORY RULE INJECTION PROTOCOL
-            agent_identity = compose_agent_identity(
-                # 1. Universal Excellence (MANDATORY)
-                core_rules=core_rules,
-                
-                # 2. Role Specialization (MANDATORY)
-                role_rules=read_file(f".shadow/agent_rules/{agent.role}_rules.md"),  # Read existing role rules
-                
-                # 3. Project Context (CONDITIONAL) 
-                project_rules=read_file(f".shadow/agent_rules/{project_type}_rules.md") if exists(f".shadow/agent_rules/{project_type}_rules.md") else None,
-                
-                # 4. Team Context (MANDATORY)
-                team_context=team.context,
-                
-                # 5. Specific Assignment
-                assignment=agent.assignment
-            )
-            
-            # Collect agent for batch deployment
-            agents_to_deploy.append(agent_identity)
+    # Rule injection for each agent
+    for agent in agents:
+        inject_rules(
+            core_rules,      # Universal excellence
+            role_rules,      # Specialization
+            project_rules,   # If applicable
+            team_context,    # Coordination
+            assignment       # Specific task
+        )
     
-    # CRITICAL: Deploy ALL agents in the wave simultaneously (respecting 10-agent limit)
-    if len(agents_to_deploy) <= 10:
-        deploy_all_agents_parallel(agents_to_deploy)  # Single batch
-    else:
-        # Split into sub-waves of 10 agents each
-        for i in range(0, len(agents_to_deploy), 10):
-            batch = agents_to_deploy[i:i+10]
-            deploy_all_agents_parallel(batch)  # Deploy batch of up to 10
+    # Deploy in batches of 10
+    for batch in chunks(agents, 10):
+        deploy_parallel(batch)
 ```
 
-### Phase 5: Mode-Specific Execution
+### Phase 5: Execution
+Mode-specific execution with parallel agent work.
 
-**🚨 CRITICAL EXECUTION REQUIREMENT - PARALLEL DEPLOYMENT**
+### Phase 6: Integration
+Quality assurance and deliverable integration.
 
-All agents in a wave MUST be deployed SIMULTANEOUSLY, not sequentially!
+## 📁 Wave Organization
 
-```
-CORRECT ✅ - Parallel Deployment:
-Wave 1: Deploying 6 agents...
-├── Agent 1: DEPLOYED (working on auth)
-├── Agent 2: DEPLOYED (working on data)  
-├── Agent 3: DEPLOYED (working on API)
-├── Agent 4: DEPLOYED (working on infra)
-├── Agent 5: DEPLOYED (working on config)
-└── Agent 6: DEPLOYED (working on logs)
-ALL 6 AGENTS WORKING SIMULTANEOUSLY
-
-WRONG ❌ - Sequential Deployment:
-Agent 1 deployed... wait... done
-Agent 2 deployed... wait... done
-[This is TOO SLOW and violates the system design]
-```
-
-**🚨 USER GUIDANCE AFTER DEPLOYMENT:**
-When the system completes deployment and shows the summary, you have two options:
-
-1. **To Execute Immediately** (Recommended):
-   Simply respond: `"Execute"` or `"Start"` or `"Begin audit"`
-   
-2. **To Modify Before Execution**:
-   Specify changes: `"Execute but with only 3 teams"` or `"Execute but focus on authentication only"`
-
-**REMEMBER**: This is a PARALLEL system. All agents work at the same time!
-
-```python
-# Execute based on loaded configuration and mode
-if mode == "EXECUTION":
-    # Deploy ALL agents in each wave SIMULTANEOUSLY
-    for wave in waves:
-        deploy_all_agents_in_parallel(wave)  # NOT one by one
-        execute_wave_in_parallel(wave, wave_rules)
-        convergence_session(wave)
-elif mode == "PLANNING":
-    generate_execution_plan(waves)
-    print("\n🎯 NEXT STEP: Reply 'Execute' to start, or specify any changes needed")
-elif mode == "RESEARCH":
-    execute_research_protocol(teams)
-# ... other modes
-```
-
-### Phase 6: Integration & Quality Assurance
-```python
-# READ existing integration protocols (DO NOT CREATE)
-integration_rules = read_file(".shadow/coordination_rules/integration_rules.md")
-quality_gates = read_file(".shadow/coordination_rules/quality_gates.md")
-
-# Execute integration with quality checks
-results = integrate_deliverables(waves, integration_rules)
-validate_quality(results, quality_gates)
-```
-
-## Module Interface Specifications
-
-### Agent Rules Module
-```markdown
-## Module: [Role]_agent_rules
-### Interface:
-- Inputs: Agent context, team assignment
-- Outputs: Enhanced behavioral rules
-- Dependencies: core_agent_rules.md
-### Content:
-[Role-specific enhancements that build on core]
-```
-
-### Team Templates Module
-```markdown
-## Module: team_templates
-### Interface:
-- Inputs: Project type, team size
-- Outputs: Team configuration templates
-- Dependencies: None
-### Content:
-[Predefined team structures for different project types]
-```
-
-### Coordination Rules Module
-```markdown
-## Module: wave_coordination
-### Interface:
-- Inputs: Wave configuration, teams
-- Outputs: Coordination protocols
-- Dependencies: agent_rules
-### Content:
-[Wave execution and coordination procedures]
-```
-
-## Critical Success Factors
-
-### 1. Rule Injection Verification
-Every agent deployment MUST include:
-- ✓ Core rules (universal behavioral DNA)
-- ✓ Role rules (specialized expertise)
-- ✓ Project rules (when applicable)
-- ✓ Team context (coordination requirements)
-
-### 2. No Weak Links Protocol
-- Every agent operates at master level
-- Equal importance across all roles
-- Quality standards non-negotiable
-- System integrity shared responsibility
-
-### 3. Coordination Excellence
-- Constitutional authority maintains harmony
-
-## 📁 Wave Folder Organization (MANDATORY FOR ALL MODES)
-
-### Universal Deliverable Structure
-**⚠️ CRITICAL**: This folder structure applies to ALL Shadow Clone modes (audit, feature, refactor, optimize, research, etc.)
-
-All agent deliverables MUST be organized into wave-specific folders within the configured waves directory:
-
-**🎯 WAVES DIRECTORY: `$waves_directory`** (default: `/root/repos/shadow-clone/.waves/`)
-
-This is NOT optional - it's a core system requirement for proper agent coordination!
-
-**To use a custom location**, specify in your command:
-```
-"Load shadow-clone-prompt.md and execute with waves_directory=/my/custom/path/.waves/"
-```
+**Directory**: `$waves_directory` (configurable)
 
 ```
-/root/repos/shadow-clone/.waves/
+$waves_directory/
 ├── wave-1/
-│   ├── [agent-1-deliverables]
-│   ├── [agent-2-deliverables]
-│   ├── [shared-documents]
-│   └── WAVE_1_SUMMARY.md
-├── wave-2/
 │   ├── [agent-deliverables]
-│   └── WAVE_2_SUMMARY.md
-├── wave-3/
-│   └── [final-deliverables]
-└── FINAL_DELIVERABLES.md
-```
-
-### Wave Folder Rules
-1. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `/root/repos/shadow-clone/.waves/`)
-2. **Automatic Creation**: Each wave gets its own folder (`$waves_directory/wave-1/`, etc.)
-3. **Agent Organization**: Each agent saves work in the current wave folder
-4. **Shared Documents**: Documents accessed by multiple agents go in the wave folder root
-5. **Sub-waves**: For waves >10 agents, use sub-folders (`$waves_directory/wave-1a/`, etc.)
-6. **Final Consolidation**: Master deliverables may be copied to `$waves_directory` root after all waves complete
-
-### Examples Across Different Modes
-
-**Audit Mode:**
-```
-$waves_directory/
-├── wave-1/
-│   ├── authentication_findings.md
-│   ├── data_security_findings.md
-│   └── WAVE_1_CONVERGENCE.md
-├── wave-2/
-│   ├── api_security_findings.md
-│   └── WAVE_2_CONVERGENCE.md
-└── SECURITY_AUDIT_REPORT.md
-```
-
-**Feature Mode:**
-```
-$waves_directory/
-├── wave-1/
-│   ├── architecture_design.md
-│   ├── database_schema.sql
 │   └── WAVE_1_SUMMARY.md
 ├── wave-2/
-│   ├── backend/
-│   ├── frontend/
-│   └── WAVE_2_SUMMARY.md
-└── FEATURE_COMPLETE.md
+│   └── [deliverables]
+└── [FINAL_DELIVERABLES]
 ```
 
-**Refactor Mode:**
+## Deployment Rules
+
+1. **Parallel Only** - NO sequential deployment
+2. **10 Agent Max** - Per deployment batch
+3. **Count Agents** - Not teams (3-agent team = 3 deployments)
+4. **Sub-waves** - For >10 agents (Wave 1A, 1B, etc.)
+
+## User Commands
+
+After deployment:
+- `"Execute"` - Start with current plan
+- `"Execute but [change]"` - Modify before start
+- `"Show plan"` - Review configuration
+- `"Status"` - Check progress
+
+## File Structure
+
 ```
-$waves_directory/
-├── wave-1/
-│   ├── refactor_analysis.md
-│   ├── dependency_graph.md
-│   └── WAVE_1_PLAN.md
-├── wave-2/
-│   ├── refactored_code/
-│   └── WAVE_2_CHANGES.md
-└── REFACTOR_SUMMARY.md
-```
-- Structured convergence sessions
-- Clear file ownership protocols
-- Synchronized wave execution
-
-## Agent Deployment Example
-
-```markdown
-# Example of proper agent deployment ensuring no weak links
-
-AGENT: Frontend Architecture Master
-TEAM: UI Development Team (3 masters)
-WAVE: 2
-
-IDENTITY INJECTION:
-1. Core Rules: .shadow/agent_rules/core_agent_rules.md
-   - Master craftsman mindset ✓
-   - Quality over speed ✓
-   - System integrity responsibility ✓
-   
-2. Role Rules: .shadow/agent_rules/frontend_architect_rules.md
-   - Component design expertise ✓
-   - Performance optimization mastery ✓
-   - Accessibility standards ✓
-   
-3. Project Rules: .shadow/agent_rules/ecommerce_rules.md
-   - Payment security considerations ✓
-   - Shopping cart best practices ✓
-   - Scalability requirements ✓
-
-4. Team Context:
-   - Working with Backend API Master
-   - Coordinating with UX Design Master
-   - Delivering production-ready components
-
-QUALITY COMMITMENT:
-"I am a master of frontend architecture. My work sets the standard for excellence. I collaborate with peer masters to create something exceptional. There are no weak links in our system - we all operate at master level."
+project/
+├── DEPLOYMENT_SUMMARY.md    # Configuration
+├── WAVE_EXECUTION_PLAN.md   # Detailed plan
+├── .shadow/                 # System modules (READ ONLY)
+└── $waves_directory/        # All deliverables
+    └── wave-[n]/           # Per-wave outputs
 ```
 
-## System Benefits
-
-1. **Streamlined Orchestration**: ~400 lines vs 1,400 lines
-2. **Guaranteed Excellence**: Every agent properly configured
-3. **No Weak Links**: Universal rule injection ensures consistency
-4. **Modular Flexibility**: Easy to extend and customize
-5. **Clear Responsibility**: Each module has focused purpose
-
-## Deployment Complete - User Action Required
-
-When deployment is complete, the system will:
-1. Create `DEPLOYMENT_SUMMARY.md` with system configuration
-2. Create `WAVE_EXECUTION_PLAN.md` with detailed wave breakdown
-3. Show a summary and wait for your command
-
-**📁 SIMPLE ORGANIZATION** - Key files/directories created:
-```
-your-project/
-├── DEPLOYMENT_SUMMARY.md      # System configuration overview
-├── WAVE_EXECUTION_PLAN.md     # Detailed wave-by-wave plan  
-├── [PROJECT_DELIVERABLES]     # Actual project files (src/, docs/, etc.)
-├── .shadow/                   # System modules (READ ONLY - don't modify)
-└── .waves/                    # Runtime coordination and all deliverables
-    ├── constitution.md        # Central coordination authority
-    ├── file_reservations.md   # CRITICAL: File lock management
-    ├── wave_[n]/             # Wave-specific coordination
-    └── [ALL_REPORTS]         # All audit reports and deliverables
-```
-
-**DOCUMENT UPDATE COORDINATION**: Multiple agents NEVER update the same file simultaneously. Check `.waves/file_reservations.md` for the coordination protocol.
-
-## 📋 DEPLOYMENT FORMAT - CRITICAL FOR SUCCESS
-
-When deploying agents, use this EXACT format to ensure parallel execution:
-
-**For waves with ≤10 agents (single batch):**
-```
-🚀 WAVE 1 DEPLOYMENT - [X] AGENTS IN PARALLEL
-
-Deploying all [X] agents simultaneously:
-
-[Use X parallel Task() calls - one per agent, NOT one per team]
-```
-
-**For waves with >10 agents (multiple batches):**
-```
-🚀 WAVE 1A DEPLOYMENT - FIRST 10 AGENTS
-
-Deploying first 10 agents simultaneously:
-
-[Use 10 parallel Task() calls]
-
-🚀 WAVE 1B DEPLOYMENT - REMAINING [X] AGENTS  
-
-Deploying remaining [X] agents simultaneously:
-
-[Use X parallel Task() calls]
-```
-
-**REMEMBER**: Count AGENTS, not teams! A team with 3 agents = 3 Task() calls.
-
-**🎯 DEFAULT ACTION**: Simply reply **"Execute"** to begin with the created plan.
-
-**Alternative Commands**:
-- `"Execute"` - Start with current configuration
-- `"Execute but [modification]"` - Start with changes
-- `"Show plan"` - Review the WAVE_EXECUTION_PLAN.md
-- `"Status"` - Check current state
-
-## ⚡ CRITICAL EXECUTION REQUIREMENT
-
-**PARALLEL DEPLOYMENT IS MANDATORY**:
-- All agents in a wave MUST deploy SIMULTANEOUSLY (up to 10 agents per batch)
-- NO sequential deployment (one agent at a time)
-- NO team-by-team deployment - deploy ALL agents at once
-- Maximum 10 agents per deployment due to system constraints
-- For waves with >10 agents, split into sub-waves (e.g., Wave 1A, Wave 1B)
-
-**IMPORTANT CLARIFICATION - Teams vs Agents**:
-- **Teams** = Organizational groupings (e.g., "Authentication Team")
-- **Agents** = Individual workers that need deployment (e.g., "Session Security Specialist")
-- Deploy AGENTS, not teams!
-
-**Examples**:
-- Wave with 6 agents across 2 teams = 6 parallel Task deployments
-- Wave with 12 agents across 4 teams = Split into:
-  - Wave 1A: 10 agents (parallel deployment)
-  - Wave 1B: 2 agents (parallel deployment)
-- WRONG: Deploy Team 1, then Team 2, then Team 3 ❌
-- RIGHT: Deploy all 10 agents from all teams at once ✓
-
-## Remember
-
-The Shadow Clone System's strength comes from ensuring every agent - regardless of role - operates with the same core principles and master-level expertise. This optimized orchestrator guarantees proper rule injection while maintaining clean, modular architecture.
-
-**Every agent is a master. Every master is essential. No weak links allowed.**
+**Remember**: Every agent is a master. No weak links allowed.
