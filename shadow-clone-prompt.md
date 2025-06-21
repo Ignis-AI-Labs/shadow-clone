@@ -124,7 +124,8 @@ waves = plan_waves(
 )
 
 # CREATE CLEAR WAVE EXECUTION PLAN FOR USER REVIEW
-wave_plan_content = generate_wave_execution_plan(waves, teams)
+# CRITICAL: Include sub-wave splitting for >10 agents
+wave_plan_content = generate_wave_execution_plan(waves, teams, max_agents_per_batch=10)
 save_file(f"{workspace_dir}/WAVE_EXECUTION_PLAN.md", wave_plan_content)
 
 # ORGANIZE WORKSPACE - Keep it simple and clean
@@ -136,12 +137,20 @@ create_directory(f"{workspace_dir}/.waves")  # Single directory for runtime and 
 
 **CRITICAL: This is where we ensure no weak links**
 
+**DEPLOYMENT STRATEGY**:
+- Collect ALL agents for the wave first (across all teams)
+- Deploy in batches of up to 10 agents maximum
+- Teams are organizational units - deploy AGENTS, not teams
+- Example: 4 teams × 3 agents = 12 agents total = 2 deployment batches
+
 ```python
 # READ existing agent templates and rules (ALL FILES ALREADY EXIST)
 agent_templates = read_file(".shadow/templates/agent_templates.md")
 core_rules = read_file(".shadow/agent_rules/core_agent_rules.md")
 
 for wave in waves:
+    agents_to_deploy = []  # Collect ALL agents for this wave
+    
     for team in wave.teams:
         for agent in team.agents:
             # MANDATORY RULE INJECTION PROTOCOL
@@ -162,8 +171,17 @@ for wave in waves:
                 assignment=agent.assignment
             )
             
-            # Deploy agent with complete identity
-            deploy_agent(agent_identity)
+            # Collect agent for batch deployment
+            agents_to_deploy.append(agent_identity)
+    
+    # CRITICAL: Deploy ALL agents in the wave simultaneously (respecting 10-agent limit)
+    if len(agents_to_deploy) <= 10:
+        deploy_all_agents_parallel(agents_to_deploy)  # Single batch
+    else:
+        # Split into sub-waves of 10 agents each
+        for i in range(0, len(agents_to_deploy), 10):
+            batch = agents_to_deploy[i:i+10]
+            deploy_all_agents_parallel(batch)  # Deploy batch of up to 10
 ```
 
 ### Phase 5: Mode-Specific Execution
@@ -348,6 +366,36 @@ your-project/
 
 **DOCUMENT UPDATE COORDINATION**: Multiple agents NEVER update the same file simultaneously. Check `.waves/file_reservations.md` for the coordination protocol.
 
+## 📋 DEPLOYMENT FORMAT - CRITICAL FOR SUCCESS
+
+When deploying agents, use this EXACT format to ensure parallel execution:
+
+**For waves with ≤10 agents (single batch):**
+```
+🚀 WAVE 1 DEPLOYMENT - [X] AGENTS IN PARALLEL
+
+Deploying all [X] agents simultaneously:
+
+[Use X parallel Task() calls - one per agent, NOT one per team]
+```
+
+**For waves with >10 agents (multiple batches):**
+```
+🚀 WAVE 1A DEPLOYMENT - FIRST 10 AGENTS
+
+Deploying first 10 agents simultaneously:
+
+[Use 10 parallel Task() calls]
+
+🚀 WAVE 1B DEPLOYMENT - REMAINING [X] AGENTS  
+
+Deploying remaining [X] agents simultaneously:
+
+[Use X parallel Task() calls]
+```
+
+**REMEMBER**: Count AGENTS, not teams! A team with 3 agents = 3 Task() calls.
+
 **🎯 DEFAULT ACTION**: Simply reply **"Execute"** to begin with the created plan.
 
 **Alternative Commands**:
@@ -359,12 +407,24 @@ your-project/
 ## ⚡ CRITICAL EXECUTION REQUIREMENT
 
 **PARALLEL DEPLOYMENT IS MANDATORY**:
-- All agents in a wave MUST deploy SIMULTANEOUSLY
+- All agents in a wave MUST deploy SIMULTANEOUSLY (up to 10 agents per batch)
 - NO sequential deployment (one agent at a time)
-- Every agent starts working at the same time
-- This is NOT optional - it's essential for system performance
+- NO team-by-team deployment - deploy ALL agents at once
+- Maximum 10 agents per deployment due to system constraints
+- For waves with >10 agents, split into sub-waves (e.g., Wave 1A, Wave 1B)
 
-**Example**: Wave with 6 agents = 6 parallel deployments, NOT 6 sequential deployments
+**IMPORTANT CLARIFICATION - Teams vs Agents**:
+- **Teams** = Organizational groupings (e.g., "Authentication Team")
+- **Agents** = Individual workers that need deployment (e.g., "Session Security Specialist")
+- Deploy AGENTS, not teams!
+
+**Examples**:
+- Wave with 6 agents across 2 teams = 6 parallel Task deployments
+- Wave with 12 agents across 4 teams = Split into:
+  - Wave 1A: 10 agents (parallel deployment)
+  - Wave 1B: 2 agents (parallel deployment)
+- WRONG: Deploy Team 1, then Team 2, then Team 3 ❌
+- RIGHT: Deploy all 10 agents from all teams at once ✓
 
 ## Remember
 

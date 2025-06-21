@@ -40,6 +40,22 @@ claude "Load shadow-clone-prompt.md and execute with project_type=audit - React/
 - **Depth Focus:** Surface-level assessment vs deep penetration testing
 - **Scope Exclusions:** Specific areas to skip (with justification)
 
+## ⚠️ DEPLOYMENT CONSTRAINTS FOR AUDIT MODE
+
+**CRITICAL**: Due to system limitations, maximum 10 agents can be deployed simultaneously.
+
+**Standard Audit Configuration**:
+- Total Security Masters: ~21-24 agents (7-8 teams × 3 agents)
+- Deployment Strategy: Split into multiple sub-waves
+- Example for 21 agents:
+  - Wave 1A: First 10 agents (mixed from different teams)
+  - Wave 1B: Next 10 agents
+  - Wave 1C: Final 1 agent
+
+**IMPORTANT**: When deploying, count INDIVIDUAL AGENTS, not teams:
+- Authentication Team (3 agents) + Data Team (3 agents) = 6 agents to deploy
+- NOT "2 teams to deploy"
+
 ## 🎯 Enhanced Security Frameworks Integration
 
 ### Core Security Assessment Framework (Beyond OWASP Top Ten)
