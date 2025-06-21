@@ -35,6 +35,7 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 ARGUMENTS:
 project_plan=./project-plan.md
 workspace_dir=./
+waves_directory=/root/repos/shadow-clone/.waves/
 num_teams=dynamic
 team_composition=auto
 wave_strategy=auto
@@ -49,6 +50,7 @@ git_strategy=auto
 Extract from $ARGUMENTS with smart defaults (can be overridden by command line):
 - `project_plan` (default: "./project-plan.md")
 - `workspace_dir` (default: "./")
+- `waves_directory` (default: "/root/repos/shadow-clone/.waves/")
 - `num_teams` (default: "dynamic")
 - `team_composition` (default: "auto")
 - `wave_strategy` (default: "auto")
@@ -297,6 +299,87 @@ Every agent deployment MUST include:
 
 ### 3. Coordination Excellence
 - Constitutional authority maintains harmony
+
+## 📁 Wave Folder Organization (MANDATORY FOR ALL MODES)
+
+### Universal Deliverable Structure
+**⚠️ CRITICAL**: This folder structure applies to ALL Shadow Clone modes (audit, feature, refactor, optimize, research, etc.)
+
+All agent deliverables MUST be organized into wave-specific folders within the configured waves directory:
+
+**🎯 WAVES DIRECTORY: `$waves_directory`** (default: `/root/repos/shadow-clone/.waves/`)
+
+This is NOT optional - it's a core system requirement for proper agent coordination!
+
+**To use a custom location**, specify in your command:
+```
+"Load shadow-clone-prompt.md and execute with waves_directory=/my/custom/path/.waves/"
+```
+
+```
+/root/repos/shadow-clone/.waves/
+├── wave-1/
+│   ├── [agent-1-deliverables]
+│   ├── [agent-2-deliverables]
+│   ├── [shared-documents]
+│   └── WAVE_1_SUMMARY.md
+├── wave-2/
+│   ├── [agent-deliverables]
+│   └── WAVE_2_SUMMARY.md
+├── wave-3/
+│   └── [final-deliverables]
+└── FINAL_DELIVERABLES.md
+```
+
+### Wave Folder Rules
+1. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `/root/repos/shadow-clone/.waves/`)
+2. **Automatic Creation**: Each wave gets its own folder (`$waves_directory/wave-1/`, etc.)
+3. **Agent Organization**: Each agent saves work in the current wave folder
+4. **Shared Documents**: Documents accessed by multiple agents go in the wave folder root
+5. **Sub-waves**: For waves >10 agents, use sub-folders (`$waves_directory/wave-1a/`, etc.)
+6. **Final Consolidation**: Master deliverables may be copied to `$waves_directory` root after all waves complete
+
+### Examples Across Different Modes
+
+**Audit Mode:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── authentication_findings.md
+│   ├── data_security_findings.md
+│   └── WAVE_1_CONVERGENCE.md
+├── wave-2/
+│   ├── api_security_findings.md
+│   └── WAVE_2_CONVERGENCE.md
+└── SECURITY_AUDIT_REPORT.md
+```
+
+**Feature Mode:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── architecture_design.md
+│   ├── database_schema.sql
+│   └── WAVE_1_SUMMARY.md
+├── wave-2/
+│   ├── backend/
+│   ├── frontend/
+│   └── WAVE_2_SUMMARY.md
+└── FEATURE_COMPLETE.md
+```
+
+**Refactor Mode:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── refactor_analysis.md
+│   ├── dependency_graph.md
+│   └── WAVE_1_PLAN.md
+├── wave-2/
+│   ├── refactored_code/
+│   └── WAVE_2_CHANGES.md
+└── REFACTOR_SUMMARY.md
+```
 - Structured convergence sessions
 - Clear file ownership protocols
 - Synchronized wave execution

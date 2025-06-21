@@ -350,9 +350,10 @@ SECURITY DOMAIN: [Authentication/Data/Infrastructure/Application/Supply Chain/Co
 AUDIT WAVE: [Wave Number]
 ASSESSMENT FRAMEWORKS: [OWASP/NIST SSDF/CWE/Industry-Specific]
 
-WORKSPACE: [workspace_dir]
-REPORT TEMPLATES: [workspace_dir/.shadow/templates/]
-VALIDATION CHECKLIST: [workspace_dir/.shadow/templates/false-positive-validation-checklist.md]
+WORKSPACE: /root/repos/shadow-clone
+REPORT TEMPLATES: /root/repos/shadow-clone/.shadow/templates/
+VALIDATION CHECKLIST: /root/repos/shadow-clone/.shadow/templates/false-positive-validation-checklist.md
+WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
 
 SECURITY AUDIT CONTEXT:
 - Project Type: [Web App/Mobile App/API/Cloud Service/AI System]
@@ -400,30 +401,56 @@ DELIVERABLES:
 
 **CRITICAL**: ALL teams contribute to exactly 3 SHARED deliverables. NO individual team reports!
 
-**The 3 Master Deliverables (Created in .waves Directory)**:
+**The 3 Master Deliverables (Created in $waves_directory)**:
 
-1. **Master Security Audit Report:** `[workspace_dir]/.waves/SECURITY_AUDIT_REPORT.md`
+1. **Master Security Audit Report:** `$waves_directory/SECURITY_AUDIT_REPORT.md`
    - **Template:** `.shadow/templates/security-audit-report-template.md`
    - **Purpose:** Comprehensive findings from all teams in one unified document
    - **Sections**: Executive Summary, Critical Findings, Detailed Analysis by Domain, Code Quality & Performance Analysis, Remediation Roadmap
    - **Contributors**: All teams add their validated findings to their assigned sections
 
-2. **Vulnerability Register:** `[workspace_dir]/.waves/VULNERABILITY_REGISTER.md`
+2. **Vulnerability Register:** `$waves_directory/VULNERABILITY_REGISTER.md`
    - **Template:** `.shadow/templates/vulnerability-register-template.md`
    - **Purpose:** Centralized tracking of all confirmed vulnerabilities
    - **Format**: ID, Severity, Domain, Description, Evidence, Remediation, Status
    - **Contributors**: All teams register findings using consistent format
 
-3. **Compliance Matrix:** `[workspace_dir]/.waves/COMPLIANCE_MATRIX.md`
+3. **Compliance Matrix:** `$waves_directory/COMPLIANCE_MATRIX.md`
    - **Template:** `.shadow/templates/compliance-matrix-template.md`
    - **Purpose:** Single source of truth for all compliance requirements
    - **Coverage**: OWASP, NIST, Industry Standards, Regulatory Requirements
    - **Contributors**: Compliance team consolidates inputs from all security teams
 
-**Working Documents (Internal Use Only - NOT Deliverables)**:
-- Team findings in `.waves/[team]_findings.md` - Draft findings before convergence
-- Tool outputs in `.waves/scans/` - Raw scan data
-- Validation checklists in `.waves/` - Process tracking
+**📁 Wave-Based Organization** (MANDATORY STRUCTURE - All modes must use this folder pattern):
+```
+$waves_directory/
+├── wave-1/  (Authentication, Data, Infrastructure teams)
+│   ├── authentication_findings.md
+│   ├── data_security_findings.md
+│   ├── infrastructure_findings.md
+│   └── WAVE_1_CONVERGENCE.md
+├── wave-2/  (API, Client, Cloud teams)
+│   ├── api_security_findings.md
+│   ├── client_security_findings.md
+│   ├── cloud_security_findings.md
+│   └── WAVE_2_CONVERGENCE.md
+├── wave-3/  (Compliance & Quality teams)
+│   ├── compliance_findings.md
+│   ├── quality_performance_findings.md
+│   └── WAVE_3_CONVERGENCE.md
+├── scans/   (Tool outputs)
+│   ├── sast_results/
+│   ├── dast_results/
+│   └── dependency_scans/
+└── [Final Master Deliverables in root]
+```
+
+**IMPORTANT NOTE**: The wave folder structure ($waves_directory) is MANDATORY for all Shadow Clone modes. All deliverables must be organized by waves (wave-1/, wave-2/, etc.) to ensure proper coordination and prevent conflicts between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
+
+**Working Documents (Wave-Specific)**:
+- Team findings in `$waves_directory/wave-X/[team]_findings.md` - Draft findings before convergence
+- Tool outputs in `$waves_directory/scans/` - Raw scan data
+- Validation checklists in `$waves_directory/wave-X/` - Process tracking
 
 **REMEMBER**: Only the 3 master deliverables are client-facing. All other files are internal working documents.
 
@@ -432,9 +459,10 @@ DELIVERABLES:
 **MANDATORY**: Multiple agents MUST NEVER update the same document simultaneously!
 
 1. **Update Sequence Protocol**:
-   - Each team works in their `.waves/[team]_findings.md` file FIRST
+   - Each team works in their `$waves_directory/wave-X/[team]_findings.md` file FIRST
    - Updates to shared documents happen during CONVERGENCE SESSIONS only
    - One designated "Document Master" per wave consolidates updates
+   - Wave folders prevent cross-wave conflicts
 
 2. **Convergence Session Updates**:
    ```

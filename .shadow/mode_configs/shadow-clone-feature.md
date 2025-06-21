@@ -118,8 +118,9 @@ FEATURE SECURITY FOCUS: [Frontend/Backend/Integration/Database]
 DEVELOPMENT WAVE: [Wave Number]
 SECURITY FRAMEWORKS: [OWASP/NIST/Industry-Specific]
 
-WORKSPACE: [workspace_dir]
-FEATURE WORKING DIRECTORY: [workspace_dir/.waves/secure_feature_[domain]]
+WORKSPACE: /root/repos/shadow-clone
+FEATURE WORKING DIRECTORY: $waves_directory/secure_feature_[domain]
+WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
 
 SECURE FEATURE CONTEXT:
 - Feature Description: [What new capability is being added]
@@ -150,11 +151,14 @@ SECURITY TESTING REQUIREMENTS:
 - Manual security testing for complex logic
 
 DELIVERABLES:
-- Secure Feature Implementation: [workspace_dir/src/[feature_area]]
-- Security Design Documentation: [workspace_dir]/.waves/security_design_[feature].md
-- Threat Model Updates: [workspace_dir]/.waves/threat_model_updates_[feature].md
-- Security Test Suite: [workspace_dir/tests/security/[feature]]
-- Security Configuration: [workspace_dir/config/security/[feature]]
+
+**MANDATORY WAVE FOLDER STRUCTURE**: All deliverables must be organized in the wave folder pattern ($waves_directory/wave-1/, wave-2/, etc.) to ensure proper coordination between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
+
+- Secure Feature Implementation: /root/repos/shadow-clone/src/[feature_area]
+- Security Design Documentation: $waves_directory/wave-[X]/security_design_[feature].md
+- Threat Model Updates: $waves_directory/wave-[X]/threat_model_updates_[feature].md
+- Security Test Suite: /root/repos/shadow-clone/tests/security/[feature]
+- Security Configuration: /root/repos/shadow-clone/config/security/[feature]
 
 SECURITY COORDINATION:
 - Cross-team security review and validation

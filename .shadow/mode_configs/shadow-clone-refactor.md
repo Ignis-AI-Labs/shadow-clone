@@ -108,8 +108,9 @@ REFACTORING SECURITY FOCUS: [Architecture/Code/Testing/Configuration]
 REFACTORING WAVE: [Wave Number]
 SECURITY FRAMEWORKS: [OWASP/NIST/Industry-Specific]
 
-WORKSPACE: [workspace_dir]
-REFACTORING WORKING DIRECTORY: [workspace_dir/.waves/secure_refactor_[domain]]
+WORKSPACE: /root/repos/shadow-clone
+REFACTORING WORKING DIRECTORY: $waves_directory/secure_refactor_[domain]
+WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
 
 SECURE REFACTORING CONTEXT:
 - Refactoring Scope: [What code sections are being refactored]
@@ -140,11 +141,14 @@ SECURITY VALIDATION REQUIREMENTS:
 - Security performance impact assessment
 
 DELIVERABLES:
-- Refactored Secure Code: [workspace_dir/src/[refactored_areas]]
-- Security Control Documentation: [workspace_dir]/.waves/security_controls_[refactor].md
-- Security Enhancement Report: [workspace_dir]/.waves/security_improvements_[refactor].md
-- Security Test Updates: [workspace_dir/tests/security/[refactored_areas]]
-- Security Configuration Updates: [workspace_dir/config/security/[refactored_areas]]
+
+**MANDATORY WAVE FOLDER STRUCTURE**: All deliverables must be organized in the wave folder pattern ($waves_directory/wave-1/, wave-2/, etc.) to ensure proper coordination between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
+
+- Refactored Secure Code: /root/repos/shadow-clone/src/[refactored_areas]
+- Security Control Documentation: $waves_directory/wave-[X]/security_controls_[refactor].md
+- Security Enhancement Report: $waves_directory/wave-[X]/security_improvements_[refactor].md
+- Security Test Updates: /root/repos/shadow-clone/tests/security/[refactored_areas]
+- Security Configuration Updates: /root/repos/shadow-clone/config/security/[refactored_areas]
 
 SECURITY COORDINATION:
 - Cross-team security impact assessment

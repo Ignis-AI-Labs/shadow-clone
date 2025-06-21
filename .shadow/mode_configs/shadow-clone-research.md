@@ -72,8 +72,9 @@ RESEARCH SECURITY FOCUS: [Security/Technology/Compliance/Risk]
 RESEARCH WAVE: [Wave Number]
 SECURITY FRAMEWORKS: [OWASP/NIST/Industry-Specific]
 
-WORKSPACE: [workspace_dir]
-RESEARCH WORKING DIRECTORY: [workspace_dir/.waves/secure_research_[domain]]
+WORKSPACE: /root/repos/shadow-clone
+RESEARCH WORKING DIRECTORY: $waves_directory/secure_research_[domain]
+WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
 
 SECURE RESEARCH CONTEXT:
 - Research Domain: [What area is being researched]
@@ -104,11 +105,13 @@ RESEARCH SECURITY PROTOCOLS:
 - Document security implications of findings
 
 DELIVERABLES:
-- Security-Informed Research Report: [workspace_dir]/.waves/research_security_[domain].md
-- Technology Security Assessment: [workspace_dir]/.waves/technology_security_[domain].md
-- Risk Analysis Matrix: [workspace_dir]/.waves/risk_analysis_[domain].md
-- Compliance Impact Report: [workspace_dir]/.waves/compliance_impact_[domain].md
-- Security Recommendations: [workspace_dir]/.waves/security_recommendations_[domain].md
+
+**MANDATORY WAVE FOLDER STRUCTURE**: All deliverables must be organized in the wave folder pattern ($waves_directory/wave-1/, wave-2/, etc.) to ensure proper coordination between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
+- Security-Informed Research Report: $waves_directory/wave-[X]/research_security_[domain].md
+- Technology Security Assessment: $waves_directory/wave-[X]/technology_security_[domain].md
+- Risk Analysis Matrix: $waves_directory/wave-[X]/risk_analysis_[domain].md
+- Compliance Impact Report: $waves_directory/wave-[X]/compliance_impact_[domain].md
+- Security Recommendations: $waves_directory/wave-[X]/security_recommendations_[domain].md
 
 SECURITY COORDINATION:
 - Cross-team security research validation

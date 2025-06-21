@@ -120,8 +120,9 @@ OPTIMIZATION SECURITY FOCUS: [Critical/Performance/Quality/Infrastructure]
 OPTIMIZATION WAVE: [Wave Number based on priority]
 SECURITY FRAMEWORKS: [OWASP/NIST/Industry-Specific]
 
-WORKSPACE: [workspace_dir]
-OPTIMIZATION WORKING DIRECTORY: [workspace_dir/.waves/secure_optimize_[domain]]
+WORKSPACE: /root/repos/shadow-clone
+OPTIMIZATION WORKING DIRECTORY: $waves_directory/secure_optimize_[domain]
+WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
 
 SECURE OPTIMIZATION CONTEXT:
 - Audit Findings Source: [Previous audit branch/reports]
@@ -152,11 +153,14 @@ AUDIT FINDING INTEGRATION:
 - Compliance gaps to close
 
 DELIVERABLES:
-- Optimized Secure Code: [workspace_dir/src/[optimized_areas]]
-- Security Improvement Report: [workspace_dir]/.waves/security_improvements_[optimize].md
-- Vulnerability Remediation Log: [workspace_dir]/.waves/vulnerability_fixes_[optimize].md
-- Performance Security Report: [workspace_dir]/.waves/performance_security_[optimize].md
-- Compliance Achievement Report: [workspace_dir]/.waves/compliance_status_[optimize].md
+
+**MANDATORY WAVE FOLDER STRUCTURE**: All deliverables must be organized in the wave folder pattern ($waves_directory/wave-1/, wave-2/, etc.) to ensure proper coordination between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
+
+- Optimized Secure Code: /root/repos/shadow-clone/src/[optimized_areas]
+- Security Improvement Report: $waves_directory/wave-[X]/security_improvements_[optimize].md
+- Vulnerability Remediation Log: $waves_directory/wave-[X]/vulnerability_fixes_[optimize].md
+- Performance Security Report: $waves_directory/wave-[X]/performance_security_[optimize].md
+- Compliance Achievement Report: $waves_directory/wave-[X]/compliance_status_[optimize].md
 
 SECURITY COORDINATION:
 - Cross-team security improvement validation
