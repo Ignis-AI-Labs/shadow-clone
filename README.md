@@ -86,7 +86,7 @@ Shadow Clone is a premium SaaS platform with strictly limited NFT-based licenses
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `project_type` | `auto` | `audit`, `feature`, `refactor`, `optimize`, `debug`, `research` |
-| `waves_directory` | `/root/repos/shadow-clone/.waves/` | Configurable output location |
+| `waves_directory` | `./.waves/` | Configurable output location |
 | `num_teams` | `dynamic` | Team count |
 | `wave_strategy` | `auto` | Wave execution strategy |
 

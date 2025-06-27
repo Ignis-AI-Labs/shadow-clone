@@ -115,7 +115,7 @@ shadow-clone/
 4. **NFT Verification**: Periodic re-verification for tier benefits
 5. **Wave Folder Organization**: All deliverables organized in `$waves_directory/wave-X/` folders
 6. **Agent Isolation**: Each wave works in its own folder to prevent conflicts
-7. **Configurable Paths**: Users can set custom `waves_directory` (default: `/root/repos/shadow-clone/.waves/`)
+7. **Configurable Paths**: Users can set custom `waves_directory` (default: `./.waves/`)
 
 ## Security Considerations
 

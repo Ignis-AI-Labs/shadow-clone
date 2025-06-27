@@ -9,7 +9,7 @@ See LICENSE-PROPRIETARY.md for full terms.
 ## 🎯 Critical System Paths
 
 ### Waves Directory (CONFIGURABLE)
-**DEFAULT PATH**: `/root/repos/shadow-clone/.waves/`
+**DEFAULT PATH**: `./.waves/`
 **PARAMETER**: `$waves_directory`
 
 - **Purpose**: Central location for ALL agent deliverables across ALL modes
@@ -56,7 +56,7 @@ $waves_directory/
 
 ## ⚠️ Critical Rules
 
-1. **Path Consistency**: Always use `/root/repos/shadow-clone/.waves/`
+1. **Path Consistency**: Always use `./.waves/` (relative to workspace)
 2. **No Relative Paths**: Never use `./waves` or `../waves`
 3. **No Variables**: Never use `[workspace_dir]` or similar
 4. **Wave Isolation**: Each wave works in its own folder

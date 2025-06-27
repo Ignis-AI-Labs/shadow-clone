@@ -22,7 +22,7 @@
 1. **MANDATORY STRUCTURE**: `$waves_directory/wave-X/`
 2. **ALL DELIVERABLES**: Must be in wave folders
 3. **CONFIGURABLE PATH**: Via waves_directory argument
-4. **DEFAULT PATH**: `/root/repos/shadow-clone/.waves/`
+4. **DEFAULT PATH**: `./.waves/`
 
 ## 🔒 Document Coordination
 

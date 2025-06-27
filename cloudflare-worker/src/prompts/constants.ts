@@ -9,7 +9,7 @@ See LICENSE-PROPRIETARY.md for full terms.
 ## 🎯 Critical System Paths
 
 ### Waves Directory (CONFIGURABLE)
-**DEFAULT PATH**: \`/root/repos/shadow-clone/.waves/\`
+**DEFAULT PATH**: \`./.waves/\`
 **PARAMETER**: \`$waves_directory\`
 
 - **Purpose**: Central location for ALL agent deliverables across ALL modes
@@ -56,10 +56,10 @@ $waves_directory/
 
 ## ⚠️ Critical Rules
 
-1. **Path Consistency**: Always use \`/root/repos/shadow-clone/.waves/\`
-2. **No Relative Paths**: Never use \`./waves\` or \`../waves\`
-3. **No Variables**: Never use \`[workspace_dir]\` or similar
-4. **Wave Isolation**: Each wave works in its own folder
-5. **No Cross-Wave Access**: Agents cannot modify other waves' folders
+1. **Path Consistency**: Always use \`./.waves/\` (relative to workspace)
+2. **Wave Isolation**: Each wave works in its own folder
+3. **No Cross-Wave Access**: Agents cannot modify other waves' folders
+4. **No Variables**: Never use \`[workspace_dir]\` or similar in paths
+5. **Automatic Creation**: Waves directory created if it doesn't exist
 
 This constants file ensures system-wide consistency for the Shadow Clone orchestration system.`;

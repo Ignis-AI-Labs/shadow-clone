@@ -104,7 +104,7 @@ When you need additional Shadow Clone modules, fetch them from the Cloudflare AP
 ARGUMENTS:
 project_plan=./project-plan.md
 workspace_dir=./
-waves_directory=/root/repos/shadow-clone/.waves/
+waves_directory=./.waves/
 num_teams=dynamic
 team_composition=auto
 wave_strategy=auto
@@ -119,7 +119,7 @@ git_strategy=auto
 Extract from $ARGUMENTS with smart defaults (can be overridden by command line):
 - `project_plan` (default: "./project-plan.md")
 - `workspace_dir` (default: "./")
-- `waves_directory` (default: "/root/repos/shadow-clone/.waves/")
+- `waves_directory` (default: "./.waves/")
 - `num_teams` (default: "dynamic")
 - `team_composition` (default: "auto")
 - `wave_strategy` (default: "auto")
@@ -387,7 +387,7 @@ Every agent deployment MUST include:
 
 All agent deliverables MUST be organized into wave-specific folders within the configured waves directory:
 
-**🎯 WAVES DIRECTORY: `$waves_directory`** (default: `/root/repos/shadow-clone/.waves/`)
+**🎯 WAVES DIRECTORY: `$waves_directory`** (default: `./.waves/` in current workspace)
 
 This is NOT optional - it's a core system requirement for proper agent coordination!
 
@@ -412,7 +412,7 @@ $waves_directory/
 ```
 
 ### Wave Folder Rules
-1. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `/root/repos/shadow-clone/.waves/`)
+1. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `./.waves/`)
 2. **Automatic Creation**: Each wave gets its own folder (`$waves_directory/wave-1/`, etc.)
 3. **Agent Organization**: Each agent saves work in the current wave folder
 4. **Shared Documents**: Documents accessed by multiple agents go in the wave folder root
