@@ -29,12 +29,13 @@ Modular orchestrator ensuring every agent operates at master level through prope
 
 ## System Architecture
 
-**📂 Modules** (READ ONLY - ALL EXIST):
-- `.shadow/agent_rules/` - Behavioral DNA
-- `.shadow/coordination_rules/` - Wave coordination  
-- `.shadow/mode_configs/` - Project methodologies
-- `.shadow/templates/` - Standards
-- `.shadow/execution_phases/` - Phase implementations
+**📂 Modules** (FETCH FROM API AS NEEDED):
+When you need additional Shadow Clone modules, fetch them from the Cloudflare API:
+- Agent Rules: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/{role} -H "X-API-Key: {KEY}"`
+- Mode Configs: `curl -X GET {API_ENDPOINT}/api/prompts/modes/{mode} -H "X-API-Key: {KEY}"`
+- Coordination Rules: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules -H "X-API-Key: {KEY}"`
+- Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/{template} -H "X-API-Key: {KEY}"`
+- Execution Phases: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/{phase} -H "X-API-Key: {KEY}"`
 
 **🎯 Core**: Universal excellence, synchronized operation, focused delivery.
 
@@ -59,7 +60,10 @@ Command line overrides defaults: `"Load shadow-clone-prompt.md and execute with 
 
 1. **Parse Arguments** - Extract configuration with defaults
 2. **Detect Mode** - execution (default), planning, research, resume, status, health, repair
-3. **Load Configuration** - `{workspace_dir}/.shadow/mode_configs/shadow-clone-{project_type}.md`
+3. **Load Configuration** - Fetch mode config from API:
+   - For specific modes: `curl -X GET {API_ENDPOINT}/api/prompts/modes/{mode} -H "X-API-Key: {KEY}"`
+   - For project types: `curl -X GET {API_ENDPOINT}/api/prompts/modes/{project_type} -H "X-API-Key: {KEY}"`
+   - Example: For plan mode, fetch `/api/prompts/modes/plan`
 
 ## Execution Phases
 
@@ -69,11 +73,12 @@ Command line overrides defaults: `"Load shadow-clone-prompt.md and execute with 
 - Apply safety measures
 
 ### Phase 2: Team Configuration
-- Load team templates
+- Fetch team templates from API: `curl -X GET {API_ENDPOINT}/api/prompts/templates/{template} -H "X-API-Key: {KEY}"`
 - Configure based on project type
 
 ### Phase 3: Wave Planning
-- Plan waves with coordination rules
+- Fetch coordination rules: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules -H "X-API-Key: {KEY}"`
+- Plan waves with fetched coordination rules
 - Create WAVE_EXECUTION_PLAN.md
 - Split waves >10 agents into sub-waves
 
@@ -86,9 +91,11 @@ for wave in waves:
     
     # Rule injection for each agent
     for agent in agents:
+        # Fetch agent-specific rules from API
+        role_rules = fetch_from_api(f"/api/prompts/agent-rules/{agent.role}")
         inject_rules(
-            core_rules,      # Universal excellence
-            role_rules,      # Specialization
+            core_rules,      # Universal excellence  
+            role_rules,      # Fetched specialization rules
             project_rules,   # If applicable
             team_context,    # Coordination
             assignment       # Specific task
@@ -101,6 +108,8 @@ for wave in waves:
 
 ### Phase 5: Execution
 Mode-specific execution with parallel agent work.
+- Mode configurations already fetched from API in initialization
+- Agents use fetched rules and templates for their work
 
 ### Phase 6: Integration
 Quality assurance and deliverable integration.
@@ -140,7 +149,6 @@ After deployment:
 project/
 ├── DEPLOYMENT_SUMMARY.md    # Configuration
 ├── WAVE_EXECUTION_PLAN.md   # Detailed plan
-├── .shadow/                 # System modules (READ ONLY)
 └── $waves_directory/        # All deliverables
     └── wave-[n]/           # Per-wave outputs
 ```
