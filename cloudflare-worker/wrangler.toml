@@ -1,0 +1,31 @@
+name = "shadow-clone-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "shadow-clone-api-prod"
+
+# Add your KV namespaces for data storage
+[[kv_namespaces]]
+binding = "USERS"
+id = "YOUR_USERS_KV_ID"
+preview_id = "YOUR_USERS_KV_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "PROJECTS"
+id = "YOUR_PROJECTS_KV_ID"
+preview_id = "YOUR_PROJECTS_KV_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "API_KEYS"
+id = "YOUR_API_KEYS_KV_ID"
+preview_id = "YOUR_API_KEYS_KV_PREVIEW_ID"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "development"
+
+# CORS configuration
+[env.production.vars]
+ENVIRONMENT = "production"
+CORS_ORIGIN = "*"
