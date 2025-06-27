@@ -53,7 +53,7 @@ export async function injectShadowCloneCommand(authProvider: AuthProvider, comma
             command = `Fetch the Shadow Clone orchestration prompt from the API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
-Then execute it with: project_plan=./project-plan.md waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with project_plan=./project-plan.md waves_directory=./.waves/`;
             break;
             
         case 'debug':
@@ -61,7 +61,7 @@ Then execute it with: project_plan=./project-plan.md waves_directory=./.waves/`;
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 Also fetch the debug mode: curl -X GET ${apiEndpoint}/api/prompts/modes/debug -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=debug waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=debug waves_directory=./.waves/`;
             break;
             
         case 'feature':
@@ -69,7 +69,7 @@ Execute with: mode=debug waves_directory=./.waves/`;
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 Also fetch the feature mode: curl -X GET ${apiEndpoint}/api/prompts/modes/feature -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=feature project_plan=./feature-spec.md waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=feature project_plan=./feature-spec.md waves_directory=./.waves/`;
             break;
             
         case 'refactor':
@@ -77,7 +77,7 @@ Execute with: mode=feature project_plan=./feature-spec.md waves_directory=./.wav
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 Also fetch the refactor mode: curl -X GET ${apiEndpoint}/api/prompts/modes/refactor -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=refactor waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=refactor waves_directory=./.waves/`;
             break;
             
         case 'optimize':
@@ -85,7 +85,7 @@ Execute with: mode=refactor waves_directory=./.waves/`;
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 Also fetch the optimize mode: curl -X GET ${apiEndpoint}/api/prompts/modes/optimize -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=optimize waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=optimize waves_directory=./.waves/`;
             break;
             
         case 'audit':
@@ -93,28 +93,28 @@ Execute with: mode=optimize waves_directory=./.waves/`;
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 Also fetch the audit mode: curl -X GET ${apiEndpoint}/api/prompts/modes/audit -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=audit waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=audit waves_directory=./.waves/`;
             break;
             
         case 'research':
             command = `Fetch the Shadow Clone orchestration prompt from the API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
-Execute with: mode=research waves_directory=./.waves/`;
+Load shadow-clone-prompt.md and execute with mode=research waves_directory=./.waves/`;
             break;
             
         case 'resume':
             command = `Fetch the Shadow Clone orchestration prompt from the API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
-Then resume the previous session.`;
+Load shadow-clone-prompt.md and resume`;
             break;
             
         case 'plan':
             command = `Fetch the Shadow Clone orchestration prompt from the API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
-Then create a detailed project plan. Agents will analyze requirements and create a comprehensive plan without implementing code yet.`;
+Load shadow-clone-prompt.md and plan`;
             break;
             
         case 'custom':
@@ -135,6 +135,11 @@ Execute with: ${customParams}`;
         case 'help':
             // Don't inject anything, just show help
             vscode.commands.executeCommand('shadowClone.showHelp');
+            return;
+            
+        case 'params':
+            // Launch parameter builder
+            vscode.commands.executeCommand('shadowClone.buildParameters');
             return;
             
         default:

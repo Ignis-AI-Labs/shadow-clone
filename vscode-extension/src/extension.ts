@@ -13,6 +13,7 @@ import { launchClaudeCommand, launchClaudeWithArgumentsCommand } from './command
 import { ShadowCloneMacros } from './utils/shadowCloneCommands';
 import { injectShadowCloneCommand, injectDeployCommand, injectDebugCommand, injectFeatureCommand, injectCustomCommand } from './commands/injectCommand';
 import { showHelpCommand, showQuickReferenceCommand } from './commands/showHelp';
+import { buildParametersCommand, injectParametersCommand, injectParameterSnippet } from './commands/parameterBuilder';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
@@ -130,7 +131,19 @@ export async function activate(context: vscode.ExtensionContext) {
         
         // Help commands
         vscode.commands.registerCommand('shadowClone.showHelp', showHelpCommand),
-        vscode.commands.registerCommand('shadowClone.showQuickReference', showQuickReferenceCommand)
+        vscode.commands.registerCommand('shadowClone.showQuickReference', showQuickReferenceCommand),
+        
+        // Parameter commands
+        vscode.commands.registerCommand('shadowClone.buildParameters', injectParametersCommand),
+        vscode.commands.registerCommand('shadowClone.paramSnippet.minimal', () => 
+            injectParameterSnippet('MINIMAL')
+        ),
+        vscode.commands.registerCommand('shadowClone.paramSnippet.standard', () => 
+            injectParameterSnippet('STANDARD')
+        ),
+        vscode.commands.registerCommand('shadowClone.paramSnippet.fullstack', () => 
+            injectParameterSnippet('FULL_STACK')
+        )
     );
 
     // Auto-authenticate if we have stored credentials

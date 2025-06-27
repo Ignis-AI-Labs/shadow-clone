@@ -46,6 +46,9 @@ export class MacroItem extends vscode.TreeItem {
             case 'help':
                 this.iconPath = new vscode.ThemeIcon('question');
                 break;
+            case 'params':
+                this.iconPath = new vscode.ThemeIcon('settings-gear');
+                break;
             default:
                 this.iconPath = new vscode.ThemeIcon('code');
         }
@@ -129,6 +132,12 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
             'help', 
             'Learn Shadow Clone commands - Full documentation and examples', 
             'help'
+        ),
+        new MacroItem(
+            '⚙️ Build Parameters', 
+            'params', 
+            'Interactive parameter builder - Select and configure execution arguments', 
+            'params'
         )
     ];
 

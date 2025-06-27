@@ -61,22 +61,94 @@ Each command has three parts:
 
 ## 📝 Parameters Explained
 
-### project_plan=./project-plan.md
-Points to a markdown file describing what you want built. This file should contain:
-- Project goals and requirements
-- Technical specifications
-- User stories or features
-- Any specific constraints
+Shadow Clone uses a simple key=value syntax for parameters. You chain multiple parameters with spaces:
+\`\`\`
+Load shadow-clone-prompt.md and execute with param1=value1 param2=value2 param3=value3
+\`\`\`
 
-### waves_directory=./.waves/
-Where agents save their work. Each "wave" is a coordinated phase where agents collaborate:
-- wave-1/: First wave outputs (planning, architecture)
-- wave-2/: Second wave outputs (implementation)
-- wave-3/: Third wave outputs (testing, documentation)
-- [final-deliverables]/: Consolidated final code
+### Core Parameters
 
-### mode=<mode_name>
-Selects the specialized agent configuration (deploy, debug, feature, etc.)
+**project_plan=./project-plan.md**
+- Points to your requirements file
+- Can be any markdown file with project details
+- Example: \`project_plan=./specs/new-feature.md\`
+
+**waves_directory=./.waves/**
+- Where agents save their work
+- Each wave creates a subfolder
+- Example: \`waves_directory=./agent-outputs/\`
+
+**mode=<mode_name>**
+- Selects specialized agent behavior
+- Options: feature, debug, refactor, optimize, audit, research
+- Example: \`mode=debug\`
+
+### Advanced Parameters
+
+**wave_count=<number|dynamic>**
+- Number of agent waves to run
+- Use "dynamic" for automatic determination
+- Example: \`wave_count=3\` or \`wave_count=dynamic\`
+
+**num_teams=<1-3>**
+- Number of parallel agent teams
+- More teams = faster but more complex
+- Example: \`num_teams=2\`
+
+**team_composition=<type>**
+- Specialization of agent teams
+- Options: fullstack, frontend, backend, ai-specialists, architects
+- Example: \`team_composition=fullstack\`
+
+**git_strategy=<strategy>**
+- How agents handle version control
+- Options: feature-branch, direct, none
+- Example: \`git_strategy=feature-branch\`
+
+**enable_testing=<true|false>**
+- Auto-generate test suites
+- Default: true
+- Example: \`enable_testing=true\`
+
+**enable_docs=<true|false>**
+- Auto-generate documentation
+- Default: true
+- Example: \`enable_docs=true\`
+
+**max_agents_per_wave=<1-10>**
+- Concurrent agents per wave
+- Default: 10
+- Example: \`max_agents_per_wave=5\`
+
+### Parameter Examples
+
+**Minimal Setup:**
+\`\`\`
+Load shadow-clone-prompt.md and execute with waves_directory=./.waves/
+\`\`\`
+
+**Standard Project:**
+\`\`\`
+Load shadow-clone-prompt.md and execute with project_plan=./project-plan.md waves_directory=./.waves/
+\`\`\`
+
+**Debug Session:**
+\`\`\`
+Load shadow-clone-prompt.md and execute with mode=debug waves_directory=./.waves/ execution_timeout=15
+\`\`\`
+
+**Enterprise Build:**
+\`\`\`
+Load shadow-clone-prompt.md and execute with project_plan=./requirements.md waves_directory=./.waves/ num_teams=3 team_composition=fullstack git_strategy=feature-branch enable_testing=true enable_docs=true
+\`\`\`
+
+### Using the Parameter Builder
+
+Click "⚙️ Build Parameters" in the Macros view for an interactive parameter builder that:
+- Shows all available parameters
+- Provides descriptions and defaults
+- Validates your inputs
+- Builds the complete parameter string
 
 ## 💡 Tips for Success
 

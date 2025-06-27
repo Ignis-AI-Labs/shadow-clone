@@ -112,6 +112,23 @@
         "command": "shadowClone.showQuickReference",
         "title": "Shadow Clone: Quick Reference",
         "icon": "$(info)"
+      },
+      {
+        "command": "shadowClone.buildParameters",
+        "title": "Shadow Clone: Build Parameters",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "shadowClone.paramSnippet.minimal",
+        "title": "Shadow Clone: Insert Minimal Parameters"
+      },
+      {
+        "command": "shadowClone.paramSnippet.standard",
+        "title": "Shadow Clone: Insert Standard Parameters"
+      },
+      {
+        "command": "shadowClone.paramSnippet.fullstack",
+        "title": "Shadow Clone: Insert Full-Stack Parameters"
       }
     ],
     "viewsContainers": {
