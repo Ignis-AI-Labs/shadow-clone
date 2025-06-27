@@ -63,16 +63,25 @@ const authenticate = (req, res, next) => {
 // Mock auth validation endpoint
 app.post('/auth/validate', (req, res) => {
   const { apiKey } = req.body;
-  console.log('Auth validation request:', { apiKey });
+  console.log('Auth validation request:', { 
+    apiKey,
+    headers: req.headers,
+    body: req.body 
+  });
   
   if (apiKey === 'test-key-123') {
+    console.log('✅ Authentication successful for test-key-123');
     res.json({
       valid: true,
       userId: '123',
       licenseType: 'pioneer'
     });
   } else {
-    res.status(401).json({ valid: false });
+    console.log('❌ Authentication failed. Expected: test-key-123, Got:', apiKey);
+    res.status(401).json({ 
+      valid: false,
+      error: 'Invalid API key' 
+    });
   }
 });
 
