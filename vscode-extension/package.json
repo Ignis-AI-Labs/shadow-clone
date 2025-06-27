@@ -49,6 +49,28 @@
       {
         "command": "shadowClone.authenticate",
         "title": "Shadow Clone: Authenticate"
+      },
+      {
+        "command": "shadowClone.launchClaude",
+        "title": "Shadow Clone: Launch Claude Code",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "shadowClone.buildCustomCommand",
+        "title": "Shadow Clone: Build Custom Command"
+      },
+      {
+        "command": "shadowClone.showSessions",
+        "title": "Shadow Clone: Show Active Sessions"
+      },
+      {
+        "command": "shadowClone.terminateSession",
+        "title": "Shadow Clone: Terminate Session",
+        "icon": "$(close)"
+      },
+      {
+        "command": "shadowClone.clearCompletedSessions",
+        "title": "Shadow Clone: Clear Completed Sessions"
       }
     ],
     "viewsContainers": {
@@ -73,6 +95,12 @@
           "name": "Active Agents",
           "icon": "$(account)",
           "contextualTitle": "Shadow Clone Agents"
+        },
+        {
+          "id": "shadowClone.claudeSessions",
+          "name": "Claude Sessions",
+          "icon": "$(terminal)",
+          "contextualTitle": "Shadow Clone Claude Sessions"
         }
       ]
     },
@@ -102,6 +130,18 @@
           "command": "shadowClone.createProject",
           "when": "view == shadowClone.projectView",
           "group": "navigation"
+        },
+        {
+          "command": "shadowClone.launchClaude",
+          "when": "view == shadowClone.claudeSessions",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "shadowClone.terminateSession",
+          "when": "view == shadowClone.claudeSessions && viewItem == session",
+          "group": "inline"
         }
       ]
     }
@@ -142,9 +182,11 @@
     "webpack-obfuscator": "^3.5.1"
   },
   "dependencies": {
+    "@types/uuid": "^10.0.0",
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
     "ws": "^8.14.2"
   }
 }
