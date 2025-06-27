@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from '../auth/authProvider';
-import { SHADOW_CLONE_API, LICENSE_TYPES } from '../utils/constants';
+import { getApiEndpoint, LICENSE_TYPES } from '../utils/constants';
 
 export async function showStatusCommand(authProvider: AuthProvider) {
     const hasAuth = await authProvider.checkAuth();
@@ -19,15 +19,15 @@ export async function showStatusCommand(authProvider: AuthProvider) {
     }
 
     try {
-        // Fetch user status and credit balance
-        const [userResponse, creditsResponse, projectsResponse] = await Promise.all([
-            authProvider.makeAuthenticatedRequest(`${SHADOW_CLONE_API}/user/profile`),
-            authProvider.makeAuthenticatedRequest(`${SHADOW_CLONE_API}/credits/balance`),
-            authProvider.makeAuthenticatedRequest(`${SHADOW_CLONE_API}/projects?limit=5`)
+        // Fetch user status and license information
+        const [userResponse, licenseResponse, projectsResponse] = await Promise.all([
+            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/user/profile`),
+            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/user/license-status`),
+            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/projects?limit=5`)
         ]);
 
         const user = userResponse.data;
-        const credits = creditsResponse.data;
+        const license = licenseResponse.data;
         const projects = projectsResponse.data;
 
         // Format license type display
@@ -53,7 +53,7 @@ export async function showStatusCommand(authProvider: AuthProvider) {
                 ...user,
                 licenseDisplay: licenseDisplay[user.licenseType as keyof typeof licenseDisplay] || user.licenseType
             },
-            credits,
+            license,
             projects,
             extensionVersion: vscode.extensions.getExtension('shadow-clone.shadow-clone')?.packageJSON.version || '0.1.0'
         });
@@ -64,7 +64,7 @@ export async function showStatusCommand(authProvider: AuthProvider) {
 }
 
 function getStatusWebviewContent(data: any): string {
-    const { user, credits, projects, extensionVersion } = data;
+    const { user, license, projects, extensionVersion } = data;
     
     return `<!DOCTYPE html>
 <html lang="en">
@@ -129,11 +129,10 @@ function getStatusWebviewContent(data: any): string {
             font-size: 20px;
             font-weight: 600;
         }
-        .credits-warning {
-            background-color: var(--vscode-inputValidation-warningBackground);
-            border: 1px solid var(--vscode-inputValidation-warningBorder);
+        .license-info {
+            background-color: var(--vscode-textBlockQuote-background);
+            border-left: 3px solid var(--vscode-textLink-foreground);
             padding: 12px;
-            border-radius: 4px;
             margin-bottom: 16px;
         }
         .project-list {
@@ -187,6 +186,15 @@ function getStatusWebviewContent(data: any): string {
             color: var(--vscode-descriptionForeground);
             font-size: 12px;
         }
+        .feature-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 2px;
+            background-color: var(--vscode-badge-background);
+            color: var(--vscode-badge-foreground);
+            border-radius: 3px;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
@@ -203,12 +211,12 @@ function getStatusWebviewContent(data: any): string {
                     <div class="stat-value">#${user.id}</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Credit Balance</div>
-                    <div class="stat-value">$${credits.balance.toFixed(2)}</div>
+                    <div class="stat-label">License Status</div>
+                    <div class="stat-value">${license.isActive ? 'Active' : 'Inactive'}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Active Projects</div>
-                    <div class="stat-value">${user.activeProjects || 0}</div>
+                    <div class="stat-value">${user.activeProjects || 0} / ${license.features?.maxConcurrentProjects || 5}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Total Deployments</div>
@@ -216,16 +224,17 @@ function getStatusWebviewContent(data: any): string {
                 </div>
             </div>
             
-            ${credits.balance < 10 ? `
-            <div class="credits-warning">
-                ⚠️ Low credit balance. Add credits to continue using Shadow Clone.
+            <div class="license-info">
+                <strong>License Features:</strong><br>
+                ${license.features?.prioritySupport ? '<span class="feature-tag">Priority Support</span>' : ''}
+                ${license.features?.earlyAccess ? '<span class="feature-tag">Early Access</span>' : ''}
+                ${license.expiresAt ? `<br><small>Expires: ${new Date(license.expiresAt).toLocaleDateString()}</small>` : '<br><small>Lifetime Access (NFT)</small>'}
             </div>
-            ` : ''}
             
             <div class="action-buttons">
-                <button class="button" onclick="addCredits()">Add Credits</button>
-                <button class="button" onclick="viewPricing()">View Pricing</button>
+                <button class="button" onclick="createProject()">Create Project</button>
                 <button class="button" onclick="manageLicense()">Manage License</button>
+                <button class="button" onclick="viewDocs()">Documentation</button>
             </div>
         </div>
         
@@ -252,16 +261,16 @@ function getStatusWebviewContent(data: any): string {
     <script>
         const vscode = acquireVsCodeApi();
         
-        function addCredits() {
-            vscode.postMessage({ command: 'addCredits' });
-        }
-        
-        function viewPricing() {
-            vscode.postMessage({ command: 'viewPricing' });
+        function createProject() {
+            vscode.postMessage({ command: 'createProject' });
         }
         
         function manageLicense() {
             vscode.postMessage({ command: 'manageLicense' });
+        }
+        
+        function viewDocs() {
+            vscode.postMessage({ command: 'viewDocs' });
         }
     </script>
 </body>

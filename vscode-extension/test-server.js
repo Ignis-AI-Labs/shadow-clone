@@ -100,12 +100,19 @@ app.get('/user/profile', authenticate, (req, res) => {
   res.json(mockData.users[req.userId]);
 });
 
-// Mock credits endpoint
-app.get('/credits/balance', authenticate, (req, res) => {
-  console.log('Fetching credit balance');
+// Mock subscription/license status endpoint
+app.get('/user/license-status', authenticate, (req, res) => {
+  console.log('Fetching license status');
+  const user = mockData.users[req.userId];
   res.json({ 
-    balance: 50.00,
-    currency: 'USD'
+    licenseType: user.licenseType,
+    isActive: true,
+    expiresAt: user.licenseType === 'ignis_elite' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // NFT holders don't expire
+    features: {
+      maxConcurrentProjects: user.licenseType === 'ignis_elite' ? 10 : 5,
+      prioritySupport: user.licenseType === 'ignis_elite' || user.licenseType === 'reserve',
+      earlyAccess: user.licenseType === 'ignis_elite' || user.licenseType === 'pioneer'
+    }
   });
 });
 
