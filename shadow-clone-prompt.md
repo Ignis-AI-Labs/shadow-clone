@@ -1,3 +1,28 @@
+<!--
+╔═══════════════════════════════════════════════════════════════════════════════════════╗
+║                           PROPRIETARY AND CONFIDENTIAL                                 ║
+║                                                                                        ║
+║  Copyright (c) 2024 Ignis AI Labs LLC. All Rights Reserved.                          ║
+║                                                                                        ║
+║  NOTICE: This file contains proprietary information and trade secrets of              ║
+║  Ignis AI Labs LLC. Any unauthorized use, reproduction, distribution, or              ║
+║  disclosure of this material is strictly prohibited and will be prosecuted            ║
+║  to the fullest extent of the law.                                                   ║
+║                                                                                        ║
+║  This file is licensed under the Shadow Clone Proprietary License.                   ║
+║  You may not use this file except in compliance with the License.                    ║
+║                                                                                        ║
+║  By accessing this file, you acknowledge that:                                       ║
+║  1. This is proprietary software with restricted access                              ║
+║  2. You have a valid license agreement with Ignis AI Labs LLC                       ║
+║  3. You will not share, copy, or distribute this code                               ║
+║  4. Violations will result in immediate license termination                          ║
+║  5. Legal action will be taken against violators                                     ║
+║                                                                                        ║
+║  For licensing information: legal@shadowclone.ai                                     ║
+╚═══════════════════════════════════════════════════════════════════════════════════════╝
+-->
+
 # Shadow Clone System
 
 Modular orchestrator ensuring every agent operates at master level through proper rule injection. No weak links.

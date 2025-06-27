@@ -1,3 +1,9 @@
+<!--
+COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
+Unauthorized access, use, or distribution is strictly prohibited.
+See LICENSE-PROPRIETARY.md for full terms.
+-->
+
 # Security Remediation Roadmap Template
 *Strategic plan for vulnerability remediation and security improvement*
 

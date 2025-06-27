@@ -1,3 +1,9 @@
+<!--
+COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
+Unauthorized access, use, or distribution is strictly prohibited.
+See LICENSE-PROPRIETARY.md for full terms.
+-->
+
 # Phase 1: Project Analysis & Safety Assessment
 
 ## Module Interface

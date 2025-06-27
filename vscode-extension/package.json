@@ -1,0 +1,150 @@
+{
+  "name": "shadow-clone",
+  "displayName": "Shadow Clone AI",
+  "description": "Deploy teams of specialized AI agents to complete complex software projects",
+  "version": "0.1.0",
+  "publisher": "shadow-clone",
+  "private": true,
+  "license": "Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/shadow-clone"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "ai",
+    "code generation",
+    "automation",
+    "agents",
+    "orchestration"
+  ],
+  "activationEvents": [
+    "onCommand:shadowClone.createProject",
+    "onCommand:shadowClone.deployAgents",
+    "onCommand:shadowClone.showStatus",
+    "onView:shadowClone.projectView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "shadowClone.createProject",
+        "title": "Shadow Clone: Create New Project"
+      },
+      {
+        "command": "shadowClone.deployAgents",
+        "title": "Shadow Clone: Deploy AI Agents"
+      },
+      {
+        "command": "shadowClone.showStatus",
+        "title": "Shadow Clone: Show Project Status"
+      },
+      {
+        "command": "shadowClone.authenticate",
+        "title": "Shadow Clone: Authenticate"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "shadowClone",
+          "title": "Shadow Clone",
+          "icon": "$(rocket)"
+        }
+      ]
+    },
+    "views": {
+      "shadowClone": [
+        {
+          "id": "shadowClone.projectView",
+          "name": "Projects",
+          "icon": "$(project)",
+          "contextualTitle": "Shadow Clone Projects"
+        },
+        {
+          "id": "shadowClone.agentView",
+          "name": "Active Agents",
+          "icon": "$(account)",
+          "contextualTitle": "Shadow Clone Agents"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Shadow Clone",
+      "properties": {
+        "shadowClone.apiEndpoint": {
+          "type": "string",
+          "default": "https://api.shadowclone.ai",
+          "description": "Shadow Clone API endpoint"
+        },
+        "shadowClone.wavesDirectory": {
+          "type": "string",
+          "default": ".waves",
+          "description": "Directory for agent deliverables"
+        },
+        "shadowClone.maxAgentsPerWave": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum agents to deploy per wave"
+        }
+      }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "shadowClone.createProject",
+          "when": "view == shadowClone.projectView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build:prod",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build:dev": "webpack --mode development",
+    "build:prod": "NODE_ENV=production webpack --mode production",
+    "build:analyze": "webpack --mode production --analyze",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "test:prod": "npm run build:prod && npm run test",
+    "package": "vsce package",
+    "package:prod": "npm run build:prod && vsce package",
+    "publish": "vsce publish",
+    "verify:obfuscation": "node scripts/verify-obfuscation.js"
+  },
+  "devDependencies": {
+    "@types/node": "18.x",
+    "@types/vscode": "^1.74.0",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
+    "cors": "^2.8.5",
+    "eslint": "^8.28.0",
+    "express": "^4.18.2",
+    "terser-webpack-plugin": "^5.3.9",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.1.3",
+    "vsce": "^2.15.0",
+    "webpack": "^5.89.0",
+    "webpack-bundle-analyzer": "^4.9.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-obfuscator": "^3.5.1"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "ws": "^8.14.2"
+  }
+}
