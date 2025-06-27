@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/authProvider';
 import { ProjectProvider } from './providers/projectProvider';
 import { AgentProvider } from './providers/agentProvider';
 import { ClaudeSessionProvider } from './providers/claudeSessionProvider';
+import { MacroProvider } from './providers/macroProvider';
 import { ClaudeSessionManager } from './utils/claudeSessionManager';
 import { createProjectCommand } from './commands/createProject';
 import { deployAgentsCommand } from './commands/deployAgents';
@@ -10,6 +11,8 @@ import { showStatusCommand } from './commands/showStatus';
 import { authenticateCommand } from './commands/authenticate';
 import { launchClaudeCommand, launchClaudeWithArgumentsCommand } from './commands/claudeLauncher';
 import { ShadowCloneMacros } from './utils/shadowCloneCommands';
+import { injectShadowCloneCommand, injectDeployCommand, injectDebugCommand, injectFeatureCommand, injectCustomCommand } from './commands/injectCommand';
+import { showHelpCommand, showQuickReferenceCommand } from './commands/showHelp';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
@@ -27,11 +30,13 @@ export async function activate(context: vscode.ExtensionContext) {
     const projectProvider = new ProjectProvider(authProvider);
     const agentProvider = new AgentProvider(authProvider);
     const claudeSessionProvider = new ClaudeSessionProvider(sessionManager);
+    const macroProvider = new MacroProvider();
 
     // Register tree views
     vscode.window.registerTreeDataProvider('shadowClone.projectView', projectProvider);
     vscode.window.registerTreeDataProvider('shadowClone.agentView', agentProvider);
     vscode.window.registerTreeDataProvider('shadowClone.claudeSessions', claudeSessionProvider);
+    vscode.window.registerTreeDataProvider('shadowClone.macros', macroProvider);
 
     // Register commands
     context.subscriptions.push(
@@ -101,7 +106,31 @@ export async function activate(context: vscode.ExtensionContext) {
             
             vscode.env.clipboard.writeText(command);
             vscode.window.showInformationMessage('Custom command copied to clipboard!');
-        })
+        }),
+        
+        // Chat injection commands
+        vscode.commands.registerCommand('shadowClone.injectCommand', () =>
+            injectShadowCloneCommand(authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.injectDeploy', () =>
+            injectDeployCommand(authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.injectDebug', () =>
+            injectDebugCommand(authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.injectFeature', () =>
+            injectFeatureCommand(authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.injectCustom', () =>
+            injectCustomCommand(authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.executeMacro', (commandType: string) =>
+            injectShadowCloneCommand(authProvider, commandType)
+        ),
+        
+        // Help commands
+        vscode.commands.registerCommand('shadowClone.showHelp', showHelpCommand),
+        vscode.commands.registerCommand('shadowClone.showQuickReference', showQuickReferenceCommand)
     );
 
     // Auto-authenticate if we have stored credentials
@@ -182,6 +211,59 @@ export async function activate(context: vscode.ExtensionContext) {
     sessionManager.onSessionsChanged(updateSessionsIndicator);
     updateSessionsIndicator();
     context.subscriptions.push(sessionsIndicator);
+
+    // Quick inject buttons
+    const injectButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 97);
+    injectButton.text = '$(code) SC Inject';
+    injectButton.command = 'shadowClone.injectCommand';
+    injectButton.tooltip = 'Inject Shadow Clone command at cursor';
+    injectButton.show();
+    context.subscriptions.push(injectButton);
+    
+    // Help button
+    const helpButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 93);
+    helpButton.text = '$(question)';
+    helpButton.command = 'shadowClone.showQuickReference';
+    helpButton.tooltip = 'Shadow Clone Help';
+    helpButton.show();
+    context.subscriptions.push(helpButton);
+
+    // Quick command buttons (hidden by default, shown when authenticated)
+    const deployButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 96);
+    deployButton.text = '$(rocket)';
+    deployButton.command = 'shadowClone.injectDeploy';
+    deployButton.tooltip = 'Inject deploy command';
+    
+    const debugButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 95);
+    debugButton.text = '$(bug)';
+    debugButton.command = 'shadowClone.injectDebug';
+    debugButton.tooltip = 'Inject debug command';
+    
+    const featureButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 92);
+    featureButton.text = '$(sparkle)';
+    featureButton.command = 'shadowClone.injectFeature';
+    featureButton.tooltip = 'Inject feature command';
+    
+    // Show/hide quick buttons based on auth status
+    const updateQuickButtons = async () => {
+        const hasAuth = await authProvider.checkAuth();
+        if (hasAuth) {
+            deployButton.show();
+            debugButton.show();
+            featureButton.show();
+        } else {
+            deployButton.hide();
+            debugButton.hide();
+            featureButton.hide();
+        }
+    };
+    
+    authProvider.onDidChangeAuth(() => updateQuickButtons());
+    updateQuickButtons();
+    
+    context.subscriptions.push(deployButton);
+    context.subscriptions.push(debugButton);
+    context.subscriptions.push(featureButton);
 
     // Note: Claude Code should be installed via command line
     // Users can install it with: npm install -g @anthropic/claude-code

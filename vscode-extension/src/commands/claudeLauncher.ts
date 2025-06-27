@@ -87,25 +87,63 @@ export async function launchClaudeCommand(sessionManager: ClaudeSessionManager, 
         // Track the session
         const sessionId = sessionManager.createSession(claudeTerminal, selected.label, finalCommand);
 
-        // Copy to clipboard
-        await vscode.env.clipboard.writeText(finalCommand);
+        // Wait a moment for Claude to initialize
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Show instructions
-        const message = await vscode.window.showInformationMessage(
-            `Shadow Clone prompt loaded! Command copied to clipboard. Paste it when Claude is ready.`,
-            'View Full Prompt',
-            'Track Sessions'
+        // Show command preview and options
+        const action = await vscode.window.showInformationMessage(
+            `Shadow Clone command ready. Review before sending?`,
+            { modal: true, detail: finalCommand },
+            'Send to Claude',
+            'Edit First',
+            'Cancel'
         );
 
-        if (message === 'View Full Prompt') {
-            const doc = await vscode.workspace.openTextDocument({
-                content: `# Shadow Clone Command\n\n${finalCommand}\n\n## Session ID: ${sessionId}\n\n## Instructions:\n1. Wait for Claude Code to fully start\n2. Paste this entire command\n3. Shadow Clone will orchestrate AI agents for your project`,
-                language: 'markdown'
+        if (action === 'Send to Claude') {
+            // Send the command directly to the terminal
+            claudeTerminal.sendText(finalCommand);
+            
+            vscode.window.showInformationMessage(
+                'Shadow Clone command sent! Claude will fetch the prompt from the API.',
+                'Track Session'
+            ).then(choice => {
+                if (choice === 'Track Session') {
+                    vscode.commands.executeCommand('shadowClone.showSessions');
+                }
             });
-            vscode.window.showTextDocument(doc);
-        } else if (message === 'Track Sessions') {
-            vscode.commands.executeCommand('shadowClone.showSessions');
+        } else if (action === 'Edit First') {
+            // Allow user to edit the command before sending
+            const editedCommand = await vscode.window.showInputBox({
+                prompt: 'Edit Shadow Clone command before sending',
+                value: finalCommand,
+                valueSelection: [0, finalCommand.length],
+                placeHolder: 'Shadow Clone command...',
+                validateInput: (value) => {
+                    if (!value || value.trim().length === 0) {
+                        return 'Command cannot be empty';
+                    }
+                    return null;
+                }
+            });
+
+            if (editedCommand) {
+                // Send the edited command
+                claudeTerminal.sendText(editedCommand);
+                
+                // Update the session with edited command
+                sessionManager.updateSessionCommand(sessionId, editedCommand);
+                
+                vscode.window.showInformationMessage(
+                    'Custom Shadow Clone command sent!',
+                    'Track Session'
+                ).then(choice => {
+                    if (choice === 'Track Session') {
+                        vscode.commands.executeCommand('shadowClone.showSessions');
+                    }
+                });
+            }
         }
+        // If Cancel or closed, do nothing
 
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to load Shadow Clone prompts: ${error}`);

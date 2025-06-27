@@ -129,6 +129,15 @@ export class ClaudeSessionManager {
         }
     }
 
+    updateSessionCommand(id: string, newCommand: string) {
+        const session = this.sessions.get(id);
+        if (session) {
+            session.command = newCommand;
+            this.saveSessions();
+            this._onSessionsChanged.fire();
+        }
+    }
+
     clearCompletedSessions() {
         const completed = this.getAllSessions().filter(s => s.status === 'completed');
         completed.forEach(s => this.sessions.delete(s.id));

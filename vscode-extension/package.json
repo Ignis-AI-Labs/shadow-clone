@@ -73,6 +73,45 @@
         "command": "shadowClone.signOut",
         "title": "Shadow Clone: Sign Out",
         "icon": "$(sign-out)"
+      },
+      {
+        "command": "shadowClone.injectCommand",
+        "title": "Shadow Clone: Inject Command",
+        "icon": "$(code)"
+      },
+      {
+        "command": "shadowClone.injectDeploy",
+        "title": "Shadow Clone: Inject Deploy Command",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "shadowClone.injectDebug",
+        "title": "Shadow Clone: Inject Debug Command",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "shadowClone.injectFeature",
+        "title": "Shadow Clone: Inject Feature Command",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "shadowClone.injectCustom",
+        "title": "Shadow Clone: Inject Custom Command",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "shadowClone.executeMacro",
+        "title": "Shadow Clone: Execute Macro"
+      },
+      {
+        "command": "shadowClone.showHelp",
+        "title": "Shadow Clone: Show Help",
+        "icon": "$(question)"
+      },
+      {
+        "command": "shadowClone.showQuickReference",
+        "title": "Shadow Clone: Quick Reference",
+        "icon": "$(info)"
       }
     ],
     "viewsContainers": {
@@ -103,6 +142,12 @@
           "name": "Claude Sessions",
           "icon": "$(terminal)",
           "contextualTitle": "Shadow Clone Claude Sessions"
+        },
+        {
+          "id": "shadowClone.macros",
+          "name": "Macros",
+          "icon": "$(code)",
+          "contextualTitle": "Shadow Clone Macros"
         }
       ]
     },
@@ -137,6 +182,11 @@
           "command": "shadowClone.launchClaude",
           "when": "view == shadowClone.claudeSessions",
           "group": "navigation"
+        },
+        {
+          "command": "shadowClone.showHelp",
+          "when": "view == shadowClone.macros",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -146,10 +196,30 @@
           "group": "inline"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "shadowClone.injectCommand",
+        "key": "ctrl+shift+s",
+        "mac": "cmd+shift+s",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.injectDeploy",
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.injectFeature",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorTextFocus"
+      }
+    ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run build:prod",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "build:dev": "webpack --mode development",
