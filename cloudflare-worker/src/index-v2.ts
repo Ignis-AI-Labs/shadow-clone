@@ -11,7 +11,7 @@ import {
   handleGetCoordinationRule,
   handleGetTemplate,
   handleGetExecutionPhase
-} from './handlers/prompts';
+} from './handlers/prompts-v2';
 import { corsHeaders } from './utils/cors';
 
 export interface Env {
