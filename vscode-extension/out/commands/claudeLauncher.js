@@ -38,15 +38,14 @@ exports.launchClaudeWithArgumentsCommand = launchClaudeWithArgumentsCommand;
 const vscode = __importStar(require("vscode"));
 const shadowCloneCommands_1 = require("../utils/shadowCloneCommands");
 async function launchClaudeCommand(sessionManager) {
-    // Check if Claude extension is installed
-    const claudeExtension = vscode.extensions.getExtension('anthropic.claude');
-    if (!claudeExtension) {
-        const install = await vscode.window.showWarningMessage('Claude extension is not installed. Shadow Clone works best with the official Claude extension.', 'Install Claude Extension', 'Continue Anyway');
-        if (install === 'Install Claude Extension') {
-            vscode.commands.executeCommand('workbench.extensions.search', '@id:anthropic.claude');
-            return;
-        }
-    }
+    // Launch Claude Code in terminal
+    const claudeTerminal = vscode.window.createTerminal({
+        name: 'Claude Code',
+        iconPath: new vscode.ThemeIcon('terminal')
+    });
+    // Run claude command to start Claude Code
+    claudeTerminal.sendText('claude');
+    claudeTerminal.show();
     // Show command selection
     const commandOptions = [
         {
@@ -122,19 +121,12 @@ async function launchClaudeCommand(sessionManager) {
             finalCommand = finalCommand.replace('waves_directory=./.waves/', `waves_directory=${wavesDir}/`);
         }
     }
-    // Create and show terminal
-    const terminal = vscode.window.createTerminal({
-        name: `Shadow Clone: ${selected.label.replace(/\$\([^)]+\)\s*/, '')}`,
-        iconPath: new vscode.ThemeIcon('rocket')
-    });
-    // Track the terminal
-    const sessionId = sessionManager.createSession(terminal, selected.label, finalCommand);
+    // Track the Claude terminal session
+    const sessionId = sessionManager.createSession(claudeTerminal, selected.label, finalCommand);
     // Copy command to clipboard
     await vscode.env.clipboard.writeText(finalCommand);
-    // Show the terminal
-    terminal.show();
     // Show instructions
-    const message = await vscode.window.showInformationMessage(`Shadow Clone command copied to clipboard! Paste it into Claude Code.`, 'View Command', 'Track Sessions');
+    const message = await vscode.window.showInformationMessage(`Claude Code is starting. Command copied to clipboard! Paste it when Claude is ready.`, 'View Command', 'Track Sessions');
     if (message === 'View Command') {
         const doc = await vscode.workspace.openTextDocument({
             content: `# Shadow Clone Command\n\n\`\`\`\n${finalCommand}\n\`\`\`\n\nThis command has been copied to your clipboard.\n\n## To use:\n1. Make sure Claude Code is running in the terminal\n2. Paste this command\n3. Shadow Clone will orchestrate AI agents for your project\n\n## Session ID: ${sessionId}`,
@@ -150,13 +142,16 @@ async function launchClaudeWithArgumentsCommand(sessionManager, args) {
     // Quick launch with specific mode
     const mode = args?.mode || 'deploy';
     const command = shadowCloneCommands_1.SHADOW_CLONE_COMMANDS[mode.toUpperCase()] || shadowCloneCommands_1.SHADOW_CLONE_COMMANDS.DEPLOY;
-    const terminal = vscode.window.createTerminal({
-        name: `Shadow Clone: ${mode}`,
-        iconPath: new vscode.ThemeIcon('rocket')
+    // Launch Claude Code in terminal
+    const claudeTerminal = vscode.window.createTerminal({
+        name: 'Claude Code',
+        iconPath: new vscode.ThemeIcon('terminal')
     });
-    sessionManager.createSession(terminal, mode, command);
+    // Run claude command
+    claudeTerminal.sendText('claude');
+    claudeTerminal.show();
+    sessionManager.createSession(claudeTerminal, mode, command);
     await vscode.env.clipboard.writeText(command);
-    terminal.show();
-    vscode.window.showInformationMessage(`Shadow Clone ${mode} command copied to clipboard!`);
+    vscode.window.showInformationMessage(`Claude Code is starting. ${mode} command copied to clipboard!`);
 }
 //# sourceMappingURL=claudeLauncher.js.map

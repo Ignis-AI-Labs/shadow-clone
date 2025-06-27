@@ -183,36 +183,9 @@ export async function activate(context: vscode.ExtensionContext) {
     updateSessionsIndicator();
     context.subscriptions.push(sessionsIndicator);
 
-    // Check for Claude extension
-    const checkClaudeExtension = () => {
-        // Check for different possible Claude extension IDs
-        const possibleIds = [
-            'anthropic.claude',
-            'anthropic.claude-code', 
-            'Anthropic.claude-code',
-            'claude.claude-code'
-        ];
-        
-        const claudeExt = possibleIds.some(id => vscode.extensions.getExtension(id));
-        
-        if (!claudeExt) {
-            vscode.window.showInformationMessage(
-                'Install the official Claude extension for the best Shadow Clone experience.',
-                'Install Claude',
-                'Dismiss'
-            ).then(choice => {
-                if (choice === 'Install Claude') {
-                    // Just search for "claude" to show all Claude extensions
-                    vscode.commands.executeCommand('workbench.extensions.search', 'claude');
-                }
-            });
-        } else {
-            console.log('Claude extension already installed');
-        }
-    };
-    
-    // Check after a delay to not overwhelm on startup
-    setTimeout(checkClaudeExtension, 5000);
+    // Note: Claude Code should be installed via command line
+    // Users can install it with: npm install -g @anthropic/claude-code
+    console.log('Shadow Clone requires Claude Code CLI to be installed');
     
     } catch (error) {
         console.error('Shadow Clone activation error:', error);
