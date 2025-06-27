@@ -54,6 +54,11 @@ Each command has three parts:
 **When to use:** Returning to an incomplete project
 **Example usage:** Continuing after interruption, picking up next day
 
+### Plan Mode
+**What it does:** Creates comprehensive project plans without writing code
+**When to use:** Before starting implementation, for complex projects needing design
+**Example usage:** Architecture planning, API design, database schema planning
+
 ## 📝 Parameters Explained
 
 ### project_plan=./project-plan.md

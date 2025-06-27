@@ -35,6 +35,7 @@ export async function injectShadowCloneCommand(authProvider: AuthProvider, comma
             { label: '$(shield) Security Audit', value: 'audit', description: 'Security assessment' },
             { label: '$(search) Research', value: 'research', description: 'Analyze without changes' },
             { label: '$(history) Resume', value: 'resume', description: 'Continue previous session' },
+            { label: '$(checklist) Plan', value: 'plan', description: 'Create project plan without coding' },
             { label: '$(list-flat) Custom', value: 'custom', description: 'Custom command' }
         ];
         
@@ -107,6 +108,13 @@ Execute with: mode=research waves_directory=./.waves/`;
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then resume the previous session.`;
+            break;
+            
+        case 'plan':
+            command = `Fetch the Shadow Clone orchestration prompt from the API:
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+
+Then create a detailed project plan. Agents will analyze requirements and create a comprehensive plan without implementing code yet.`;
             break;
             
         case 'custom':

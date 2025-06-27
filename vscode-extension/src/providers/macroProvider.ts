@@ -37,6 +37,9 @@ export class MacroItem extends vscode.TreeItem {
             case 'resume':
                 this.iconPath = new vscode.ThemeIcon('history');
                 break;
+            case 'plan':
+                this.iconPath = new vscode.ThemeIcon('checklist');
+                break;
             case 'custom':
                 this.iconPath = new vscode.ThemeIcon('edit');
                 break;
@@ -108,6 +111,12 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
             'resume', 
             'Continues previous work - Picks up where agents left off', 
             'resume'
+        ),
+        new MacroItem(
+            'Plan Mode', 
+            'plan', 
+            'Creates detailed project plan - Agents analyze and plan without coding', 
+            'plan'
         ),
         new MacroItem(
             'Custom Command', 
