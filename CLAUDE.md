@@ -13,21 +13,19 @@ Shadow Clone is an exclusive AI agent orchestration platform that enables users 
 - Each agent has a specific role (e.g., Architect, Frontend Dev, Backend Dev, QA, etc.)
 - Agents can see each other's work and build upon it
 
-### 2. **Exclusive Licensing Model (2,000 Total Licenses)**
-- **777 Ignis Elite NFT Holders**: VIP tier with free monthly access
-- **500 Pioneer Licenses**: $79/month early adopters
-- **500 Builder Licenses**: $99/month for agencies/teams  
-- **223 Reserve Licenses**: $149/month premium tier
-- Creates scarcity value and ensures quality service
+### 2. **Exclusive NFT-Based Licensing Model (2,000 Total Licenses)**
+- **777 Ignis Elite NFT Holders**: Complimentary lifetime access
+- **500 Pioneer NFTs**: $79/month subscription (free NFT mint, first come first serve)
+- **500 Builder NFTs**: $99/month subscription (free NFT mint for verified partners)  
+- **223 Reserve NFTs**: $149/month subscription (free NFT mint, limited availability)
+- All access controlled via NFT ownership for security
+- Partner verification required for Builder tier
 
-### 3. **Prepaid Credit System**
-- All compute is prepaid - no post-paid usage
-- Automatic instance termination at $0 balance
-- Tier-based compute markups:
-  - Ignis Elite: 25% markup (lowest)
-  - Pioneer: 50% markup
-  - Builder: 75% markup
-  - Reserve: 100% markup
+### 3. **SaaS Subscription Model**
+- Fixed monthly subscriptions (no usage-based pricing)
+- NFT holders get free NFT but pay monthly subscription (except Ignis Elite)
+- All tiers have full access to Shadow Clone features
+- No compute markups - flat subscription pricing
 
 ### 4. **Technical Architecture**
 - **Frontend**: Next.js 14, TypeScript, TailwindCSS, RainbowKit (Web3)
@@ -65,14 +63,16 @@ shadow-clone/
 
 ## Key Files to Understand
 
-1. **`shadow-clone-prompt.md`** - Core orchestration logic and agent deployment rules
+1. **`shadow-clone-prompt.md`** - Core orchestration logic (now served via API)
 2. **`shadow-clone-licensing-plan.md`** - Complete business model and pricing
-3. **`.shadow/mode_configs/`** - Individual agent role definitions
+3. **`.shadow/mode_configs/`** - Agent role definitions (now served via API)
 4. **`backend/prisma/schema.prisma`** - Database structure
 5. **`frontend/src/types/index.ts`** - TypeScript interfaces
-6. **`SECURITY_FIXES_SUMMARY.md`** - Recent security hardening work
+6. **`vscode-extension/`** - VS Code extension for Shadow Clone
+7. **`cloudflare-worker/`** - API serving prompts and handling auth
+8. **`DEVELOPMENT_SETUP.md`** - Complete dev environment setup
 
-## Current Implementation Status
+## Current Implementation Status (Updated 2025-06-27)
 
 ### ✅ Completed
 - Agent orchestration system with 10-agent deployment limit
@@ -82,8 +82,13 @@ shadow-clone/
 - Prepaid credit system with auto-termination
 - Security hardening (auth, rate limiting, input validation)
 - MCP integration design for enhanced agent capabilities
+- **VS Code Extension** with authentication and Claude integration
+- **Cloudflare Worker API** deployed to https://shadow-clone-api.elijah-02b.workers.dev
+- **Prompt Protection System** - Prompts served via API, not local files
+- **PromptService** - Fetches and caches prompts with authentication
 
 ### 🚧 In Progress
+- VS Code extension packaging (works in debug mode, issues with VSIX)
 - Stripe payment integration
 - Instance management with DigitalOcean
 - Real-time execution monitoring
@@ -93,6 +98,14 @@ shadow-clone/
 - Production deployment
 - Blockchain integration for WORK tokens
 - Advanced MCP server implementations
+
+### 🔧 Current Development Focus
+**VS Code Extension Issues:**
+- Extension works perfectly in debug mode (F5 in VS Code)
+- Packaged VSIX has activation issues
+- Commands are registered but not properly activating
+- User moving to VS Code for direct development
+- All prompt protection and API integration is complete and working
 
 ## Important Business Rules
 
@@ -156,3 +169,25 @@ When working on Shadow Clone:
 - **Testing**: Use `TESTING_GUIDE.md` for QA procedures
 
 Remember: Shadow Clone is about exclusivity, quality, and empowering users to build complex software with AI teams. Every decision should support these core values.
+
+## Development Environment
+
+### API Credentials
+- **Cloudflare API Token**: Stored in `/cloudflare-worker/.env`
+- **Test API Key**: `test-key-123` (for development)
+- **API Endpoint**: https://shadow-clone-api.elijah-02b.workers.dev
+
+### Quick Commands
+```bash
+# Deploy Cloudflare Worker
+cd cloudflare-worker && ./deploy.sh
+
+# Run VS Code Extension in Debug Mode
+cd vscode-extension
+code .
+# Press F5 to launch
+
+# Test API Prompts
+curl -X GET https://shadow-clone-api.elijah-02b.workers.dev/api/prompts/shadow-clone \
+  -H "X-API-Key: test-key-123"
+```
