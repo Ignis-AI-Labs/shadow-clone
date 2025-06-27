@@ -185,7 +185,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Check for Claude extension
     const checkClaudeExtension = () => {
-        const claudeExt = vscode.extensions.getExtension('anthropic.claude');
+        // Check for different possible Claude extension IDs
+        const possibleIds = [
+            'anthropic.claude',
+            'anthropic.claude-code', 
+            'Anthropic.claude-code',
+            'claude.claude-code'
+        ];
+        
+        const claudeExt = possibleIds.some(id => vscode.extensions.getExtension(id));
+        
         if (!claudeExt) {
             vscode.window.showInformationMessage(
                 'Install the official Claude extension for the best Shadow Clone experience.',
@@ -193,9 +202,12 @@ export async function activate(context: vscode.ExtensionContext) {
                 'Dismiss'
             ).then(choice => {
                 if (choice === 'Install Claude') {
-                    vscode.commands.executeCommand('workbench.extensions.search', '@id:anthropic.claude');
+                    // Just search for "claude" to show all Claude extensions
+                    vscode.commands.executeCommand('workbench.extensions.search', 'claude');
                 }
             });
+        } else {
+            console.log('Claude extension already installed');
         }
     };
     
