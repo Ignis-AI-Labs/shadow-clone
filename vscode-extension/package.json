@@ -149,7 +149,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build:prod",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "build:dev": "webpack --mode development",

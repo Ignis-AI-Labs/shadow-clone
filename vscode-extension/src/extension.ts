@@ -16,6 +16,8 @@ let sessionManager: ClaudeSessionManager;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Shadow Clone extension is now active!');
+    
+    try {
 
     // Initialize providers
     authProvider = new AuthProvider(context);
@@ -103,8 +105,12 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     // Auto-authenticate if we have stored credentials
+    console.log('Checking authentication status...');
     const hasAuth = await authProvider.checkAuth();
+    console.log('Has auth:', hasAuth);
+    
     if (!hasAuth) {
+        console.log('No auth found, showing welcome message');
         const choice = await vscode.window.showInformationMessage(
             'Welcome to Shadow Clone! Please authenticate to get started.',
             'Authenticate'
@@ -112,14 +118,21 @@ export async function activate(context: vscode.ExtensionContext) {
         if (choice === 'Authenticate') {
             vscode.commands.executeCommand('shadowClone.authenticate');
         }
+    } else {
+        console.log('User is already authenticated');
     }
 
     // Set up status bar items
+    console.log('Creating status bar items...');
+    
+    // Main status bar item
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Shadow Clone';
     statusBarItem.command = 'shadowClone.showStatus';
+    statusBarItem.tooltip = 'Shadow Clone - Click to view status';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
+    console.log('Main status bar item created');
 
     // Authentication status button
     const authButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
@@ -188,6 +201,11 @@ export async function activate(context: vscode.ExtensionContext) {
     
     // Check after a delay to not overwhelm on startup
     setTimeout(checkClaudeExtension, 5000);
+    
+    } catch (error) {
+        console.error('Shadow Clone activation error:', error);
+        vscode.window.showErrorMessage(`Shadow Clone failed to activate: ${error}`);
+    }
 }
 
 export function deactivate() {
