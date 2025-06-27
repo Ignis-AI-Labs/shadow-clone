@@ -138,3 +138,26 @@ DELIVERABLES:
 - Authentication/authorization performance
 - Encryption overhead
 - Logging efficiency
+
+## Example Wave Directory Structure
+
+**Refactor Mode Deliverables:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── refactor_analysis.md
+│   ├── dependency_graph.md
+│   ├── technical_debt_assessment.md
+│   └── WAVE_1_PLAN.md
+├── wave-2/
+│   ├── refactored_code/
+│   │   ├── before/
+│   │   └── after/
+│   ├── migration_scripts/
+│   └── WAVE_2_CHANGES.md
+├── wave-3/
+│   ├── test_updates/
+│   ├── performance_benchmarks.md
+│   └── WAVE_3_VALIDATION.md
+└── REFACTOR_SUMMARY.md
+```

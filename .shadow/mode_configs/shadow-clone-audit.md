@@ -115,3 +115,30 @@ TOOLS:
 - Client challenge <5%
 
 **Templates**: Use `.shadow/templates/` for all reports
+
+## Example Wave Directory Structure
+
+**Audit Mode Deliverables:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── authentication_findings.md
+│   ├── data_security_findings.md
+│   ├── infrastructure_assessment.md
+│   └── WAVE_1_CONVERGENCE.md
+├── wave-2/
+│   ├── api_security_findings.md
+│   ├── application_vulnerabilities.md
+│   ├── supply_chain_analysis.md
+│   └── WAVE_2_CONVERGENCE.md
+├── wave-3/
+│   ├── compliance_assessment.md
+│   ├── false_positive_validation.md
+│   └── WAVE_3_CONVERGENCE.md
+└── FINAL_DELIVERABLES/
+    ├── SECURITY_AUDIT_REPORT.md
+    ├── VULNERABILITY_REGISTER.xlsx
+    ├── RISK_ASSESSMENT_MATRIX.md
+    ├── REMEDIATION_ROADMAP.md
+    └── EXECUTIVE_SUMMARY.pdf
+```

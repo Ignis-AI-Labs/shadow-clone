@@ -141,3 +141,30 @@ DELIVERABLES:
 - Anomaly detection
 - Incident response
 - Escalation procedures
+
+## Example Wave Directory Structure
+
+**Feature Mode Deliverables:**
+```
+$waves_directory/
+├── wave-1/
+│   ├── architecture_design.md
+│   ├── database_schema.sql
+│   ├── api_specification.yaml
+│   └── WAVE_1_SUMMARY.md
+├── wave-2/
+│   ├── backend/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   └── services/
+│   ├── frontend/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   └── styles/
+│   └── WAVE_2_SUMMARY.md
+├── wave-3/
+│   ├── tests/
+│   ├── documentation/
+│   └── WAVE_3_SUMMARY.md
+└── FEATURE_COMPLETE.md
+```

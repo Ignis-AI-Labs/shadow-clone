@@ -33,11 +33,55 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 
 **📂 Modular Components** (FETCH FROM API AS NEEDED):
 When you need additional Shadow Clone modules, fetch them from the Cloudflare API:
-- **Agent Rules**: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/{role} -H "X-API-Key: {KEY}"`
-- **Mode Configs**: `curl -X GET {API_ENDPOINT}/api/prompts/modes/{mode} -H "X-API-Key: {KEY}"`
-- **Coordination Rules**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules -H "X-API-Key: {KEY}"`
-- **Templates**: `curl -X GET {API_ENDPOINT}/api/prompts/templates/{template} -H "X-API-Key: {KEY}"`
-- **Execution Phases**: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/{phase} -H "X-API-Key: {KEY}"`
+
+**Agent Rules** (Behavioral DNA for agents):
+- Core Rules: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/core_agent_rules -H "X-API-Key: {KEY}"`
+- Role-Specific Rules:
+  - Development: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/development_agent_rules -H "X-API-Key: {KEY}"`
+  - QA: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/qa_agent_rules -H "X-API-Key: {KEY}"`
+  - DevOps: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/devops_agent_rules -H "X-API-Key: {KEY}"`
+  - Security: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/security_agent_rules -H "X-API-Key: {KEY}"`
+  - Documentation: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/documentation_agent_rules -H "X-API-Key: {KEY}"`
+  - Team Lead: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/team_lead_rules -H "X-API-Key: {KEY}"`
+- Project-Type Rules:
+  - Audit: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/audit_agent_rules -H "X-API-Key: {KEY}"`
+  - Research: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/research_agent_rules -H "X-API-Key: {KEY}"`
+
+**Mode Configurations** (Project-type methodologies):
+- Audit: `curl -X GET {API_ENDPOINT}/api/prompts/modes/audit -H "X-API-Key: {KEY}"`
+- Debug: `curl -X GET {API_ENDPOINT}/api/prompts/modes/debug -H "X-API-Key: {KEY}"`
+- Feature: `curl -X GET {API_ENDPOINT}/api/prompts/modes/feature -H "X-API-Key: {KEY}"`
+- Optimize: `curl -X GET {API_ENDPOINT}/api/prompts/modes/optimize -H "X-API-Key: {KEY}"`
+- Refactor: `curl -X GET {API_ENDPOINT}/api/prompts/modes/refactor -H "X-API-Key: {KEY}"`
+- Research: `curl -X GET {API_ENDPOINT}/api/prompts/modes/research -H "X-API-Key: {KEY}"`
+- Plan: `curl -X GET {API_ENDPOINT}/api/prompts/modes/plan -H "X-API-Key: {KEY}"`
+
+**Coordination Rules** (Wave and integration protocols):
+- Wave Coordination: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/wave_coordination -H "X-API-Key: {KEY}"`
+- Integration Rules: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/integration_rules -H "X-API-Key: {KEY}"`
+- Quality Gates: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/quality_gates -H "X-API-Key: {KEY}"`
+- Mode Operations: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/mode_operations -H "X-API-Key: {KEY}"`
+- Workspace Structure: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/workspace_structure -H "X-API-Key: {KEY}"`
+
+**Templates** (Reusable structures and reports):
+- Agent Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/agent_templates -H "X-API-Key: {KEY}"`
+- Team Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/team_templates -H "X-API-Key: {KEY}"`
+- Wave Execution Plan: `curl -X GET {API_ENDPOINT}/api/prompts/templates/wave-execution-plan-template -H "X-API-Key: {KEY}"`
+- Security Templates:
+  - Security Audit Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/security-audit-report-template -H "X-API-Key: {KEY}"`
+  - Vulnerability Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/vulnerability-report-template -H "X-API-Key: {KEY}"`
+  - Risk Assessment Matrix: `curl -X GET {API_ENDPOINT}/api/prompts/templates/risk-assessment-matrix-template -H "X-API-Key: {KEY}"`
+  - Compliance Matrix: `curl -X GET {API_ENDPOINT}/api/prompts/templates/compliance-matrix-template -H "X-API-Key: {KEY}"`
+
+**Execution Phases** (Step-by-step implementation):
+- Phase 1 Analysis: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase1_analysis -H "X-API-Key: {KEY}"`
+- Phase 2 Team Config: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase2_team_config -H "X-API-Key: {KEY}"`
+- Phase 3 Wave Planning: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase3_wave_planning -H "X-API-Key: {KEY}"`
+- Phase 4 Deployment: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase4_deployment -H "X-API-Key: {KEY}"`
+- Phase 5 Execution: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase5_execution -H "X-API-Key: {KEY}"`
+- Phase 6 Integration: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase6_integration -H "X-API-Key: {KEY}"`
+- Phase 7 Quality: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase7_quality -H "X-API-Key: {KEY}"`
+- Wave Execution Protocol: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/wave_execution_protocol -H "X-API-Key: {KEY}"`
 
 **CRITICAL API OPERATIONS**:
 - **"load_module"** = Fetch from API at specified endpoint
@@ -375,47 +419,15 @@ $waves_directory/
 5. **Sub-waves**: For waves >10 agents, use sub-folders (`$waves_directory/wave-1a/`, etc.)
 6. **Final Consolidation**: Master deliverables may be copied to `$waves_directory` root after all waves complete
 
-### Examples Across Different Modes
+### Mode-Specific Examples
 
-**Audit Mode:**
-```
-$waves_directory/
-├── wave-1/
-│   ├── authentication_findings.md
-│   ├── data_security_findings.md
-│   └── WAVE_1_CONVERGENCE.md
-├── wave-2/
-│   ├── api_security_findings.md
-│   └── WAVE_2_CONVERGENCE.md
-└── SECURITY_AUDIT_REPORT.md
-```
+Mode-specific examples and folder structures are provided in each mode configuration file. When loading a mode, refer to its specific documentation for:
+- Expected deliverable structure
+- Wave organization patterns
+- Mode-specific templates and reports
+- Example outputs and workflows
 
-**Feature Mode:**
-```
-$waves_directory/
-├── wave-1/
-│   ├── architecture_design.md
-│   ├── database_schema.sql
-│   └── WAVE_1_SUMMARY.md
-├── wave-2/
-│   ├── backend/
-│   ├── frontend/
-│   └── WAVE_2_SUMMARY.md
-└── FEATURE_COMPLETE.md
-```
-
-**Refactor Mode:**
-```
-$waves_directory/
-├── wave-1/
-│   ├── refactor_analysis.md
-│   ├── dependency_graph.md
-│   └── WAVE_1_PLAN.md
-├── wave-2/
-│   ├── refactored_code/
-│   └── WAVE_2_CHANGES.md
-└── REFACTOR_SUMMARY.md
-```
+Fetch the appropriate mode configuration from the API to see detailed examples for your use case.
 
 ## Agent Deployment Example
 
