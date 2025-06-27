@@ -111,7 +111,7 @@
       "properties": {
         "shadowClone.apiEndpoint": {
           "type": "string",
-          "default": "https://api.shadowclone.ai",
+          "default": "https://shadow-clone-api.elijah-02b.workers.dev",
           "description": "Shadow Clone API endpoint. Set this to your Cloudflare Worker URL (e.g., https://shadow-clone.your-subdomain.workers.dev)"
         },
         "shadowClone.wavesDirectory": {
