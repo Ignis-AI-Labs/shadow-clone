@@ -1,6 +1,4 @@
-// API configuration - these will be obfuscated in production build
-export const SHADOW_CLONE_API = getApiEndpoint();
-export const SHADOW_CLONE_WS = getWebSocketEndpoint();
+import * as vscode from 'vscode';
 
 // License types
 export const LICENSE_TYPES = {
@@ -31,17 +29,27 @@ export const COMMANDS = {
     REFRESH_AGENTS: 'shadowClone.refreshAgents'
 } as const;
 
+// Default API endpoints
+export const DEFAULT_API_ENDPOINT = 'https://api.shadowclone.ai';
+export const DEFAULT_WS_ENDPOINT = 'wss://api.shadowclone.ai/ws';
+
 // Get API endpoint from settings or environment
-function getApiEndpoint(): string {
-    const config = vscode.workspace.getConfiguration('shadowClone');
-    return config.get<string>('apiEndpoint') || process.env.SHADOW_CLONE_API || 'https://api.shadowclone.ai';
+export function getApiEndpoint(): string {
+    try {
+        const config = vscode.workspace.getConfiguration('shadowClone');
+        return config.get<string>('apiEndpoint') || process.env.SHADOW_CLONE_API || DEFAULT_API_ENDPOINT;
+    } catch {
+        // Fallback if vscode is not available yet
+        return process.env.SHADOW_CLONE_API || DEFAULT_API_ENDPOINT;
+    }
 }
 
 // Get WebSocket endpoint
-function getWebSocketEndpoint(): string {
+export function getWebSocketEndpoint(): string {
     const apiEndpoint = getApiEndpoint();
     return apiEndpoint.replace(/^https?:/, 'wss:').replace(/\/api$/, '/ws');
 }
 
-// Import vscode after functions to avoid circular dependency
-import * as vscode from 'vscode';
+// For backward compatibility - these should be called as functions
+export const SHADOW_CLONE_API = DEFAULT_API_ENDPOINT;
+export const SHADOW_CLONE_WS = DEFAULT_WS_ENDPOINT;

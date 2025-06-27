@@ -33,10 +33,10 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.COMMANDS = exports.AGENT_OUTPUT_PATTERN = exports.WAVE_DIRECTORY_PATTERN = exports.DEPLOYMENT_LIMITS = exports.LICENSE_TYPES = exports.SHADOW_CLONE_WS = exports.SHADOW_CLONE_API = void 0;
-// API configuration - these will be obfuscated in production build
-exports.SHADOW_CLONE_API = getApiEndpoint();
-exports.SHADOW_CLONE_WS = getWebSocketEndpoint();
+exports.SHADOW_CLONE_WS = exports.SHADOW_CLONE_API = exports.DEFAULT_WS_ENDPOINT = exports.DEFAULT_API_ENDPOINT = exports.COMMANDS = exports.AGENT_OUTPUT_PATTERN = exports.WAVE_DIRECTORY_PATTERN = exports.DEPLOYMENT_LIMITS = exports.LICENSE_TYPES = void 0;
+exports.getApiEndpoint = getApiEndpoint;
+exports.getWebSocketEndpoint = getWebSocketEndpoint;
+const vscode = __importStar(require("vscode"));
 // License types
 exports.LICENSE_TYPES = {
     IGNIS_ELITE: 'ignis_elite',
@@ -62,16 +62,26 @@ exports.COMMANDS = {
     REFRESH_PROJECTS: 'shadowClone.refreshProjects',
     REFRESH_AGENTS: 'shadowClone.refreshAgents'
 };
+// Default API endpoints
+exports.DEFAULT_API_ENDPOINT = 'https://api.shadowclone.ai';
+exports.DEFAULT_WS_ENDPOINT = 'wss://api.shadowclone.ai/ws';
 // Get API endpoint from settings or environment
 function getApiEndpoint() {
-    const config = vscode.workspace.getConfiguration('shadowClone');
-    return config.get('apiEndpoint') || process.env.SHADOW_CLONE_API || 'https://api.shadowclone.ai';
+    try {
+        const config = vscode.workspace.getConfiguration('shadowClone');
+        return config.get('apiEndpoint') || process.env.SHADOW_CLONE_API || exports.DEFAULT_API_ENDPOINT;
+    }
+    catch {
+        // Fallback if vscode is not available yet
+        return process.env.SHADOW_CLONE_API || exports.DEFAULT_API_ENDPOINT;
+    }
 }
 // Get WebSocket endpoint
 function getWebSocketEndpoint() {
     const apiEndpoint = getApiEndpoint();
     return apiEndpoint.replace(/^https?:/, 'wss:').replace(/\/api$/, '/ws');
 }
-// Import vscode after functions to avoid circular dependency
-const vscode = __importStar(require("vscode"));
+// For backward compatibility - these should be called as functions
+exports.SHADOW_CLONE_API = exports.DEFAULT_API_ENDPOINT;
+exports.SHADOW_CLONE_WS = exports.DEFAULT_WS_ENDPOINT;
 //# sourceMappingURL=constants.js.map

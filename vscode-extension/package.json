@@ -26,10 +26,7 @@
     "orchestration"
   ],
   "activationEvents": [
-    "onCommand:shadowClone.createProject",
-    "onCommand:shadowClone.deployAgents",
-    "onCommand:shadowClone.showStatus",
-    "onView:shadowClone.projectView"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {

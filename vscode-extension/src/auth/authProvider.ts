@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
-import { SHADOW_CLONE_API } from '../utils/constants';
+import { getApiEndpoint } from '../utils/constants';
 
 export class AuthProvider {
     private static readonly AUTH_KEY = 'shadowClone.auth';
@@ -15,7 +15,7 @@ export class AuthProvider {
     async authenticate(apiKey: string): Promise<boolean> {
         try {
             // Validate API key with backend
-            const response = await axios.post(`${SHADOW_CLONE_API}/auth/validate`, {
+            const response = await axios.post(`${getApiEndpoint()}/auth/validate`, {
                 apiKey
             }, {
                 headers: {

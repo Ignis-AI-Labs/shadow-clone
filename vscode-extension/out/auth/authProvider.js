@@ -49,7 +49,7 @@ class AuthProvider {
     async authenticate(apiKey) {
         try {
             // Validate API key with backend
-            const response = await axios_1.default.post(`${constants_1.SHADOW_CLONE_API}/auth/validate`, {
+            const response = await axios_1.default.post(`${(0, constants_1.getApiEndpoint)()}/auth/validate`, {
                 apiKey
             }, {
                 headers: {
