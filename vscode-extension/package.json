@@ -68,6 +68,11 @@
       {
         "command": "shadowClone.clearCompletedSessions",
         "title": "Shadow Clone: Clear Completed Sessions"
+      },
+      {
+        "command": "shadowClone.signOut",
+        "title": "Shadow Clone: Sign Out",
+        "icon": "$(sign-out)"
       }
     ],
     "viewsContainers": {

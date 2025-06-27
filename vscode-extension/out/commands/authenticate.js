@@ -59,10 +59,24 @@ async function authenticateCommand(authProvider) {
     });
     if (authenticated) {
         const licenseType = await authProvider.getLicenseType();
-        vscode.window.showInformationMessage(`Successfully authenticated! License: ${licenseType}`);
+        const licenseDisplay = {
+            'ignis_elite': '🔥 Ignis Elite (NFT)',
+            'pioneer': '🚀 Pioneer',
+            'builder': '🏗️ Builder',
+            'reserve': '💎 Reserve'
+        };
+        const displayText = licenseType ? (licenseDisplay[licenseType] || licenseType) : 'Unknown';
+        vscode.window.showInformationMessage(`Successfully authenticated! ${displayText} License Active`, 'View Status').then(action => {
+            if (action === 'View Status') {
+                vscode.commands.executeCommand('shadowClone.showStatus');
+            }
+        });
     }
     else {
-        vscode.window.showErrorMessage('Authentication failed. Please check your API key.');
+        const retry = await vscode.window.showErrorMessage('Authentication failed. Please check your API key.', 'Try Again', 'Cancel');
+        if (retry === 'Try Again') {
+            vscode.commands.executeCommand('shadowClone.authenticate');
+        }
     }
 }
 //# sourceMappingURL=authenticate.js.map

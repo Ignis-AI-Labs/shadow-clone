@@ -121,6 +121,30 @@ export async function activate(context: vscode.ExtensionContext) {
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 
+    // Authentication status button
+    const authButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
+    const updateAuthButton = async () => {
+        const hasAuth = await authProvider.checkAuth();
+        if (hasAuth) {
+            const licenseType = await authProvider.getLicenseType();
+            authButton.text = '$(check) License Active';
+            authButton.tooltip = `Shadow Clone ${licenseType} - Click to view status`;
+            authButton.command = 'shadowClone.showStatus';
+            authButton.backgroundColor = undefined;
+        } else {
+            authButton.text = '$(key) Authenticate';
+            authButton.tooltip = 'Click to authenticate with Shadow Clone';
+            authButton.command = 'shadowClone.authenticate';
+            authButton.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+        }
+        authButton.show();
+    };
+    
+    // Update auth button when auth changes
+    authProvider.onDidChangeAuth(() => updateAuthButton());
+    updateAuthButton();
+    context.subscriptions.push(authButton);
+
     // Claude launcher button
     const claudeButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
     claudeButton.text = '$(terminal) Launch Claude';
