@@ -9,6 +9,8 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 - **Integrated Project Management**: Create and manage projects from the sidebar
 - **Secure Authentication**: API key-based access with license verification
 - **Wave-based Deployment**: Organize large projects into manageable waves
+- **Claude Code Integration**: Launch Claude with embedded Shadow Clone prompts
+- **Intellectual Property Protection**: Prompts served via API, never stored locally
 
 ## Installation
 
@@ -31,34 +33,62 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 - `Shadow Clone: Create New Project` - Start a new AI-powered project
 - `Shadow Clone: Deploy AI Agents` - Deploy agents to work on your project
 - `Shadow Clone: Show Project Status` - View account and project information
+- `Shadow Clone: Launch Claude` - Open Claude Code with Shadow Clone prompts
+- `Shadow Clone: Show Sessions` - View active Claude sessions
+- `Shadow Clone: Build Custom Command` - Create custom Shadow Clone commands
 
-## License Tiers
+## Exclusive Access
 
-### 🔥 Ignis Elite (NFT Holders)
-- Free monthly access
-- Lowest compute markup (25%)
-- Priority support
+Shadow Clone uses NFT-based licensing for security and exclusivity:
 
-### 🚀 Pioneer License ($79/month)
-- Early adopter pricing
-- 50% compute markup
-- 500 licenses available
+### 🔥 Ignis Elite (777 NFTs)
+- Premium tier NFT holders
+- Complimentary lifetime access
+- Original collection
 
-### 🏗️ Builder License ($99/month)
-- For agencies and teams
-- 75% compute markup
-- 500 licenses available
+### 🚀 Pioneer Access (500 NFTs)
+- $79/month subscription
+- Free NFT mint (first come, first serve)
+- Early adopter benefits
 
-### 💎 Reserve License ($149/month)
-- Premium tier
-- 100% compute markup
-- 223 licenses available
+### 🏗️ Builder Access (500 NFTs)
+- $99/month subscription
+- Free NFT mint for verified partners only
+- Agency/team features
+- **Partner verification required** - Ensuring responsible use
+
+### 💎 Reserve Access (223 NFTs)
+- $149/month subscription
+- Free NFT mint (limited availability)
+- Premium support tier
+
+**Total Platform Capacity**: 2,000 NFT licenses
+**Security Model**: All access controlled via NFT ownership to ensure platform integrity
+
+## Claude Code Integration
+
+Shadow Clone works seamlessly with Claude Code:
+
+1. **Install Claude Code**: `npm install -g @anthropic/claude-code`
+2. **Launch from VS Code**: Click "Launch Claude" button in status bar
+3. **Select Mode**: Choose from audit, feature, debug, etc.
+4. **Secure Prompts**: Prompts are fetched from API and embedded in commands
+5. **Paste & Execute**: Copy command and paste in Claude terminal
+
+### Intellectual Property Protection
+
+- **No Local Prompt Files**: All prompts served dynamically via API
+- **Session-Based Access**: Prompts are ephemeral and tied to sessions
+- **Authentication Required**: Valid license required to access prompts
+- **Copy Protection**: Prompts cannot be saved or exported
+- **Encrypted Transmission**: All API communication via HTTPS
 
 ## Requirements
 
 - VS Code 1.74.0 or higher
 - Active Shadow Clone license
 - Internet connection for API access
+- Claude Code CLI (for AI agent execution)
 
 ## Configuration
 
@@ -70,10 +100,14 @@ Access settings through VS Code preferences:
 
 ## Security
 
-- API keys are stored securely using VS Code's secret storage
-- All communication is encrypted via HTTPS
-- Source code is obfuscated to protect proprietary algorithms
-- Server-side validation for all operations
+- **API Key Storage**: Secured using VS Code's secret storage
+- **Encrypted Communication**: All API calls via HTTPS
+- **Source Protection**: Extension code obfuscated with Webpack
+- **Prompt Protection**: Shadow Clone prompts never stored locally
+- **Server Validation**: All operations verified server-side
+- **Session Isolation**: Each Claude session has unique access tokens
+- **No File Access**: Prompts delivered via API, not filesystem
+- **Audit Trail**: All prompt access logged for security
 
 ## Support
 

@@ -3,6 +3,7 @@ import { handleAuthValidate } from './handlers/auth';
 import { handleGetProfile, handleGetLicenseStatus } from './handlers/user';
 import { handleGetProjects, handleCreateProject } from './handlers/projects';
 import { handleGetDeployments, handleCreateDeployment } from './handlers/deployments';
+import { handleGetShadowClonePrompt, handleGetModeConfig, handleGetAllModes } from './handlers/prompts';
 import { corsHeaders } from './utils/cors';
 
 export interface Env {
@@ -34,6 +35,11 @@ router.post('/projects', handleCreateProject);
 // Deployment routes
 router.get('/projects/:id/deployments', handleGetDeployments);
 router.post('/projects/:id/deploy', handleCreateDeployment);
+
+// Shadow Clone prompts and configurations (authenticated)
+router.get('/api/prompts/shadow-clone', handleGetShadowClonePrompt);
+router.get('/api/prompts/modes', handleGetAllModes);
+router.get('/api/prompts/modes/:mode', handleGetModeConfig);
 
 // 404 handler
 router.all('*', () => {

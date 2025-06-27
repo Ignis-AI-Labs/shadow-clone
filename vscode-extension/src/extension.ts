@@ -57,10 +57,10 @@ export async function activate(context: vscode.ExtensionContext) {
         
         // Claude integration commands
         vscode.commands.registerCommand('shadowClone.launchClaude', () =>
-            launchClaudeCommand(sessionManager)
+            launchClaudeCommand(sessionManager, authProvider)
         ),
         vscode.commands.registerCommand('shadowClone.launchClaudeQuick', (args) =>
-            launchClaudeWithArgumentsCommand(sessionManager, args)
+            launchClaudeWithArgumentsCommand(sessionManager, authProvider, args)
         ),
         vscode.commands.registerCommand('shadowClone.showSessions', () => {
             vscode.commands.executeCommand('shadowClone.claudeSessions.focus');

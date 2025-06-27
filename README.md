@@ -6,36 +6,80 @@
 
 Orchestrates teams of specialized AI agents that work in parallel waves to deliver exceptional results. Every agent operates at master level - no weak links allowed.
 
+## 🔐 Intellectual Property Protection
+
+Shadow Clone prompts are served dynamically through our secure API:
+- **No Local Files**: Prompts are never stored on user machines
+- **API Authentication**: Only licensed users can access prompts
+- **Encrypted Delivery**: All prompts transmitted via HTTPS
+- **Session-Based**: Prompts are ephemeral and session-specific
+- **Copy Protection**: Prompts cannot be exported or saved locally
+
 ## 🚀 Quick Start
 
 ```bash
-# Execute with Claude
-claude "Load shadow-clone-prompt.md and execute"
+# Install VS Code Extension
+code --install-extension shadow-clone-*.vsix
 
-# With specific mode
-claude "Load shadow-clone-prompt.md and execute with project_type=audit"
+# Launch through VS Code
+1. Click "Launch Claude" button in status bar
+2. Select mode and parameters
+3. Paste command when Claude is ready
+
+# The VS Code extension handles:
+- Secure prompt retrieval from API
+- License verification
+- Command generation with embedded prompts
 ```
 
 ## 📋 Key Documentation
 
 - **[CLAUDE.md](./CLAUDE.md)** - AI context file for understanding the system
-- **[CRITICAL_RULES.md](./CRITICAL_RULES.md)** - Essential system rules (single source of truth)
-- **[shadow-clone-prompt.md](./shadow-clone-prompt.md)** - Main orchestrator (streamlined to ~120 lines)
+- **[CRITICAL_RULES.md](./CRITICAL_RULES.md)** - Essential system rules (internal reference)
 - **[STREAMLINING_SUMMARY.md](./STREAMLINING_SUMMARY.md)** - Documentation improvements (75% reduction)
 
 ## 🎯 System Architecture
 
 ```
-your-project/
-├── shadow-clone-prompt.md        # Main orchestrator
-├── CRITICAL_RULES.md            # System rules reference
-└── .shadow/                     # Modular components
-    ├── agent_rules/            # Behavioral DNA
-    ├── coordination_rules/     # Wave coordination
-    ├── mode_configs/          # Project types
-    ├── templates/             # Standards
-    └── execution_phases/      # Implementation
+Shadow Clone API Server
+├── Prompt Engine               # Dynamic prompt generation
+├── License Verification        # Access control
+├── Mode Configurations         # Project type templates
+└── Security Layer             # IP protection
+
+VS Code Extension
+├── Authentication             # License key management
+├── Prompt Service            # Secure API client
+├── Claude Integration        # Command generation
+└── Session Management        # Track AI agent deployments
 ```
+
+## 💎 Exclusive Access
+
+Shadow Clone is a premium SaaS platform with strictly limited NFT-based licenses:
+
+### 🔥 Ignis Elite (777 NFTs)
+- Premium tier NFT holders
+- Complimentary lifetime access
+- Original collection
+
+### 🚀 Pioneer Access (500 NFTs)
+- $79/month subscription
+- Free NFT mint (first come, first serve)
+- Early adopter benefits
+
+### 🏗️ Builder Access (500 NFTs)
+- $99/month subscription
+- Free NFT mint for verified partners
+- Agency/team features
+
+### 💎 Reserve Access (223 NFTs)
+- $149/month subscription
+- Free NFT mint (limited availability)
+- Premium support tier
+
+**Total Platform Capacity**: 2,000 NFT licenses only
+**Security Note**: Partner verification required for Builder tier to ensure responsible use
 
 ## 🔧 Configuration
 
@@ -74,19 +118,20 @@ $waves_directory/
 
 ## 🎮 Usage Examples
 
-```bash
-# Security audit
-claude "Load shadow-clone-prompt.md and execute with project_type=audit"
+Through VS Code Extension:
+1. Click "Launch Claude" button in status bar
+2. Select mode:
+   - **Audit**: Comprehensive security assessment
+   - **Feature**: Build new functionality
+   - **Refactor**: Improve existing code
+   - **Optimize**: Performance enhancements
+   - **Debug**: Fix issues
+   - **Research**: Analyze without changes
+3. Configure parameters (project plan, waves directory)
+4. Extension generates secure command with embedded prompts
+5. Paste in Claude when ready
 
-# Feature development  
-claude "Load shadow-clone-prompt.md and execute with project_type=feature"
-
-# Custom waves directory
-claude "Load shadow-clone-prompt.md and execute with waves_directory=/custom/path/"
-
-# Natural language
-claude "Build a secure REST API with authentication and real-time updates"
-```
+Note: Direct file access to prompts is not available. All prompts are served through authenticated API calls to protect intellectual property.
 
 ## 📊 Project Modes
 
@@ -99,9 +144,11 @@ claude "Build a secure REST API with authentication and real-time updates"
 
 ## 🚀 Advanced Features
 
-- **Resume**: `claude "Load shadow-clone-prompt.md and resume"`
-- **Status**: `claude "Load shadow-clone-prompt.md and status"`
-- **Planning**: `claude "Load shadow-clone-prompt.md and plan"`
+- **Resume Previous Session**: Select "Resume Previous" in VS Code extension
+- **Track Active Sessions**: View real-time progress in Claude Sessions panel
+- **Custom Parameters**: Build complex commands with interactive prompts
+- **Session Management**: Monitor and control multiple AI agent deployments
+- **Secure Prompt Caching**: 30-minute cache for optimal performance
 
 ---
 
