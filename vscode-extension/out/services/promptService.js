@@ -54,43 +54,39 @@ class PromptService {
         }
     }
     async buildCommand(options) {
-        // Fetch the main prompt
-        const mainPrompt = await this.getMainPrompt();
-        // Build the command components
-        const parts = [];
-        // Start with the main prompt content
-        parts.push('```shadow-clone');
-        parts.push(mainPrompt.content);
-        // Add mode configuration if specified
-        if (options.mode && options.mode !== 'custom') {
-            try {
-                const modeConfig = await this.getMode(options.mode);
-                parts.push('\n---MODE CONFIGURATION---');
-                parts.push(modeConfig.content);
-            }
-            catch (error) {
-                console.warn(`Could not load mode ${options.mode}:`, error);
-            }
+        // Build the command to fetch prompts from API
+        const apiEndpoint = (0, constants_1.getApiEndpoint)();
+        const apiKey = await this.authProvider.getApiKey();
+        if (!apiKey) {
+            throw new Error('No API key found. Please authenticate first.');
         }
-        parts.push('```');
+        // Build a command that tells Claude to fetch the prompt from the API
+        const parts = [];
+        parts.push('Fetch the Shadow Clone orchestration prompt from the API:');
+        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
+        parts.push('');
+        parts.push('Then execute it with the following parameters:');
         // Add execution parameters
-        const params = ['execute'];
+        const params = [];
         if (options.projectPlan) {
             params.push(`project_plan=${options.projectPlan}`);
         }
         if (options.wavesDirectory) {
             params.push(`waves_directory=${options.wavesDirectory}`);
         }
-        if (options.mode) {
+        if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
+            parts.push(`Also fetch the ${options.mode} mode configuration from:`);
+            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         if (options.additionalParams) {
             for (const [key, value] of Object.entries(options.additionalParams)) {
                 params.push(`${key}=${value}`);
             }
         }
-        // Combine prompt and parameters
-        return parts.join('\n') + '\n\nExecute Shadow Clone with: ' + params.join(' ');
+        parts.push('');
+        parts.push('Parameters: ' + (params.length > 0 ? params.join(' ') : '(none)'));
+        return parts.join('\n');
     }
     getFromCache(key) {
         const cached = this.cache.get(key);

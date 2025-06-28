@@ -50,6 +50,13 @@ class ClaudeSessionManager {
         this.restoreSessions();
     }
     createSession(terminal, mode, command) {
+        // Check if this terminal already has a session
+        for (const [id, session] of this.sessions) {
+            if (session.terminal === terminal && session.status === 'active') {
+                console.log(`[SessionManager] Terminal already has active session: ${id}`);
+                return id; // Return existing session ID
+            }
+        }
         const sessionId = (0, uuid_1.v4)();
         const session = {
             id: sessionId,
@@ -115,6 +122,14 @@ class ClaudeSessionManager {
     getSession(id) {
         return this.sessions.get(id);
     }
+    getSessionByTerminal(terminal) {
+        for (const session of this.sessions.values()) {
+            if (session.terminal === terminal) {
+                return session;
+            }
+        }
+        return undefined;
+    }
     getAllSessions() {
         return Array.from(this.sessions.values());
     }
@@ -126,6 +141,14 @@ class ClaudeSessionManager {
         if (session) {
             session.terminal.dispose();
             session.status = 'completed';
+            this.saveSessions();
+            this._onSessionsChanged.fire();
+        }
+    }
+    updateSessionCommand(id, newCommand) {
+        const session = this.sessions.get(id);
+        if (session) {
+            session.command = newCommand;
             this.saveSessions();
             this._onSessionsChanged.fire();
         }

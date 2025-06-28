@@ -28,6 +28,14 @@ export class ClaudeSessionManager {
     }
 
     createSession(terminal: vscode.Terminal, mode: string, command: string): string {
+        // Check if this terminal already has a session
+        for (const [id, session] of this.sessions) {
+            if (session.terminal === terminal && session.status === 'active') {
+                console.log(`[SessionManager] Terminal already has active session: ${id}`);
+                return id; // Return existing session ID
+            }
+        }
+        
         const sessionId = uuidv4();
         const session: ClaudeSession = {
             id: sessionId,
@@ -109,6 +117,15 @@ export class ClaudeSessionManager {
 
     getSession(id: string): ClaudeSession | undefined {
         return this.sessions.get(id);
+    }
+    
+    getSessionByTerminal(terminal: vscode.Terminal): ClaudeSession | undefined {
+        for (const session of this.sessions.values()) {
+            if (session.terminal === terminal) {
+                return session;
+            }
+        }
+        return undefined;
     }
 
     getAllSessions(): ClaudeSession[] {

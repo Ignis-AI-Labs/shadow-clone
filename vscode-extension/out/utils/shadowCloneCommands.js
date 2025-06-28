@@ -3,23 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShadowCloneMacros = exports.SHADOW_CLONE_COMMANDS = void 0;
 // Shadow Clone command templates
 exports.SHADOW_CLONE_COMMANDS = {
-    DEPLOY: 'Load shadow-clone-prompt.md and execute with project_plan=./project-plan.md workspace_dir=./ waves_directory=./.waves/',
-    RESEARCH: 'Load shadow-clone-prompt.md and execute with project_type=research',
-    DEBUG: 'Load shadow-clone-prompt.md and execute with project_type=debug',
-    FEATURE: 'Load shadow-clone-prompt.md and execute with project_type=feature',
-    REFACTOR: 'Load shadow-clone-prompt.md and execute with project_type=refactor',
-    OPTIMIZE: 'Load shadow-clone-prompt.md and execute with project_type=optimize',
-    AUDIT: 'Load shadow-clone-prompt.md and execute with project_type=audit',
-    RESUME: 'Load shadow-clone-prompt.md and resume',
-    STATUS: 'Load shadow-clone-prompt.md and status',
-    PLAN: 'Load shadow-clone-prompt.md and plan',
-    HEALTH: 'Load shadow-clone-prompt.md and health',
-    REPAIR: 'Load shadow-clone-prompt.md and repair'
+    DEPLOY: 'Fetch Shadow Clone prompt from API and execute with project_plan=./project-plan.md workspace_dir=./ waves_directory=./.waves/',
+    RESEARCH: 'Fetch Shadow Clone prompt from API and execute with project_type=research',
+    DEBUG: 'Fetch Shadow Clone prompt from API and execute with project_type=debug',
+    FEATURE: 'Fetch Shadow Clone prompt from API and execute with project_type=feature',
+    REFACTOR: 'Fetch Shadow Clone prompt from API and execute with project_type=refactor',
+    OPTIMIZE: 'Fetch Shadow Clone prompt from API and execute with project_type=optimize',
+    AUDIT: 'Fetch Shadow Clone prompt from API and execute with project_type=audit',
+    RESUME: 'Fetch Shadow Clone prompt from API and resume',
+    STATUS: 'Fetch Shadow Clone prompt from API and status',
+    PLAN: 'Fetch Shadow Clone prompt from API and plan',
+    HEALTH: 'Fetch Shadow Clone prompt from API and health',
+    REPAIR: 'Fetch Shadow Clone prompt from API and repair'
 };
 // Macro system for building custom commands
 class ShadowCloneMacros {
     static buildCommand(options) {
-        let command = 'Load shadow-clone-prompt.md and ';
+        let command = 'Fetch Shadow Clone prompt from API and ';
         // Special modes
         if (options.mode && ['resume', 'status', 'plan', 'health', 'repair'].includes(options.mode)) {
             return command + options.mode;

@@ -17,11 +17,13 @@ import { buildParametersCommand, injectParametersCommand, injectParameterSnippet
 import { SecurityTelemetryService } from './services/securityTelemetry';
 import { CommandInterceptor } from './utils/commandInterceptor';
 import { setTelemetryInstance } from './services/telemetryHandler';
+import { TerminalMonitor } from './utils/terminalMonitor';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
 let telemetryService: SecurityTelemetryService;
 let commandInterceptor: CommandInterceptor;
+let terminalMonitor: TerminalMonitor;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Shadow Clone extension is now active!');
@@ -38,6 +40,9 @@ export async function activate(context: vscode.ExtensionContext) {
     
     // Set global telemetry instance
     setTelemetryInstance(telemetryService);
+    
+    // Initialize terminal monitor
+    terminalMonitor = new TerminalMonitor(sessionManager);
     
     // Setup monitoring
     commandInterceptor.setupFileSystemMonitoring();
@@ -174,7 +179,33 @@ export async function activate(context: vscode.ExtensionContext) {
         ),
         vscode.commands.registerCommand('shadowClone.paramSnippet.fullstack', () => 
             injectParameterSnippet('FULL_STACK')
-        )
+        ),
+        
+        // Session management commands
+        vscode.commands.registerCommand('shadowClone.registerTerminal', () => {
+            terminalMonitor.registerCurrentTerminal();
+        }),
+        vscode.commands.registerCommand('shadowClone.showSessions', () => {
+            const sessions = sessionManager.getActiveSessions();
+            if (sessions.length === 0) {
+                vscode.window.showInformationMessage('No active Claude sessions. Start one with "Launch Claude"');
+            } else {
+                // Show session picker
+                const items = sessions.map(s => ({
+                    label: `$(terminal) ${s.mode} - ${s.terminal?.name || 'Unknown'}`,
+                    description: `Started ${new Date(s.startTime).toLocaleTimeString()}`,
+                    session: s
+                }));
+                
+                vscode.window.showQuickPick(items, {
+                    placeHolder: 'Select a session to view details'
+                }).then(selected => {
+                    if (selected) {
+                        selected.session.terminal?.show();
+                    }
+                });
+            }
+        })
     );
 
     // Auto-authenticate if we have stored credentials
