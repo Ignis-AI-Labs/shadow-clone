@@ -133,7 +133,8 @@ export async function handleClaimIgnisLicense(
       licenseType,
       nftPhase: primaryOwnership.phase,
       nftContract: primaryOwnership.contract,
-      nftTokenIds: primaryOwnership.tokenIds,
+      nftTokenId: primaryOwnership.tokenId,
+      nftBalance: primaryOwnership.balance,
       allOwnerships: ownerships, // Store all NFTs they own
       status: 'active',
       createdAt: new Date().toISOString(),
@@ -159,14 +160,12 @@ export async function handleClaimIgnisLicense(
     await env.USERS.put(`user:${userId}`, JSON.stringify(user));
     await env.API_KEYS.put(apiKey, userId);
 
-    // Store NFT-specific claims to prevent duplicate claims per token
+    // Store NFT-specific claims to prevent duplicate claims per contract
     for (const ownership of ownerships) {
-      for (const tokenId of ownership.tokenIds) {
-        await env.USERS.put(
-          `license:nft:${ownership.contract}:${tokenId}`, 
-          JSON.stringify({ licenseId, email, walletAddress })
-        );
-      }
+      await env.USERS.put(
+        `license:nft:${ownership.contract}:${ownership.tokenId}`, 
+        JSON.stringify({ licenseId, email, walletAddress, balance: ownership.balance })
+      );
     }
 
     // Update license count
@@ -175,7 +174,7 @@ export async function handleClaimIgnisLicense(
 
     // Build response message
     const ownedPhases = ownerships.map(o => getPhaseDisplayName(o.phase)).join(', ');
-    const totalNFTs = ownerships.reduce((sum, o) => sum + o.tokenIds.length, 0);
+    const totalNFTs = ownerships.reduce((sum, o) => sum + o.balance, 0);
 
     return new Response(
       JSON.stringify({
@@ -188,7 +187,8 @@ export async function handleClaimIgnisLicense(
           licenseType,
           phase: primaryOwnership.phase,
           nftContract: primaryOwnership.contract,
-          tokenIds: primaryOwnership.tokenIds,
+          tokenId: primaryOwnership.tokenId,
+          balance: primaryOwnership.balance,
           message: `Congratulations! Your ${getPhaseDisplayName(primaryOwnership.phase)} license has been activated.`,
           details: {
             ownedCollections: ownedPhases,
