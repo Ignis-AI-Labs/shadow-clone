@@ -4,20 +4,33 @@ import { handleGetProfile, handleGetLicenseStatus } from './handlers/user';
 import { handleGetProjects, handleCreateProject } from './handlers/projects';
 import { handleGetDeployments, handleCreateDeployment } from './handlers/deployments';
 import { 
-  handleGetShadowClonePrompt, 
-  handleGetModeConfig, 
-  handleGetAllModes,
-  handleGetAgentRule,
-  handleGetCoordinationRule,
-  handleGetTemplate,
-  handleGetExecutionPhase
-} from './handlers/prompts';
+  handleGetShadowClonePromptSecure, 
+  handleGetModeConfigSecure, 
+  handleGetAllModesSecure,
+  handleGetAgentRuleSecure,
+  handleGetCoordinationRuleSecure,
+  handleGetTemplateSecure,
+  handleGetExecutionPhaseSecure
+} from './handlers/prompts-secure';
+import {
+  handleGetSecurityAnalytics,
+  handleUnblockUser,
+  handleClearUserEvents,
+  handleGenerateReport,
+  handleConfigureNotifications
+} from './handlers/admin';
+import {
+  handleTelemetryEvents,
+  handleHighRiskAlert,
+  handleGetTelemetryAnalytics
+} from './handlers/telemetry';
 import { corsHeaders } from './utils/cors';
 
 export interface Env {
   USERS: KVNamespace;
   PROJECTS: KVNamespace;
   API_KEYS: KVNamespace;
+  ADMIN_KEYS: KVNamespace;
   ENVIRONMENT: string;
   CORS_ORIGIN: string;
 }
@@ -44,25 +57,37 @@ router.post('/projects', handleCreateProject);
 router.get('/projects/:id/deployments', handleGetDeployments);
 router.post('/projects/:id/deploy', handleCreateDeployment);
 
-// Shadow Clone prompts and configurations (authenticated)
-router.get('/api/prompts/shadow-clone', handleGetShadowClonePrompt);
+// Shadow Clone prompts and configurations (authenticated with security)
+router.get('/api/prompts/shadow-clone', handleGetShadowClonePromptSecure);
 
 // Mode configurations
-router.get('/api/prompts/modes', handleGetAllModes);
-router.get('/api/prompts/modes/:mode', handleGetModeConfig);
+router.get('/api/prompts/modes', handleGetAllModesSecure);
+router.get('/api/prompts/modes/:mode', handleGetModeConfigSecure);
 
 // Agent rules
-router.get('/api/prompts/agent-rules/:role', handleGetAgentRule);
+router.get('/api/prompts/agent-rules/:role', handleGetAgentRuleSecure);
 
 // Coordination rules
-router.get('/api/prompts/coordination-rules', handleGetCoordinationRule);
-router.get('/api/prompts/coordination-rules/:rule', handleGetCoordinationRule);
+router.get('/api/prompts/coordination-rules', handleGetCoordinationRuleSecure);
+router.get('/api/prompts/coordination-rules/:rule', handleGetCoordinationRuleSecure);
 
 // Templates
-router.get('/api/prompts/templates/:template', handleGetTemplate);
+router.get('/api/prompts/templates/:template', handleGetTemplateSecure);
 
 // Execution phases
-router.get('/api/prompts/execution-phases/:phase', handleGetExecutionPhase);
+router.get('/api/prompts/execution-phases/:phase', handleGetExecutionPhaseSecure);
+
+// Admin routes
+router.get('/admin/security/analytics', handleGetSecurityAnalytics);
+router.post('/admin/security/unblock', handleUnblockUser);
+router.post('/admin/security/clear-events', handleClearUserEvents);
+router.post('/admin/security/generate-report', handleGenerateReport);
+router.post('/admin/security/configure-notifications', handleConfigureNotifications);
+router.get('/admin/telemetry/analytics', handleGetTelemetryAnalytics);
+
+// Telemetry routes
+router.post('/api/telemetry/events', handleTelemetryEvents);
+router.post('/api/security/high-risk-alert', handleHighRiskAlert);
 
 // 404 handler
 router.all('*', () => {
@@ -95,5 +120,11 @@ export default {
         }
       );
     }
+  },
+  
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    // Import dynamically to avoid circular dependencies
+    const { handleScheduledReport } = await import('./handlers/admin');
+    await handleScheduledReport(event, env);
   },
 };

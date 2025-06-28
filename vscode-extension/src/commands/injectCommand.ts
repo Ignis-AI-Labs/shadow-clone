@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from '../auth/authProvider';
 import { getApiEndpoint } from '../utils/constants';
+import { logCommandExecution } from '../services/telemetryHandler';
 
 export async function injectShadowCloneCommand(authProvider: AuthProvider, commandType?: string) {
     // Check if we have an active terminal first (for Claude sessions)
@@ -229,6 +230,13 @@ Then load the returned prompt and execute with the parameters above.`;
         default:
             return;
     }
+    
+    // Log telemetry
+    logCommandExecution('shadowClone.inject', {
+        commandType,
+        destination: activeTerminal ? 'terminal' : 'editor',
+        apiEndpoint,
+    });
     
     // Inject into terminal or editor
     if (activeTerminal) {

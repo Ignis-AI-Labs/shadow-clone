@@ -29,3 +29,11 @@ ENVIRONMENT = "development"
 [env.production.vars]
 ENVIRONMENT = "production"
 CORS_ORIGIN = "*"
+
+# Cron triggers for scheduled reports
+[triggers]
+crons = [
+  "0 9 * * *",     # Daily at 9 AM UTC
+  "0 9 * * 1",     # Weekly on Monday at 9 AM UTC
+  "0 9 1 * *"      # Monthly on 1st at 9 AM UTC
+]

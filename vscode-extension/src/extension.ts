@@ -14,9 +14,14 @@ import { ShadowCloneMacros } from './utils/shadowCloneCommands';
 import { injectShadowCloneCommand, injectDeployCommand, injectDebugCommand, injectFeatureCommand, injectCustomCommand } from './commands/injectCommand';
 import { showHelpCommand, showQuickReferenceCommand } from './commands/showHelp';
 import { buildParametersCommand, injectParametersCommand, injectParameterSnippet } from './commands/parameterBuilder';
+import { SecurityTelemetryService } from './services/securityTelemetry';
+import { CommandInterceptor } from './utils/commandInterceptor';
+import { setTelemetryInstance } from './services/telemetryHandler';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
+let telemetryService: SecurityTelemetryService;
+let commandInterceptor: CommandInterceptor;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Shadow Clone extension is now active!');
@@ -26,6 +31,32 @@ export async function activate(context: vscode.ExtensionContext) {
     // Initialize providers
     authProvider = new AuthProvider(context);
     sessionManager = new ClaudeSessionManager(context);
+    
+    // Initialize security telemetry
+    telemetryService = new SecurityTelemetryService(context, authProvider);
+    commandInterceptor = new CommandInterceptor(telemetryService);
+    
+    // Set global telemetry instance
+    setTelemetryInstance(telemetryService);
+    
+    // Setup monitoring
+    commandInterceptor.setupFileSystemMonitoring();
+    commandInterceptor.monitorClipboardForPrompts();
+    
+    // Show telemetry notice (one time)
+    const telemetryShown = context.globalState.get('telemetryNoticeShown');
+    if (!telemetryShown) {
+        vscode.window.showInformationMessage(
+            'Shadow Clone collects anonymous usage data to improve security and prevent misuse.',
+            'Learn More',
+            'OK'
+        ).then(selection => {
+            if (selection === 'Learn More') {
+                vscode.env.openExternal(vscode.Uri.parse('https://shadow-clone.ai/privacy'));
+            }
+            context.globalState.update('telemetryNoticeShown', true);
+        });
+    }
     
     // Initialize tree data providers
     const projectProvider = new ProjectProvider(authProvider);
@@ -290,4 +321,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
     console.log('Shadow Clone extension deactivated');
+    
+    // Dispose of telemetry service
+    if (telemetryService) {
+        telemetryService.dispose();
+    }
+    
+    // Dispose of command interceptor
+    if (commandInterceptor) {
+        commandInterceptor.dispose();
+    }
 }

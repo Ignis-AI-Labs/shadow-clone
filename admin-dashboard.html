@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Clone Security Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00ff88;
+            margin-bottom: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        .stat-label {
+            color: #888;
+            margin-top: 5px;
+        }
+        .events-table {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #0a0a0a;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #222;
+        }
+        .severity-high {
+            color: #ff4444;
+        }
+        .severity-medium {
+            color: #ff8800;
+        }
+        .severity-low {
+            color: #ffdd00;
+        }
+        .refresh-btn {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .refresh-btn:hover {
+            background: #00cc66;
+        }
+        .config-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        input, select {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .alert {
+            background: #ff444422;
+            border: 1px solid #ff4444;
+            color: #ff8888;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Shadow Clone Security Dashboard</h1>
+        
+        <div class="config-section">
+            <h3>Configuration</h3>
+            <label>API Key: <input type="password" id="apiKey" placeholder="Your admin API key" style="width: 300px;"></label>
+            <label>Auto-refresh: 
+                <select id="refreshInterval">
+                    <option value="0">Disabled</option>
+                    <option value="10">10 seconds</option>
+                    <option value="30">30 seconds</option>
+                    <option value="60">1 minute</option>
+                </select>
+            </label>
+            <button class="refresh-btn" onclick="loadDashboard()">Load Dashboard</button>
+        </div>
+
+        <div id="alerts"></div>
+        
+        <div class="stats-grid" id="stats">
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Suspicious Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Blocked Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Extraction Attempts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">24hr Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Active Sessions</div>
+            </div>
+        </div>
+
+        <h2>Recent Security Events</h2>
+        <div class="events-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User ID</th>
+                        <th>Event Type</th>
+                        <th>Details</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody id="eventsTable">
+                    <tr><td colspan="5">No data loaded</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Top Offenders</h2>
+        <div class="events-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Extraction Attempts</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="offendersTable">
+                    <tr><td colspan="4">No data loaded</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = 'https://shadow-clone-api.elijah-02b.workers.dev';
+        let refreshTimer = null;
+
+        async function loadDashboard() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                alert('Please enter your admin API key');
+                return;
+            }
+
+            try {
+                // Load security analytics
+                const securityResp = await fetch(`${API_ENDPOINT}/admin/security/analytics`, {
+                    headers: { 'X-API-Key': apiKey }
+                });
+                
+                if (!securityResp.ok) {
+                    throw new Error('Failed to load security data. Check your API key.');
+                }
+                
+                const securityData = await securityResp.json();
+                updateSecurityStats(securityData.analytics);
+
+                // Load telemetry analytics
+                const telemetryResp = await fetch(`${API_ENDPOINT}/admin/telemetry/analytics`, {
+                    headers: { 'X-API-Key': apiKey }
+                });
+                
+                if (telemetryResp.ok) {
+                    const telemetryData = await telemetryResp.json();
+                    updateTelemetryStats(telemetryData.analytics);
+                }
+
+                // Clear any errors
+                document.getElementById('alerts').innerHTML = '';
+                
+            } catch (error) {
+                document.getElementById('alerts').innerHTML = 
+                    `<div class="alert">Error: ${error.message}</div>`;
+            }
+        }
+
+        function updateSecurityStats(data) {
+            const stats = data.stats;
+            const statsElements = document.querySelectorAll('.stat-value');
+            
+            statsElements[0].textContent = stats.totalUsers || 0;
+            statsElements[1].textContent = stats.suspiciousUsers || 0;
+            statsElements[2].textContent = stats.blockedUsers || 0;
+            statsElements[3].textContent = stats.extractionAttempts || 0;
+            statsElements[4].textContent = stats.last24HourEvents || 0;
+
+            // Update events table
+            const eventsHtml = data.recentEvents.map(event => `
+                <tr>
+                    <td>${new Date(event.timestamp).toLocaleString()}</td>
+                    <td>${event.userId}</td>
+                    <td class="severity-${getSeverity(event.eventType)}">${event.eventType}</td>
+                    <td>${event.details}</td>
+                    <td>${event.ip || '-'}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('eventsTable').innerHTML = eventsHtml || 
+                '<tr><td colspan="5">No recent events</td></tr>';
+
+            // Update offenders table
+            const offendersHtml = data.topOffenders.map(user => `
+                <tr>
+                    <td>${user.userId}</td>
+                    <td class="severity-high">${user.attempts}</td>
+                    <td>${data.blockedUsers.includes(user.userId) ? '🚫 Blocked' : '✅ Active'}</td>
+                    <td>
+                        <button onclick="unblockUser('${user.userId}')">Unblock</button>
+                        <button onclick="clearEvents('${user.userId}')">Clear</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('offendersTable').innerHTML = offendersHtml || 
+                '<tr><td colspan="4">No offenders found</td></tr>';
+        }
+
+        function updateTelemetryStats(data) {
+            if (data && data.activeSessions !== undefined) {
+                document.querySelectorAll('.stat-value')[5].textContent = data.activeSessions;
+                
+                // Show high risk sessions alert
+                if (data.highRiskSessions > 0) {
+                    const alertHtml = `<div class="alert">
+                        ⚠️ ${data.highRiskSessions} high-risk sessions detected!
+                    </div>`;
+                    document.getElementById('alerts').innerHTML = alertHtml;
+                }
+            }
+        }
+
+        function getSeverity(eventType) {
+            if (eventType.includes('extraction') || eventType.includes('high_risk')) return 'high';
+            if (eventType.includes('suspicious') || eventType.includes('enumeration')) return 'medium';
+            return 'low';
+        }
+
+        async function unblockUser(userId) {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!confirm(`Unblock user ${userId}?`)) return;
+
+            try {
+                const resp = await fetch(`${API_ENDPOINT}/admin/security/unblock`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-API-Key': apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                
+                if (resp.ok) {
+                    alert('User unblocked');
+                    loadDashboard();
+                } else {
+                    alert('Failed to unblock user');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function clearEvents(userId) {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!confirm(`Clear all events for user ${userId}?`)) return;
+
+            try {
+                const resp = await fetch(`${API_ENDPOINT}/admin/security/clear-events`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-API-Key': apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                
+                if (resp.ok) {
+                    alert('Events cleared');
+                    loadDashboard();
+                } else {
+                    alert('Failed to clear events');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Auto-refresh setup
+        document.getElementById('refreshInterval').addEventListener('change', (e) => {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+            }
+            
+            const interval = parseInt(e.target.value);
+            if (interval > 0) {
+                refreshTimer = setInterval(loadDashboard, interval * 1000);
+            }
+        });
+
+        // Generate report
+        async function generateReport(reportType) {
+            const apiKey = document.getElementById('apiKey').value;
+            
+            try {
+                const resp = await fetch(`${API_ENDPOINT}/admin/security/generate-report`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-API-Key': apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reportType })
+                });
+                
+                if (resp.ok) {
+                    const report = await resp.json();
+                    console.log('Report generated:', report);
+                    alert('Report generated! Check console for details.');
+                } else {
+                    alert('Failed to generate report');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
