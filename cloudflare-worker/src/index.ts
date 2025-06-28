@@ -24,6 +24,12 @@ import {
   handleHighRiskAlert,
   handleGetTelemetryAnalytics
 } from './handlers/telemetry';
+import {
+  handleClaimIgnisEliteLicense,
+  handleGeneratePaidLicense,
+  handleCheckNFTClaim,
+  handleGetLicenseAvailability
+} from './handlers/license-api';
 import { corsHeaders } from './utils/cors';
 
 export interface Env {
@@ -88,6 +94,12 @@ router.get('/admin/telemetry/analytics', handleGetTelemetryAnalytics);
 // Telemetry routes
 router.post('/api/telemetry/events', handleTelemetryEvents);
 router.post('/api/security/high-risk-alert', handleHighRiskAlert);
+
+// License API routes (for Ignis Labs dashboard integration)
+router.post('/api/license/claim/ignis-elite', handleClaimIgnisEliteLicense);
+router.post('/api/license/generate', handleGeneratePaidLicense);
+router.get('/api/license/check-nft', handleCheckNFTClaim);
+router.get('/api/license/availability', handleGetLicenseAvailability);
 
 // 404 handler
 router.all('*', () => {
