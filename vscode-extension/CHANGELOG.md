@@ -2,6 +2,14 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.1.3] - 2025-06-28
+
+### Changed
+- Updated NFT distribution to correctly reflect Ignis Elite phases (100/200/477)
+- Clarified that only Ignis Elite NFT holders currently have access
+- Removed unconfirmed pricing for Pioneer/Builder/Reserve tiers
+- Updated marketplace description to reflect current access model
+
 ## [0.1.2] - 2025-06-28
 
 ### Fixed
