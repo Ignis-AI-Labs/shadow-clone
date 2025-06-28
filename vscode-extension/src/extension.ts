@@ -24,9 +24,17 @@ let sessionManager: ClaudeSessionManager;
 let telemetryService: SecurityTelemetryService;
 let commandInterceptor: CommandInterceptor;
 let terminalMonitor: TerminalMonitor;
+let isActivated = false;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Shadow Clone extension is now active!');
+    
+    // Prevent double activation
+    if (isActivated) {
+        console.warn('Shadow Clone extension already activated, skipping...');
+        return;
+    }
+    isActivated = true;
     
     try {
 
@@ -185,7 +193,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('shadowClone.registerTerminal', () => {
             terminalMonitor.registerCurrentTerminal();
         }),
-        vscode.commands.registerCommand('shadowClone.showSessions', () => {
+        vscode.commands.registerCommand('shadowClone.showSessionPicker', () => {
             const sessions = sessionManager.getActiveSessions();
             if (sessions.length === 0) {
                 vscode.window.showInformationMessage('No active Claude sessions. Start one with "Launch Claude"');
@@ -352,6 +360,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
     console.log('Shadow Clone extension deactivated');
+    
+    // Reset activation flag
+    isActivated = false;
     
     // Dispose of telemetry service
     if (telemetryService) {

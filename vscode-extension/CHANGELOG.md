@@ -2,6 +2,19 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.1.2] - 2025-06-28
+
+### Fixed
+- Added activation guard to prevent double activation
+- Properly handle showSessions command registration
+- Fixed potential race condition during extension startup
+
+## [0.1.1] - 2025-06-28
+
+### Fixed
+- Fixed duplicate command registration error on activation
+- Renamed second `showSessions` command to `showSessionPicker`
+
 ## [0.1.0] - 2025-06-28
 
 ### Initial Release 🎉
