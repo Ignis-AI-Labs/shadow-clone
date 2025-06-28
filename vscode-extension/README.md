@@ -41,10 +41,12 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 
 Shadow Clone uses NFT-based licensing for security and exclusivity:
 
-### 🔥 Ignis Elite (777 NFTs)
-- Premium tier NFT holders
-- Complimentary lifetime access
-- Original collection
+### 🔥 Ignis Elite NFT Collection
+- **Phase 1**: Original 777 NFT holders
+- **Phase 2**: Extended collection holders
+- **Phase 3**: Latest release holders
+- All phases include complimentary lifetime access
+- Premium tier benefits across all phases
 
 ### 🚀 Pioneer Access (500 NFTs)
 - $79/month subscription

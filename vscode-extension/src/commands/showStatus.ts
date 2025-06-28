@@ -32,7 +32,9 @@ export async function showStatusCommand(authProvider: AuthProvider) {
 
         // Format license type display
         const licenseDisplay = {
-            [LICENSE_TYPES.IGNIS_ELITE]: '🔥 Ignis Elite (NFT Holder)',
+            [LICENSE_TYPES.IGNIS_ELITE_PHASE_1]: '🔥 Ignis Elite Phase 1 (NFT)',
+            [LICENSE_TYPES.IGNIS_ELITE_PHASE_2]: '🚀 Ignis Elite Phase 2 (NFT)',
+            [LICENSE_TYPES.IGNIS_ELITE_PHASE_3]: '💎 Ignis Elite Phase 3 (NFT)',
             [LICENSE_TYPES.PIONEER]: '🚀 Pioneer License',
             [LICENSE_TYPES.BUILDER]: '🏗️ Builder License',
             [LICENSE_TYPES.RESERVE]: '💎 Reserve License'

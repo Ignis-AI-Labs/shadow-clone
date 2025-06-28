@@ -1,29 +1,54 @@
 {
   "name": "shadow-clone",
-  "displayName": "Shadow Clone AI",
-  "description": "Deploy teams of specialized AI agents to complete complex software projects",
+  "displayName": "Shadow Clone AI Agent Orchestrator",
+  "description": "Deploy teams of specialized AI agents to complete complex software projects. Exclusive NFT-based access with Claude integration.",
   "version": "0.1.0",
-  "publisher": "shadow-clone",
-  "private": true,
+  "publisher": "ignislabs",
+  "private": false,
   "license": "Proprietary",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/shadow-clone"
+    "url": "https://github.com/ignislabs/shadow-clone"
+  },
+  "homepage": "https://shadow-clone.ai",
+  "bugs": {
+    "url": "https://github.com/ignislabs/shadow-clone/issues"
   },
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
-    "Other",
     "Programming Languages",
-    "Snippets"
+    "Machine Learning",
+    "Other"
   ],
   "keywords": [
     "ai",
-    "code generation",
+    "claude",
+    "agent",
     "automation",
-    "agents",
-    "orchestration"
+    "shadow-clone",
+    "code-generation",
+    "orchestration",
+    "nft",
+    "ignis"
+  ],
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/license-NFT%20Exclusive-blue",
+      "href": "https://shadow-clone.ai/license",
+      "description": "License Type"
+    },
+    {
+      "url": "https://img.shields.io/badge/Claude-Integration-green",
+      "href": "https://claude.ai",
+      "description": "Claude Integration"
+    }
   ],
   "activationEvents": [
     "onStartupFinished"

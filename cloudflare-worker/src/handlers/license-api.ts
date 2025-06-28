@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 interface ClaimLicenseRequest {
   walletAddress: string;
   nftTokenId: string;
+  nftCollection: 'ignis_elite' | 'phase_1' | 'phase_2' | 'phase_3';
   email: string;
   signature?: string; // For wallet signature verification
 }
@@ -18,24 +19,24 @@ interface GenerateLicenseRequest {
 }
 
 /**
- * API endpoint for Ignis Elite NFT holders to claim their license
+ * API endpoint for Ignis NFT holders (Ignis Elite, Phase 1, 2, 3) to claim their license
  * This will be called from your Ignis Labs dashboard
  */
-export async function handleClaimIgnisEliteLicense(
+export async function handleClaimIgnisNFTLicense(
   request: Request,
   env: Env
 ): Promise<Response> {
   try {
     const body = await request.json() as ClaimLicenseRequest;
-    const { walletAddress, nftTokenId, email, signature } = body;
+    const { walletAddress, nftTokenId, nftCollection, email, signature } = body;
 
     // Validate required fields
-    if (!walletAddress || !nftTokenId || !email) {
+    if (!walletAddress || !nftTokenId || !nftCollection || !email) {
       return new Response(
         JSON.stringify({ 
           success: false,
           error: 'Missing required fields',
-          required: ['walletAddress', 'nftTokenId', 'email'] 
+          required: ['walletAddress', 'nftTokenId', 'nftCollection', 'email'] 
         }),
         {
           status: 400,
@@ -64,7 +65,7 @@ export async function handleClaimIgnisEliteLicense(
       );
     }
 
-    // Validate NFT token ID (1-777 for Ignis Elite)
+    // Validate NFT collection and token ID
     const tokenId = parseInt(nftTokenId);
     if (isNaN(tokenId) || tokenId < 1 || tokenId > 777) {
       return new Response(
@@ -181,7 +182,7 @@ export async function handleClaimIgnisEliteLicense(
           walletAddress,
           nftTokenId: tokenId,
           licenseType: 'ignis_elite',
-          message: 'Congratulations! Your Ignis Elite license has been activated.',
+          message: 'Congratulations! Your Ingis Elite license has been activated.',
         }
       }),
       {
@@ -193,7 +194,7 @@ export async function handleClaimIgnisEliteLicense(
       }
     );
   } catch (error) {
-    console.error('Ignis Elite claim error:', error);
+    console.error('Ignis NFT claim error:', error);
     return new Response(
       JSON.stringify({
         success: false,

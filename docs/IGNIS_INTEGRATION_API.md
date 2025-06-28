@@ -1,7 +1,7 @@
 # Shadow Clone License API - Ignis Labs Integration
 
 ## Overview
-This API allows the Ignis Labs dashboard to integrate with Shadow Clone's license system. Ignis Elite NFT holders can claim their complimentary lifetime licenses through your dashboard.
+This API allows the Ignis Labs dashboard to integrate with Shadow Clone's license system. Ignis Elite, Phase 1, Phase 2, and Phase 3 NFT holders can claim their complimentary lifetime licenses through your dashboard.
 
 ## Base URL
 ```
@@ -11,18 +11,23 @@ https://shadow-clone-api.elijah-02b.workers.dev
 ## API Endpoints
 
 ### 1. Claim Ignis Elite License
-Allows Ignis Elite NFT holders to claim their Shadow Clone license.
+Allows Ignis Elite, Phase 1, Phase 2, and Phase 3 NFT holders to claim their Shadow Clone license.
 
-**Endpoint:** `POST /api/license/claim/ignis-elite`
+**Endpoint:** `POST /api/license/claim/ignis`
 
 **Request Body:**
 ```json
 {
   "walletAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f6E123",
-  "nftTokenId": "123",
   "email": "holder@example.com",
-  "signature": "0x..." // Optional: Wallet signature for verification
+  "rpcUrl": "https://eth-mainnet.g.alchemy.com/v2/your-key" // Optional: Custom RPC URL
 }
+```
+
+**Note**: The API automatically checks all three Ignis Elite contracts:
+- Phase 1: `0x42347db440ef412bbe19c0841895a4b98256885b`
+- Phase 2: `0x17a2b200cec625b431c3ae7334d2d8ddb41712ce`
+- Phase 3: `0xab505a667039d08d8e33cef95c81897a8b5fed1a`
 ```
 
 **Success Response (201):**
@@ -34,9 +39,16 @@ Allows Ignis Elite NFT holders to claim their Shadow Clone license.
     "licenseId": "lic_xxxxxxxxxxxxxxxx",
     "email": "holder@example.com",
     "walletAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f6E123",
-    "nftTokenId": 123,
-    "licenseType": "ignis_elite",
-    "message": "Congratulations! Your Ignis Elite license has been activated."
+    "phase": "phase_1",
+    "nftContract": "0x42347db440ef412bbe19c0841895a4b98256885b",
+    "tokenIds": [123, 456],
+    "licenseType": "ignis_elite_phase_1",
+    "message": "Congratulations! Your Ignis Elite Phase 1 license has been activated.",
+    "details": {
+      "ownedCollections": "Ignis Elite Phase 1, Ignis Elite Phase 2",
+      "totalNFTsOwned": 3,
+      "allOwnerships": [...]
+    }
   }
 }
 ```
@@ -47,7 +59,7 @@ Allows Ignis Elite NFT holders to claim their Shadow Clone license.
 - `500` - Server error
 
 ### 2. Check NFT Claim Status
-Check if a specific Ignis Elite NFT has already claimed a license.
+Check if a specific Ignis NFT has already claimed a license.
 
 **Endpoint:** `GET /api/license/check-nft?tokenId={tokenId}`
 

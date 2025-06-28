@@ -29,7 +29,9 @@ export async function authenticateCommand(authProvider: AuthProvider) {
     if (authenticated) {
         const licenseType = await authProvider.getLicenseType();
         const licenseDisplay: Record<string, string> = {
-            'ignis_elite': '🔥 Ignis Elite (NFT)',
+            'ignis_elite_phase_1': '🔥 Ignis Elite Phase 1 (NFT)',
+            'ignis_elite_phase_2': '🚀 Ignis Elite Phase 2 (NFT)',
+            'ignis_elite_phase_3': '💎 Ignis Elite Phase 3 (NFT)',
             'pioneer': '🚀 Pioneer',
             'builder': '🏗️ Builder',
             'reserve': '💎 Reserve'

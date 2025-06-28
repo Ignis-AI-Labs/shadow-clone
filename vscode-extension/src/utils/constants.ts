@@ -2,7 +2,9 @@ import * as vscode from 'vscode';
 
 // License types
 export const LICENSE_TYPES = {
-    IGNIS_ELITE: 'ignis_elite',
+    IGNIS_ELITE_PHASE_1: 'ignis_elite_phase_1',
+    IGNIS_ELITE_PHASE_2: 'ignis_elite_phase_2',
+    IGNIS_ELITE_PHASE_3: 'ignis_elite_phase_3',
     PIONEER: 'pioneer',
     BUILDER: 'builder',
     RESERVE: 'reserve'
