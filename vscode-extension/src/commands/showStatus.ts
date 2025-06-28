@@ -256,7 +256,7 @@ function getStatusWebviewContent(data: any): string {
         
         <div class="footer">
             Shadow Clone Extension v${extensionVersion} • 
-            ${user.licenseType === LICENSE_TYPES.IGNIS_ELITE ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
+            ${user.licenseType?.startsWith('ignis_elite') ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
         </div>
     </div>
     

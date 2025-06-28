@@ -24,6 +24,7 @@ preview_id = "dfece89e12874900b863c2b05099acdf"
 # Environment variables
 [vars]
 ENVIRONMENT = "development"
+ETHEREUM_RPC_URL = "https://eth-mainnet.g.alchemy.com/v2/demo"
 
 # CORS configuration
 [env.production.vars]

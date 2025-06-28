@@ -25,11 +25,14 @@ import {
   handleGetTelemetryAnalytics
 } from './handlers/telemetry';
 import {
-  handleClaimIgnisEliteLicense,
   handleGeneratePaidLicense,
   handleCheckNFTClaim,
   handleGetLicenseAvailability
 } from './handlers/license-api';
+import {
+  handleClaimIgnisLicense,
+  handleCheckIgnisOwnership
+} from './handlers/license-ignis';
 import { corsHeaders } from './utils/cors';
 
 export interface Env {
@@ -39,6 +42,7 @@ export interface Env {
   ADMIN_KEYS: KVNamespace;
   ENVIRONMENT: string;
   CORS_ORIGIN: string;
+  ETHEREUM_RPC_URL?: string;
 }
 
 const router = new Router<Env>();
@@ -96,7 +100,8 @@ router.post('/api/telemetry/events', handleTelemetryEvents);
 router.post('/api/security/high-risk-alert', handleHighRiskAlert);
 
 // License API routes (for Ignis Labs dashboard integration)
-router.post('/api/license/claim/ignis-elite', handleClaimIgnisEliteLicense);
+router.post('/api/license/claim/ignis', handleClaimIgnisLicense);
+router.get('/api/license/check/ignis', handleCheckIgnisOwnership);
 router.post('/api/license/generate', handleGeneratePaidLicense);
 router.get('/api/license/check-nft', handleCheckNFTClaim);
 router.get('/api/license/availability', handleGetLicenseAvailability);
