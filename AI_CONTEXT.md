@@ -4,6 +4,8 @@
 
 Shadow Clone is an exclusive AI agent orchestration platform that enables users to deploy teams of specialized AI agents to complete complex software projects. Think of it as having an AI development team that works together to build complete applications, with different agents handling different aspects like architecture, coding, testing, and documentation.
 
+**Company**: Ignis AI Labs LLC (Puerto Rico)
+
 ## Key Concepts
 
 ### 1. **Agent Orchestration**
@@ -12,20 +14,22 @@ Shadow Clone is an exclusive AI agent orchestration platform that enables users 
 - Agents work in "waves" - coordinated phases where different specialists collaborate
 - Each agent has a specific role (e.g., Architect, Frontend Dev, Backend Dev, QA, etc.)
 - Agents can see each other's work and build upon it
+- Maximum 10 agents per wave (system splits larger teams into sub-waves)
 
 ### 2. **Exclusive NFT-Based Licensing Model (2,000 Total Licenses)**
-- **777 Ignis Elite NFT Holders**: Complimentary lifetime access
-- **500 Pioneer NFTs**: $79/month subscription (free NFT mint, first come first serve)
-- **500 Builder NFTs**: $99/month subscription (free NFT mint for verified partners)  
-- **223 Reserve NFTs**: $149/month subscription (free NFT mint, limited availability)
+- **777 Ignis Elite NFT Holders**: Complimentary lifetime access (Phase 1, 2, and 3)
+- **500 Pioneer NFTs**: Subscription pricing TBD (free NFT mint, first come first serve)
+- **500 Builder NFTs**: Subscription pricing TBD (free NFT mint for verified partners)  
+- **223 Reserve NFTs**: Subscription pricing TBD (free NFT mint, limited availability)
 - All access controlled via NFT ownership for security
 - Partner verification required for Builder tier
 
 ### 3. **SaaS Subscription Model**
-- Fixed monthly subscriptions (no usage-based pricing)
+- Fixed monthly subscriptions (pricing TBD for non-Ignis tiers)
 - NFT holders get free NFT but pay monthly subscription (except Ignis Elite)
 - All tiers have full access to Shadow Clone features
 - No compute markups - flat subscription pricing
+- Prepaid credit system for compute resources
 
 ### 4. **Technical Architecture**
 - **Frontend**: Next.js 14, TypeScript, TailwindCSS, RainbowKit (Web3)
@@ -33,6 +37,7 @@ Shadow Clone is an exclusive AI agent orchestration platform that enables users 
 - **Infrastructure**: Cloudflare Workers + R2 (control plane), DigitalOcean (compute)
 - **AI Providers**: Claude Code, Claude API, OpenAI API
 - **MCP Integration**: Model Context Protocol for file system, git, database access
+- **VS Code Extension**: Direct integration with Claude Code
 
 ## Project Structure
 
@@ -51,6 +56,16 @@ shadow-clone/
 │   │   ├── services/         # Business logic
 │   │   ├── middleware/       # Express middleware
 │   │   └── prisma/           # Database schema
+├── cloudflare-worker/         # Prompt API & NFT verification
+│   ├── src/
+│   │   ├── prompts/          # Protected prompts
+│   │   ├── utils/            # NFT verification logic
+│   │   └── index.ts          # Worker entry point
+├── vscode-extension/          # VS Code integration
+│   ├── src/
+│   │   ├── commands/         # Extension commands
+│   │   ├── providers/        # View providers
+│   │   └── services/         # API integration
 ├── integration/               # External service integrations
 │   └── api/                  # Cloudflare Worker, webhooks
 ├── docs/                      # Documentation
@@ -72,23 +87,25 @@ shadow-clone/
 7. **`cloudflare-worker/`** - API serving prompts and handling auth
 8. **`DEVELOPMENT_SETUP.md`** - Complete dev environment setup
 
-## Current Implementation Status (Updated 2025-06-27)
+## Current Implementation Status (Updated 2025-06-28)
 
 ### ✅ Completed
 - Agent orchestration system with 10-agent deployment limit
 - Frontend UI with project creation wizard
 - Backend licensing system with 2,000 license limit
-- NFT verification for Ignis Elite holders
+- NFT verification for Ignis Elite holders (Phase 1, 2, and 3)
 - Prepaid credit system with auto-termination
 - Security hardening (auth, rate limiting, input validation)
 - MCP integration design for enhanced agent capabilities
-- **VS Code Extension** with authentication and Claude integration
+- **VS Code Extension v0.1.4** with authentication and Claude integration
 - **Cloudflare Worker API** deployed to https://shadow-clone-api.elijah-02b.workers.dev
 - **Prompt Protection System** - Prompts served via API, not local files
 - **PromptService** - Fetches and caches prompts with authentication
+- **Blockchain NFT Verification** - Direct on-chain verification for Ignis Elite
+- **License Claiming System** - API endpoints for NFT holders to claim licenses
 
 ### 🚧 In Progress
-- VS Code extension packaging (works in debug mode, issues with VSIX)
+- Dashboard integration for license claiming
 - Stripe payment integration
 - Instance management with DigitalOcean
 - Real-time execution monitoring
@@ -100,22 +117,58 @@ shadow-clone/
 - Advanced MCP server implementations
 
 ### 🔧 Current Development Focus
-**VS Code Extension Issues:**
-- Extension works perfectly in debug mode (F5 in VS Code)
-- Packaged VSIX has activation issues
-- Commands are registered but not properly activating
-- User moving to VS Code for direct development
-- All prompt protection and API integration is complete and working
+**License Integration for Dashboard:**
+- Implementing NFT verification UI in dashboard
+- Connecting wallet for ownership verification
+- License claiming flow for Ignis Elite holders
+- API key generation and secure storage
+
+## Ignis Elite NFT License System
+
+### NFT Contracts Verified
+```javascript
+IGNIS_CONTRACTS = {
+  PHASE_1: {
+    address: '0x42347db440ef412bbe19c0841895a4b98256885b',
+    tokenId: 1,
+    name: 'Ignis Elite Phase 1'
+  },
+  PHASE_2: {
+    address: '0x17a2b200cec625b431c3ae7334d2d8ddb41712ce',
+    tokenId: 0,
+    name: 'Ignis Elite Phase 2'
+  },
+  PHASE_3: {
+    address: '0xab505a667039d08d8e33cef95c81897a8b5fed1a',
+    tokenId: 0,
+    name: 'Ignis Elite Phase 3'
+  }
+}
+```
+
+### License Claiming API
+- **Check Ownership**: `GET /api/license/check/ignis?wallet={address}`
+- **Claim License**: `POST /api/license/claim/ignis`
+- **Get Availability**: `GET /api/license/availability`
+
+### Storage Structure (Cloudflare KV)
+- `license:{licenseId}` → Full license object
+- `license:wallet:{walletAddress}` → License claim record
+- `license:email:{email}` → License ID mapping
+- `license:nft:{contract}:{tokenId}` → NFT claim record
+- `license:count:{licenseType}` → Usage counter
 
 ## Important Business Rules
 
 1. **10 Agent Deployment Limit**: Waves with >10 agents split into sub-waves
 2. **Zero Unpaid Compute**: Instances terminate immediately at $0 balance
 3. **License Transfers**: $99 fee, 30-day cooldown
-4. **NFT Verification**: Periodic re-verification for tier benefits
-5. **Wave Folder Organization**: All deliverables organized in `$waves_directory/wave-X/` folders
-6. **Agent Isolation**: Each wave works in its own folder to prevent conflicts
-7. **Configurable Paths**: Users can set custom `waves_directory` (default: `./.waves/`)
+4. **NFT Verification**: Real-time blockchain verification at claim time
+5. **One License Per Wallet**: Prevents duplicate claims
+6. **One License Per Email**: Ensures unique user accounts
+7. **Wave Folder Organization**: All deliverables organized in `$waves_directory/wave-X/` folders
+8. **Agent Isolation**: Each wave works in its own folder to prevent conflicts
+9. **Configurable Paths**: Users can set custom `waves_directory` (default: `./.waves/`)
 
 ## Security Considerations
 
@@ -124,6 +177,9 @@ shadow-clone/
 - **API keys**: Hashed with bcrypt before storage
 - **Rate limiting**: Strict limits on auth and credit endpoints
 - **Auto-termination**: Prevents unpaid compute usage
+- **Prompt Protection**: All prompts served via authenticated API
+- **NFT Verification**: Direct blockchain calls prevent spoofing
+- **CORS Configuration**: Allows dashboard integration
 
 ## Common Tasks
 
@@ -133,6 +189,33 @@ cd backend
 cp .env.testing .env
 npm install
 npm run dev
+```
+
+### Deploy Cloudflare Worker
+```bash
+cd cloudflare-worker
+./deploy.sh
+```
+
+### Run VS Code Extension in Debug Mode
+```bash
+cd vscode-extension
+code .
+# Press F5 to launch
+```
+
+### Test NFT License Claiming
+```bash
+# Check NFT ownership
+curl -X GET "https://shadow-clone-api.elijah-02b.workers.dev/api/license/check/ignis?wallet=0xYourWalletAddress"
+
+# Claim license
+curl -X POST https://shadow-clone-api.elijah-02b.workers.dev/api/license/claim/ignis \
+  -H "Content-Type: application/json" \
+  -d '{
+    "walletAddress": "0xYourWalletAddress",
+    "email": "holder@example.com"
+  }'
 ```
 
 ### Custom Waves Directory
@@ -163,7 +246,8 @@ When working on Shadow Clone:
 
 ## Contact & Support
 
-- **GitHub Issues**: Report bugs and feature requests
+- **Support Email**: support@shadow-clone.ai
+- **License Inquiries**: license@shadow-clone.ai
 - **Deployment Guide**: See `DEPLOYMENT.md`
 - **Security**: Review `SECURITY_AUDIT_SUMMARY.md` before changes
 - **Testing**: Use `TESTING_GUIDE.md` for QA procedures
@@ -187,7 +271,36 @@ cd vscode-extension
 code .
 # Press F5 to launch
 
+# Package VS Code Extension
+cd vscode-extension
+npm run package
+# Creates shadow-clone-0.1.4.vsix
+
 # Test API Prompts
 curl -X GET https://shadow-clone-api.elijah-02b.workers.dev/api/prompts/shadow-clone \
   -H "X-API-Key: test-key-123"
+
+# Build Frontend
+cd frontend
+npm run build
+
+# Run Backend
+cd backend
+npm run dev
 ```
+
+## Recent Updates (2025-06-28)
+
+1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
+2. **VS Code Extension**: Version 0.1.4 packaged with updated licensing
+3. **NFT Verification**: Complete implementation with blockchain verification
+4. **Dashboard Integration**: Ready for license claiming UI implementation
+5. **Repository Links**: Removed from public-facing packages for security
+
+## Next Steps
+
+1. **Dashboard NFT Integration**: Implement the license claiming UI in the main dashboard
+2. **Payment Processing**: Complete Stripe integration for non-Ignis tiers
+3. **Instance Management**: Finalize DigitalOcean deployment automation
+4. **Production Launch**: Deploy to production environment
+5. **Marketing Site**: Launch public-facing website with NFT minting
