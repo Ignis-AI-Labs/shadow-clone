@@ -100,6 +100,9 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('shadowClone.authenticate', () => 
             authenticateCommand(authProvider)
         ),
+        vscode.commands.registerCommand('shadowClone.updateCredentials', () => 
+            authenticateCommand(authProvider, true)
+        ),
         vscode.commands.registerCommand('shadowClone.refreshLicense', async () => {
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Window,

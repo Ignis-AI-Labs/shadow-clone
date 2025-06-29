@@ -33,17 +33,26 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SHADOW_CLONE_WS = exports.SHADOW_CLONE_API = exports.DEFAULT_WS_ENDPOINT = exports.DEFAULT_API_ENDPOINT = exports.COMMANDS = exports.AGENT_OUTPUT_PATTERN = exports.WAVE_DIRECTORY_PATTERN = exports.DEPLOYMENT_LIMITS = exports.LICENSE_TYPES = void 0;
+exports.SHADOW_CLONE_WS = exports.SHADOW_CLONE_API = exports.DEFAULT_WS_ENDPOINT = exports.DEFAULT_API_ENDPOINT = exports.COMMANDS = exports.AGENT_OUTPUT_PATTERN = exports.WAVE_DIRECTORY_PATTERN = exports.DEPLOYMENT_LIMITS = exports.TEST_ADDRESSES = exports.LICENSE_TYPES = void 0;
 exports.getApiEndpoint = getApiEndpoint;
 exports.getWebSocketEndpoint = getWebSocketEndpoint;
 const vscode = __importStar(require("vscode"));
 // License types
 exports.LICENSE_TYPES = {
-    IGNIS_ELITE: 'ignis_elite',
+    TRIPLE_OG: 'tripleOG',
+    DOUBLE_OG: 'doubleOG',
+    SINGLE_OG: 'singleOG',
+    IGNIS_ELITE: 'ignisElite',
     PIONEER: 'pioneer',
     BUILDER: 'builder',
     RESERVE: 'reserve'
 };
+// Test addresses that are treated as tripleOG holders
+exports.TEST_ADDRESSES = [
+    "0xc7892218FfE73AaFA2Dc1Bd118d26c2C324c1291",
+    "0x4faa0fac32f844acaf59b5b5a72c0d38de8bd0cd",
+    "0x98164369278d01270158BaDc39A5b96f71758C13"
+];
 // Agent deployment limits
 exports.DEPLOYMENT_LIMITS = {
     MAX_AGENTS_PER_WAVE: 10,
@@ -63,8 +72,8 @@ exports.COMMANDS = {
     REFRESH_AGENTS: 'shadowClone.refreshAgents'
 };
 // Default API endpoints
-exports.DEFAULT_API_ENDPOINT = 'https://api.shadowclone.ai';
-exports.DEFAULT_WS_ENDPOINT = 'wss://api.shadowclone.ai/ws';
+exports.DEFAULT_API_ENDPOINT = 'https://api.ignislabs.ai';
+exports.DEFAULT_WS_ENDPOINT = 'wss://api.ignislabs.ai/ws';
 // Get API endpoint from settings or environment
 function getApiEndpoint() {
     try {

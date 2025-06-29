@@ -49,7 +49,7 @@ class AuthProvider {
     async authenticate(apiKey) {
         try {
             // Validate API key with backend
-            const response = await axios_1.default.post(`${(0, constants_1.getApiEndpoint)()}/auth/validate`, {
+            const response = await axios_1.default.post(`${(0, constants_1.getApiEndpoint)()}/shadow-clone-licenses/validate`, {
                 apiKey
             }, {
                 headers: {
@@ -57,21 +57,38 @@ class AuthProvider {
                 }
             });
             if (response.data.valid) {
-                // Store encrypted credentials
+                // Check if license is active
+                const isActive = response.data.isActive !== false;
+                // Store encrypted credentials regardless of active status
                 await this.context.secrets.store(AuthProvider.AUTH_KEY, JSON.stringify({
                     apiKey,
                     userId: response.data.userId,
                     licenseType: response.data.licenseType,
+                    isActive,
                     timestamp: Date.now()
                 }));
                 this._onDidChangeAuth.fire();
-                return true;
+                if (!isActive) {
+                    return {
+                        success: true,
+                        isActive: false,
+                        message: 'Your license is currently inactive. Please check your subscription status.'
+                    };
+                }
+                return { success: true, isActive: true };
             }
-            return false;
+            return { success: false, message: 'Invalid API key' };
         }
         catch (error) {
             console.error('Authentication failed:', error);
-            return false;
+            // Check for specific error messages
+            if (error.response?.status === 401) {
+                return { success: false, message: 'Invalid API key. Please check your credentials.' };
+            }
+            else if (error.response?.status === 403) {
+                return { success: false, message: 'Access denied. Your license may have expired.' };
+            }
+            return { success: false, message: 'Authentication failed. Please try again.' };
         }
     }
     async checkAuth() {
@@ -108,6 +125,14 @@ class AuthProvider {
     async logout() {
         await this.context.secrets.delete(AuthProvider.AUTH_KEY);
         this._onDidChangeAuth.fire();
+    }
+    async updateCredentials(apiKey) {
+        // This is essentially the same as authenticate but we're being explicit about updating
+        return this.authenticate(apiKey);
+    }
+    async isLicenseActive() {
+        const auth = await this.getAuth();
+        return auth?.isActive !== false;
     }
     async makeAuthenticatedRequest(url, options = {}) {
         const apiKey = await this.getApiKey();

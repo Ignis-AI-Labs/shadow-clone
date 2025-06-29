@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.showStatusCommand = showStatusCommand;
 const vscode = __importStar(require("vscode"));
 const constants_1 = require("../utils/constants");
-async function showStatusCommand(authProvider) {
+async function showStatusCommand(authProvider, licenseStatusManager) {
     const hasAuth = await authProvider.checkAuth();
     if (!hasAuth) {
         const choice = await vscode.window.showWarningMessage('Not authenticated with Shadow Clone', 'Authenticate', 'Cancel');
@@ -46,18 +46,58 @@ async function showStatusCommand(authProvider) {
         return;
     }
     try {
-        // Fetch user status and license information
-        const [userResponse, licenseResponse, projectsResponse] = await Promise.all([
-            authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/user/profile`),
-            authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/user/license-status`),
-            authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/projects?limit=5`)
+        // Fetch user status and license information from Ignis API
+        const [licenseResponse] = await Promise.all([
+            authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/shadow_clone_licenses`)
         ]);
-        const user = userResponse.data;
-        const license = licenseResponse.data;
-        const projects = projectsResponse.data;
+        const licenses = licenseResponse.data;
+        // Get the authenticated user's data from stored auth
+        const authData = await authProvider.getAuth();
+        // Find the user's license from the response
+        const userLicense = Array.isArray(licenses)
+            ? licenses.find((lic) => lic.api_key === authData.apiKey || lic.userId === authData.userId)
+            : licenses;
+        if (!userLicense) {
+            vscode.window.showErrorMessage('Could not find your license information');
+            return;
+        }
+        // Build user object from license data
+        const user = {
+            id: userLicense.userId || authData.userId,
+            licenseType: userLicense.license_type || userLicense.licenseType || authData.licenseType,
+            email: userLicense.email,
+            activeProjects: 0,
+            totalDeployments: 0
+        };
+        const license = {
+            isActive: userLicense.is_active !== false,
+            features: {
+                maxConcurrentProjects: 5,
+                prioritySupport: ['tripleOG', 'creator'].includes(user.licenseType),
+                earlyAccess: ['tripleOG', 'creator', 'doubleOG'].includes(user.licenseType)
+            },
+            expiresAt: null // NFT holders have lifetime access
+        };
+        // If license is inactive, show warning
+        if (!license.isActive) {
+            const choice = await vscode.window.showWarningMessage('Your Shadow Clone license is currently inactive. Would you like to update your API key?', 'Update API Key', 'View Status Anyway', 'Contact Support');
+            if (choice === 'Update API Key') {
+                vscode.commands.executeCommand('shadowClone.updateCredentials');
+                return;
+            }
+            else if (choice === 'Contact Support') {
+                vscode.env.openExternal(vscode.Uri.parse('https://ignislabs.ai/support'));
+                return;
+            }
+            // Continue to show status if "View Status Anyway" is selected
+        }
+        const projects = []; // Projects not available from this endpoint
         // Format license type display
         const licenseDisplay = {
-            [constants_1.LICENSE_TYPES.IGNIS_ELITE]: '🔥 Ignis Elite (NFT Holder)',
+            [constants_1.LICENSE_TYPES.TRIPLE_OG]: '🔥 Triple OG (All Phases)',
+            [constants_1.LICENSE_TYPES.DOUBLE_OG]: '🚀 Double OG (Phase 1)',
+            [constants_1.LICENSE_TYPES.SINGLE_OG]: '💎 Single OG (Phase 2)',
+            [constants_1.LICENSE_TYPES.IGNIS_ELITE]: '✨ Ignis Elite (Phase 3)',
             [constants_1.LICENSE_TYPES.PIONEER]: '🚀 Pioneer License',
             [constants_1.LICENSE_TYPES.BUILDER]: '🏗️ Builder License',
             [constants_1.LICENSE_TYPES.RESERVE]: '💎 Reserve License'
@@ -75,6 +115,24 @@ async function showStatusCommand(authProvider) {
             projects,
             extensionVersion: vscode.extensions.getExtension('shadow-clone.shadow-clone')?.packageJSON.version || '0.1.0'
         });
+        // Handle messages from the webview
+        panel.webview.onDidReceiveMessage(message => {
+            switch (message.command) {
+                case 'createProject':
+                    vscode.commands.executeCommand('shadowClone.createProject');
+                    break;
+                case 'updateCredentials':
+                    vscode.commands.executeCommand('shadowClone.updateCredentials');
+                    panel.dispose();
+                    break;
+                case 'manageLicense':
+                    vscode.env.openExternal(vscode.Uri.parse('https://ignislabs.ai/dashboard'));
+                    break;
+                case 'viewDocs':
+                    vscode.env.openExternal(vscode.Uri.parse('https://docs.shadow-clone.ai'));
+                    break;
+            }
+        }, undefined, []);
     }
     catch (error) {
         vscode.window.showErrorMessage(`Failed to fetch status: ${error.message}`);
@@ -221,6 +279,13 @@ function getStatusWebviewContent(data) {
                 <span class="license-badge">${user.licenseDisplay}</span>
             </div>
             
+            ${!license.isActive ? `
+            <div style="background-color: var(--vscode-inputValidation-errorBackground); border: 1px solid var(--vscode-inputValidation-errorBorder); padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                <strong style="color: var(--vscode-errorForeground);">⚠️ License Inactive</strong><br>
+                Your Shadow Clone license is currently inactive. Please check your subscription status or update your API key.
+            </div>
+            ` : ''}
+            
             <div class="stat-grid">
                 <div class="stat-item">
                     <div class="stat-label">Account ID</div>
@@ -228,7 +293,7 @@ function getStatusWebviewContent(data) {
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">License Status</div>
-                    <div class="stat-value">${license.isActive ? 'Active' : 'Inactive'}</div>
+                    <div class="stat-value" style="${!license.isActive ? 'color: var(--vscode-errorForeground);' : ''}">${license.isActive ? 'Active' : 'Inactive'}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Active Projects</div>
@@ -248,7 +313,11 @@ function getStatusWebviewContent(data) {
             </div>
             
             <div class="action-buttons">
+                ${license.isActive ? `
                 <button class="button" onclick="createProject()">Create Project</button>
+                ` : `
+                <button class="button" onclick="updateCredentials()">Update API Key</button>
+                `}
                 <button class="button" onclick="manageLicense()">Manage License</button>
                 <button class="button" onclick="viewDocs()">Documentation</button>
             </div>
@@ -270,7 +339,7 @@ function getStatusWebviewContent(data) {
         
         <div class="footer">
             Shadow Clone Extension v${extensionVersion} • 
-            ${user.licenseType === constants_1.LICENSE_TYPES.IGNIS_ELITE ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
+            ${['tripleOG', 'doubleOG', 'singleOG', 'ignisElite'].includes(user.licenseType) ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
         </div>
     </div>
     
@@ -279,6 +348,10 @@ function getStatusWebviewContent(data) {
         
         function createProject() {
             vscode.postMessage({ command: 'createProject' });
+        }
+        
+        function updateCredentials() {
+            vscode.postMessage({ command: 'updateCredentials' });
         }
         
         function manageLicense() {

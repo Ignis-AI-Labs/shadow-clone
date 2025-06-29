@@ -35,9 +35,9 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticateCommand = authenticateCommand;
 const vscode = __importStar(require("vscode"));
-async function authenticateCommand(authProvider) {
+async function authenticateCommand(authProvider, isUpdate = false) {
     const apiKey = await vscode.window.showInputBox({
-        prompt: 'Enter your Shadow Clone API key',
+        prompt: isUpdate ? 'Enter your new Shadow Clone API key' : 'Enter your Shadow Clone API key',
         password: true,
         placeHolder: 'sk-...',
         validateInput: (value) => {
@@ -50,30 +50,52 @@ async function authenticateCommand(authProvider) {
     if (!apiKey) {
         return;
     }
-    const authenticated = await vscode.window.withProgress({
+    const result = await vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
-        title: 'Authenticating with Shadow Clone...',
+        title: isUpdate ? 'Updating Shadow Clone credentials...' : 'Authenticating with Shadow Clone...',
         cancellable: false
     }, async () => {
-        return await authProvider.authenticate(apiKey);
+        return isUpdate ? await authProvider.updateCredentials(apiKey) : await authProvider.authenticate(apiKey);
     });
-    if (authenticated) {
+    if (result.success) {
         const licenseType = await authProvider.getLicenseType();
         const licenseDisplay = {
-            'ignis_elite': '🔥 Ignis Elite (NFT)',
+            'tripleOG': '🔥 Triple OG (All Phases)',
+            'doubleOG': '🚀 Double OG (Phase 1)',
+            'singleOG': '💎 Single OG (Phase 2)',
+            'ignisElite': '✨ Ignis Elite (Phase 3)',
+            'ignis_elite_phase_1': '🔥 Ignis Elite Phase 1 (NFT)',
+            'ignis_elite_phase_2': '🚀 Ignis Elite Phase 2 (NFT)',
+            'ignis_elite_phase_3': '💎 Ignis Elite Phase 3 (NFT)',
             'pioneer': '🚀 Pioneer',
             'builder': '🏗️ Builder',
             'reserve': '💎 Reserve'
         };
         const displayText = licenseType ? (licenseDisplay[licenseType] || licenseType) : 'Unknown';
-        vscode.window.showInformationMessage(`Successfully authenticated! ${displayText} License Active`, 'View Status').then(action => {
-            if (action === 'View Status') {
+        if (result.isActive === false) {
+            // License is valid but inactive
+            const choice = await vscode.window.showWarningMessage(`${displayText} - ${result.message || 'Your license is currently inactive.'}`, 'View Status', 'Update API Key', 'Contact Support');
+            if (choice === 'View Status') {
                 vscode.commands.executeCommand('shadowClone.showStatus');
             }
-        });
+            else if (choice === 'Update API Key') {
+                vscode.commands.executeCommand('shadowClone.updateCredentials');
+            }
+            else if (choice === 'Contact Support') {
+                vscode.env.openExternal(vscode.Uri.parse('https://ignislabs.ai/support'));
+            }
+        }
+        else {
+            // License is active
+            vscode.window.showInformationMessage(`Successfully authenticated! ${displayText} License Active`, 'View Status').then(action => {
+                if (action === 'View Status') {
+                    vscode.commands.executeCommand('shadowClone.showStatus');
+                }
+            });
+        }
     }
     else {
-        const retry = await vscode.window.showErrorMessage('Authentication failed. Please check your API key.', 'Try Again', 'Cancel');
+        const retry = await vscode.window.showErrorMessage(result.message || 'Authentication failed. Please check your API key.', 'Try Again', 'Cancel');
         if (retry === 'Try Again') {
             vscode.commands.executeCommand('shadowClone.authenticate');
         }

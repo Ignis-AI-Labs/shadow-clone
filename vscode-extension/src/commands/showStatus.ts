@@ -59,6 +59,25 @@ export async function showStatusCommand(authProvider: AuthProvider, licenseStatu
             expiresAt: null // NFT holders have lifetime access
         };
         
+        // If license is inactive, show warning
+        if (!license.isActive) {
+            const choice = await vscode.window.showWarningMessage(
+                'Your Shadow Clone license is currently inactive. Would you like to update your API key?',
+                'Update API Key',
+                'View Status Anyway',
+                'Contact Support'
+            );
+            
+            if (choice === 'Update API Key') {
+                vscode.commands.executeCommand('shadowClone.updateCredentials');
+                return;
+            } else if (choice === 'Contact Support') {
+                vscode.env.openExternal(vscode.Uri.parse('https://ignislabs.ai/support'));
+                return;
+            }
+            // Continue to show status if "View Status Anyway" is selected
+        }
+        
         const projects: any[] = []; // Projects not available from this endpoint
 
         // Format license type display
@@ -91,6 +110,29 @@ export async function showStatusCommand(authProvider: AuthProvider, licenseStatu
             projects,
             extensionVersion: vscode.extensions.getExtension('shadow-clone.shadow-clone')?.packageJSON.version || '0.1.0'
         });
+
+        // Handle messages from the webview
+        panel.webview.onDidReceiveMessage(
+            message => {
+                switch (message.command) {
+                    case 'createProject':
+                        vscode.commands.executeCommand('shadowClone.createProject');
+                        break;
+                    case 'updateCredentials':
+                        vscode.commands.executeCommand('shadowClone.updateCredentials');
+                        panel.dispose();
+                        break;
+                    case 'manageLicense':
+                        vscode.env.openExternal(vscode.Uri.parse('https://ignislabs.ai/dashboard'));
+                        break;
+                    case 'viewDocs':
+                        vscode.env.openExternal(vscode.Uri.parse('https://docs.shadow-clone.ai'));
+                        break;
+                }
+            },
+            undefined,
+            []
+        );
 
     } catch (error: any) {
         vscode.window.showErrorMessage(`Failed to fetch status: ${error.message}`);
@@ -239,6 +281,13 @@ function getStatusWebviewContent(data: any): string {
                 <span class="license-badge">${user.licenseDisplay}</span>
             </div>
             
+            ${!license.isActive ? `
+            <div style="background-color: var(--vscode-inputValidation-errorBackground); border: 1px solid var(--vscode-inputValidation-errorBorder); padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                <strong style="color: var(--vscode-errorForeground);">⚠️ License Inactive</strong><br>
+                Your Shadow Clone license is currently inactive. Please check your subscription status or update your API key.
+            </div>
+            ` : ''}
+            
             <div class="stat-grid">
                 <div class="stat-item">
                     <div class="stat-label">Account ID</div>
@@ -246,7 +295,7 @@ function getStatusWebviewContent(data: any): string {
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">License Status</div>
-                    <div class="stat-value">${license.isActive ? 'Active' : 'Inactive'}</div>
+                    <div class="stat-value" style="${!license.isActive ? 'color: var(--vscode-errorForeground);' : ''}">${license.isActive ? 'Active' : 'Inactive'}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Active Projects</div>
@@ -266,7 +315,11 @@ function getStatusWebviewContent(data: any): string {
             </div>
             
             <div class="action-buttons">
+                ${license.isActive ? `
                 <button class="button" onclick="createProject()">Create Project</button>
+                ` : `
+                <button class="button" onclick="updateCredentials()">Update API Key</button>
+                `}
                 <button class="button" onclick="manageLicense()">Manage License</button>
                 <button class="button" onclick="viewDocs()">Documentation</button>
             </div>
@@ -297,6 +350,10 @@ function getStatusWebviewContent(data: any): string {
         
         function createProject() {
             vscode.postMessage({ command: 'createProject' });
+        }
+        
+        function updateCredentials() {
+            vscode.postMessage({ command: 'updateCredentials' });
         }
         
         function manageLicense() {
