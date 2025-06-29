@@ -12,26 +12,6 @@ export async function handleAuthValidate(request: Request, env: Env): Promise<Re
       return jsonResponse({ valid: false, error: 'Missing API key' }, 400);
     }
 
-    // For demo purposes, create test users
-    if (apiKey === 'test-key-123') {
-      const testUser = {
-        id: 'test-user-123',
-        email: 'test@example.com',
-        name: 'Test User',
-        licenseType: 'pioneer' as const,
-        createdAt: new Date().toISOString(),
-      };
-
-      // Store test user
-      await env.USERS.put('test-user-123', JSON.stringify(testUser));
-      await env.API_KEYS.put('test-key-123', 'test-user-123');
-
-      return jsonResponse({
-        valid: true,
-        userId: testUser.id,
-        licenseType: testUser.licenseType,
-      });
-    }
 
     // Look up the API key
     const userId = await env.API_KEYS.get(apiKey);

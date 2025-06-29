@@ -24,7 +24,7 @@ npm run package:prod
 # Start mock server (in terminal 1)
 PORT=3001 node test-server.js
 
-# Test API key: test-key-123
+# Test API key: YOUR_API_KEY
 ```
 
 ### 3. Install Extension
@@ -54,7 +54,7 @@ PORT=3001 node test-server.js
 1. Click Shadow Clone icon in activity bar
 2. Click "Authenticate" 
 3. Enter API key:
-   - Test: `test-key-123`
+   - Test: Your development API key
    - Production: Your actual API key
 
 ## Testing Checklist

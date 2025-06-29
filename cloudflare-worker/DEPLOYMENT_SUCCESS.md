@@ -24,7 +24,7 @@ OR add to your VS Code settings.json:
 ## Test Authentication
 
 1. Click the "$(key) Authenticate" button in VS Code status bar
-2. Enter the test API key: `test-key-123`
+2. Enter your API key
 3. You should see "$(check) License Active" with Pioneer license
 
 ## API Endpoints
@@ -45,11 +45,11 @@ All endpoints are live and accessible:
 # Test authentication
 curl -X POST https://shadow-clone-api.elijah-02b.workers.dev/auth/validate \
   -H 'Content-Type: application/json' \
-  -d '{"apiKey": "test-key-123"}'
+  -d '{"apiKey": "YOUR_API_KEY"}'
 
 # Get user profile (requires API key header)
 curl https://shadow-clone-api.elijah-02b.workers.dev/user/profile \
-  -H 'X-API-Key: test-key-123'
+  -H 'X-API-Key: YOUR_API_KEY'
 ```
 
 ## Management

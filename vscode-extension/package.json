@@ -2,7 +2,7 @@
   "name": "shadow-clone",
   "displayName": "Shadow Clone AI Agent Orchestrator",
   "description": "Deploy teams of specialized AI agents to complete complex software projects. Currently exclusive to Ignis Elite NFT holders.",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "publisher": "IgnisAILabsLLC",
   "private": false,
   "license": "Proprietary",
@@ -191,8 +191,8 @@
       "properties": {
         "shadowClone.apiEndpoint": {
           "type": "string",
-          "default": "https://shadow-clone-api.elijah-02b.workers.dev",
-          "description": "Shadow Clone API endpoint. Set this to your Cloudflare Worker URL (e.g., https://shadow-clone.your-subdomain.workers.dev)"
+          "default": "https://api.ignislabs.ai",
+          "description": "Shadow Clone API endpoint (default: https://api.ignislabs.ai)"
         },
         "shadowClone.wavesDirectory": {
           "type": "string",

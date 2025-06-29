@@ -37,7 +37,7 @@ This is the Cloudflare Worker implementation of the Shadow Clone API.
 
 ## Test API Key
 
-For testing, the worker accepts `test-key-123` as a valid API key which creates a test user with Pioneer license.
+For testing, configure your own test API key which creates a test user with Pioneer license.
 
 ## API Endpoints
 

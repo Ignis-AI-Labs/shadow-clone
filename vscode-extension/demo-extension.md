@@ -3,7 +3,7 @@
 ## What's Running Now
 
 ✅ **Mock API Server** is running on port 3001
-- Test API Key: `test-key-123`
+- Test API Key: Configure your own test key
 - Simulates all Shadow Clone backend endpoints
 
 ## To Test the Extension in VS Code
@@ -24,7 +24,7 @@
    - Click it to open Shadow Clone panel
 
 4. **Test the features**:
-   - Click "Authenticate" → Enter API key: `test-key-123`
+   - Click "Authenticate" → Enter your API key
    - You'll see two tree views:
      - **Projects**: Shows your existing projects
      - **Active Agents**: Shows running AI agents

@@ -52,9 +52,8 @@ async function createAdminUser() {
     console.log('Admin user created successfully!');
 }
 
-// For testing, you can use the test key
-console.log('For testing, you can use: test-key-123');
-console.log('Or create a real admin user by running this script with your Cloudflare credentials');
+// To create an admin user, run this script with your Cloudflare credentials
+console.log('Update the Cloudflare credentials above and run this script to create an admin user');
 
 // Uncomment to run:
 // createAdminUser();

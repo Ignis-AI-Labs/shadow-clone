@@ -15,7 +15,7 @@ export class AuthProvider {
     async authenticate(apiKey: string): Promise<boolean> {
         try {
             // Validate API key with backend
-            const response = await axios.post(`${getApiEndpoint()}/auth/validate`, {
+            const response = await axios.post(`${getApiEndpoint()}/shadow-clone-licenses/validate`, {
                 apiKey
             }, {
                 headers: {

@@ -13,7 +13,7 @@ Ensure these files exist in your project root:
 2. **Check Authentication**
    - Look for status bar buttons (bottom right)
    - Click "$(key) Authenticate" 
-   - Enter: `test-key-123`
+   - Enter your API key
    - Should show "$(check) License Active"
 
 3. **Launch Claude**

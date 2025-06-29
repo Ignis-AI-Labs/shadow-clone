@@ -47,11 +47,11 @@ The API will be deployed to: `https://shadow-clone-api.elijah-02b.workers.dev`
 # Test authentication
 curl -X POST https://shadow-clone-api.elijah-02b.workers.dev/auth/validate \
   -H "Content-Type: application/json" \
-  -d '{"apiKey": "test-key-123"}'
+  -d '{"apiKey": "YOUR_API_KEY"}'
 
 # Test fetching prompts
 curl -X GET https://shadow-clone-api.elijah-02b.workers.dev/api/prompts/shadow-clone \
-  -H "X-API-Key: test-key-123"
+  -H "X-API-Key: YOUR_API_KEY"
 ```
 
 ## VS Code Extension Setup
@@ -93,7 +93,7 @@ code --install-extension shadow-clone-0.1.0.vsix
 ## Testing the Full System
 
 1. **Open VS Code** with the extension installed
-2. **Authenticate** with test key: `test-key-123`
+2. **Authenticate** with your API key
 3. **Launch Claude** using the status bar button
 4. **Select a mode** (e.g., audit, feature, debug)
 5. **Paste the command** into Claude when ready
@@ -123,7 +123,7 @@ code --install-extension shadow-clone-0.1.0.vsix
 ## Security Notes
 
 1. **API Token**: The Cloudflare API token is stored in `.env` (not committed to git)
-2. **Test Mode**: Uses `test-key-123` for development
+2. **Test Mode**: Use your development API key for testing
 3. **Prompt Protection**: Prompts are served via API, never stored locally
 4. **Authentication**: All prompt endpoints require valid API key
 

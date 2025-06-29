@@ -70,7 +70,7 @@ app.use(express.json());
 // Mock auth endpoint
 app.post('/auth/validate', (req, res) => {
   const { apiKey } = req.body;
-  if (apiKey === 'test-key-123') {
+  if (apiKey === 'YOUR_TEST_API_KEY') {
     res.json({
       valid: true,
       userId: '123',

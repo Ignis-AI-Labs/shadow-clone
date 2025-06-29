@@ -32,9 +32,10 @@ export async function showStatusCommand(authProvider: AuthProvider) {
 
         // Format license type display
         const licenseDisplay = {
-            [LICENSE_TYPES.IGNIS_ELITE_PHASE_1]: '🔥 Ignis Elite Phase 1 (NFT)',
-            [LICENSE_TYPES.IGNIS_ELITE_PHASE_2]: '🚀 Ignis Elite Phase 2 (NFT)',
-            [LICENSE_TYPES.IGNIS_ELITE_PHASE_3]: '💎 Ignis Elite Phase 3 (NFT)',
+            [LICENSE_TYPES.TRIPLE_OG]: '🔥 Triple OG (All Phases)',
+            [LICENSE_TYPES.DOUBLE_OG]: '🚀 Double OG (Phase 1)',
+            [LICENSE_TYPES.SINGLE_OG]: '💎 Single OG (Phase 2)',
+            [LICENSE_TYPES.IGNIS_ELITE]: '✨ Ignis Elite (Phase 3)',
             [LICENSE_TYPES.PIONEER]: '🚀 Pioneer License',
             [LICENSE_TYPES.BUILDER]: '🏗️ Builder License',
             [LICENSE_TYPES.RESERVE]: '💎 Reserve License'
@@ -256,7 +257,7 @@ function getStatusWebviewContent(data: any): string {
         
         <div class="footer">
             Shadow Clone Extension v${extensionVersion} • 
-            ${user.licenseType?.startsWith('ignis_elite') ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
+            ${['tripleOG', 'doubleOG', 'singleOG', 'ignisElite'].includes(user.licenseType) ? 'NFT Verified ✓' : `License #${user.licenseNumber || 'N/A'}`}
         </div>
     </div>
     

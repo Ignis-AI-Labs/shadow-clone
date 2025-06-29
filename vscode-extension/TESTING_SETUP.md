@@ -28,12 +28,12 @@
 
 4. **Authenticate**
    - Click the "$(key) Authenticate" button in status bar
-   - Enter test API key: `test-key-123`
+   - Enter your API key
    - You should see "$(check) License Active"
 
 ## Test Server Details
 
-- **Test API Key**: `test-key-123`
+- **Test API Key**: Use your development API key
 - **Test User**: Pioneer license type
 - **Mock Data**: 2 sample projects with deployments
 

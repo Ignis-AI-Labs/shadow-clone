@@ -17,7 +17,7 @@
      - "$(terminal) Launch Claude" button
    
    - Click "$(key) Authenticate"
-   - Enter test API key: `test-key-123`
+   - Enter your API key
    - Should change to "$(check) License Active"
 
 ## Testing Features
@@ -55,7 +55,7 @@
   ```bash
   curl https://shadow-clone-api.elijah-02b.workers.dev/auth/validate \
     -H 'Content-Type: application/json' \
-    -d '{"apiKey": "test-key-123"}'
+    -d '{"apiKey": "YOUR_API_KEY"}'
   ```
 
 **Want to use a different API key?**

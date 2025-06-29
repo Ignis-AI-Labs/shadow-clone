@@ -257,15 +257,12 @@ Remember: Shadow Clone is about exclusivity, quality, and empowering users to bu
 ## Development Environment
 
 ### API Credentials
-- **Cloudflare API Token**: Stored in `/cloudflare-worker/.env`
-- **Test API Key**: `test-key-123` (for development)
-- **API Endpoint**: https://shadow-clone-api.elijah-02b.workers.dev
+- **API Endpoint**: https://api.ignislabs.ai (production)
+- **Authentication**: All API keys managed through Ignis Dashboard
+- **Note**: The old Cloudflare Worker has been deprecated and should be deleted
 
 ### Quick Commands
 ```bash
-# Deploy Cloudflare Worker
-cd cloudflare-worker && ./deploy.sh
-
 # Run VS Code Extension in Debug Mode
 cd vscode-extension
 code .
@@ -274,11 +271,13 @@ code .
 # Package VS Code Extension
 cd vscode-extension
 npm run package
-# Creates shadow-clone-0.1.4.vsix
+# Creates shadow-clone-0.1.6.vsix
 
-# Test API Prompts
-curl -X GET https://shadow-clone-api.elijah-02b.workers.dev/api/prompts/shadow-clone \
-  -H "X-API-Key: test-key-123"
+# Test API (requires valid API key from Ignis dashboard)
+curl -X POST https://api.ignislabs.ai/shadow-clone-licenses/validate \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -d '{"apiKey": "YOUR_API_KEY"}'
 
 # Build Frontend
 cd frontend

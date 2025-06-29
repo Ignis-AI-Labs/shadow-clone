@@ -2,13 +2,21 @@ import * as vscode from 'vscode';
 
 // License types
 export const LICENSE_TYPES = {
-    IGNIS_ELITE_PHASE_1: 'ignis_elite_phase_1',
-    IGNIS_ELITE_PHASE_2: 'ignis_elite_phase_2',
-    IGNIS_ELITE_PHASE_3: 'ignis_elite_phase_3',
+    TRIPLE_OG: 'tripleOG',
+    DOUBLE_OG: 'doubleOG',
+    SINGLE_OG: 'singleOG',
+    IGNIS_ELITE: 'ignisElite',
     PIONEER: 'pioneer',
     BUILDER: 'builder',
     RESERVE: 'reserve'
 } as const;
+
+// Test addresses that are treated as tripleOG holders
+export const TEST_ADDRESSES = [
+    "0xc7892218FfE73AaFA2Dc1Bd118d26c2C324c1291",
+    "0x4faa0fac32f844acaf59b5b5a72c0d38de8bd0cd",
+    "0x98164369278d01270158BaDc39A5b96f71758C13"
+];
 
 // Agent deployment limits
 export const DEPLOYMENT_LIMITS = {
@@ -32,8 +40,8 @@ export const COMMANDS = {
 } as const;
 
 // Default API endpoints
-export const DEFAULT_API_ENDPOINT = 'https://api.shadowclone.ai';
-export const DEFAULT_WS_ENDPOINT = 'wss://api.shadowclone.ai/ws';
+export const DEFAULT_API_ENDPOINT = 'https://api.ignislabs.ai';
+export const DEFAULT_WS_ENDPOINT = 'wss://api.ignislabs.ai/ws';
 
 // Get API endpoint from settings or environment
 export function getApiEndpoint(): string {
