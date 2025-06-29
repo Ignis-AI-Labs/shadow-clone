@@ -18,12 +18,15 @@ import { SecurityTelemetryService } from './services/securityTelemetry';
 import { CommandInterceptor } from './utils/commandInterceptor';
 import { setTelemetryInstance } from './services/telemetryHandler';
 import { TerminalMonitor } from './utils/terminalMonitor';
+import { getApiEndpoint } from './utils/constants';
+import { LicenseStatusManager } from './services/licenseStatusManager';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
 let telemetryService: SecurityTelemetryService;
 let commandInterceptor: CommandInterceptor;
 let terminalMonitor: TerminalMonitor;
+let licenseStatusManager: LicenseStatusManager;
 let isActivated = false;
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -41,6 +44,14 @@ export async function activate(context: vscode.ExtensionContext) {
     // Initialize providers
     authProvider = new AuthProvider(context);
     sessionManager = new ClaudeSessionManager(context);
+    
+    // Show startup message
+    const hasAuthOnStartup = await authProvider.checkAuth();
+    if (hasAuthOnStartup) {
+        vscode.window.setStatusBarMessage('$(sync~spin) Shadow Clone: Verifying license...', 3000);
+    }
+    
+    licenseStatusManager = new LicenseStatusManager(context, authProvider);
     
     // Initialize security telemetry
     telemetryService = new SecurityTelemetryService(context, authProvider);
@@ -89,6 +100,15 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('shadowClone.authenticate', () => 
             authenticateCommand(authProvider)
         ),
+        vscode.commands.registerCommand('shadowClone.refreshLicense', async () => {
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Window,
+                title: 'Refreshing license status...'
+            }, async () => {
+                await licenseStatusManager.refreshStatus();
+            });
+            vscode.window.showInformationMessage('License status refreshed');
+        }),
         vscode.commands.registerCommand('shadowClone.createProject', () => 
             createProjectCommand(authProvider, projectProvider)
         ),
@@ -96,7 +116,7 @@ export async function activate(context: vscode.ExtensionContext) {
             deployAgentsCommand(authProvider, agentProvider)
         ),
         vscode.commands.registerCommand('shadowClone.showStatus', () => 
-            showStatusCommand(authProvider)
+            showStatusCommand(authProvider, licenseStatusManager)
         ),
         vscode.commands.registerCommand('shadowClone.refreshProjects', () => 
             projectProvider.refresh()
@@ -251,11 +271,29 @@ export async function activate(context: vscode.ExtensionContext) {
     const updateAuthButton = async () => {
         const hasAuth = await authProvider.checkAuth();
         if (hasAuth) {
-            const licenseType = await authProvider.getLicenseType();
-            authButton.text = '$(check) License Active';
-            authButton.tooltip = `Shadow Clone ${licenseType} - Click to view status`;
+            const status = licenseStatusManager.getStatus();
+            
+            if (status) {
+                if (status.isActive) {
+                    authButton.text = '$(check) License Active';
+                    authButton.tooltip = `Shadow Clone ${status.licenseType} - Last checked: ${status.lastChecked.toLocaleTimeString()}`;
+                    authButton.backgroundColor = undefined;
+                } else {
+                    authButton.text = '$(warning) License Inactive';
+                    authButton.tooltip = `Shadow Clone ${status.licenseType} - License is inactive`;
+                    authButton.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
+                }
+            } else {
+                // Status not yet loaded
+                authButton.text = '$(sync~spin) Checking License...';
+                authButton.tooltip = 'Verifying license status...';
+                authButton.backgroundColor = undefined;
+                
+                // Trigger status check
+                licenseStatusManager.checkLicenseStatus();
+            }
+            
             authButton.command = 'shadowClone.showStatus';
-            authButton.backgroundColor = undefined;
         } else {
             authButton.text = '$(key) Authenticate';
             authButton.tooltip = 'Click to authenticate with Shadow Clone';
@@ -267,6 +305,10 @@ export async function activate(context: vscode.ExtensionContext) {
     
     // Update auth button when auth changes
     authProvider.onDidChangeAuth(() => updateAuthButton());
+    
+    // Update auth button when license status changes
+    licenseStatusManager.onStatusChanged(() => updateAuthButton());
+    
     updateAuthButton();
     context.subscriptions.push(authButton);
 

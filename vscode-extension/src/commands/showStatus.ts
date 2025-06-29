@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from '../auth/authProvider';
 import { getApiEndpoint, LICENSE_TYPES } from '../utils/constants';
+import { LicenseStatusManager } from '../services/licenseStatusManager';
 
-export async function showStatusCommand(authProvider: AuthProvider) {
+export async function showStatusCommand(authProvider: AuthProvider, licenseStatusManager?: LicenseStatusManager) {
     const hasAuth = await authProvider.checkAuth();
     
     if (!hasAuth) {
@@ -19,16 +20,46 @@ export async function showStatusCommand(authProvider: AuthProvider) {
     }
 
     try {
-        // Fetch user status and license information
-        const [userResponse, licenseResponse, projectsResponse] = await Promise.all([
-            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/user/profile`),
-            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/user/license-status`),
-            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/projects?limit=5`)
+        // Fetch user status and license information from Ignis API
+        const [licenseResponse] = await Promise.all([
+            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/shadow_clone_licenses`)
         ]);
 
-        const user = userResponse.data;
-        const license = licenseResponse.data;
-        const projects = projectsResponse.data;
+        const licenses = licenseResponse.data;
+        
+        // Get the authenticated user's data from stored auth
+        const authData = await authProvider.getAuth();
+        
+        // Find the user's license from the response
+        const userLicense = Array.isArray(licenses) 
+            ? licenses.find((lic: any) => lic.api_key === authData.apiKey || lic.userId === authData.userId)
+            : licenses;
+            
+        if (!userLicense) {
+            vscode.window.showErrorMessage('Could not find your license information');
+            return;
+        }
+        
+        // Build user object from license data
+        const user = {
+            id: userLicense.userId || authData.userId,
+            licenseType: userLicense.license_type || userLicense.licenseType || authData.licenseType,
+            email: userLicense.email,
+            activeProjects: 0,
+            totalDeployments: 0
+        };
+        
+        const license = {
+            isActive: userLicense.is_active !== false,
+            features: {
+                maxConcurrentProjects: 5,
+                prioritySupport: ['tripleOG', 'creator'].includes(user.licenseType),
+                earlyAccess: ['tripleOG', 'creator', 'doubleOG'].includes(user.licenseType)
+            },
+            expiresAt: null // NFT holders have lifetime access
+        };
+        
+        const projects: any[] = []; // Projects not available from this endpoint
 
         // Format license type display
         const licenseDisplay = {

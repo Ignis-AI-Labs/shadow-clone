@@ -87,7 +87,7 @@ shadow-clone/
 7. **`cloudflare-worker/`** - API serving prompts and handling auth
 8. **`DEVELOPMENT_SETUP.md`** - Complete dev environment setup
 
-## Current Implementation Status (Updated 2025-06-28)
+## Current Implementation Status (Updated 2025-06-29)
 
 ### ✅ Completed
 - Agent orchestration system with 10-agent deployment limit
@@ -97,12 +97,15 @@ shadow-clone/
 - Prepaid credit system with auto-termination
 - Security hardening (auth, rate limiting, input validation)
 - MCP integration design for enhanced agent capabilities
-- **VS Code Extension v0.1.4** with authentication and Claude integration
+- **VS Code Extension v0.2.0** with authentication, Claude integration, and automatic license verification
 - **Cloudflare Worker API** deployed to https://shadow-clone-api.elijah-02b.workers.dev
 - **Prompt Protection System** - Prompts served via API, not local files
 - **PromptService** - Fetches and caches prompts with authentication
 - **Blockchain NFT Verification** - Direct on-chain verification for Ignis Elite
 - **License Claiming System** - API endpoints for NFT holders to claim licenses
+- **Automatic License Refresh** - 30-minute automatic status checks
+- **Startup License Verification** - Validates license on VS Code startup
+- **Complete Test Credential Removal** - Enhanced security with no hardcoded credentials
 
 ### 🚧 In Progress
 - Dashboard integration for license claiming
@@ -117,11 +120,13 @@ shadow-clone/
 - Advanced MCP server implementations
 
 ### 🔧 Current Development Focus
-**License Integration for Dashboard:**
-- Implementing NFT verification UI in dashboard
-- Connecting wallet for ownership verification
-- License claiming flow for Ignis Elite holders
-- API key generation and secure storage
+**VS Code Extension Enhancements:**
+- ✅ Implemented automatic 30-minute license status refresh
+- ✅ Added startup license verification with progress indicator
+- ✅ Migrated to Ignis Dashboard API (api.ignislabs.ai)
+- ✅ Removed all test credentials for enhanced security
+- ✅ Created LicenseStatusManager service for centralized license handling
+- 🚧 Addressing VSIX packaging issues (extension works in debug mode)
 
 ## Ignis Elite NFT License System
 
@@ -259,7 +264,11 @@ Remember: Shadow Clone is about exclusivity, quality, and empowering users to bu
 ### API Credentials
 - **API Endpoint**: https://api.ignislabs.ai (production)
 - **Authentication**: All API keys managed through Ignis Dashboard
-- **Note**: The old Cloudflare Worker has been deprecated and should be deleted
+- **Old Worker**: https://shadow-clone-api.elijah-02b.workers.dev (deprecated, to be removed)
+- **License Endpoints**: 
+  - Validation: POST /shadow-clone-licenses/validate
+  - Status: GET /shadow_clone_licenses
+- **No Test Credentials**: All hardcoded test keys have been removed
 
 ### Quick Commands
 ```bash
@@ -271,7 +280,7 @@ code .
 # Package VS Code Extension
 cd vscode-extension
 npm run package
-# Creates shadow-clone-0.1.6.vsix
+# Creates shadow-clone-0.2.0.vsix
 
 # Test API (requires valid API key from Ignis dashboard)
 curl -X POST https://api.ignislabs.ai/shadow-clone-licenses/validate \
@@ -288,18 +297,32 @@ cd backend
 npm run dev
 ```
 
-## Recent Updates (2025-06-28)
+## Recent Updates (2025-06-29)
 
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
-2. **VS Code Extension**: Version 0.1.4 packaged with updated licensing
-3. **NFT Verification**: Complete implementation with blockchain verification
-4. **Dashboard Integration**: Ready for license claiming UI implementation
-5. **Repository Links**: Removed from public-facing packages for security
+2. **VS Code Extension**: Version 0.2.0 with automatic license verification
+3. **API Migration**: Complete migration from Cloudflare Worker to Ignis Dashboard API
+4. **Security Enhancement**: Removed all test credentials (test-key-123, test-user-123)
+5. **License Status Management**: Automatic 30-minute refresh and startup verification
+6. **Repository Links**: Removed from public-facing packages for security
+7. **Documentation**: Reorganized all MD files into structured /docs directory
+
+## VS Code Extension Version History
+
+- **v0.2.0** (2025-06-29) - Startup license check + 30-min auto-refresh, LicenseStatusManager service
+- **v0.1.9** - Fixed license status sync issues
+- **v0.1.8** - Updated API endpoints for Ignis Dashboard
+- **v0.1.7** - Ignis Dashboard API integration
+- **v0.1.6** - Security updates, removed test credentials
+- **v0.1.5** - License type updates (tripleOG, doubleOG, singleOG, ignisElite)
+- **v0.1.4** - Updated to Ignis AI Labs LLC
+- **v0.1.3** - Initial public release
 
 ## Next Steps
 
-1. **Dashboard NFT Integration**: Implement the license claiming UI in the main dashboard
-2. **Payment Processing**: Complete Stripe integration for non-Ignis tiers
-3. **Instance Management**: Finalize DigitalOcean deployment automation
-4. **Production Launch**: Deploy to production environment
-5. **Marketing Site**: Launch public-facing website with NFT minting
+1. **VS Code Extension**: Resolve VSIX packaging issues (works in debug mode)
+2. **Dashboard NFT Integration**: Implement the license claiming UI in the main dashboard
+3. **Payment Processing**: Complete Stripe integration for non-Ignis tiers
+4. **Instance Management**: Finalize DigitalOcean deployment automation
+5. **Production Launch**: Deploy to production environment
+6. **Marketing Site**: Launch public-facing website with NFT minting
