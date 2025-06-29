@@ -20,6 +20,7 @@ import { setTelemetryInstance } from './services/telemetryHandler';
 import { TerminalMonitor } from './utils/terminalMonitor';
 import { getApiEndpoint } from './utils/constants';
 import { LicenseStatusManager } from './services/licenseStatusManager';
+import { withAuth, withAuthSync } from './utils/authGuard';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
@@ -129,52 +130,68 @@ export async function activate(context: vscode.ExtensionContext) {
         ),
         
         // Claude integration commands
-        vscode.commands.registerCommand('shadowClone.launchClaude', () =>
-            launchClaudeCommand(sessionManager, authProvider)
+        vscode.commands.registerCommand('shadowClone.launchClaude', 
+            withAuthSync(() => launchClaudeCommand(sessionManager, authProvider), authProvider, {
+                requireActiveSubscription: true
+            })
         ),
-        vscode.commands.registerCommand('shadowClone.launchClaudeQuick', (args) =>
-            launchClaudeWithArgumentsCommand(sessionManager, authProvider, args)
+        vscode.commands.registerCommand('shadowClone.launchClaudeQuick', 
+            withAuthSync((args) => launchClaudeWithArgumentsCommand(sessionManager, authProvider, args), authProvider, {
+                requireActiveSubscription: true
+            })
         ),
-        vscode.commands.registerCommand('shadowClone.showSessions', () => {
-            vscode.commands.executeCommand('shadowClone.claudeSessions.focus');
-        }),
-        vscode.commands.registerCommand('shadowClone.openSessionOutput', (sessionId: string) => {
-            const session = sessionManager.getSession(sessionId);
-            if (session?.outputPath) {
-                vscode.commands.executeCommand('vscode.open', vscode.Uri.file(session.outputPath));
-            }
-        }),
-        vscode.commands.registerCommand('shadowClone.terminateSession', (sessionId: string) => {
-            sessionManager.terminateSession(sessionId);
-        }),
-        vscode.commands.registerCommand('shadowClone.clearCompletedSessions', () => {
-            sessionManager.clearCompletedSessions();
-        }),
-        vscode.commands.registerCommand('shadowClone.copyCommand', (command: string) => {
-            vscode.env.clipboard.writeText(command);
-            vscode.window.showInformationMessage('Shadow Clone command copied to clipboard!');
-        }),
-        vscode.commands.registerCommand('shadowClone.buildCustomCommand', async () => {
-            // Interactive command builder
-            const projectType = await vscode.window.showQuickPick([
-                'feature', 'debug', 'refactor', 'optimize', 'audit', 'research'
-            ], { placeHolder: 'Select project type' });
-            
-            if (!projectType) return;
-            
-            const wavesDir = await vscode.window.showInputBox({
-                prompt: 'Waves directory',
-                value: './.waves/'
-            });
-            
-            const command = ShadowCloneMacros.buildCommand({
-                projectType,
-                wavesDirectory: wavesDir
-            });
-            
-            vscode.env.clipboard.writeText(command);
-            vscode.window.showInformationMessage('Custom command copied to clipboard!');
-        }),
+        vscode.commands.registerCommand('shadowClone.showSessions', 
+            withAuthSync(() => {
+                vscode.commands.executeCommand('shadowClone.claudeSessions.focus');
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.openSessionOutput', 
+            withAuthSync((sessionId: string) => {
+                const session = sessionManager.getSession(sessionId);
+                if (session?.outputPath) {
+                    vscode.commands.executeCommand('vscode.open', vscode.Uri.file(session.outputPath));
+                }
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.terminateSession', 
+            withAuthSync((sessionId: string) => {
+                sessionManager.terminateSession(sessionId);
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.clearCompletedSessions', 
+            withAuthSync(() => {
+                sessionManager.clearCompletedSessions();
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.copyCommand', 
+            withAuthSync((command: string) => {
+                vscode.env.clipboard.writeText(command);
+                vscode.window.showInformationMessage('Shadow Clone command copied to clipboard!');
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.buildCustomCommand', 
+            withAuth(async () => {
+                // Interactive command builder
+                const projectType = await vscode.window.showQuickPick([
+                    'feature', 'debug', 'refactor', 'optimize', 'audit', 'research'
+                ], { placeHolder: 'Select project type' });
+                
+                if (!projectType) return;
+                
+                const wavesDir = await vscode.window.showInputBox({
+                    prompt: 'Waves directory',
+                    value: './.waves/'
+                });
+                
+                const command = ShadowCloneMacros.buildCommand({
+                    projectType,
+                    wavesDirectory: wavesDir
+                });
+                
+                vscode.env.clipboard.writeText(command);
+                vscode.window.showInformationMessage('Custom command copied to clipboard!');
+            }, authProvider, { requireActiveSubscription: true })
+        ),
         
         // Chat injection commands
         vscode.commands.registerCommand('shadowClone.injectCommand', () =>
@@ -201,7 +218,9 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('shadowClone.showQuickReference', showQuickReferenceCommand),
         
         // Parameter commands
-        vscode.commands.registerCommand('shadowClone.buildParameters', injectParametersCommand),
+        vscode.commands.registerCommand('shadowClone.buildParameters', 
+            withAuthSync(() => injectParametersCommand(), authProvider)
+        ),
         vscode.commands.registerCommand('shadowClone.paramSnippet.minimal', () => 
             injectParameterSnippet('MINIMAL')
         ),
@@ -213,30 +232,34 @@ export async function activate(context: vscode.ExtensionContext) {
         ),
         
         // Session management commands
-        vscode.commands.registerCommand('shadowClone.registerTerminal', () => {
-            terminalMonitor.registerCurrentTerminal();
-        }),
-        vscode.commands.registerCommand('shadowClone.showSessionPicker', () => {
-            const sessions = sessionManager.getActiveSessions();
-            if (sessions.length === 0) {
-                vscode.window.showInformationMessage('No active Claude sessions. Start one with "Launch Claude"');
-            } else {
-                // Show session picker
-                const items = sessions.map(s => ({
-                    label: `$(terminal) ${s.mode} - ${s.terminal?.name || 'Unknown'}`,
-                    description: `Started ${new Date(s.startTime).toLocaleTimeString()}`,
-                    session: s
-                }));
-                
-                vscode.window.showQuickPick(items, {
-                    placeHolder: 'Select a session to view details'
-                }).then(selected => {
-                    if (selected) {
-                        selected.session.terminal?.show();
-                    }
-                });
-            }
-        })
+        vscode.commands.registerCommand('shadowClone.registerTerminal', 
+            withAuthSync(() => {
+                terminalMonitor.registerCurrentTerminal();
+            }, authProvider)
+        ),
+        vscode.commands.registerCommand('shadowClone.showSessionPicker', 
+            withAuthSync(() => {
+                const sessions = sessionManager.getActiveSessions();
+                if (sessions.length === 0) {
+                    vscode.window.showInformationMessage('No active Claude sessions. Start one with "Launch Claude"');
+                } else {
+                    // Show session picker
+                    const items = sessions.map(s => ({
+                        label: `$(terminal) ${s.mode} - ${s.terminal?.name || 'Unknown'}`,
+                        description: `Started ${new Date(s.startTime).toLocaleTimeString()}`,
+                        session: s
+                    }));
+                    
+                    vscode.window.showQuickPick(items, {
+                        placeHolder: 'Select a session to view details'
+                    }).then(selected => {
+                        if (selected) {
+                            selected.session.terminal?.show();
+                        }
+                    });
+                }
+            }, authProvider)
+        )
     );
 
     // Auto-authenticate if we have stored credentials
@@ -265,7 +288,7 @@ export async function activate(context: vscode.ExtensionContext) {
     statusBarItem.text = '$(rocket) Shadow Clone';
     statusBarItem.command = 'shadowClone.showStatus';
     statusBarItem.tooltip = 'Shadow Clone - Click to view status';
-    statusBarItem.show();
+    // Don't show by default - will be updated based on auth
     context.subscriptions.push(statusBarItem);
     console.log('Main status bar item created');
 
@@ -320,14 +343,17 @@ export async function activate(context: vscode.ExtensionContext) {
     claudeButton.text = '$(terminal) Launch Claude';
     claudeButton.command = 'shadowClone.launchClaude';
     claudeButton.tooltip = 'Launch Claude Code with Shadow Clone commands';
-    claudeButton.show();
+    // Don't show by default - will be updated based on auth
     context.subscriptions.push(claudeButton);
 
     // Active sessions indicator
     const sessionsIndicator = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 98);
-    const updateSessionsIndicator = () => {
+    const updateSessionsIndicator = async () => {
+        const hasAuth = await authProvider.checkAuth();
+        const isActive = hasAuth ? await authProvider.isLicenseActive() : false;
         const activeSessions = sessionManager.getActiveSessions();
-        if (activeSessions.length > 0) {
+        
+        if (hasAuth && isActive && activeSessions.length > 0) {
             sessionsIndicator.text = `$(debug-start) ${activeSessions.length} active`;
             sessionsIndicator.command = 'shadowClone.showSessions';
             sessionsIndicator.show();
@@ -345,7 +371,7 @@ export async function activate(context: vscode.ExtensionContext) {
     injectButton.text = '$(code) SC Inject';
     injectButton.command = 'shadowClone.injectCommand';
     injectButton.tooltip = 'Inject Shadow Clone command at cursor';
-    injectButton.show();
+    // Don't show by default - will be updated based on auth
     context.subscriptions.push(injectButton);
     
     // Help button
@@ -372,22 +398,46 @@ export async function activate(context: vscode.ExtensionContext) {
     featureButton.command = 'shadowClone.injectFeature';
     featureButton.tooltip = 'Inject feature command';
     
-    // Show/hide quick buttons based on auth status
-    const updateQuickButtons = async () => {
+    // Show/hide ALL buttons based on auth status
+    const updateAllStatusBarItems = async () => {
         const hasAuth = await authProvider.checkAuth();
-        if (hasAuth) {
+        const isActive = hasAuth ? await authProvider.isLicenseActive() : false;
+        
+        if (hasAuth && isActive) {
+            // Show all features for authenticated users with active licenses
+            statusBarItem.show();
+            claudeButton.show();
+            injectButton.show();
             deployButton.show();
             debugButton.show();
             featureButton.show();
-        } else {
+        } else if (hasAuth && !isActive) {
+            // Show limited features for users with inactive licenses
+            statusBarItem.show();
+            // Hide action buttons
+            claudeButton.hide();
+            injectButton.hide();
             deployButton.hide();
             debugButton.hide();
             featureButton.hide();
+        } else {
+            // Hide everything except auth and help for unauthenticated users
+            statusBarItem.hide();
+            claudeButton.hide();
+            injectButton.hide();
+            deployButton.hide();
+            debugButton.hide();
+            featureButton.hide();
+            sessionsIndicator.hide();
         }
     };
     
-    authProvider.onDidChangeAuth(() => updateQuickButtons());
-    updateQuickButtons();
+    // Update status bar items when auth changes
+    authProvider.onDidChangeAuth(() => updateAllStatusBarItems());
+    licenseStatusManager.onStatusChanged(() => updateAllStatusBarItems());
+    
+    // Initial update
+    await updateAllStatusBarItems();
     
     context.subscriptions.push(deployButton);
     context.subscriptions.push(debugButton);
