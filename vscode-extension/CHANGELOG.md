@@ -2,6 +2,21 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.3.2] - 2025-06-30
+
+### Fixed
+- Reverted prompt API endpoints to use Ignis Labs API
+- Unified all API calls to use single authentication source
+- Fixed authentication rejection issues with separated APIs
+
+### Changed
+- All prompt endpoints now use api.ignislabs.ai
+- Removed separate Cloudflare Worker endpoint for prompts
+- Simplified API architecture to single endpoint
+
+### Note
+- Prompts must be added to Ignis Labs API backend to support these endpoints
+
 ## [0.3.1] - 2025-06-30
 
 ### Fixed

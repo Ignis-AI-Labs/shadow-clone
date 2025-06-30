@@ -42,7 +42,6 @@ export const COMMANDS = {
 // Default API endpoints
 export const DEFAULT_API_ENDPOINT = 'https://api.ignislabs.ai';
 export const DEFAULT_WS_ENDPOINT = 'wss://api.ignislabs.ai/ws';
-export const PROMPT_API_ENDPOINT = 'https://shadow-clone-api.elijah-02b.workers.dev';
 
 // Get API endpoint from settings or environment
 export function getApiEndpoint(): string {
@@ -53,12 +52,6 @@ export function getApiEndpoint(): string {
         // Fallback if vscode is not available yet
         return process.env.SHADOW_CLONE_API || DEFAULT_API_ENDPOINT;
     }
-}
-
-// Get Prompt API endpoint (Cloudflare Worker)
-export function getPromptApiEndpoint(): string {
-    // Prompts are served from the Cloudflare Worker, not the main API
-    return PROMPT_API_ENDPOINT;
 }
 
 // Get WebSocket endpoint

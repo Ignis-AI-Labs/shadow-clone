@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from '../auth/authProvider';
-import { getApiEndpoint, getPromptApiEndpoint } from '../utils/constants';
+import { getApiEndpoint } from '../utils/constants';
 import { logCommandExecution } from '../services/telemetryHandler';
 
 export async function injectShadowCloneCommand(authProvider: AuthProvider, commandType?: string) {
@@ -21,7 +21,6 @@ export async function injectShadowCloneCommand(authProvider: AuthProvider, comma
     }
 
     const apiEndpoint = getApiEndpoint();
-    const promptApiEndpoint = getPromptApiEndpoint();
     
     // Build command based on type
     let command: string;
@@ -62,7 +61,7 @@ project_plan=./project-plan.md waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute with the parameters above.`;
             break;
@@ -78,8 +77,8 @@ mode=debug waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${promptApiEndpoint}/api/prompts/modes/debug -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/modes/debug -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -95,8 +94,8 @@ mode=feature project_plan=./feature-spec.md waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${promptApiEndpoint}/api/prompts/modes/feature -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/modes/feature -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -112,8 +111,8 @@ mode=refactor waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${promptApiEndpoint}/api/prompts/modes/refactor -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/modes/refactor -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -129,8 +128,8 @@ mode=optimize waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${promptApiEndpoint}/api/prompts/modes/optimize -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/modes/optimize -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -146,8 +145,8 @@ mode=audit waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${promptApiEndpoint}/api/prompts/modes/audit -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/modes/audit -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -163,7 +162,7 @@ mode=research waves_directory=./.waves/
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute with the parameters above.`;
             break;
@@ -173,7 +172,7 @@ Then load the returned prompt and execute with the parameters above.`;
 # Resume previous Shadow Clone session
 
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute the 'resume' command.`;
             break;
@@ -189,7 +188,7 @@ Use 'plan' command to create detailed project plan without implementation
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute the 'plan' command.`;
             break;
@@ -213,7 +212,7 @@ ${customParams}
 
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute with the parameters above.`;
             break;
