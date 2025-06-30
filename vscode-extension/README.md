@@ -49,14 +49,49 @@ npm --version   # Should show 8.x.x or higher
 
 ### 3. Claude Code CLI
 
-Shadow Clone integrates with Anthropic's Claude Code for AI agent execution:
+Shadow Clone integrates with Anthropic's Claude Code for AI agent execution.
+
+**⚠️ WSL/Linux Users - Avoid Permission Errors:**
+
+We provide an automated setup script that configures npm properly to avoid permission errors:
 
 ```bash
-# Install Claude Code globally
+# Download and run the setup script
+curl -o setup-wsl.sh https://raw.githubusercontent.com/shadow-clone/vscode-extension/main/scripts/setup-wsl.sh
+chmod +x setup-wsl.sh
+./setup-wsl.sh
+
+# After script completes, restart your terminal or run:
+source ~/.bashrc
+```
+
+**Manual Installation (All Platforms):**
+
+```bash
+# Option 1: Configure npm to install global packages without sudo (Recommended)
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Now install Claude Code
 npm install -g @anthropic/claude-code
 
-# Verify installation
+# Option 2: Use sudo (Not recommended, but works)
+sudo npm install -g @anthropic/claude-code
+
+# Option 3: Use npx (No installation needed)
+npx @anthropic/claude-code --version
+```
+
+**Verify Installation:**
+```bash
+# Check if Claude is installed
 claude --version
+
+# If command not found, ensure PATH is updated:
+echo $PATH | grep npm-global
+# Should show your npm-global/bin directory
 
 # Authenticate Claude (you'll need an Anthropic API key)
 claude auth
@@ -68,6 +103,11 @@ claude auth
 3. Navigate to API Keys section
 4. Generate a new API key
 5. Save it securely (you'll need it for authentication)
+
+**Common WSL Issues:**
+- **Permission denied**: Use the setup script or configure npm prefix as shown above
+- **Command not found**: Restart terminal or run `source ~/.bashrc`
+- **Path issues**: Check that `~/.npm-global/bin` is in your PATH
 
 ### 4. VS Code Extension Installation
 
@@ -114,17 +154,59 @@ Shadow Clone requires an active license:
 - Permission errors: Use `nvm` instead of system Node.js
 - Version conflicts: Ensure Node.js 18+ with `node --version`
 
-**Claude Code Issues**
-- Authentication fails: Check API key validity at https://console.anthropic.com
-- Command not found: Ensure global npm bin is in PATH:
-  ```bash
-  echo 'export PATH="$PATH:$(npm bin -g)"' >> ~/.bashrc
-  source ~/.bashrc
-  ```
+**Claude Code Installation Issues**
+
+1. **EACCES Permission Denied Error**
+   ```bash
+   # Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
+   # Solution: Configure npm to use a user directory
+   mkdir -p ~/.npm-global
+   npm config set prefix '~/.npm-global'
+   echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
+   source ~/.bashrc
+   npm install -g @anthropic/claude-code
+   ```
+
+2. **Command Not Found After Installation**
+   ```bash
+   # Ensure PATH includes npm global bin
+   echo $PATH | grep npm-global
+   
+   # If missing, add it:
+   echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
+   source ~/.bashrc
+   
+   # Or for immediate use:
+   export PATH=$PATH:~/.npm-global/bin
+   ```
+
+3. **WSL-Specific Network Issues**
+   ```bash
+   # If npm install fails with network errors in WSL:
+   # Check DNS settings
+   echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+   
+   # Or disable IPv6 temporarily
+   sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+   ```
+
+4. **Alternative Installation Methods**
+   ```bash
+   # Using yarn (if npm fails)
+   yarn global add @anthropic/claude-code
+   
+   # Using npx (no installation)
+   npx @anthropic/claude-code auth
+   
+   # Using nvm's npm (cleanest approach)
+   nvm use 18
+   npm install -g @anthropic/claude-code
+   ```
 
 **Extension Issues**
 - Extension not loading: Check VS Code version (1.74.0+ required)
 - API connection fails: Verify internet connection and API endpoint
+- License verification fails: Ensure valid Shadow Clone API key
 
 ## Features
 

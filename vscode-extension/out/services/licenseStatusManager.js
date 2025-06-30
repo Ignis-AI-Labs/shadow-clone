@@ -170,34 +170,31 @@ class LicenseStatusManager {
                 this.saveStatus(null);
                 return null;
             }
-            // Check license status
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/shadow_clone_licenses`);
-            const licenses = response.data;
-            const userLicense = Array.isArray(licenses)
-                ? licenses.find((lic) => lic.api_key === authData.apiKey ||
-                    lic.userId === authData.userId ||
-                    lic.email === authData.email)
-                : licenses;
-            if (!userLicense) {
-                console.error('Could not find user license in response');
-                // Keep existing status if we can't find the license
+            // Use validation endpoint directly since /shadow_clone_licenses doesn't exist
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/shadow-clone-licenses/validate`, {
+                method: 'POST',
+                data: { apiKey: authData.apiKey }
+            });
+            if (!response.data.valid) {
+                console.error('License validation failed');
+                // Keep existing status if validation fails
                 if (this.currentStatus) {
                     this.currentStatus.lastChecked = new Date();
                     this.saveStatus(this.currentStatus);
                 }
                 return this.currentStatus;
             }
-            // Update status
+            // Update status from validation response
             const status = {
-                isActive: userLicense.is_active !== false,
-                licenseType: userLicense.license_type || userLicense.licenseType || authData.licenseType,
+                isActive: response.data.isActive !== false,
+                licenseType: response.data.licenseType || authData.licenseType,
                 lastChecked: new Date(),
-                userId: userLicense.userId || authData.userId,
-                email: userLicense.email
+                userId: response.data.userId || authData.userId,
+                email: response.data.email || authData.email
             };
             // Add expiration if available
-            if (userLicense.expires_at || userLicense.expiresAt) {
-                status.expiresAt = new Date(userLicense.expires_at || userLicense.expiresAt);
+            if (response.data.expiresAt) {
+                status.expiresAt = new Date(response.data.expiresAt);
             }
             this.saveStatus(status);
             // Show notification if status changed

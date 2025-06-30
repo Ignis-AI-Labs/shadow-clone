@@ -1,36 +1,36 @@
-export type Handler<T> = (request: Request, env: T, params: Record<string, string>) => Promise<Response> | Response;
+export type Handler<T, P = Record<string, string>> = (request: Request, env: T, params: P) => Promise<Response> | Response;
 
 export class Router<T> {
-  private routes: Map<string, Map<string, Handler<T>>> = new Map();
+  private routes: Map<string, Map<string, Handler<T, any>>> = new Map();
 
-  private addRoute(method: string, path: string, handler: Handler<T>) {
+  private addRoute(method: string, path: string, handler: Handler<T, any>) {
     if (!this.routes.has(method)) {
       this.routes.set(method, new Map());
     }
-    this.routes.get(method)!.set(path, handler);
+    this.routes.get(method)!.set(path, handler as Handler<T, Record<string, string>>);
   }
 
-  get(path: string, handler: Handler<T>) {
+  get(path: string, handler: Handler<T, any>) {
     this.addRoute('GET', path, handler);
   }
 
-  post(path: string, handler: Handler<T>) {
+  post(path: string, handler: Handler<T, any>) {
     this.addRoute('POST', path, handler);
   }
 
-  put(path: string, handler: Handler<T>) {
+  put(path: string, handler: Handler<T, any>) {
     this.addRoute('PUT', path, handler);
   }
 
-  delete(path: string, handler: Handler<T>) {
+  delete(path: string, handler: Handler<T, any>) {
     this.addRoute('DELETE', path, handler);
   }
 
-  options(path: string, handler: Handler<T>) {
+  options(path: string, handler: Handler<T, any>) {
     this.addRoute('OPTIONS', path, handler);
   }
 
-  all(path: string, handler: Handler<T>) {
+  all(path: string, handler: Handler<T, any>) {
     ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'].forEach(method => {
       this.addRoute(method, path, handler);
     });

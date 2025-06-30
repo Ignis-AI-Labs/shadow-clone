@@ -20,43 +20,42 @@ export async function showStatusCommand(authProvider: AuthProvider, licenseStatu
     }
 
     try {
-        // Fetch user status and license information from Ignis API
-        const [licenseResponse] = await Promise.all([
-            authProvider.makeAuthenticatedRequest(`${getApiEndpoint()}/shadow_clone_licenses`)
-        ]);
-
-        const licenses = licenseResponse.data;
-        
         // Get the authenticated user's data from stored auth
         const authData = await authProvider.getAuth();
         
-        // Find the user's license from the response
-        const userLicense = Array.isArray(licenses) 
-            ? licenses.find((lic: any) => lic.api_key === authData.apiKey || lic.userId === authData.userId)
-            : licenses;
-            
-        if (!userLicense) {
-            vscode.window.showErrorMessage('Could not find your license information');
+        // Use validation endpoint to get license info
+        const licenseResponse = await authProvider.makeAuthenticatedRequest(
+            `${getApiEndpoint()}/shadow-clone-licenses/validate`,
+            {
+                method: 'POST',
+                data: { apiKey: authData.apiKey }
+            }
+        );
+
+        if (!licenseResponse.data.valid) {
+            vscode.window.showErrorMessage('Could not validate your license');
             return;
         }
         
+        const licenseData = licenseResponse.data;
+        
         // Build user object from license data
         const user = {
-            id: userLicense.userId || authData.userId,
-            licenseType: userLicense.license_type || userLicense.licenseType || authData.licenseType,
-            email: userLicense.email,
+            id: licenseData.userId || authData.userId,
+            licenseType: licenseData.licenseType || authData.licenseType,
+            email: licenseData.email || authData.email || 'Not provided',
             activeProjects: 0,
             totalDeployments: 0
         };
         
         const license = {
-            isActive: userLicense.is_active !== false,
+            isActive: licenseData.isActive !== false,
             features: {
                 maxConcurrentProjects: 5,
                 prioritySupport: ['tripleOG', 'creator'].includes(user.licenseType),
                 earlyAccess: ['tripleOG', 'creator', 'doubleOG'].includes(user.licenseType)
             },
-            expiresAt: null // NFT holders have lifetime access
+            expiresAt: licenseData.expiresAt || null
         };
         
         // If license is inactive, show warning
