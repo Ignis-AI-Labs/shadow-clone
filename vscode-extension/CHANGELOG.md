@@ -2,6 +2,21 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.2.3] - 2025-06-30
+
+### Added
+- Comprehensive installation guide at the top of README
+- Detailed WSL setup instructions for Windows users
+- Step-by-step Node.js installation guide (nvm and direct methods)
+- Claude Code CLI installation and authentication instructions
+- Quick Start Checklist for easy setup tracking
+- Troubleshooting section for common installation issues
+
+### Changed
+- Reorganized README to prioritize setup instructions
+- Updated System Requirements section with more detail
+- Removed duplicate Claude Code installation information
+
 ## [0.1.3] - 2025-06-28
 
 ### Changed

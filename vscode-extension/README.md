@@ -2,6 +2,130 @@
 
 Deploy teams of specialized AI agents to complete complex software projects directly from VS Code.
 
+## Prerequisites & Installation
+
+Before using Shadow Clone, ensure you have all required dependencies installed. Follow these steps in order:
+
+### 1. Windows Subsystem for Linux (WSL) - Windows Users Only
+
+Shadow Clone's AI agents require a Unix-like environment. Windows users must install WSL:
+
+```bash
+# Open PowerShell as Administrator and run:
+wsl --install
+
+# After installation, restart your computer
+# Set up your Linux distribution (Ubuntu recommended)
+# Create a username and password when prompted
+```
+
+For detailed WSL setup: https://docs.microsoft.com/en-us/windows/wsl/install
+
+### 2. Node.js and npm
+
+Shadow Clone requires Node.js 18.0.0 or higher:
+
+**Option A: Using Node Version Manager (nvm) - Recommended**
+```bash
+# Install nvm (Linux/macOS/WSL)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Restart terminal or run:
+source ~/.bashrc
+
+# Install and use Node.js
+nvm install 18
+nvm use 18
+
+# Verify installation
+node --version  # Should show v18.x.x or higher
+npm --version   # Should show 8.x.x or higher
+```
+
+**Option B: Direct Installation**
+- Download from https://nodejs.org/ (LTS version recommended)
+- Follow installer instructions for your OS
+- Verify installation with `node --version`
+
+### 3. Claude Code CLI
+
+Shadow Clone integrates with Anthropic's Claude Code for AI agent execution:
+
+```bash
+# Install Claude Code globally
+npm install -g @anthropic/claude-code
+
+# Verify installation
+claude --version
+
+# Authenticate Claude (you'll need an Anthropic API key)
+claude auth
+```
+
+**Getting a Claude API Key:**
+1. Visit https://console.anthropic.com
+2. Create an account or sign in
+3. Navigate to API Keys section
+4. Generate a new API key
+5. Save it securely (you'll need it for authentication)
+
+### 4. VS Code Extension Installation
+
+**Option A: From VS Code Marketplace**
+1. Open VS Code
+2. Go to Extensions (Ctrl/Cmd + Shift + X)
+3. Search for "Shadow Clone AI"
+4. Click Install
+
+**Option B: Manual Installation**
+```bash
+# Download the .vsix file from releases
+# Install using VS Code CLI
+code --install-extension shadow-clone-*.vsix
+```
+
+### 5. Shadow Clone License
+
+Shadow Clone requires an active license:
+1. Obtain an NFT license (Ignis Elite holders have automatic access)
+2. Get your API key from the Shadow Clone dashboard
+3. Authenticate in VS Code using the Shadow Clone sidebar
+
+### Quick Start Checklist
+
+- [ ] WSL installed and configured (Windows only)
+- [ ] Node.js 18+ and npm installed
+- [ ] Claude Code CLI installed (`npm install -g @anthropic/claude-code`)
+- [ ] Claude authenticated (`claude auth`)
+- [ ] VS Code Shadow Clone extension installed
+- [ ] Shadow Clone API key obtained and configured
+
+### Troubleshooting Common Issues
+
+**WSL Issues (Windows)**
+- If `wsl --install` fails, enable WSL feature first:
+  ```powershell
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+  ```
+- Restart and try `wsl --install` again
+
+**Node.js Issues**
+- Permission errors: Use `nvm` instead of system Node.js
+- Version conflicts: Ensure Node.js 18+ with `node --version`
+
+**Claude Code Issues**
+- Authentication fails: Check API key validity at https://console.anthropic.com
+- Command not found: Ensure global npm bin is in PATH:
+  ```bash
+  echo 'export PATH="$PATH:$(npm bin -g)"' >> ~/.bashrc
+  source ~/.bashrc
+  ```
+
+**Extension Issues**
+- Extension not loading: Check VS Code version (1.74.0+ required)
+- API connection fails: Verify internet connection and API endpoint
+
 ## Features
 
 - **AI Agent Orchestration**: Deploy up to 10 specialized AI agents per wave
@@ -73,11 +197,10 @@ Shadow Clone uses NFT-based licensing for security and exclusivity:
 
 Shadow Clone works seamlessly with Claude Code:
 
-1. **Install Claude Code**: `npm install -g @anthropic/claude-code`
-2. **Launch from VS Code**: Click "Launch Claude" button in status bar
-3. **Select Mode**: Choose from audit, feature, debug, etc.
-4. **Secure Prompts**: Prompts are fetched from API and embedded in commands
-5. **Paste & Execute**: Copy command and paste in Claude terminal
+1. **Launch from VS Code**: Click "Launch Claude" button in status bar
+2. **Select Mode**: Choose from audit, feature, debug, etc.
+3. **Secure Prompts**: Prompts are fetched from API and embedded in commands
+4. **Paste & Execute**: Copy command and paste in Claude terminal
 
 ### Intellectual Property Protection
 
@@ -87,12 +210,14 @@ Shadow Clone works seamlessly with Claude Code:
 - **Copy Protection**: Prompts cannot be saved or exported
 - **Encrypted Transmission**: All API communication via HTTPS
 
-## Requirements
+## System Requirements
 
-- VS Code 1.74.0 or higher
-- Active Shadow Clone license
-- Internet connection for API access
-- Claude Code CLI (for AI agent execution)
+- **VS Code**: Version 1.74.0 or higher
+- **Node.js**: Version 18.0.0 or higher
+- **Operating System**: Windows (with WSL), macOS, or Linux
+- **Claude Code CLI**: Latest version (`@anthropic/claude-code`)
+- **Internet**: Stable connection for API access
+- **License**: Active Shadow Clone NFT license
 
 ## Configuration
 
