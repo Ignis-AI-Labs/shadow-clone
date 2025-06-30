@@ -2,219 +2,67 @@
 
 Deploy teams of specialized AI agents to complete complex software projects directly from VS Code.
 
-## Prerequisites & Installation
+## Quick Start
 
-Before using Shadow Clone, ensure you have all required dependencies installed. Follow these steps in order:
+1. **Install the Extension**
+   - Search for "Shadow Clone AI" in VS Code Marketplace
+   - Click Install
 
-### 1. Windows Subsystem for Linux (WSL) - Windows Users Only
+2. **Automatic Setup**
+   - The extension will check for required dependencies on first launch
+   - If anything is missing, click "Setup Now" when prompted
+   - Follow the interactive setup guide
 
-Shadow Clone's AI agents require a Unix-like environment. Windows users must install WSL:
+3. **Get Your License**
+   - Obtain a Shadow Clone NFT license (Ignis Elite holders have automatic access)
+   - Get your API key from the [Shadow Clone dashboard](https://shadow-clone.ai)
+   - Click the Shadow Clone icon in VS Code and authenticate
 
+That's it! The extension handles all dependency installation for you.
+
+## Manual Setup (Advanced Users)
+
+If the automatic setup doesn't work or you prefer manual installation:
+
+1. **Windows Users**: Install WSL from PowerShell (Admin): `wsl --install`
+2. **Install Node.js 18+**: Download from [nodejs.org](https://nodejs.org)
+3. **Install Claude Code**: Run the setup script from the extension folder:
+   ```bash
+   # Navigate to where the extension is installed
+   cd ~/.vscode/extensions/IgnisAILabsLLC.shadow-clone-*/scripts
+   bash setup-wsl.sh
+   ```
+
+## Troubleshooting
+
+**Missing Dependencies Warning**
+- Click the warning in VS Code status bar
+- Follow the interactive setup guide
+- Or run: `Cmd/Ctrl + Shift + P` → "Shadow Clone: Check Dependencies"
+
+**Permission Errors (npm install)**
 ```bash
-# Open PowerShell as Administrator and run:
-wsl --install
-
-# After installation, restart your computer
-# Set up your Linux distribution (Ubuntu recommended)
-# Create a username and password when prompted
-```
-
-For detailed WSL setup: https://docs.microsoft.com/en-us/windows/wsl/install
-
-### 2. Node.js and npm
-
-Shadow Clone requires Node.js 18.0.0 or higher. We recommend using the latest LTS version:
-
-**Option A: Using Node Version Manager (nvm) - Recommended**
-```bash
-# Install nvm (Linux/macOS/WSL)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-# Restart terminal or run:
-source ~/.bashrc
-
-# Install and use latest Node.js LTS
-nvm install --lts
-nvm use --lts
-nvm alias default 'lts/*'
-
-# Verify installation
-node --version  # Should show latest LTS version (v20.x.x or higher)
-npm --version   # Should show 10.x.x or higher
-```
-
-**Option B: Direct Installation**
-- Download from https://nodejs.org/ (LTS version recommended)
-- Follow installer instructions for your OS
-- Verify installation with `node --version`
-
-### 3. Claude Code CLI
-
-Shadow Clone integrates with Anthropic's Claude Code for AI agent execution.
-
-**⚠️ WSL/Linux Users - Avoid Permission Errors:**
-
-We provide an automated setup script that:
-- Installs/updates to the latest Node.js LTS version
-- Configures npm properly to avoid permission errors
-- Installs Claude Code without requiring sudo
-- Sets up your PATH correctly
-
-```bash
-# Download and run the setup script
-curl -o setup-wsl.sh https://raw.githubusercontent.com/shadow-clone/vscode-extension/main/scripts/setup-wsl.sh
-chmod +x setup-wsl.sh
-./setup-wsl.sh
-
-# After script completes, restart your terminal or run:
-source ~/.bashrc
-```
-
-**Manual Installation (All Platforms):**
-
-```bash
-# Option 1: Configure npm to install global packages without sudo (Recommended)
+# Fix npm permissions
 mkdir -p ~/.npm-global
 npm config set prefix '~/.npm-global'
 echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
 source ~/.bashrc
+```
 
-# Now install Claude Code
+**Can't Find Claude Command**
+```bash
+# Check if installed
+which claude
+
+# If not found, reinstall
 npm install -g @anthropic/claude-code
 
-# Option 2: Use sudo (Not recommended, but works)
-sudo npm install -g @anthropic/claude-code
-
-# Option 3: Use npx (No installation needed)
-npx @anthropic/claude-code --version
+# Restart VS Code after installation
 ```
-
-**Verify Installation:**
-```bash
-# Check if Claude is installed
-claude --version
-
-# If command not found, ensure PATH is updated:
-echo $PATH | grep npm-global
-# Should show your npm-global/bin directory
-
-# Authenticate Claude (you'll need an Anthropic API key)
-claude auth
-```
-
-**Getting a Claude API Key:**
-1. Visit https://console.anthropic.com
-2. Create an account or sign in
-3. Navigate to API Keys section
-4. Generate a new API key
-5. Save it securely (you'll need it for authentication)
-
-**Common WSL Issues:**
-- **Permission denied**: Use the setup script or configure npm prefix as shown above
-- **Command not found**: Restart terminal or run `source ~/.bashrc`
-- **Path issues**: Check that `~/.npm-global/bin` is in your PATH
-
-### 4. VS Code Extension Installation
-
-**Option A: From VS Code Marketplace**
-1. Open VS Code
-2. Go to Extensions (Ctrl/Cmd + Shift + X)
-3. Search for "Shadow Clone AI"
-4. Click Install
-
-**Option B: Manual Installation**
-```bash
-# Download the .vsix file from releases
-# Install using VS Code CLI
-code --install-extension shadow-clone-*.vsix
-```
-
-### 5. Shadow Clone License
-
-Shadow Clone requires an active license:
-1. Obtain an NFT license (Ignis Elite holders have automatic access)
-2. Get your API key from the Shadow Clone dashboard
-3. Authenticate in VS Code using the Shadow Clone sidebar
-
-### Quick Start Checklist
-
-- [ ] WSL installed and configured (Windows only)
-- [ ] Node.js 18+ and npm installed
-- [ ] Claude Code CLI installed (`npm install -g @anthropic/claude-code`)
-- [ ] Claude authenticated (`claude auth`)
-- [ ] VS Code Shadow Clone extension installed
-- [ ] Shadow Clone API key obtained and configured
-
-### Troubleshooting Common Issues
-
-**WSL Issues (Windows)**
-- If `wsl --install` fails, enable WSL feature first:
-  ```powershell
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-  ```
-- Restart and try `wsl --install` again
-
-**Node.js Issues**
-- Permission errors: Use `nvm` instead of system Node.js
-- Version conflicts: Ensure Node.js 18+ with `node --version`
-
-**Claude Code Installation Issues**
-
-1. **EACCES Permission Denied Error**
-   ```bash
-   # Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
-   # Solution: Configure npm to use a user directory
-   mkdir -p ~/.npm-global
-   npm config set prefix '~/.npm-global'
-   echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
-   source ~/.bashrc
-   npm install -g @anthropic/claude-code
-   ```
-
-2. **Command Not Found After Installation**
-   ```bash
-   # Ensure PATH includes npm global bin
-   echo $PATH | grep npm-global
-   
-   # If missing, add it:
-   echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
-   source ~/.bashrc
-   
-   # Or for immediate use:
-   export PATH=$PATH:~/.npm-global/bin
-   ```
-
-3. **WSL-Specific Network Issues**
-   ```bash
-   # If npm install fails with network errors in WSL:
-   # Check DNS settings
-   echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
-   
-   # Or disable IPv6 temporarily
-   sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
-   ```
-
-4. **Alternative Installation Methods**
-   ```bash
-   # Using yarn (if npm fails)
-   yarn global add @anthropic/claude-code
-   
-   # Using npx (no installation)
-   npx @anthropic/claude-code auth
-   
-   # Using nvm's npm (cleanest approach)
-   nvm use 18
-   npm install -g @anthropic/claude-code
-   ```
-
-**Extension Issues**
-- Extension not loading: Check VS Code version (1.74.0+ required)
-- API connection fails: Verify internet connection and API endpoint
-- License verification fails: Ensure valid Shadow Clone API key
 
 ## Features
 
+- **Automatic Dependency Setup**: Built-in setup assistant for all requirements
 - **AI Agent Orchestration**: Deploy up to 10 specialized AI agents per wave
 - **Real-time Progress Tracking**: Monitor agent activity and project status
 - **Integrated Project Management**: Create and manage projects from the sidebar

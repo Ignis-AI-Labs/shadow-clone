@@ -2,6 +2,27 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.3.0] - 2025-06-30
+
+### Added
+- Built-in dependency checker that runs on extension activation
+- Interactive setup assistant with webview UI
+- Automatic detection of missing Node.js and Claude Code CLI
+- One-click dependency installation from within VS Code
+- Status bar warning for missing dependencies
+- "Check Dependencies" command for manual verification
+- Automated setup script execution from extension
+
+### Changed
+- Simplified README to 3-step quick start process
+- Moved complex setup instructions to troubleshooting section
+- Extension now handles all dependency management automatically
+
+### Improved
+- First-time user experience with guided setup
+- No more manual terminal commands for basic users
+- Automatic PATH configuration for npm global packages
+
 ## [0.2.3] - 2025-06-30
 
 ### Added

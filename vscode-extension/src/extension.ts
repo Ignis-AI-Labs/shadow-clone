@@ -21,6 +21,8 @@ import { TerminalMonitor } from './utils/terminalMonitor';
 import { getApiEndpoint } from './utils/constants';
 import { LicenseStatusManager } from './services/licenseStatusManager';
 import { withAuth, withAuthSync } from './utils/authGuard';
+import { DependencyChecker } from './services/dependencyChecker';
+import { checkDependencies } from './commands/checkDependencies';
 
 let authProvider: AuthProvider;
 let sessionManager: ClaudeSessionManager;
@@ -41,6 +43,22 @@ export async function activate(context: vscode.ExtensionContext) {
     isActivated = true;
     
     try {
+    // Check dependencies first
+    const dependencyChecker = DependencyChecker.getInstance();
+    const depStatus = await dependencyChecker.checkAllDependencies();
+    
+    // If critical dependencies are missing, show notification
+    if (!depStatus.nodeInstalled || !depStatus.claudeInstalled) {
+        const choice = await vscode.window.showWarningMessage(
+            'Shadow Clone requires Node.js and Claude Code CLI to function properly.',
+            'Setup Now',
+            'Later'
+        );
+        
+        if (choice === 'Setup Now') {
+            await checkDependencies(context);
+        }
+    }
 
     // Initialize providers
     authProvider = new AuthProvider(context);
@@ -127,6 +145,11 @@ export async function activate(context: vscode.ExtensionContext) {
         ),
         vscode.commands.registerCommand('shadowClone.refreshAgents', () => 
             agentProvider.refresh()
+        ),
+        
+        // Dependency management command
+        vscode.commands.registerCommand('shadowClone.checkDependencies', () =>
+            checkDependencies(context)
         ),
         
         // Claude integration commands
