@@ -23,23 +23,24 @@ For detailed WSL setup: https://docs.microsoft.com/en-us/windows/wsl/install
 
 ### 2. Node.js and npm
 
-Shadow Clone requires Node.js 18.0.0 or higher:
+Shadow Clone requires Node.js 18.0.0 or higher. We recommend using the latest LTS version:
 
 **Option A: Using Node Version Manager (nvm) - Recommended**
 ```bash
 # Install nvm (Linux/macOS/WSL)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Restart terminal or run:
 source ~/.bashrc
 
-# Install and use Node.js
-nvm install 18
-nvm use 18
+# Install and use latest Node.js LTS
+nvm install --lts
+nvm use --lts
+nvm alias default 'lts/*'
 
 # Verify installation
-node --version  # Should show v18.x.x or higher
-npm --version   # Should show 8.x.x or higher
+node --version  # Should show latest LTS version (v20.x.x or higher)
+npm --version   # Should show 10.x.x or higher
 ```
 
 **Option B: Direct Installation**
@@ -53,7 +54,11 @@ Shadow Clone integrates with Anthropic's Claude Code for AI agent execution.
 
 **⚠️ WSL/Linux Users - Avoid Permission Errors:**
 
-We provide an automated setup script that configures npm properly to avoid permission errors:
+We provide an automated setup script that:
+- Installs/updates to the latest Node.js LTS version
+- Configures npm properly to avoid permission errors
+- Installs Claude Code without requiring sudo
+- Sets up your PATH correctly
 
 ```bash
 # Download and run the setup script

@@ -33,33 +33,59 @@ fi
 
 # Step 1: Check Node.js installation
 echo "Step 1: Checking Node.js installation..."
+
+# Install or update nvm
+echo "Ensuring nvm is installed/updated..."
+if [ -d "$HOME/.nvm" ]; then
+    # Update nvm to latest version
+    cd "$HOME/.nvm"
+    git fetch --tags origin
+    git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
+    cd -
+else
+    # Install nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi
+
+# Load nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Get the latest LTS version of Node.js
+echo "Checking for latest Node.js LTS version..."
+LATEST_LTS=$(nvm ls-remote --lts | tail -1 | awk '{print $2}')
+print_status "Latest Node.js LTS version is $LATEST_LTS"
+
+# Check current Node.js version
 if command -v node &> /dev/null; then
-    NODE_VERSION=$(node --version)
-    print_status "Node.js $NODE_VERSION is installed"
+    CURRENT_VERSION=$(node --version)
+    print_status "Current Node.js version is $CURRENT_VERSION"
     
-    # Check if version is 18 or higher
-    MAJOR_VERSION=$(echo $NODE_VERSION | cut -d. -f1 | sed 's/v//')
-    if [ "$MAJOR_VERSION" -lt 18 ]; then
-        print_error "Node.js version 18 or higher is required. You have $NODE_VERSION"
-        echo ""
-        echo "Please update Node.js using nvm:"
-        echo "  nvm install 18"
-        echo "  nvm use 18"
-        exit 1
+    # Install latest if not already using it
+    if [ "$CURRENT_VERSION" != "$LATEST_LTS" ]; then
+        print_warning "Updating to latest Node.js LTS version..."
+        nvm install --lts
+        nvm use --lts
+        nvm alias default 'lts/*'
+        print_status "Node.js updated to $(node --version)"
+    else
+        print_status "Already using latest Node.js LTS version"
     fi
 else
-    print_error "Node.js is not installed!"
-    echo ""
-    echo "Installing Node.js via nvm..."
-    
-    # Install nvm if not present
-    if ! command -v nvm &> /dev/null; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    fi
-    
-    # Install Node.js 18
+    print_warning "Node.js not found, installing latest LTS version..."
+    nvm install --lts
+    nvm use --lts
+    nvm alias default 'lts/*'
+    print_status "Node.js $(node --version) installed"
+fi
+
+# Verify Node.js version is at least 18
+NODE_VERSION=$(node --version)
+MAJOR_VERSION=$(echo $NODE_VERSION | cut -d. -f1 | sed 's/v//')
+if [ "$MAJOR_VERSION" -lt 18 ]; then
+    print_error "Node.js version 18 or higher is required. You have $NODE_VERSION"
+    echo "Installing Node.js 18..."
     nvm install 18
     nvm use 18
     nvm alias default 18
