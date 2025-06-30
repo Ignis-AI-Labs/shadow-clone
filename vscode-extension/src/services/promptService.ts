@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from '../auth/authProvider';
-import { getApiEndpoint } from '../utils/constants';
+import { getApiEndpoint, getPromptApiEndpoint } from '../utils/constants';
 
 export interface ShadowClonePrompt {
     content: string;
@@ -27,7 +27,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/shadow-clone`
+                `${getPromptApiEndpoint()}/api/prompts/shadow-clone`
             );
             
             const prompt = response.data as ShadowClonePrompt;
@@ -45,7 +45,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/modes`
+                `${getPromptApiEndpoint()}/api/prompts/modes`
             );
             
             const modes = response.data.modes as string[];
@@ -63,7 +63,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/modes/${modeName}`
+                `${getPromptApiEndpoint()}/api/prompts/modes/${modeName}`
             );
             
             const mode = response.data as ShadowCloneMode;
@@ -81,7 +81,7 @@ export class PromptService {
         additionalParams?: Record<string, string>;
     }): Promise<string> {
         // Build the command to fetch prompts from API
-        const apiEndpoint = getApiEndpoint();
+        const promptApiEndpoint = getPromptApiEndpoint();
         const apiKey = await this.authProvider.getApiKey();
         
         if (!apiKey) {
@@ -92,7 +92,7 @@ export class PromptService {
         const parts: string[] = [];
         
         parts.push('Fetch the Shadow Clone orchestration prompt from the API:');
-        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
+        parts.push(`curl -X GET ${promptApiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
         parts.push('');
         parts.push('Then execute it with the following parameters:');
         
@@ -110,7 +110,7 @@ export class PromptService {
         if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
             parts.push(`Also fetch the ${options.mode} mode configuration from:`);
-            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
+            parts.push(`curl -X GET ${promptApiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         
         if (options.additionalParams) {

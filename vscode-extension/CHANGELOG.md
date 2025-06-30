@@ -2,6 +2,20 @@
 
 All notable changes to the Shadow Clone VS Code extension will be documented in this file.
 
+## [0.3.1] - 2025-06-30
+
+### Fixed
+- Corrected prompt API endpoints to use Cloudflare Worker URL
+- Separated prompt API from license API endpoints
+- Fixed "404 Not Found" errors when fetching prompts
+- Updated all macros to use correct prompt endpoints
+
+### Technical
+- Added `getPromptApiEndpoint()` function for prompt-specific URLs
+- Updated PromptService to use Cloudflare Worker for prompts
+- Updated injectCommand to use correct prompt API endpoint
+- Maintained separation between license API (Ignis Labs) and prompt API (Cloudflare)
+
 ## [0.3.0] - 2025-06-30
 
 ### Added
