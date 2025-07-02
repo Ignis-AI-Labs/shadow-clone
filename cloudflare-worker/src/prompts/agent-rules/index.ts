@@ -32,3 +32,5 @@ export const AGENT_RULES = {
   security: SECURITY_AGENT_RULES,
   teamLead: TEAM_LEAD_RULES,
 };
+// Planning agent rules
+export { PLANNING_AGENT_RULES } from './planning';

@@ -18,6 +18,9 @@ import { TEMPLATES as IMPORTED_TEMPLATES } from '../prompts/templates';
 // Import all execution phases
 import { EXECUTION_PHASES as IMPORTED_EXECUTION_PHASES } from '../prompts/execution-phases';
 
+// Import documentation
+import { SYSTEM_ORGANIZATION, INITIALIZATION_SEQUENCE } from '../prompts/documentation';
+
 // Mode configurations map
 const MODE_CONFIGS = SHADOW_CLONE_MODES;
 
@@ -32,6 +35,7 @@ const AGENT_RULES: Record<string, string> = {
   team_lead_rules: IMPORTED_AGENT_RULES.teamLead,
   audit_agent_rules: IMPORTED_AGENT_RULES.audit,
   research_agent_rules: IMPORTED_AGENT_RULES.research,
+  planning_agent_rules: IMPORTED_AGENT_RULES.planning,
 };
 
 // Coordination rules map - now populated with actual content
@@ -41,6 +45,9 @@ const COORDINATION_RULES: Record<string, string> = {
   quality_gates: IMPORTED_COORDINATION_RULES.qualityGates,
   mode_operations: IMPORTED_COORDINATION_RULES.modeOperations,
   workspace_structure: IMPORTED_COORDINATION_RULES.workspaceStructure,
+  file_organization_rules: IMPORTED_COORDINATION_RULES.fileOrganization,
+  initialization_checklist: IMPORTED_COORDINATION_RULES.initializationChecklist,
+  system_validation_rules: IMPORTED_COORDINATION_RULES.systemValidation,
 };
 
 // Templates map - now populated with actual content
@@ -49,7 +56,8 @@ const TEMPLATES: Record<string, string> = {
   team_templates: IMPORTED_TEMPLATES.teamTemplates,
   'wave-execution-plan-template': IMPORTED_TEMPLATES.waveExecutionPlan,
   'security-audit-report-template': IMPORTED_TEMPLATES.securityAuditReport,
-  // Add other templates as they are converted
+  'master-project-plan-template': IMPORTED_TEMPLATES.masterProjectPlan,
+  'planning-consolidation-template': IMPORTED_TEMPLATES.planningConsolidation,
 };
 
 // Execution phases map - now populated with actual content
@@ -62,6 +70,12 @@ const EXECUTION_PHASES: Record<string, string> = {
   phase6_integration: IMPORTED_EXECUTION_PHASES.phase6Integration,
   phase7_quality: IMPORTED_EXECUTION_PHASES.phase7Quality,
   wave_execution_protocol: IMPORTED_EXECUTION_PHASES.waveExecutionProtocol,
+};
+
+// Documentation map
+const DOCUMENTATION: Record<string, string> = {
+  system_organization: SYSTEM_ORGANIZATION,
+  initialization_sequence: INITIALIZATION_SEQUENCE,
 };
 
 /**
@@ -568,6 +582,81 @@ export async function handleGetAllModes(
     return new Response(
       JSON.stringify({
         error: 'Failed to fetch modes',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
+  }
+}
+
+/**
+ * Handle requests for documentation
+ */
+export async function handleGetDocumentation(
+  request: Request,
+  env: Env,
+  params: { doc: string }
+): Promise<Response> {
+  try {
+    // Verify authentication
+    const authResult = await authenticateRequest(request, env);
+    if ('error' in authResult) {
+      return new Response(
+        JSON.stringify({ error: authResult.error }),
+        {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
+    const doc = params.doc.toLowerCase().replace(/-/g, '_');
+    const content = DOCUMENTATION[doc];
+
+    if (\!content) {
+      return new Response(
+        JSON.stringify({
+          error: 'Documentation not found',
+          availableDocuments: Object.keys(DOCUMENTATION),
+        }),
+        {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        document: doc,
+        content: content,
+        version: '2.0.0',
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch documentation',
         message: error instanceof Error ? error.message : 'Unknown error',
       }),
       {

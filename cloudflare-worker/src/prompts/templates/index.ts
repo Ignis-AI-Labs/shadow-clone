@@ -18,3 +18,6 @@ export const TEMPLATES = {
   waveExecutionPlan: WAVE_EXECUTION_PLAN_TEMPLATE,
   // Add other template exports here as they are created
 };
+// Planning templates
+export { MASTER_PROJECT_PLAN_TEMPLATE } from './master-project-plan';
+export { PLANNING_CONSOLIDATION_TEMPLATE } from './planning-consolidation';
