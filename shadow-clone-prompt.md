@@ -65,7 +65,7 @@ When you need additional Shadow Clone modules, fetch them from the Cloudflare AP
 - Optimize: `curl -X GET {API_ENDPOINT}/api/prompts/modes/optimize -H "X-API-Key: {KEY}"`
 - Refactor: `curl -X GET {API_ENDPOINT}/api/prompts/modes/refactor -H "X-API-Key: {KEY}"`
 - Research: `curl -X GET {API_ENDPOINT}/api/prompts/modes/research -H "X-API-Key: {KEY}"`
-- Plan: `curl -X GET {API_ENDPOINT}/api/prompts/modes/plan -H "X-API-Key: {KEY}"`
+- Plan: `curl -X GET {API_ENDPOINT}/api/prompts/modes/plan -H "X-API-Key: {KEY}"` # Strategic planning with consolidation
 
 **Coordination Rules** (Wave and integration protocols):
 - **🚨 CRITICAL - Initialization Checklist**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/initialization_checklist -H "X-API-Key: {KEY}"`
@@ -81,6 +81,9 @@ When you need additional Shadow Clone modules, fetch them from the Cloudflare AP
 - Agent Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/agent_templates -H "X-API-Key: {KEY}"`
 - Team Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/team_templates -H "X-API-Key: {KEY}"`
 - Wave Execution Plan: `curl -X GET {API_ENDPOINT}/api/prompts/templates/wave-execution-plan-template -H "X-API-Key: {KEY}"`
+- Planning Templates:
+  - Master Project Plan: `curl -X GET {API_ENDPOINT}/api/prompts/templates/master-project-plan-template -H "X-API-Key: {KEY}"`
+  - Planning Consolidation: `curl -X GET {API_ENDPOINT}/api/prompts/templates/planning-consolidation-template -H "X-API-Key: {KEY}"`
 - Security Templates:
   - Security Audit Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/security-audit-report-template -H "X-API-Key: {KEY}"`
   - Vulnerability Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/vulnerability-report-template -H "X-API-Key: {KEY}"`
@@ -152,7 +155,7 @@ Extract from $ARGUMENTS with smart defaults (can be overridden by command line):
 
 ### 2. Mode Detection
 Detect operational mode from prompt:
-- "and plan" → PLANNING MODE
+- "and plan" → PLANNING MODE (Strategic planning with data consolidation)
 - "and execute" → EXECUTION MODE
 - "and research" → RESEARCH MODE
 - "and resume" → RESUME MODE
