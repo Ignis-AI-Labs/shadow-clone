@@ -43,7 +43,47 @@ workspace_dir/.waves/
 
 ## Wave Execution Flow
 
+### Pre-Flight Validation (MANDATORY)
+```python
+def pre_flight_validation(wave_number):
+    """
+    CRITICAL: Must pass ALL checks before ANY wave execution
+    This prevents system bypass and ensures proper initialization
+    """
+    validation_checks = {
+        # System readiness
+        "initialization_complete": verify_initialization_checklist_complete(),
+        "all_rules_loaded": verify_all_coordination_rules_loaded(),
+        "validation_rules_active": check_system_validation_rules_active(),
+        
+        # Wave-specific checks
+        "wave_0_complete": check_wave_0_completion() if wave_number > 0 else True,
+        "previous_wave_done": check_previous_wave_complete(wave_number - 1) if wave_number > 1 else True,
+        
+        # Agent readiness
+        "agents_configured": verify_all_agents_have_complete_rulesets(),
+        "file_org_understood": verify_agents_understand_file_organization(),
+        
+        # Workspace readiness
+        "workspace_valid": verify_workspace_structure_correct(),
+        "wave_dirs_exist": check_wave_directories_exist(),
+        "tracking_files_ready": verify_tracking_files_initialized()
+    }
+    
+    # Check all validations
+    failed_checks = [check for check, passed in validation_checks.items() if not passed]
+    
+    if failed_checks:
+        error_msg = f"PRE-FLIGHT VALIDATION FAILED for Wave {wave_number}:\n"
+        error_msg += "\n".join(f"  ❌ {check}" for check in failed_checks)
+        raise CriticalValidationError(error_msg)
+    
+    log_success(f"✓ All pre-flight checks passed for Wave {wave_number}")
+    return True
+```
+
 ### Pre-Wave Setup
+- **FIRST: Execute pre-flight validation checks**
 - Verify prerequisite deliverables from previous waves
 - Prepare workspace areas for current wave teams
 - Initialize coordination mechanisms

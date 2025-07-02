@@ -141,9 +141,19 @@ DELIVERABLES:
 
 ## Example Wave Directory Structure
 
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
 **Refactor Mode Deliverables:**
 ```
 $waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── code_analysis.md       # Current code structure analysis
+│   ├── refactor_goals.md      # Refactoring objectives
+│   ├── security_controls.md   # Existing security inventory
+│   ├── risk_assessment.md     # Refactoring risk analysis
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
 ├── wave-1/
 │   ├── refactor_analysis.md
 │   ├── dependency_graph.md

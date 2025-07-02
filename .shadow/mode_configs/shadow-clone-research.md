@@ -280,4 +280,37 @@ SECURITY COORDINATION:
 - Security best practice evolution
 - Industry trend and standard updates
 
-This secure research framework ensures that all research activities maintain security awareness and produce actionable insights that enhance rather than compromise security posture. 
+This secure research framework ensures that all research activities maintain security awareness and produce actionable insights that enhance rather than compromise security posture.
+
+## Example Wave Directory Structure
+
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
+**Research Mode Deliverables:**
+```
+$waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── research_objectives.md # Research goals and questions
+│   ├── domain_analysis.md     # Domain landscape assessment
+│   ├── methodology.md         # Research approach
+│   ├── security_context.md    # Security considerations
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
+├── wave-1/
+│   ├── technology_assessment.md
+│   ├── security_landscape.md
+│   ├── compliance_requirements.md
+│   └── WAVE_1_FINDINGS.md
+├── wave-2/
+│   ├── framework_evaluation.md
+│   ├── tool_comparison.md
+│   ├── best_practices.md
+│   └── WAVE_2_ANALYSIS.md
+├── wave-3/
+│   ├── recommendations.md
+│   ├── implementation_guide.md
+│   ├── risk_matrix.md
+│   └── WAVE_3_SYNTHESIS.md
+└── RESEARCH_REPORT.md
+``` 
