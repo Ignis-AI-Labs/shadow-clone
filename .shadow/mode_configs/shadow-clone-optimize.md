@@ -107,3 +107,36 @@ DELIVERABLES:
 - Control validation
 - Performance assessment
 - Compliance verification
+
+## Example Wave Directory Structure
+
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
+**Optimize Mode Deliverables:**
+```
+$waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── audit_findings.md      # Summary of audit findings
+│   ├── optimization_scope.md  # Optimization priorities
+│   ├── security_baseline.md   # Current security posture
+│   ├── performance_metrics.md # Baseline measurements
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
+├── wave-1/
+│   ├── critical_security_fixes/
+│   ├── vulnerability_patches/
+│   ├── security_enhancements.md
+│   └── WAVE_1_CRITICAL.md
+├── wave-2/
+│   ├── performance_optimizations/
+│   ├── database_improvements/
+│   ├── api_enhancements.md
+│   └── WAVE_2_PERFORMANCE.md
+├── wave-3/
+│   ├── quality_improvements/
+│   ├── test_coverage_updates/
+│   ├── documentation_updates.md
+│   └── WAVE_3_QUALITY.md
+└── OPTIMIZATION_REPORT.md
+```

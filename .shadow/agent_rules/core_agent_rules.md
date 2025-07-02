@@ -205,6 +205,9 @@ You must maintain and regularly update your individual state file: `.waves/wave_
 - **Clear Naming**: Use descriptive file and directory names
 - **Version Control**: Work with git according to project strategy
 - **Backup Awareness**: Understand backup and rollback procedures
+- **MANDATORY COMPLIANCE**: Follow file_organization_rules.md for ALL file placement
+- **Wave-0 First**: All planning documents go in .waves/wave-0/ before implementation
+- **Source Code Placement**: NEVER put source code in .waves/ directory
 
 ## Error Handling & Recovery
 

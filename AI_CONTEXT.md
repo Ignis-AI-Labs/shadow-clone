@@ -80,12 +80,14 @@ shadow-clone/
 
 1. **`shadow-clone-prompt.md`** - Core orchestration logic (now served via API)
 2. **`shadow-clone-licensing-plan.md`** - Complete business model and pricing
-3. **`.shadow/mode_configs/`** - Agent role definitions (now served via API)
-4. **`backend/prisma/schema.prisma`** - Database structure
-5. **`frontend/src/types/index.ts`** - TypeScript interfaces
-6. **`vscode-extension/`** - VS Code extension for Shadow Clone
-7. **`cloudflare-worker/`** - API serving prompts and handling auth
-8. **`DEVELOPMENT_SETUP.md`** - Complete dev environment setup
+3. **`.shadow/SYSTEM_ORGANIZATION.md`** - Comprehensive system organization guide
+4. **`.shadow/coordination_rules/file_organization_rules.md`** - MANDATORY file placement rules
+5. **`.shadow/mode_configs/`** - Agent role definitions (now served via API)
+6. **`backend/prisma/schema.prisma`** - Database structure
+7. **`frontend/src/types/index.ts`** - TypeScript interfaces
+8. **`vscode-extension/`** - VS Code extension for Shadow Clone
+9. **`cloudflare-worker/`** - API serving prompts and handling auth
+10. **`DEVELOPMENT_SETUP.md`** - Complete dev environment setup
 
 ## Current Implementation Status (Updated 2025-06-29)
 
@@ -171,9 +173,11 @@ IGNIS_CONTRACTS = {
 4. **NFT Verification**: Real-time blockchain verification at claim time
 5. **One License Per Wallet**: Prevents duplicate claims
 6. **One License Per Email**: Ensures unique user accounts
-7. **Wave Folder Organization**: All deliverables organized in `$waves_directory/wave-X/` folders
-8. **Agent Isolation**: Each wave works in its own folder to prevent conflicts
-9. **Configurable Paths**: Users can set custom `waves_directory` (default: `./.waves/`)
+7. **Wave-0 Mandatory**: ALL projects must complete pre-execution planning in wave-0
+8. **Wave Folder Organization**: All deliverables organized in `$waves_directory/wave-X/` folders
+9. **File Organization Rules**: Strict enforcement of file placement (see file_organization_rules.md)
+10. **Agent Isolation**: Each wave works in its own folder to prevent conflicts
+11. **Configurable Paths**: Users can set custom `waves_directory` (default: `./.waves/`)
 
 ## Security Considerations
 

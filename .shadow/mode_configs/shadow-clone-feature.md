@@ -144,9 +144,19 @@ DELIVERABLES:
 
 ## Example Wave Directory Structure
 
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
 **Feature Mode Deliverables:**
 ```
 $waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── feature_analysis.md    # Feature requirements breakdown
+│   ├── impact_assessment.md   # Code impact analysis
+│   ├── security_review.md     # Security implications
+│   ├── architecture_plan.md   # High-level design
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
 ├── wave-1/
 │   ├── architecture_design.md
 │   ├── database_schema.sql

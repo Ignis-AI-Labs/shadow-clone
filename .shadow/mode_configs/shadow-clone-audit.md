@@ -118,9 +118,19 @@ TOOLS:
 
 ## Example Wave Directory Structure
 
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
 **Audit Mode Deliverables:**
 ```
 $waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── issue_analysis.md      # Security issue analysis
+│   ├── vulnerability_scope.md # Vulnerability assessment scope
+│   ├── audit_framework.md     # Selected audit frameworks
+│   ├── tool_selection.md      # Security tool selection
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
 ├── wave-1/
 │   ├── authentication_findings.md
 │   ├── data_security_findings.md

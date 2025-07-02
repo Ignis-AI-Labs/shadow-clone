@@ -17,18 +17,56 @@ See LICENSE-PROPRIETARY.md for full terms.
   - Safety measures applied
   - Git branch created (if applicable)
   - Initial workspace structure
+  - **VERIFIED SYSTEM INITIALIZATION**
 - **Dependencies**: 
+  - **MANDATORY**: initialization_checklist.md
   - Mode configurations (if project_type specific)
   - Git integration utilities
+  - ALL coordination rules
 
 ## Phase Objectives
-1. Understand the project requirements and scope
-2. Detect or determine the project type
-3. Ensure workspace safety through backups and git branching
-4. Create initial project structure
-5. Prepare foundation for team configuration
+1. **FIRST: Complete mandatory system initialization checklist**
+2. Understand the project requirements and scope
+3. Detect or determine the project type
+4. Ensure workspace safety through backups and git branching
+5. Create initial project structure
+6. Prepare foundation for team configuration
 
 ## Execution Steps
+
+### 0. MANDATORY System Initialization (MUST BE FIRST)
+```python
+def initialize_system():
+    """
+    CRITICAL: This MUST execute before ANY other steps
+    Failure here = Complete system failure
+    """
+    # Load and execute initialization checklist
+    checklist = load_file(".shadow/coordination_rules/initialization_checklist.md")
+    
+    # Verify ALL required system files
+    required_files = [
+        ".shadow/agent_rules/core_agent_rules.md",
+        ".shadow/coordination_rules/file_organization_rules.md",
+        ".shadow/coordination_rules/wave_coordination.md",
+        ".shadow/coordination_rules/workspace_structure.md",
+        ".shadow/coordination_rules/initialization_checklist.md"
+    ]
+    
+    for file in required_files:
+        if not exists(file):
+            raise CriticalError(f"SYSTEM FAILURE: Missing {file}")
+    
+    # Load ALL core rules
+    core_rules = load_all_core_rules()
+    
+    # Verify wave-0 enforcement is configured
+    if "wave-0" not in core_rules:
+        raise CriticalError("Wave-0 enforcement not configured!")
+    
+    log_success("System initialization complete")
+    return True
+```
 
 ### 1. Dynamic Project Plan Creation
 If no project plan exists at the specified path:

@@ -66,12 +66,61 @@ elif mode == "RESEARCH":
 
 ## Wave Execution Protocol
 
+### 0. Wave-0 Execution (Pre-Implementation Planning)
+```python
+def execute_wave_0(project_context, mode_config):
+    """
+    MANDATORY pre-execution planning phase
+    All planning must be completed before implementation begins
+    """
+    wave_0_structure = {
+        "number": 0,
+        "name": "Pre-Execution Planning",
+        "status": "executing",
+        "deliverables": []
+    }
+    
+    # Create wave-0 directory
+    create_directory(".waves/wave-0/")
+    
+    # Execute planning activities based on mode
+    planning_docs = {
+        "project_analysis.md": analyze_project(project_context),
+        "requirements.md": extract_requirements(project_context),
+        "architecture_plan.md": design_architecture(project_context, mode_config),
+        "team_formation.md": assign_teams_and_agents(project_context),
+        "wave_plan.md": plan_execution_waves(project_context),
+        "risk_assessment.md": identify_risks(project_context),
+        "setup_complete.md": None  # Created after validation
+    }
+    
+    # Write all planning documents
+    for doc_name, content in planning_docs.items():
+        if content:
+            write_file(f".waves/wave-0/{doc_name}", content)
+            wave_0_structure["deliverables"].append(doc_name)
+    
+    # Validate wave-0 completion
+    if validate_wave_0_deliverables(wave_0_structure["deliverables"]):
+        write_file(".waves/wave-0/setup_complete.md", 
+                  f"Wave-0 completed at {timestamp()}\nReady for implementation.")
+        wave_0_structure["status"] = "completed"
+    else:
+        raise Exception("Wave-0 validation failed. Cannot proceed to implementation.")
+    
+    return wave_0_structure
+```
+
 ### 1. Pre-Wave Setup
 ```python
 def prepare_wave_execution(wave, deployed_agents):
     """
     Set up wave for execution
     """
+    # Ensure wave-0 is complete before any implementation waves
+    if wave["number"] == 1:
+        verify_wave_0_completion()
+    
     wave_state = {
         "number": wave["number"],
         "status": "preparing",

@@ -21,9 +21,13 @@ workspace_dir/
 │   │   ├── security_agent_rules.md # Rules for security agents
 │   │   └── [additional role-specific rules]
 │   ├── coordination_rules/ # Wave and mode coordination rules
+│   │   ├── initialization_checklist.md # MANDATORY startup checklist
+│   │   ├── system_validation_rules.md # Continuous validation enforcement
+│   │   ├── file_organization_rules.md # MANDATORY file placement rules
 │   │   ├── wave_coordination.md # Wave execution and coordination protocols
 │   │   ├── mode_operations.md   # Mode-specific operation procedures
-│   │   └── workspace_structure.md # This file - workspace organization
+│   │   ├── workspace_structure.md # This file - workspace organization
+│   │   └── integration_rules.md # Integration protocols
 │   ├── mode_configs/     # Modular configuration files
 │   │   ├── shadow-clone-audit.md
 │   │   ├── shadow-clone-feature.md
@@ -31,7 +35,9 @@ workspace_dir/
 │   │   ├── shadow-clone-optimize.md
 │   │   ├── shadow-clone-debug.md
 │   │   └── shadow-clone-research.md
-│   └── templates/        # System templates and patterns
+│   ├── templates/        # System templates and patterns
+│   ├── SYSTEM_ORGANIZATION.md  # Comprehensive system overview
+│   └── INITIALIZATION_SEQUENCE.md # Detailed startup sequence
 ├── .waves/                # Wave execution runtime files
 │   ├── constitution.md   # Project constitution - central coordination authority
 │   ├── wave_plan.md      # Wave assignments and timeline
@@ -43,7 +49,14 @@ workspace_dir/
 │   ├── diplomatic_log.md # Cross-team coordination and dependency resolution
 │   ├── git_status.md     # Git branch management and safety
 │   ├── safety_log.md     # Backup and safety operations log
-│   ├── project_analysis.md # Project type detection results
+│   ├── wave_0/           # Pre-execution planning phase (MANDATORY)
+│   │   ├── project_analysis.md # Initial project understanding
+│   │   ├── requirements.md # Extracted requirements
+│   │   ├── architecture_plan.md # High-level architecture
+│   │   ├── team_formation.md # Team and agent assignments
+│   │   ├── wave_plan.md # Execution strategy
+│   │   ├── risk_assessment.md # Risk analysis
+│   │   └── setup_complete.md # Pre-execution checkpoint
 │   ├── wave_1/           # Wave 1 coordination
 │   │   ├── team_reports/ # Individual agent state files
 │   │   ├── dependencies.md # Cross-team dependency tracking
@@ -66,6 +79,7 @@ workspace_dir/
 ### .shadow/ - System Framework
 - **agent_rules/**: Behavioral protocols injected into agent identities
 - **coordination_rules/**: Wave coordination and mode operation procedures
+  - **file_organization_rules.md**: MANDATORY file placement and wave-0 requirements
 - **mode_configs/**: Project-type specific configurations and methodologies
 - **templates/**: Standardized templates and patterns
 

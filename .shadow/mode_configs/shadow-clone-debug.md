@@ -95,4 +95,37 @@ This module guides the Shadow Clone System in debugging issues while maintaining
 - Monitoring configuration debugging
 - Logging configuration issue resolution
 
-This secure debugging framework ensures that issue resolution enhances rather than compromises security while effectively resolving problems and maintaining compliance requirements. 
+This secure debugging framework ensures that issue resolution enhances rather than compromises security while effectively resolving problems and maintaining compliance requirements.
+
+## Example Wave Directory Structure
+
+**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+
+**Debug Mode Deliverables:**
+```
+$waves_directory/
+├── wave-0/                    # MANDATORY pre-execution planning
+│   ├── issue_analysis.md      # Initial issue investigation
+│   ├── root_cause_analysis.md # Root cause hypothesis
+│   ├── debug_strategy.md      # Debugging approach
+│   ├── security_impact.md     # Security implications
+│   ├── team_formation.md      # Agent assignments
+│   ├── wave_plan.md          # Execution strategy
+│   └── setup_complete.md      # Pre-execution checkpoint
+├── wave-1/
+│   ├── reproduction_steps.md
+│   ├── debug_findings.md
+│   ├── security_assessment.md
+│   └── WAVE_1_DIAGNOSIS.md
+├── wave-2/
+│   ├── fix_implementation/
+│   ├── test_cases/
+│   ├── security_validation.md
+│   └── WAVE_2_RESOLUTION.md
+├── wave-3/
+│   ├── regression_tests/
+│   ├── performance_impact.md
+│   ├── documentation_updates.md
+│   └── WAVE_3_VALIDATION.md
+└── DEBUG_COMPLETE.md
+``` 

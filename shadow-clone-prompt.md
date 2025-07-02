@@ -29,6 +29,17 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 
 **🗾 Master Craftsman Philosophy**: Every agent is a domain master capable of handling entire projects independently, but when masters collaborate with proper coordination, they create something far superior through collective expertise.
 
+## 🚨 CRITICAL: Mandatory Initialization Sequence
+
+**BEFORE ANY EXECUTION**, the system MUST:
+1. Load the initialization_checklist.md from API
+2. Verify ALL critical system components exist
+3. Create wave-0 directory for planning
+4. Initialize all tracking systems
+5. Validate everything is properly configured
+
+**FAILURE TO INITIALIZE = SYSTEM FAILURE**
+
 ## System Architecture
 
 **📂 Modular Components** (FETCH FROM API AS NEEDED):
@@ -57,6 +68,9 @@ When you need additional Shadow Clone modules, fetch them from the Cloudflare AP
 - Plan: `curl -X GET {API_ENDPOINT}/api/prompts/modes/plan -H "X-API-Key: {KEY}"`
 
 **Coordination Rules** (Wave and integration protocols):
+- **🚨 CRITICAL - Initialization Checklist**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/initialization_checklist -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - System Validation**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/system_validation_rules -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - File Organization**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/file_organization_rules -H "X-API-Key: {KEY}"`
 - Wave Coordination: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/wave_coordination -H "X-API-Key: {KEY}"`
 - Integration Rules: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/integration_rules -H "X-API-Key: {KEY}"`
 - Quality Gates: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/quality_gates -H "X-API-Key: {KEY}"`
@@ -82,6 +96,10 @@ When you need additional Shadow Clone modules, fetch them from the Cloudflare AP
 - Phase 6 Integration: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase6_integration -H "X-API-Key: {KEY}"`
 - Phase 7 Quality: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase7_quality -H "X-API-Key: {KEY}"`
 - Wave Execution Protocol: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/wave_execution_protocol -H "X-API-Key: {KEY}"`
+
+**System Documentation** (Critical references):
+- System Organization: `curl -X GET {API_ENDPOINT}/api/prompts/documentation/system_organization -H "X-API-Key: {KEY}"`
+- Initialization Sequence: `curl -X GET {API_ENDPOINT}/api/prompts/documentation/initialization_sequence -H "X-API-Key: {KEY}"`
 
 **CRITICAL API OPERATIONS**:
 - **"load_module"** = Fetch from API at specified endpoint
@@ -158,8 +176,41 @@ elif project_type != "auto":
 
 ## Execution Flow
 
-### Phase 1: Project Analysis
+### Phase 1: MANDATORY System Initialization & Project Analysis
+
+**🚨 CRITICAL: NO EXECUTION WITHOUT INITIALIZATION**
+
 ```python
+# STEP 0: MANDATORY INITIALIZATION CHECKLIST
+# This MUST happen before ANY other operation
+initialization_checklist = fetch_from_api("/api/prompts/coordination-rules/initialization_checklist")
+system_validation_rules = fetch_from_api("/api/prompts/coordination-rules/system_validation_rules")
+file_organization_rules = fetch_from_api("/api/prompts/coordination-rules/file_organization_rules")
+
+# Verify ALL critical components are loaded
+CRITICAL_COMPONENTS = [
+    "core_agent_rules",
+    "file_organization_rules", 
+    "wave_coordination",
+    "system_validation_rules",
+    "workspace_structure"
+]
+
+for component in CRITICAL_COMPONENTS:
+    if not verify_component_loaded(component):
+        raise CriticalError(f"SYSTEM FAILURE: {component} not loaded. Cannot proceed!")
+
+# Create mandatory wave-0 directory for planning
+create_directory(f"{waves_directory}/wave-0/")  # MANDATORY for ALL projects
+
+# Initialize tracking systems
+initialize_file_registry()
+initialize_file_reservations()
+initialize_agent_registry()
+
+log("✓ System initialization complete - proceeding with project analysis")
+
+# NOW proceed with project analysis
 # Dynamic project plan creation if needed
 if not exists(project_plan):
     project_plan = generate_from_user_request($ARGUMENTS)
@@ -170,6 +221,11 @@ project_context = analyze_project(project_plan, workspace_dir)
 
 # Safety assessment and git strategy
 apply_safety_measures(workspace_dir, git_strategy)
+
+# ENFORCE WAVE-0 PLANNING
+if is_new_project() and not wave_0_complete():
+    log("📋 Wave-0 planning phase required before implementation")
+    enforce_wave_0_planning()
 ```
 
 ### Phase 2: Team Configuration
@@ -237,16 +293,22 @@ for wave in waves:
                 # 1. Universal Excellence (MANDATORY)
                 core_rules=core_rules,
                 
-                # 2. Role Specialization (MANDATORY)
+                # 2. File Organization Rules (MANDATORY)
+                file_org_rules=file_organization_rules,
+                
+                # 3. Role Specialization (MANDATORY)
                 role_rules=role_rules,
                 
-                # 3. Project Context (CONDITIONAL) 
+                # 4. Project Context (CONDITIONAL) 
                 project_rules=project_rules,
                 
-                # 4. Team Context (MANDATORY)
+                # 5. Team Context (MANDATORY)
                 team_context=team.context,
                 
-                # 5. Specific Assignment
+                # 6. Wave-0 Requirements (MANDATORY)
+                wave_0_enforcement="All planning must occur in wave-0 before implementation",
+                
+                # 7. Specific Assignment
                 assignment=agent.assignment
             )
             
@@ -300,8 +362,16 @@ When the system completes deployment and shows the summary, you have two options
 ```python
 # Execute based on loaded configuration and mode
 if mode == "EXECUTION":
-    # Deploy ALL agents in each wave SIMULTANEOUSLY
+    # CRITICAL: Pre-flight validation before EACH wave
     for wave in waves:
+        # Run mandatory pre-flight checks
+        pre_flight_validation(wave.number)
+        
+        # Verify wave-0 complete for implementation waves
+        if wave.number > 0 and not wave_0_complete():
+            raise CriticalError("Cannot execute implementation without wave-0 planning!")
+        
+        # Deploy ALL agents in each wave SIMULTANEOUSLY
         deploy_all_agents_in_parallel(wave)  # NOT one by one
         execute_wave_in_parallel(wave, wave_rules)
         convergence_session(wave)
@@ -398,6 +468,14 @@ This is NOT optional - it's a core system requirement for proper agent coordinat
 
 ```
 $waves_directory/
+├── wave-0/                    # 🚨 MANDATORY: Pre-execution planning
+│   ├── project_analysis.md   # Initial project understanding
+│   ├── requirements.md       # Extracted requirements
+│   ├── architecture_plan.md  # High-level design
+│   ├── team_formation.md     # Agent assignments
+│   ├── wave_plan.md         # Execution strategy
+│   ├── risk_assessment.md    # Risk analysis
+│   └── setup_complete.md     # Planning completion marker
 ├── wave-1/
 │   ├── [agent-1-deliverables]
 │   ├── [agent-2-deliverables]
@@ -412,12 +490,15 @@ $waves_directory/
 ```
 
 ### Wave Folder Rules
-1. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `./.waves/`)
-2. **Automatic Creation**: Each wave gets its own folder (`$waves_directory/wave-1/`, etc.)
-3. **Agent Organization**: Each agent saves work in the current wave folder
-4. **Shared Documents**: Documents accessed by multiple agents go in the wave folder root
-5. **Sub-waves**: For waves >10 agents, use sub-folders (`$waves_directory/wave-1a/`, etc.)
-6. **Final Consolidation**: Master deliverables may be copied to `$waves_directory` root after all waves complete
+1. **WAVE-0 IS MANDATORY**: ALL projects start with planning in `$waves_directory/wave-0/`
+2. **USE CONFIGURED PATH**: Always use `$waves_directory` (default: `./.waves/`)
+3. **Automatic Creation**: Each wave gets its own folder (`$waves_directory/wave-1/`, etc.)
+4. **File Organization Rules**: ALL agents MUST follow file_organization_rules.md
+5. **NO SOURCE CODE IN .WAVES**: Implementation code goes in src/, tests/, etc.
+6. **Agent Organization**: Each agent saves work in the current wave folder
+7. **Shared Documents**: Documents accessed by multiple agents go in the wave folder root
+8. **Sub-waves**: For waves >10 agents, use sub-folders (`$waves_directory/wave-1a/`, etc.)
+9. **Final Consolidation**: Master deliverables may be copied to `$waves_directory` root after all waves complete
 
 ### Mode-Specific Examples
 
