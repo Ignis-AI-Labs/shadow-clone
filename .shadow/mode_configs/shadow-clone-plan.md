@@ -6,36 +6,40 @@ See LICENSE-PROPRIETARY.md for full terms.
 
 # Shadow Clone Planning Mode Configuration
 
-## 🎯 Strategic Planning & Consolidation Framework
+## 🎯 Strategic Planning - When You Have No Plan Yet
 
-Transform complex project requirements into actionable, comprehensive execution plans with proper data consolidation from all analysis phases.
+**Perfect for**: "I have this idea for a project but I don't know where to start..."
+
+Transform your vision into a comprehensive MASTER_PLAN that serves as the complete blueprint for project execution.
 
 ## Planning Mode Overview
 
-Planning Mode creates detailed project blueprints by:
-1. Analyzing all wave-0 deliverables and previous planning documents
-2. Consolidating findings from research, analysis, and assessment phases
-3. Creating comprehensive execution strategies
-4. Producing actionable project plans with clear milestones
-5. Ensuring all planning artifacts are coherent and aligned
+Planning Mode is designed for projects that **don't have a project plan yet**. It transforms your initial ideas and requirements into a comprehensive MASTER_PLAN by:
+
+1. Analyzing your project request and understanding your vision
+2. Researching best practices and approaches for your project type
+3. Creating detailed technical and business strategies
+4. Producing the ultimate **MASTER_PLAN** that guides entire project execution
+5. Ensuring all planning artifacts are professional and actionable
+
+**Primary Output**: The MASTER_PLAN - your complete blueprint for project success
 
 ## Pre-Planning Requirements
 
-### Data Consolidation Sources
-**Wave-0 Documents** (Primary Sources):
-- project_analysis.md
-- requirements.md
-- architecture_plan.md
-- team_formation.md
-- risk_assessment.md
-- Any mode-specific planning documents
+### Starting Points (When You Have No Plan)
+**User Input**:
+- Your project idea or vision
+- Basic requirements or goals
+- Any constraints you're aware of
+- Success criteria you envision
 
-**Previous Wave Outputs** (If Available):
-- Research findings
-- Technical assessments
-- Feasibility studies
-- Stakeholder feedback
-- Constraint analyses
+**Wave-0 Discovery** (What We'll Create):
+- Initial project understanding
+- Requirements extraction from your description
+- Technology research and recommendations
+- Resource and timeline estimation
+- Risk identification
+- Strategic approach formulation
 
 ## Planning Team Structure
 
@@ -155,46 +159,67 @@ Planning Mode creates detailed project blueprints by:
 
 ## Planning Deliverables
 
-### Master Documents
-1. **Comprehensive Project Plan**
-   - Executive summary
-   - Project objectives
-   - Scope definition
-   - Work breakdown structure
-   - Timeline and milestones
-   - Resource requirements
-   - Risk management plan
-   - Quality assurance approach
-   - Success criteria
+### 🎯 THE MASTER_PLAN
+The ultimate deliverable - a single, comprehensive document that contains EVERYTHING needed to execute your project successfully.
 
-2. **Technical Implementation Guide**
-   - Architecture blueprint
-   - Technology stack details
-   - Integration approach
-   - Security considerations
-   - Performance requirements
-   - Scalability plan
+**MASTER_PLAN.md** includes:
+1. **Executive Vision**
+   - Your project transformed into a clear, compelling vision
+   - Strategic objectives and success metrics
+   - Expected business impact and ROI
 
-3. **Resource & Timeline Document**
-   - Detailed project schedule
-   - Resource allocation matrix
-   - Budget breakdown
-   - Dependency mapping
-   - Critical path analysis
+2. **Comprehensive Project Blueprint**
+   - Complete project scope and boundaries
+   - Work breakdown structure (WBS)
+   - Detailed requirements (functional & non-functional)
+   - User stories and acceptance criteria
+   - Success criteria and KPIs
 
-4. **Risk Management Plan**
-   - Comprehensive risk register
+3. **Technical Architecture**
+   - System design and architecture diagrams
+   - Technology stack recommendations with justifications
+   - Integration strategies
+   - Security architecture
+   - Performance and scalability plans
+   - Development best practices
+
+4. **Execution Roadmap**
+   - Phase-by-phase implementation plan
+   - Sprint breakdown with deliverables
+   - Timeline with milestones
+   - Critical path identification
+   - Dependency management
+
+5. **Resource Management**
+   - Team structure and roles
+   - Skill requirements
+   - Budget allocation
+   - Resource timeline
+   - Vendor/tool requirements
+
+6. **Risk Management**
+   - Comprehensive risk assessment
    - Mitigation strategies
    - Contingency plans
-   - Monitoring approach
-   - Escalation procedures
+   - Decision trees for key risks
 
-5. **Stakeholder Communication Plan**
-   - Stakeholder matrix
-   - Communication schedule
-   - Reporting structure
-   - Feedback mechanisms
-   - Change management approach
+7. **Quality & Governance**
+   - Quality standards and metrics
+   - Testing strategy
+   - Code review process
+   - Documentation standards
+   - Compliance requirements
+
+8. **Communication Framework**
+   - Stakeholder engagement plan
+   - Reporting cadence
+   - Escalation paths
+   - Change management process
+
+### Supporting Documents
+- **Technical_Specifications.md**: Deep technical details
+- **Implementation_Guide.md**: Step-by-step execution instructions
+- **Quick_Start_Guide.md**: For teams to get started immediately
 
 ## Planning Best Practices
 
@@ -226,34 +251,34 @@ Planning Mode creates detailed project blueprints by:
 **Planning Mode Deliverables:**
 ```
 $waves_directory/
-├── wave-0/                      # MANDATORY pre-execution planning
-│   ├── planning_scope.md        # What needs to be planned
-│   ├── data_sources.md          # Available inputs for planning
-│   ├── planning_objectives.md   # Goals of planning exercise
-│   ├── stakeholder_map.md       # Who needs the plan
-│   ├── constraint_analysis.md   # Planning constraints
+├── wave-0/                      # Initial Discovery & Research
+│   ├── project_vision.md        # Your idea transformed into vision
+│   ├── requirements_discovery.md # What we understood from your input
+│   ├── technology_research.md   # Best tech stack for your project
+│   ├── approach_options.md      # Different ways to build this
+│   ├── initial_estimates.md     # Rough timeline and resources
 │   ├── team_formation.md        # Planning team structure
-│   ├── wave_plan.md            # How planning will proceed
-│   └── setup_complete.md        # Pre-execution checkpoint
+│   ├── wave_plan.md            # How we'll create your plan
+│   └── setup_complete.md        # Ready to create MASTER_PLAN
 ├── wave-1/                      # Strategic Planning
-│   ├── consolidated_requirements.md
-│   ├── technical_roadmap.md
-│   ├── resource_timeline_plan.md
-│   ├── data_synthesis_report.md
+│   ├── detailed_requirements.md # Complete requirements analysis
+│   ├── technical_architecture.md # System design and architecture
+│   ├── execution_roadmap.md     # How to build it step-by-step
+│   ├── resource_plan.md         # Who you need and when
 │   └── WAVE_1_SUMMARY.md
-├── wave-2/                      # Quality Assurance
-│   ├── risk_management_plan.md
-│   ├── stakeholder_alignment.md
-│   ├── plan_validation_report.md
-│   ├── feasibility_assessment.md
+├── wave-2/                      # Validation & Risk Assessment
+│   ├── risk_analysis.md         # What could go wrong & how to prevent
+│   ├── feasibility_validation.md # Confirming the plan is achievable
+│   ├── stakeholder_review.md    # Ensuring all perspectives covered
+│   ├── quality_framework.md     # How to ensure excellence
 │   └── WAVE_2_SUMMARY.md
-├── wave-3/                      # Documentation
-│   ├── master_project_plan.md
-│   ├── executive_summary.md
-│   ├── technical_guide.md
-│   ├── implementation_roadmap.md
+├── wave-3/                      # MASTER_PLAN Creation
+│   ├── MASTER_PLAN.md          # 🎯 THE COMPLETE PROJECT BLUEPRINT
+│   ├── Technical_Specifications.md
+│   ├── Implementation_Guide.md
+│   ├── Quick_Start_Guide.md
 │   └── WAVE_3_SUMMARY.md
-└── PLANNING_COMPLETE.md
+└── PLANNING_COMPLETE.md         # Your project is ready to execute!
 ```
 
 ## Success Metrics
@@ -281,10 +306,42 @@ $waves_directory/
 
 ## Integration with Shadow Clone System
 
-Planning Mode serves as the bridge between analysis and execution:
-1. **Input**: Consolidates all analysis and research outputs
-2. **Process**: Creates comprehensive, actionable plans
-3. **Output**: Delivers execution-ready project blueprint
-4. **Validation**: Ensures plan quality before execution begins
+### Planning Mode Workflow
+1. **Input**: Your project idea, vision, or basic requirements
+2. **Wave-0**: Research and discovery to understand your needs
+3. **Wave-1**: Strategic planning to create detailed approach
+4. **Wave-2**: Validation and risk assessment
+5. **Wave-3**: MASTER_PLAN creation and finalization
+6. **Output**: Complete MASTER_PLAN ready for execution
 
-The planning team's expertise in consolidation and strategic thinking ensures that all project knowledge is transformed into a coherent, implementable plan that guides successful project execution.
+### After Planning Mode - Using Your MASTER_PLAN
+
+Once your MASTER_PLAN is complete, you can:
+
+1. **Execute with Shadow Clone**:
+   ```
+   "Load shadow-clone-prompt.md and execute with project_plan=.waves/wave-3/MASTER_PLAN.md"
+   ```
+
+2. **Share with Stakeholders**:
+   - Executive summary for leadership buy-in
+   - Technical specs for development teams
+   - Resource plan for managers
+   - Timeline for project tracking
+
+3. **Use as Living Document**:
+   - Update as project evolves
+   - Track against actual progress
+   - Adjust based on learnings
+
+### The Power of the MASTER_PLAN
+
+Your MASTER_PLAN transforms a vague idea into:
+- Clear project vision and objectives
+- Detailed technical architecture
+- Step-by-step implementation roadmap
+- Complete resource and budget allocation
+- Comprehensive risk mitigation strategies
+- Professional documentation ready for any audience
+
+**Remember**: The MASTER_PLAN is your project's North Star - everything flows from this blueprint!
