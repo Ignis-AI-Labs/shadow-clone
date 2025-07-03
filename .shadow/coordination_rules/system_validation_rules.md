@@ -102,7 +102,40 @@ def runtime_validation_loop():
         # Verify Record Keeper active
         check_record_keeper_activity()
         
+        # Enforce git commit protocol
+        enforce_no_commits_during_waves()
+        
         sleep(validation_interval)
+```
+
+### Layer 4: Git Operation Validation
+**When**: During all wave execution
+**What**: Enforce git commit protocol
+
+```python
+def enforce_no_commits_during_waves():
+    """
+    Ensure NO commits happen during wave execution
+    Per git_commit_protocol.md
+    """
+    # Monitor for forbidden git operations
+    forbidden_commands = [
+        "git commit",
+        "git push", 
+        "git merge",
+        "git rebase",
+        "git tag"
+    ]
+    
+    # If any agent attempts forbidden operation
+    for agent in active_agents:
+        if agent.attempting_command in forbidden_commands:
+            raise GitProtocolViolation(
+                f"Agent {agent.name} attempted {agent.attempting_command} during wave execution. "
+                f"Commits are ONLY allowed after final wave completion."
+            )
+    
+    return True
 ```
 
 ## Validation Checkpoints
@@ -174,6 +207,19 @@ Validates:
   - Wave summaries included
   - Resume mode information current
 Failure Action: BLOCK - Cannot proceed without context preservation
+```
+
+### 7. Git Commit Protocol Checkpoint
+```yaml
+Location: Continuous during wave execution + final phase
+Validates:
+  - NO git commits during any wave execution
+  - NO git push operations until final commit
+  - Git strategy properly initialized
+  - Branch created if specified
+  - Final commit only after all waves complete
+  - Commit message follows protocol template
+Failure Action: ABORT - Git protocol violation stops execution
 ```
 
 ## Bypass Prevention Mechanisms
@@ -287,5 +333,7 @@ def handle_validation_error(error):
 3. ✓ Wave-0 ALWAYS happens first
 4. ✓ Agents ALWAYS have complete rulesets
 5. ✓ File organization ALWAYS enforced
+6. ✓ Constitution ALWAYS maintained
+7. ✓ Git commits ONLY after final wave
 
 **Remember**: Validation is not optional - it's the immune system of Shadow Clone.

@@ -173,13 +173,22 @@ def execute_git_strategy(workspace_dir, strategy, project_type):
     if strategy == "safe_branch":
         branch_name = f"shadow-clone/{project_type}-{timestamp()}"
         git_checkout_new_branch(branch_name)
+        log_info(f"Created feature branch: {branch_name}")
+        log_info("NOTE: Commits will only happen after final wave completion")
     elif strategy == "branch":
         branch_name = f"shadow-clone/{project_type}"
         git_checkout_new_branch(branch_name)
+        log_info(f"Created branch: {branch_name}")
+        log_info("NOTE: Commits will only happen after final wave completion")
     elif strategy == "main":
         # Work on current branch
-        log_warning("Working on main branch")
+        log_warning("Working on main branch - changes will not be committed until final wave")
+        log_info("NOTE: Commits will only happen after final wave completion")
     # strategy == "none" - skip git operations
+    
+    # Load commit protocol for all strategies except "none"
+    if strategy != "none":
+        load_coordination_rule("git_commit_protocol.md")
 ```
 
 ### 6. Mode-Specific Analysis

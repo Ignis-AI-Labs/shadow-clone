@@ -419,6 +419,88 @@ def create_post_deployment_monitoring_plan(baseline_metrics, integrated_system):
     return monitoring_plan
 ```
 
+## Git Commit Protocol - Final Project Commit
+
+### Execute Final Commit (Only After All Checks Pass)
+```python
+def execute_final_commit_protocol(project_context, final_audit):
+    """
+    Creates the single, atomic commit for the entire project
+    Per git_commit_protocol.md - NO commits until now
+    """
+    # Load commit protocol
+    commit_protocol = load_coordination_rule("git_commit_protocol.md")
+    
+    # Verify commit conditions
+    if final_audit["certification_status"] != "certified":
+        log_error("Cannot commit - project not certified")
+        return None
+    
+    if not verify_all_waves_complete():
+        log_error("Cannot commit - waves incomplete")
+        return None
+    
+    if not verify_constitution_updated():
+        log_error("Cannot commit - constitution not updated")
+        return None
+    
+    # Generate comprehensive commit message
+    commit_message = generate_final_commit_message(
+        project_type=project_context["type"],
+        waves_completed=get_completed_waves(),
+        constitution_summary=read_constitution_summary(),
+        audit_results=final_audit,
+        files_changed=count_changed_files()
+    )
+    
+    # Stage all project files
+    git_add_all_deliverables()
+    
+    # Create the single project commit
+    commit_result = git_commit(commit_message)
+    
+    # Log commit details
+    log_commit_success(commit_result)
+    
+    # Update constitution with commit info
+    update_constitution_with_commit(commit_result["sha"])
+    
+    return commit_result
+```
+
+### Final Commit Message Template
+```
+{project_type}: {project_description}
+
+Shadow Clone Execution Complete - All Waves Successful
+
+Wave Summary:
+{for each wave:}
+- Wave {n}: {wave_summary} ✓
+
+Quality Certification:
+- Code Quality: {score}% PASSED
+- Architecture: {score}% PASSED  
+- Security: {score}% PASSED
+- Performance: {score}% PASSED
+- Overall: CERTIFIED
+
+Key Deliverables:
+{list major deliverables}
+
+Technical Summary:
+- Files Changed: {count}
+- Tests Added: {count}
+- Documentation: Complete
+- Quality Gates: All Passed
+
+This commit represents the complete, tested, and certified implementation
+delivered by Shadow Clone master craftsmen.
+
+Shadow Clone ID: {execution_id}
+Git Strategy: {git_strategy_used}
+```
+
 ## Final Deliverables
 1. **Final Quality Certification**: Comprehensive audit results
 2. **Deployment Authorization**: Formal approval with auth code
@@ -426,6 +508,7 @@ def create_post_deployment_monitoring_plan(baseline_metrics, integrated_system):
 4. **Rollback Procedures**: Tested and documented
 5. **Monitoring Plan**: Post-deployment monitoring strategy
 6. **Stakeholder Signoffs**: All approvals documented
+7. **Git Commit**: Single atomic commit with all changes
 
 ## Success Criteria
 - All audit sections pass with ≥90% score
