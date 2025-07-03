@@ -55,7 +55,8 @@ def validate_agent_deployment(agent):
         "file_organization_rules",
         "wave_coordination_rules",
         "constitution_awareness",
-        "record_keeper_protocol"
+        "record_keeper_protocol",
+        "mode_validation_rules"
     ]
     
     for component in required_components:
@@ -134,6 +135,38 @@ def enforce_no_commits_during_waves():
                 f"Agent {agent.name} attempted {agent.attempting_command} during wave execution. "
                 f"Commits are ONLY allowed after final wave completion."
             )
+    
+    return True
+```
+
+### Layer 5: Mode Protocol Validation
+**When**: Throughout execution
+**What**: Enforce mode-specific requirements
+
+```python
+def validate_mode_protocols(current_mode, current_phase):
+    """
+    Ensure mode follows ALL required protocols
+    Per mode_validation_rules.md
+    """
+    # Load mode validation rules
+    mode_rules = load_coordination_rule("mode_validation_rules.md")
+    mode_validator = ModeValidator(current_mode)
+    
+    # Validate phase execution order
+    mode_validator.validate_phase_sequence(current_phase)
+    
+    # Validate required functions are called
+    mode_validator.validate_mandatory_functions(current_phase)
+    
+    # Validate mode-specific requirements
+    mode_validator.validate_mode_requirements(current_mode)
+    
+    # Check for violations
+    if mode_validator.has_violations():
+        raise ModeProtocolViolation(
+            f"Mode {current_mode} violated protocols: {mode_validator.violations}"
+        )
     
     return True
 ```
@@ -220,6 +253,19 @@ Validates:
   - Final commit only after all waves complete
   - Commit message follows protocol template
 Failure Action: ABORT - Git protocol violation stops execution
+```
+
+### 8. Mode Protocol Checkpoint
+```yaml
+Location: Every phase transition + continuous monitoring
+Validates:
+  - All 7 phases execute in exact order
+  - Mode-specific wave-0 files created
+  - Required teams configured properly
+  - Mandatory functions called in each phase
+  - Mode-specific functions executed
+  - Minimum wave count met
+Failure Action: ABORT - Mode violation stops execution
 ```
 
 ## Bypass Prevention Mechanisms
@@ -335,5 +381,6 @@ def handle_validation_error(error):
 5. ✓ File organization ALWAYS enforced
 6. ✓ Constitution ALWAYS maintained
 7. ✓ Git commits ONLY after final wave
+8. ✓ ALL modes follow required protocols
 
 **Remember**: Validation is not optional - it's the immune system of Shadow Clone.
