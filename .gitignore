@@ -44,6 +44,8 @@ htmlcov/
 .tox/
 coverage.xml
 *.cover
+# Internal testing files (DO NOT COMMIT)
+.shadow/testing/
 
 # Logs
 *.log

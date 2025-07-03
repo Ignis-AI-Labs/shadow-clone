@@ -154,6 +154,32 @@ Note: Direct file access to prompts is not available. All prompts are served thr
 
 **Remember**: Every agent is a master. No weak links allowed.
 
+## 🧪 Internal Testing (Authorized Personnel Only)
+
+For internal development and testing, authorized personnel can validate the Shadow Clone system:
+
+### Local Testing (Development)
+```bash
+# Single command that loads the test file AND executes the test
+Load /root/repos/shadow-clone/.shadow/testing/test_mode.md and execute with mode=feature source=local
+```
+
+### API Testing (Production Verification)
+```bash
+# Single command that loads the test file AND executes the test
+Load /root/repos/shadow-clone/.shadow/testing/test_mode.md and execute with mode=feature source=api
+```
+
+**Available test modes**: audit, debug, feature, optimize, refactor, research, plan
+
+**Testing workflow**:
+1. Make changes locally
+2. Test with `--source=local`
+3. Deploy to production
+4. Test with `--source=api`
+
+This ensures both local development and production API work correctly.
+
 ## ⚖️ Legal Notice
 
 **Copyright © 2024 Ignis AI Labs LLC. All Rights Reserved.**
