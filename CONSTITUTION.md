@@ -94,21 +94,23 @@ shadow-clone/
 4. **`coordination_rules/file_organization_rules.md`** - Wave-0 and file placement
 5. **`coordination_rules/initialization_checklist.md`** - System startup checklist
 6. **`coordination_rules/system_validation_rules.md`** - Continuous validation
+7. **`coordination_rules/git_commit_protocol.md`** - Git strategy and commit rules
+8. **`coordination_rules/constitution_protocol.md`** - Context preservation rules
 
 ### Business & Legal
-7. **`shadow-clone-licensing-plan.md`** - Complete business model
-8. **`LICENSE-PROPRIETARY.md`** - Legal terms ($250k violation penalty)
-9. **`IGNIS_API_INTEGRATION.md`** - Complete API documentation
+9. **`shadow-clone-licensing-plan.md`** - Complete business model
+10. **`LICENSE-PROPRIETARY.md`** - Legal terms ($250k violation penalty)
+11. **`IGNIS_API_INTEGRATION.md`** - Complete API documentation
 
 ### Implementation
-10. **`backend/prisma/schema.prisma`** - Database structure
-11. **`cloudflare-worker/`** - API implementation
-12. **`vscode-extension/`** - VS Code integration
-13. **`IGNIS_API_PROMPT_INTEGRATION.md`** - Ignis API integration guide
-14. **`SHADOW_CLONE_API_INTEGRATION_GUIDE.md`** - VS Code extension API guide
-15. **`.shadow/SYSTEM_ORGANIZATION.md`** - Complete system architecture
-16. **`docs/licensing/LICENSE-PROPRIETARY.md`** - Legal license agreement
-17. **`.shadow/coordination_rules/`** - System coordination protocols
+12. **`backend/prisma/schema.prisma`** - Database structure
+13. **`cloudflare-worker/`** - API implementation
+14. **`vscode-extension/`** - VS Code integration
+15. **`IGNIS_API_PROMPT_INTEGRATION.md`** - Ignis API integration guide
+16. **`SHADOW_CLONE_API_INTEGRATION_GUIDE.md`** - VS Code extension API guide
+17. **`.shadow/SYSTEM_ORGANIZATION.md`** - Complete system architecture
+18. **`docs/licensing/LICENSE-PROPRIETARY.md`** - Legal license agreement
+19. **`.shadow/coordination_rules/`** - System coordination protocols
 
 ## Current Implementation Status (Updated 2025-06-29)
 
@@ -216,6 +218,13 @@ IGNIS_CONTRACTS = {
 16. **Integration Rules**: Defines how agent deliverables are merged
 17. **Quality Gates**: Mandatory checks between waves
 18. **Workspace Structure**: Strict enforcement of directory organization
+
+### Git Commit Protocol
+19. **NO Commits During Waves**: Agents are forbidden from committing during execution
+20. **Single Final Commit**: One atomic commit after all waves complete successfully
+21. **Git Strategy Options**: auto, safe_branch, branch, main, none
+22. **Commit Message Protocol**: Comprehensive summary of all waves and changes
+23. **Quality Required**: Commit only happens after all quality gates pass
 
 ## System Architecture & Organization
 
@@ -541,8 +550,16 @@ cd backend
 npm run dev
 ```
 
-## Recent Updates (2025-06-29)
+## Recent Updates
 
+### 2025-07-03
+1. **CONSTITUTION System**: Replaced AI_CONTEXT.md with comprehensive context preservation
+2. **Record Keeper Agent**: New mandatory role for maintaining project constitutions
+3. **Git Commit Protocol**: Implemented single-commit-after-final-wave strategy
+4. **Git Strategy Documentation**: Fully documented all git strategy options
+5. **Validation Enhancement**: Added git commit enforcement to system validation
+
+### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
 2. **VS Code Extension**: Version 0.2.0 with automatic license verification
 3. **API Migration**: Complete migration from Cloudflare Worker to Ignis Dashboard API
