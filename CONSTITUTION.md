@@ -89,6 +89,8 @@ shadow-clone/
 
 ### Core System Files (in .shadow/)
 1. **`shadow-clone-prompt.md`** - Main orchestrator (moved to .shadow/)
+   - **CRITICAL LOCATION**: `/root/repos/shadow-clone/.shadow/shadow-clone-prompt.md`
+   - **INVOCATION**: `Load /root/repos/shadow-clone/.shadow/shadow-clone-prompt.md`
 2. **`SYSTEM_ORGANIZATION.md`** - Comprehensive system guide
 3. **`INITIALIZATION_SEQUENCE.md`** - Mandatory startup sequence
 4. **`coordination_rules/file_organization_rules.md`** - Wave-0 and file placement
@@ -565,6 +567,8 @@ npm run dev
 6. **Mode Test Framework**: Created comprehensive testing system for all Shadow Clone modes
 7. **Mode Protocol Verification**: Ensures every mode follows all required protocols
 8. **Mode Validation Rules**: Runtime enforcement of mode-specific requirements
+9. **Active Wave-0 Execution**: Plan mode test in progress for real-time collaborative document editor
+10. **Protocol Compliance**: Full compliance verified, protocol_compliance_report.md created
 
 ### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
@@ -594,6 +598,26 @@ npm run dev
 - **Fallback Mechanism**: Alternative endpoints for reliability
 - **LicenseStatusManager**: Centralized service for all license operations
 - **Startup Verification**: Validates license on VS Code startup with progress indicator
+
+## Active Wave Execution Status
+
+### Current Project: Real-time Collaborative Document Editor
+- **Mode**: Plan
+- **Wave**: 0 (Planning Phase)
+- **Status**: In Progress
+- **Agents Deployed**: 7 (Record Keeper, Technical Architect, Project Strategist, Requirements Analyst, Market Research Specialist, Technology Researcher, Cost Analyst)
+- **Compliance Status**: ✅ All protocols compliant
+- **Expected Deliverable**: MASTER_PLAN.md
+
+### Wave-0 Progress Tracking
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Initialization | ✅ Complete | project_analysis.md, requirements.md created |
+| Team Formation | ✅ Complete | 7 agents assigned for plan mode |
+| Wave Planning | ✅ Complete | Single batch deployment configured |
+| Agent Execution | 🔄 In Progress | Agents working on deliverables |
+| Convergence | ⏳ Pending | Awaiting individual deliverables |
+| Integration | ⏳ Pending | MASTER_PLAN.md to be created |
 
 ## Next Steps
 
