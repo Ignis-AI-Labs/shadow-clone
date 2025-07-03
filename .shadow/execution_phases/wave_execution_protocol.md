@@ -64,25 +64,40 @@ Deploy Team 1 Agent 2... wait...
 
 ```python
 # Each wave follows this pattern:
-1. PARALLEL DEPLOYMENT
+1. PRE-WAVE VALIDATION
+   - Verify CONSTITUTION.md exists
+   - Ensure Record Keeper assigned
+   - Check previous wave updates complete
+   - Validate all agents have constitution awareness
+
+2. PARALLEL DEPLOYMENT
    - All teams in wave deploy at once
    - All agents in each team deploy at once
    - Everyone starts working simultaneously
+   - Record Keeper begins monitoring
 
-2. PARALLEL EXECUTION  
+3. PARALLEL EXECUTION  
    - Agents work independently
    - No waiting for others
    - Continuous state updates
+   - Record Keeper collects key decisions
 
-3. CONVERGENCE SESSION
+4. CONVERGENCE SESSION
    - All agents report findings
    - Correlate discoveries
+   - Record Keeper documents decisions
    - Prepare handoffs
 
-4. WAVE TRANSITION
-   - Complete current wave
-   - Deploy next wave
-   - Continue until done
+5. WAVE COMPLETION
+   - Record Keeper updates CONSTITUTION.md
+   - Team Lead validates constitution update
+   - Wave marked complete only after update
+   - Context preserved for next wave
+
+6. WAVE TRANSITION
+   - Next wave reads updated constitution
+   - Deploy with full context awareness
+   - Continue until project complete
 ```
 
 ## Common User Commands During Execution
@@ -93,6 +108,8 @@ Deploy Team 1 Agent 2... wait...
 - `"Skip to Wave 2"` - Jump ahead
 - `"Focus on critical findings only"` - Adjust scope mid-execution
 - `"Generate preliminary report"` - Get early results
+- `"Show constitution"` - View current project context
+- `"What decisions have been made?"` - See key architectural choices
 
 ## Example Execution Flow
 
@@ -119,8 +136,19 @@ Team 3: Infrastructure & Deployment (3 Security Masters)
 ⏳ Wave 1 in progress... (6 agents working in parallel)
 ```
 
+## Constitution: Your Project's Memory
+
+Throughout execution, the Record Keeper maintains your project's CONSTITUTION.md at `{waves_directory}/CONSTITUTION.md`. This ensures:
+
+- **No Lost Context**: Every decision and discovery is preserved
+- **Resume Capability**: Stop and restart anytime without losing progress
+- **Clear History**: Understand why choices were made
+- **Future Guidance**: Next waves build on solid foundation
+
+The constitution is updated after each wave, creating a living document of your project's evolution.
+
 ## Remember
 
-The Shadow Clone System's power comes from parallel execution. When you say "Execute", all agents in the current wave spring into action simultaneously, working as master craftsmen toward the common goal.
+The Shadow Clone System's power comes from parallel execution AND context preservation. When you say "Execute", all agents in the current wave spring into action simultaneously, working as master craftsmen toward the common goal, while the Record Keeper ensures nothing is forgotten.
 
-**Every second counts. Every agent matters. No sequential bottlenecks allowed.**
+**Every second counts. Every agent matters. Every decision is preserved. No sequential bottlenecks allowed.**

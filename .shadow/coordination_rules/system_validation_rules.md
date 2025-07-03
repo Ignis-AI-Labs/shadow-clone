@@ -26,7 +26,9 @@ def pre_execution_validation():
         "rules_loaded": verify_all_rules_loaded(),
         "wave_0_ready": check_wave_0_directory_exists(),
         "agents_configured": verify_agent_configurations(),
-        "workspace_valid": validate_workspace_structure()
+        "workspace_valid": validate_workspace_structure(),
+        "constitution_exists": check_constitution_exists(),
+        "record_keeper_assigned": verify_record_keeper_in_team()
     }
     
     failed_checks = [k for k, v in validations.items() if not v]
@@ -51,7 +53,9 @@ def validate_agent_deployment(agent):
         "role_specific_rules", 
         "mode_configuration",
         "file_organization_rules",
-        "wave_coordination_rules"
+        "wave_coordination_rules",
+        "constitution_awareness",
+        "record_keeper_protocol"
     ]
     
     for component in required_components:
@@ -91,6 +95,12 @@ def runtime_validation_loop():
         
         # Check agent behavior
         validate_agent_compliance()
+        
+        # Check constitution maintenance
+        validate_constitution_updates()
+        
+        # Verify Record Keeper active
+        check_record_keeper_activity()
         
         sleep(validation_interval)
 ```
@@ -150,7 +160,20 @@ Validates:
   - No files in .waves/ that shouldn't be
   - Quality gates passed
   - Handoffs prepared
+  - Constitution updated with wave summary
 Failure Action: REMEDIATE - Fix before next wave
+```
+
+### 6. Constitution Checkpoint
+```yaml
+Location: Throughout execution and at wave boundaries
+Validates:
+  - CONSTITUTION.md exists at {waves_directory}/
+  - Record Keeper agent assigned and active
+  - Constitution updated after major decisions
+  - Wave summaries included
+  - Resume mode information current
+Failure Action: BLOCK - Cannot proceed without context preservation
 ```
 
 ## Bypass Prevention Mechanisms
@@ -236,16 +259,25 @@ def handle_validation_error(error):
 - Validates file placement continuously
 - Ensures wave-0 directory exists
 - Checks source code not in .waves/
+- Verifies CONSTITUTION.md in correct location
 
 ### With Wave Coordination
 - Validates wave sequence
 - Ensures wave-0 completes first
 - Checks convergence participation
+- Confirms constitution updates between waves
 
 ### With Agent Rules
 - Validates rule loading
 - Monitors agent behavior
 - Ensures coordination compliance
+- Verifies constitution awareness
+
+### With Constitution Protocol
+- Ensures Record Keeper assigned
+- Validates constitution updates
+- Checks context preservation
+- Monitors resume mode readiness
 
 ## Summary
 

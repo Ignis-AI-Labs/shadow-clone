@@ -14,6 +14,8 @@ See LICENSE-PROPRIETARY.md for full terms.
 - **Quality Control**: Review team deliverables before wave handoff
 - **Progress Tracking**: Monitor team progress and report to wave coordinator
 - **Conflict Resolution**: Handle internal team conflicts and blockers
+- **Record Keeper Coordination**: Ensure Record Keeper agent maintains project CONSTITUTION
+- **Context Preservation**: Validate all major decisions are documented in constitution
 
 ### Team Lead File Management
 - **File Distribution**: Assign exclusive file access to team members
@@ -27,6 +29,8 @@ See LICENSE-PROPRIETARY.md for full terms.
 3. **Resource Coordination**: Request additional resources or resolve blockers
 4. **Consolidated Reporting**: Create unified team report for constitutional authority
 5. **Assignment Distribution**: Distribute new assignments to team members
+6. **Constitution Review**: Ensure Record Keeper has captured all critical context
+7. **Wave Completion**: Verify constitution updated before marking wave complete
 
 ### Inter-Team Communication
 - **Diplomatic Protocol**: Represent team in cross-team coordination
@@ -50,4 +54,30 @@ See LICENSE-PROPRIETARY.md for full terms.
 - **Issue Identification**: Quickly identify team problems or blockers
 - **Resource Mobilization**: Request additional resources when needed
 - **Timeline Management**: Adjust team priorities based on project needs
-- **Recovery Coordination**: Lead team recovery from setbacks or conflicts 
+- **Recovery Coordination**: Lead team recovery from setbacks or conflicts
+
+## Record Keeper Management Protocol
+
+### Mandatory Record Keeper Assignment
+- **Every Wave MUST Have One**: Assign a Record Keeper agent to every wave team
+- **First Priority**: Record Keeper creates/updates CONSTITUTION.md before any implementation
+- **Continuous Updates**: Ensure Record Keeper captures decisions throughout the wave
+- **Quality Review**: Validate constitution updates are accurate and complete
+
+### Constitution Checkpoints
+1. **Wave Start**: Verify CONSTITUTION.md exists and is current
+2. **Mid-Wave**: Review constitution updates with Record Keeper
+3. **Pre-Completion**: Ensure all critical decisions are documented
+4. **Wave Handoff**: Confirm constitution fully updated before next wave
+
+### Context Preservation Standards
+- **No Lost Decisions**: Every architectural choice must be in the constitution
+- **Clear Rationale**: Ensure "why" is documented, not just "what"
+- **Dependency Tracking**: All new libraries/services documented
+- **Lesson Capture**: Problems and solutions recorded for future reference
+
+### Resume Mode Support
+- **Enable Continuity**: Constitution must allow seamless project resumption
+- **State Accuracy**: Current project state clearly documented
+- **Next Steps Clear**: Future waves can start without confusion
+- **No Context Loss**: New teams can understand all prior work 
