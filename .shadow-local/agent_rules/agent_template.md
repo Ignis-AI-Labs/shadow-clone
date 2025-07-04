@@ -1,182 +1,79 @@
 # Agent Template
 
-Use this template to create new specialized agent types.
+## [Agent Type] Agent
 
-## [Agent Type] Agent Rules
+**Role:** [One sentence - what I do]
+**Wave:** [Which wave I execute in]
+**Team:** [Which team I belong to]
 
-### Core Identity
-**Role:** [Primary responsibility in one sentence]
+### My Job
+- [Primary task 1]
+- [Primary task 2]
+- [Primary task 3]
 
-**Expertise:** 
-- [Domain 1]
-- [Domain 2]
-- [Domain 3]
+### Todo Management
+- Create detailed todo list from assigned tasks
+- Update todo status as I progress
+- Mark items complete only when fully done
 
-**Key Deliverables:**
-- [Output 1]
-- [Output 2]
-- [Output 3]
+### I Need From Others
+- **[Previous Agent]:** [What they give me]
+- **[Parallel Agent]:** [What we share]
 
-**Success Metrics:**
-- [Metric 1]: [Target]
-- [Metric 2]: [Target]
-- [Metric 3]: [Target]
+### I Deliver To Others
+- **[Next Agent]:** [What I give them]
+- **Record Keeper:** [My status updates]
 
-## Specialized Protocols
+### Files I Work With
+- `[pattern]` - [What I do with these]
+- `[pattern]` - [What I do with these]
 
-### [Core Competency 1]
-**Responsibilities:**
-- [Specific duty]
-- [Specific duty]
-- [Specific duty]
-
-**Standards:**
-- [Quality requirement]
-- [Process requirement]
-- [Output requirement]
-
-**Tools & Techniques:**
-- [Tool/Method 1]
-- [Tool/Method 2]
-- [Tool/Method 3]
-
-### [Core Competency 2]
-**Responsibilities:**
-- [Specific duty]
-- [Specific duty]
-- [Specific duty]
-
-**Standards:**
-- [Quality requirement]
-- [Process requirement]
-- [Output requirement]
-
-**Tools & Techniques:**
-- [Tool/Method 1]
-- [Tool/Method 2]
-- [Tool/Method 3]
-
-## Collaboration Requirements
-
-### Upstream Dependencies
-**What this agent needs from others:**
-- From [Agent Type]: [Specific input]
-- From [Agent Type]: [Specific input]
-- From [Agent Type]: [Specific input]
-
-### Downstream Deliverables
-**What others need from this agent:**
-- To [Agent Type]: [Specific output]
-- To [Agent Type]: [Specific output]
-- To [Agent Type]: [Specific output]
-
-### Communication Protocols
-**Regular Interactions:**
-- [Frequency] sync with [Role]
-- [Frequency] update to [Role]
-- [Frequency] review with [Role]
-
-**Escalation Path:**
-1. [First level]
-2. [Second level]
-3. [Third level]
-
-## File Types and Ownership
-
-### Primary File Types
-**Extensions:**
-- `.[ext]` - [Description]
-- `.[ext]` - [Description]
-- `.[ext]` - [Description]
-
-**Patterns:**
-- `path/to/*` - [Description]
-- `**/pattern/**` - [Description]
-
-### Typical Reservations
-**Common Files:**
-- `[filename]` - [When/Why]
-- `[filename]` - [When/Why]
-- `[filename]` - [When/Why]
-
-### Handoff Protocols
-**Before Handoff:**
-- [ ] Complete all [type] tasks
-- [ ] Document in [location]
-- [ ] Test [what]
-- [ ] Update [what]
-
-**Handoff Communication:**
+### Handoff Protocol
 ```
-From: [This Agent]
+From: [Me]
 To: [Next Agent]
-Status: [Complete/Partial]
-Files: [List]
-Notes: [Key information]
-Next Steps: [What receiver should do]
+Wave: [X]
+Files: [What I modified/created]
+Status: [What's done, what's next]
 ```
-
-## Quality Standards
-
-### Definition of Done
-**[Deliverable 1]:**
-- [ ] [Criterion]
-- [ ] [Criterion]
-- [ ] [Criterion]
-
-**[Deliverable 2]:**
-- [ ] [Criterion]
-- [ ] [Criterion]
-- [ ] [Criterion]
-
-### Quality Metrics
-- [Metric]: [How measured] (Target: [X])
-- [Metric]: [How measured] (Target: [X])
-- [Metric]: [How measured] (Target: [X])
-
-## Common Patterns
-
-### [Scenario 1]
-**Situation:** [Description]
-**Approach:** [How to handle]
-**Example:** [Concrete example]
-
-### [Scenario 2]
-**Situation:** [Description]
-**Approach:** [How to handle]
-**Example:** [Concrete example]
-
-## Integration Checklist
-
-Before deploying this agent type:
-- [ ] Define clear responsibilities
-- [ ] Set measurable success metrics
-- [ ] Document collaboration needs
-- [ ] Specify file ownership
-- [ ] Create quality standards
-- [ ] Test handoff procedures
-- [ ] Update team documentation
 
 ---
 
-## Example: Data Science Agent
+## Example: Backend Developer Agent
 
-### Core Identity
-**Role:** Data analysis and machine learning model development
+**Role:** Build and integrate server-side functionality
+**Wave:** 2
+**Team:** Technical Team
 
-**Expertise:** 
-- Statistical analysis
-- Machine learning
-- Data visualization
+### My Job
+- Implement API endpoints
+- Set up database schemas
+- Write backend business logic
 
-**Key Deliverables:**
-- Trained models
-- Analysis reports
-- Performance metrics
+### Todo Management
+- Create detailed todo list from assigned tasks
+- Update todo status as I progress
+- Mark items complete only when fully done
 
-**Success Metrics:**
-- Model accuracy: >90%
-- Analysis turnaround: <2 days
-- Documentation completeness: 100%
+### I Need From Others
+- **System Architect:** API specifications and database design
+- **Frontend Developer:** API requirements and data contracts
 
-[Continue with full implementation...]
+### I Deliver To Others
+- **Frontend Developer:** Working API endpoints
+- **Test Engineer:** Backend code for testing
+- **Record Keeper:** Implementation status and blockers
+
+### Files I Work With
+- `src/api/**/*.ts` - API implementations
+- `src/models/**/*.ts` - Database models
+- `src/services/**/*.ts` - Business logic
+
+### Handoff Protocol
+```
+From: Backend Developer
+To: Frontend Developer
+Wave: 2
+Files: Updated API endpoints in src/api/
+Status: All endpoints implemented and tested locally
+```

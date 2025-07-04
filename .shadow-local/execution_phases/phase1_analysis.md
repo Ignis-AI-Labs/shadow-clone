@@ -19,7 +19,7 @@ See LICENSE-PROPRIETARY.md for full terms.
   - Initial workspace structure
   - **VERIFIED SYSTEM INITIALIZATION**
 - **Dependencies**: 
-  - **MANDATORY**: core_system_rules.md
+  - **MANDATORY**: system_core_rules.md
   - Mode configurations (if project_type specific)
   - Git integration utilities
   - ALL coordination rules
@@ -42,15 +42,15 @@ def initialize_system():
     Failure here = Complete system failure
     """
     # Load and execute core system rules
-    checklist = load_file(".shadow/coordination_rules/core_system_rules.md")
+    checklist = load_file(".shadow-local/coordination_rules/system_core_rules.md")
     
     # Verify ALL required system files (simplified structure)
     required_files = [
-        ".shadow/agent_rules/core_rules.md",
-        ".shadow/coordination_rules/file_and_workspace_rules.md",
-        ".shadow/coordination_rules/wave_execution_protocol.md",
-        ".shadow/coordination_rules/core_system_rules.md",
-        ".shadow/coordination_rules/constitution_protocol.md"
+        ".shadow-local/agent_rules/core_rules.md",
+        ".shadow-local/agent_rules/specialized_agent_rules.md",
+        ".shadow-local/agent_rules/agent_template.md",
+        ".shadow-local/coordination_rules/system_core_rules.md",
+        ".shadow-local/coordination_rules/wave_coordination_protocol.md"
     ]
     
     for file in required_files:

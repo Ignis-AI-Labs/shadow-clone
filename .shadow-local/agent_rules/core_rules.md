@@ -1,75 +1,65 @@
 # Core Agent Rules
 
-All agents in the Shadow Clone system must follow these universal rules.
+## NO BULLSHIT POLICY
+- Do the job right the first time
+- No shortcuts, no half-assed solutions
+- If it's not working, fix it properly
+- Quality over speed, always
 
-## Agent Identity
-Every agent operates with:
-- Clear role and responsibilities
-- Defined expertise domain
-- Specific success metrics
-- Quality standards to maintain
+## File Operations
+1. Check file reservation before touching anything
+2. Reserve it with your name: `RESERVED: [Agent] @ [timestamp]`
+3. Do your work completely
+4. Release when DONE (not "mostly done")
 
-## File Coordination
-### Reservation Protocol
-Before modifying any file:
-1. Check if file is reserved
-2. Reserve with agent name and timestamp
-3. Complete modifications
-4. Release reservation when done
+## Todo Lists Are Mandatory
+- Create detailed todos from your tasks
+- Update status in real-time
+- Only mark complete when ACTUALLY complete
+- No lying to yourself or the system
 
-### Conflict Prevention
-- One agent per file at any time
-- Coordinate through team lead for shared files
-- Use git branches for isolation when needed
+## Team Composition
+**EVERY TEAM MUST INCLUDE:**
+- Technical agents (developers, architects)
+- Analytical agents (QA, security)
+- Leadership agents (team lead, product owner)
+- **RECORD KEEPER** (mandatory - never deploy alone)
 
-## State Reporting
-### Progress Updates
-- Report status at regular intervals
-- Include: current task, progress percentage, blockers
-- Update team on completion or handoff needs
-
-### Standard Format
+## Status Updates
 ```
 Agent: [Name]
-Task: [Current work]
-Progress: [X]%
-Status: [Active/Blocked/Complete]
-Next: [Planned action]
+Wave: [X]
+Task: [What I'm doing]
+Status: [Working/Blocked/Done]
+Blockers: [What's stopping me]
 ```
 
-## Quality Standards
-### Minimum Requirements
-- Code: 90%+ quality score
-- Tests: 100% pass rate
-- Documentation: Complete for public APIs
-- Security: No high/critical vulnerabilities
+## Quality Gates
+- Code works or it doesn't ship
+- Tests pass or you fix them
+- Security vulnerabilities get fixed, period
+- Documentation exists for everything public
 
-### Continuous Improvement
-- Learn from each iteration
-- Share knowledge with team
-- Improve processes based on outcomes
+## Communication
+- Report blockers immediately
+- Hand off work cleanly with clear status
+- Update Record Keeper regularly
+- No surprises for the next agent
 
-## Communication Protocol
-### Team Coordination
-- Regular sync with team lead
-- Clear handoffs between agents
-- Document decisions and rationale
+## Error Recovery
+1. Error happens - log it
+2. Try to fix it yourself first
+3. Can't fix it? Report it with details
+4. Document the solution when found
 
-### Escalation Path
-1. Try to resolve independently
-2. Consult peer agents
-3. Escalate to team lead
-4. Request external help if needed
+## Agent Template Compliance
+- ALL agents MUST follow `.shadow-local/agent_rules/agent_template.md` structure
+- No deviations, no custom formats
+- Include: Role, Wave, Team, Job, Todo Management, Dependencies, Deliverables, Files, Handoff
+- Consistency across all agents is mandatory
 
-## Error Handling
-### Recovery Protocol
-1. Detect and log error
-2. Attempt automatic recovery
-3. Report if manual intervention needed
-4. Document resolution for future reference
-
-## Constitution Awareness
-- Read project CONSTITUTION.md at start
-- Update after significant changes
-- Preserve project context and decisions
-- Enable project resumption
+## Constitution
+- Read CONSTITUTION.md when you start
+- Follow the project's established patterns
+- Update constitution after major changes
+- Context is sacred - preserve it

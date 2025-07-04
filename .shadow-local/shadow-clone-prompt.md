@@ -22,7 +22,7 @@ source_mode = "local"  # Always local for this version
 ## 🚨 CRITICAL: Mandatory Initialization Sequence
 
 **BEFORE ANY EXECUTION**, the system MUST:
-1. Load the core_system_rules.md from local files or API
+1. Load the system_core_rules.md from local files or API
 2. Verify ALL critical system components exist
 3. Create wave-0 directory for planning
 4. Initialize all tracking systems
@@ -43,19 +43,14 @@ source_mode = "local"  # Always local for this version
 
 This LOCAL version uses the following simplified file structure:
 
-### Agent Rules (6 files total)
+### Agent Rules (3 files total)
 - `core_rules.md` - Universal rules for all agents
-- `technical_rules.md` - Development, QA, DevOps, Security
-- `analytical_rules.md` - Planning, Research, Audit, Documentation  
-- `leadership_rules.md` - Team Lead, Record Keeper
+- `specialized_agent_rules.md` - All agent specializations (Technical, Analytical, Leadership)
 - `agent_template.md` - Template for new agent types
-- `README.md` - Documentation
 
-### Coordination Rules (4 files total)
-- `core_system_rules.md` - Initialization, validation, quality standards
-- `file_and_workspace_rules.md` - File organization, git operations
-- `wave_execution_protocol.md` - Wave planning and execution
-- `constitution_protocol.md` - Context preservation
+### Coordination Rules (2 files total)
+- `system_core_rules.md` - System requirements, file operations, quality gates
+- `wave_coordination_protocol.md` - Wave execution flow and protocols
 
 ### Templates (6 files total)
 - `project-execution-template.md` - Planning and execution
@@ -100,13 +95,13 @@ source=local  # CRITICAL: Determines local vs API mode
 ```python
 # STEP 0: MANDATORY INITIALIZATION CHECKLIST
 # LOCAL VERSION - Always read from local files
-core_system_rules = read_file(f"{base_path}/coordination_rules/core_system_rules.md")
-file_and_workspace_rules = read_file(f"{base_path}/coordination_rules/file_and_workspace_rules.md")
-wave_execution_protocol = read_file(f"{base_path}/coordination_rules/wave_execution_protocol.md")
+system_core_rules = read_file(f"{base_path}/coordination_rules/system_core_rules.md")
+# Load consolidated coordination rules
+wave_coordination_protocol = read_file(f"{base_path}/coordination_rules/wave_coordination_protocol.md")
 
 # Apply the loaded rules (simplified)
-apply_rules(core_system_rules)
-apply_rules(file_and_workspace_rules)
+apply_rules(system_core_rules)
+apply_rules(wave_coordination_protocol)
 apply_rules(wave_execution_protocol)
 
 # Create mandatory wave-0 directory
@@ -137,7 +132,7 @@ for team in teams:
 
 ```python
 # Load wave coordination rules - LOCAL VERSION
-wave_rules = read_file(f"{base_path}/coordination_rules/wave_execution_protocol.md")
+wave_rules = read_file(f"{base_path}/coordination_rules/wave_coordination_protocol.md")
 
 waves = plan_waves(
     teams=teams,
@@ -168,7 +163,7 @@ for wave in waves:
             if agent.role in ["development", "qa", "devops", "security"]:
                 role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
             elif agent.role in ["planning", "research", "audit", "documentation"]:
-                role_rules = read_file(f"{base_path}/agent_rules/analytical_rules.md")
+                role_rules = read_file(f"{base_path}/agent_rules/specialized_agent_rules.md")
             elif agent.role in ["team_lead", "record_keeper"]:
                 role_rules = read_file(f"{base_path}/agent_rules/leadership_rules.md")
             else:
@@ -186,7 +181,7 @@ ROLE-SPECIFIC RULES:
 {role_rules}
 
 FILE AND WORKSPACE RULES:
-{file_and_workspace_rules}
+{system_core_rules}
 
 PROJECT TYPE:
 {project_type if project_type != "auto" else "General project"}
@@ -246,24 +241,24 @@ elif mode == "RESEARCH":
 ```python
 # Load integration and quality rules - LOCAL VERSION
 # Integration rules are now part of wave_execution_protocol
-# Quality gates are now part of core_system_rules
+# Quality gates are now part of system_core_rules
 # Both were already loaded in Phase 1
 
 results = integrate_deliverables(waves, wave_execution_protocol)
-validate_quality(results, core_system_rules)
+validate_quality(results, system_core_rules)
 ```
 
 ### Phase 7: Final Quality & Commit
 
 ```python
-# Git commit protocol is now part of file_and_workspace_rules - LOCAL VERSION
+# Git commit protocol is now part of system_core_rules - LOCAL VERSION
 # Already loaded in Phase 1
 
 # Run final audit
 final_audit()
 
-# Create single atomic commit (using file_and_workspace_rules)
-create_single_commit(file_and_workspace_rules)
+# Create single atomic commit (using system_core_rules)
+create_single_commit(system_core_rules)
 ```
 
 ## Critical Success Factors for Local Mode
