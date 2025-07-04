@@ -1,118 +1,91 @@
-# Agent Rules System (Simplified)
+# Agent Rules System (Streamlined)
 
 ## Overview
-This directory contains simplified behavioral rule sets for Shadow Clone agents. We've consolidated from 12 files to 6 files, reducing complexity while maintaining all essential functionality.
+This directory contains streamlined behavioral rule sets for Shadow Clone agents, reduced to 3 essential files.
 
 ## File Structure
 
-### Core Rules (Universal)
+### Core Rules
 - **`core_rules.md`** - Universal rules every agent must follow
-  - File coordination and conflict prevention
-  - State reporting and progress updates
-  - Quality standards (90%+ requirement)
-  - Communication and escalation protocols
-  - Error handling and recovery
+  - NO BULLSHIT POLICY
+  - File operations and reservations
+  - Mandatory todo lists
+  - Team composition requirements
+  - Quality gates
+  - Communication protocols
+  - Template compliance
 
-### Specialized Rules (By Function)
-- **`technical_rules.md`** - For building, testing, and deploying
-  - Development (Frontend, Backend, Full-stack)
-  - Quality Assurance (Testing, Bug tracking)
-  - DevOps (Infrastructure, CI/CD, Monitoring)
-  - Security (Implementation, Vulnerability management)
+### Specialized Rules
+- **`specialized_agent_rules.md`** - All agent specializations in one place
+  - **Common Standards** - Apply to all agents
+  - **Leadership Agents** - Team Lead, Record Keeper
+  - **Technical Agents** - Architect, Frontend, Backend, DevOps, Security, QA
+  - **Analytical Agents** - Planning, Research, Audit, Documentation
+  - **Wave Integration** - How agents work together across waves
+  - **Emergency Protocols** - Blocker resolution and failures
 
-- **`analytical_rules.md`** - For planning, research, and documentation
-  - Planning (Strategic planning, Consolidation)
-  - Research (Investigation, Analysis)
-  - Audit (Compliance, Risk assessment)
-  - Documentation (Technical writing, Knowledge management)
-
-- **`leadership_rules.md`** - For coordination and context preservation
-  - Team Lead (Agent coordination, File management, Communication)
-  - Record Keeper (Constitution maintenance, Context preservation)
-
-### Utility Files
-- **`agent_template.md`** - Template for creating new agent types
-- **`README.md`** - This file
+### Template
+- **`agent_template.md`** - Standard format all agents must follow
+  - Role, Wave, Team
+  - Job description
+  - Todo management
+  - Dependencies and deliverables
+  - File patterns
+  - Handoff protocol
 
 ## Rule Injection Protocol
 
-### Simple Injection Pattern
-When creating agents, inject only the necessary rule sets:
+When creating agents, inject the necessary components:
 
 ```
 AGENT COMPOSITION:
-1. Core Rules (always included)
-2. Function-Specific Rules (technical OR analytical OR leadership)
-3. Custom Assignment (specific task and context)
+1. core_rules.md (ALWAYS)
+2. Agent-specific section from specialized_agent_rules.md
+3. Follow agent_template.md structure exactly
 ```
 
-### Example Injections
+## Example Agent Creation
 
-**Frontend Developer:**
+**Backend Developer:**
 ```
 Load: core_rules.md
-Load: technical_rules.md (focus on Frontend section)
-Add: Specific UI tasks and file reservations
-```
-
-**Security Auditor:**
-```
-Load: core_rules.md
-Load: technical_rules.md (focus on Security section)
-Load: analytical_rules.md (focus on Audit section)
-Add: Specific audit scope
-```
-
-**Team Lead:**
-```
-Load: core_rules.md
-Load: leadership_rules.md
-Add: Team-specific coordination needs
+Load: specialized_agent_rules.md → Technical Agents → Backend Developer
+Structure: Follow agent_template.md format
 ```
 
 ## Key Improvements
 
-### Reduced Complexity
-- **50% fewer files** (12 → 6)
-- **Removed redundancy** - No more repeated "Master Craftsman" sections
-- **Practical focus** - Removed philosophical and theoretical content
-- **Clear grouping** - Technical vs Analytical vs Leadership
+### Maximum Efficiency
+- **83% file reduction** (18+ files → 3 files)
+- **Zero redundancy** - Each rule appears once
+- **Clear structure** - Easy to find what you need
+- **Enforced consistency** - Template compliance mandatory
 
-### Simplified Language
-- No more "Sovereign Agent" or "Constitutional Authority"
-- Standard industry terminology
-- Focus on actions, not philosophy
-- Clear, concise instructions
+### Focus on Execution
+- No philosophy, just clear expectations
+- Todo lists for tracking
+- Quality gates that matter
+- Direct communication protocols
 
-### Better Maintainability
-- Common behaviors in one place (core_rules.md)
-- Related specializations grouped together
-- Easy to add new agent types using template
-- Clear hierarchy of rules
+### Better Organization
+- All agents in one specialized file
+- Sections by agent type
+- Wave integration clearly defined
+- Emergency protocols included
 
 ## Creating New Agent Types
 
-1. Start with `agent_template.md`
-2. Define core identity and deliverables
-3. Specify collaboration requirements
-4. Set quality standards
-5. Add to appropriate functional file (technical or analytical)
+1. Use `agent_template.md` as the base
+2. Add to appropriate section in `specialized_agent_rules.md`
+3. Ensure wave assignment is clear
+4. Define handoff protocols
+5. Test integration with existing agents
 
 ## Rule Priority
 
-1. **Core Rules** - Always highest priority
-2. **Functional Rules** - Specialization requirements
-3. **Custom Assignment** - Specific implementation details
+1. **Core Rules** - Non-negotiable
+2. **Common Standards** - Apply to all
+3. **Agent-Specific Rules** - Role requirements
+4. **Template Structure** - Consistency mandate
 
-When conflicts arise, core rules take precedence. Escalate unresolvable conflicts to team lead.
-
-## Migration from Old System
-
-The old 12-file system has been consolidated:
-- `development`, `qa`, `devops`, `security` → `technical_rules.md`
-- `planning`, `research`, `audit`, `documentation` → `analytical_rules.md`
-- `team_lead` + `record_keeper` → `leadership_rules.md`
-- Removed redundant philosophical content
-- Extracted common patterns to `core_rules.md`
-
-This simplified structure maintains all functionality while being easier to understand and maintain.
+The system is designed for clarity and efficiency - get the job done right.
