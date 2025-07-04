@@ -161,7 +161,7 @@ For internal development and testing, authorized personnel can validate the Shad
 ### Local Testing (Development)
 ```bash
 # Single command that loads the test file AND executes the test
-Load /root/repos/shadow-clone/.shadow/testing/test_mode.md and execute with mode=feature source=local
+Load /root/repos/shadow-clone/.shadow-local/testing/test_mode.md and execute with mode=feature source=local
 ```
 
 ### API Testing (Production Verification)
