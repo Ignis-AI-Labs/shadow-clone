@@ -2,32 +2,33 @@ import { Env } from '../index';
 import { AuditReporter } from '../services/audit-reporter';
 
 // Suspicious patterns that might indicate extraction attempts
+// Made more specific to avoid false positives with legitimate Shadow Clone usage
 const EXTRACTION_PATTERNS = [
-  // Direct extraction attempts
-  /show\s*me\s*(the\s*)?(full\s*)?prompt/i,
-  /display\s*(all\s*)?(agent\s*)?instructions/i,
-  /what\s*are\s*your\s*system\s*instructions/i,
-  /repeat\s*everything\s*above/i,
-  /print\s*(the\s*)?(entire\s*)?prompt/i,
-  /give\s*me\s*(the\s*)?(complete\s*)?prompt/i,
-  /output\s*(the\s*)?(full\s*)?instructions/i,
+  // Direct extraction attempts - more specific patterns
+  /show\s*me\s*(the\s*)?(full\s*)?(system\s*)?prompt\s*verbatim/i,
+  /display\s*(all\s*)?(your\s*)?system\s*instructions\s*exactly/i,
+  /what\s*are\s*your\s*hidden\s*system\s*instructions/i,
+  /repeat\s*everything\s*above\s*verbatim/i,
+  /print\s*(the\s*)?(entire\s*)?system\s*prompt\s*as\s*text/i,
+  /give\s*me\s*(the\s*)?(complete\s*)?raw\s*prompt/i,
+  /output\s*(the\s*)?(full\s*)?hidden\s*instructions/i,
   
-  // File reading attempts
-  /cat\s+.*shadow-clone.*\.md/i,
-  /read\s+.*shadow-clone.*prompt/i,
-  /type\s+.*shadow-clone/i,
-  /get-content.*shadow-clone/i,
+  // File reading attempts - specific to extraction
+  /cat\s+.*shadow-clone.*prompt.*\|\s*base64/i,
+  /read\s+.*shadow-clone.*prompt.*and\s*print/i,
+  /type\s+.*shadow-clone.*\|\s*curl/i,
+  /get-content.*shadow-clone.*-raw/i,
   
-  // Code extraction attempts
-  /extract.*prompt.*content/i,
-  /dump.*instructions/i,
-  /show.*source.*code/i,
-  /reveal.*hidden.*instructions/i,
+  // Code extraction attempts - more malicious patterns
+  /extract.*system.*prompt.*bypass/i,
+  /dump.*all.*hidden.*instructions/i,
+  /show.*complete.*source.*including.*secrets/i,
+  /reveal.*all.*hidden.*system.*prompts/i,
   
-  // API response manipulation
-  /JSON\.parse.*shadow.*clone/i,
-  /console\.log.*prompt/i,
-  /print.*API.*response/i,
+  // API response manipulation - actual attack patterns
+  /JSON\.parse.*atob.*shadow.*clone/i,
+  /console\.log.*window\.prompts/i,
+  /fetch.*shadow.*clone.*then.*log.*everything/i,
 ];
 
 // Rate limiting configuration
@@ -119,7 +120,7 @@ export class SecurityMonitor {
         };
         
         await this.logSecurityEvent(event);
-        await this.updateUserSuspicionScore(userId, 25); // High penalty for extraction attempts
+        await this.updateUserSuspicionScore(userId, 15); // Moderate penalty for extraction attempts
         
         // Send real-time alert for extraction attempts
         const reporter = new AuditReporter(this.env);
@@ -197,7 +198,8 @@ export class SecurityMonitor {
     }
     
     // If accessing many different resources rapidly, flag as enumeration
-    if (matchedPatterns.size >= 3 && recentPaths.length > 10) {
+    // Increased thresholds to reduce false positives
+    if (matchedPatterns.size >= 5 && recentPaths.length > 20) {
       await this.logSecurityEvent({
         userId,
         apiKey: '',
@@ -207,7 +209,7 @@ export class SecurityMonitor {
         requestPath,
       });
       
-      await this.updateUserSuspicionScore(userId, 15);
+      await this.updateUserSuspicionScore(userId, 10); // Reduced penalty
       return true;
     }
     
