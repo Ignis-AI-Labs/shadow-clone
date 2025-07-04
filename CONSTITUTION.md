@@ -308,8 +308,15 @@ Mode-specific additions:
 ### Admin Tools for False Restrictions
 - **Unblock User**: `POST /admin/security/unblock` - Removes block and reduces suspicion by 25
 - **Clear Events**: `POST /admin/security/clear-events` - Complete security profile reset
-- **Admin Dashboard**: Located at `/admin-dashboard.html` with UI for managing restrictions
-- **Documentation**: See `/docs/ADMIN_SECURITY_ENDPOINTS.md` for detailed usage
+- **Admin Dashboard**: Web3-authenticated dashboard at `/admin-dashboard/index.html`
+- **Wallet Auth**: `POST /admin/auth/wallet` - Authenticate admin via Ethereum wallet
+- **Documentation**: See `/docs/ADMIN_SECURITY_ENDPOINTS.md` and `/docs/ADMIN_DASHBOARD_WEB3.md`
+
+### Web3 Admin Authentication
+- **Admin Wallet**: `0x4faa0fac32F844ACAF59b5B5a72C0D38de8bd0CD`
+- **Authentication**: MetaMask signature verification
+- **Session Management**: 1-hour secure tokens
+- **Dual Auth Support**: API keys and wallet tokens both work
 
 ### Security Monitoring Thresholds
 - **0-25 points**: Normal user
@@ -622,6 +629,10 @@ npm run dev
 4. **Admin Dashboard Update**: Fixed API endpoint to use https://api.ignislabs.ai
 5. **Security Resolution**: Marked false positive issue as resolved with improved patterns
 6. **Admin Tools Documentation**: Documented unblock and clear-events endpoints for removing false restrictions
+7. **Web3 Admin Dashboard**: Created wallet-authenticated admin dashboard using MetaMask
+8. **Wallet Authentication**: Implemented secure admin authentication via Ethereum signatures
+9. **Admin Deployment**: Created Cloudflare Pages deployment for admin dashboard
+10. **Dual Auth System**: Admin endpoints now support both API keys and wallet tokens
 
 ### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)

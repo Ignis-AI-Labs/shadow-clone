@@ -19,6 +19,7 @@ import {
   handleGenerateReport,
   handleConfigureNotifications
 } from './handlers/admin';
+import { handleWalletAuth } from './handlers/admin-wallet';
 import {
   handleTelemetryEvents,
   handleHighRiskAlert,
@@ -88,6 +89,7 @@ router.get('/api/prompts/templates/:template', handleGetTemplateSecure);
 router.get('/api/prompts/execution-phases/:phase', handleGetExecutionPhaseSecure);
 
 // Admin routes
+router.post('/admin/auth/wallet', handleWalletAuth);
 router.get('/admin/security/analytics', handleGetSecurityAnalytics);
 router.post('/admin/security/unblock', handleUnblockUser);
 router.post('/admin/security/clear-events', handleClearUserEvents);

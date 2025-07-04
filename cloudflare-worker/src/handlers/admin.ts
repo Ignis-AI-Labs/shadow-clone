@@ -2,28 +2,11 @@ import { Env } from '../index';
 import { SecurityMonitor } from '../utils/security-monitor';
 import { AuditReporter } from '../services/audit-reporter';
 import { corsHeaders } from '../utils/cors';
+import { isAdminAuthenticated } from './admin-wallet';
 
 interface ScheduledEvent {
   cron: string;
   scheduledTime: number;
-}
-
-/**
- * Admin authentication check
- */
-async function isAdmin(apiKey: string, env: Env): Promise<boolean> {
-  // Check if this is an admin API key
-  const adminKeys = env.ADMIN_KEYS || env.API_KEYS;
-  const userId = await adminKeys.get(apiKey);
-  
-  if (!userId) return false;
-  
-  // Check if user has admin role
-  const userData = await env.USERS.get(userId);
-  if (!userData) return false;
-  
-  const user = JSON.parse(userData);
-  return user.role === 'admin' || user.isAdmin === true;
 }
 
 /**
@@ -33,9 +16,7 @@ export async function handleGetSecurityAnalytics(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-API-Key');
-  
-  if (!apiKey || !(await isAdmin(apiKey, env))) {
+  if (!(await isAdminAuthenticated(request, env))) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       {
@@ -165,9 +146,7 @@ export async function handleUnblockUser(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-API-Key');
-  
-  if (!apiKey || !(await isAdmin(apiKey, env))) {
+  if (!(await isAdminAuthenticated(request, env))) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       {
@@ -259,9 +238,7 @@ export async function handleClearUserEvents(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-API-Key');
-  
-  if (!apiKey || !(await isAdmin(apiKey, env))) {
+  if (!(await isAdminAuthenticated(request, env))) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       {
@@ -348,9 +325,7 @@ export async function handleGenerateReport(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-API-Key');
-  
-  if (!apiKey || !(await isAdmin(apiKey, env))) {
+  if (!(await isAdminAuthenticated(request, env))) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       {
@@ -411,9 +386,7 @@ export async function handleConfigureNotifications(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const apiKey = request.headers.get('X-API-Key');
-  
-  if (!apiKey || !(await isAdmin(apiKey, env))) {
+  if (!(await isAdminAuthenticated(request, env))) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       {
