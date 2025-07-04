@@ -1,134 +1,91 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
-
-# Agent Rules System
+# Agent Rules System (Streamlined)
 
 ## Overview
-This directory contains modular behavioral rule sets that are injected into individual agent identities. This separates orchestration logic (in main prompt) from agent behavioral requirements.
+This directory contains streamlined behavioral rule sets for Shadow Clone agents, reduced to 3 essential files.
 
-## Rule Categories
+## File Structure
 
-### Core Rules (Always Injected)
-- **`core_agent_rules.md`** - Universal rules every agent must follow
-  - Sovereignty model and constitutional reporting
-  - File coordination and conflict prevention protocols
-  - State reporting requirements
-  - Convergence session participation
-  - Quality standards and communication protocols
+### Core Rules
+- **`core_rules.md`** - Universal rules every agent must follow
+  - NO BULLSHIT POLICY
+  - File operations and reservations
+  - Mandatory todo lists
+  - Team composition requirements
+  - Quality gates
+  - Communication protocols
+  - Template compliance
 
-### Role-Specific Rules (Injected Based on Agent Type)
-- **`team_lead_rules.md`** - Additional rules for team lead agents
-- **`development_agent_rules.md`** - Rules for development agents (frontend, backend, etc.)
-- **`qa_agent_rules.md`** - Rules for quality assurance and testing agents
-- **`devops_agent_rules.md`** - Rules for DevOps and infrastructure agents
-- **`security_agent_rules.md`** - Rules for security assessment agents
-- **`documentation_agent_rules.md`** - Rules for documentation specialists
+### Specialized Rules
+- **`specialized_agent_rules.md`** - All agent specializations in one place
+  - **Common Standards** - Apply to all agents
+  - **Leadership Agents** - Team Lead, Record Keeper
+  - **Technical Agents** - Architect, Frontend, Backend, DevOps, Security, QA
+  - **Analytical Agents** - Planning, Research, Audit, Documentation
+  - **Wave Integration** - How agents work together across waves
+  - **Emergency Protocols** - Blocker resolution and failures
 
-### Project-Type Rules (Injected Based on Project Mode)
-- **`audit_agent_rules.md`** - Additional rules for audit project agents
-- **`research_agent_rules.md`** - Rules for research investigation agents
+### Template
+- **`agent_template.md`** - Standard format all agents must follow
+  - Role, Wave, Team
+  - Job description
+  - Todo management
+  - Dependencies and deliverables
+  - File patterns
+  - Handoff protocol
 
 ## Rule Injection Protocol
 
-### How Rules Are Injected
-When creating individual agents, the Shadow Clone System injects relevant rule sets:
+When creating agents, inject the necessary components:
 
 ```
-AGENT IDENTITY COMPOSITION:
-1. Core Agent Rules (always included)
-2. Role-Specific Rules (based on agent specialization)
-3. Project-Type Rules (based on project mode)
-4. Custom Agent Assignment (specific task and context)
+AGENT COMPOSITION:
+1. core_rules.md (ALWAYS)
+2. Agent-specific section from specialized_agent_rules.md
+3. Follow agent_template.md structure exactly
 ```
 
-### Example Agent Identity Construction
+## Example Agent Creation
 
-**Frontend Development Agent**:
+**Backend Developer:**
 ```
-Load: core_agent_rules.md
-Load: development_agent_rules.md
-Add: [Specific agent assignment with file reservations and tasks]
-```
-
-**Team Lead Agent**:
-```
-Load: core_agent_rules.md
-Load: team_lead_rules.md
-Load: development_agent_rules.md (if also doing development work)
-Add: [Specific team coordination assignment]
+Load: core_rules.md
+Load: specialized_agent_rules.md → Technical Agents → Backend Developer
+Structure: Follow agent_template.md format
 ```
 
-**Security Audit Agent**:
-```
-Load: core_agent_rules.md
-Load: security_agent_rules.md
-Load: audit_agent_rules.md
-Add: [Specific audit scope and methodologies]
-```
+## Key Improvements
 
-## Benefits of Modular Rules
+### Maximum Efficiency
+- **83% file reduction** (18+ files → 3 files)
+- **Zero redundancy** - Each rule appears once
+- **Clear structure** - Easy to find what you need
+- **Enforced consistency** - Template compliance mandatory
 
-### Maintainability
-- **Single Source of Truth**: Core rules defined once, used everywhere
-- **Easy Updates**: Change rule once, affects all relevant agents
-- **Clear Separation**: Orchestration logic separate from behavioral rules
+### Focus on Execution
+- No philosophy, just clear expectations
+- Todo lists for tracking
+- Quality gates that matter
+- Direct communication protocols
 
-### Flexibility
-- **Role Customization**: Different agent types get appropriate rule sets
-- **Project Adaptation**: Rules adapt to different project types
-- **Scalability**: Easy to add new rule sets for new agent types
+### Better Organization
+- All agents in one specialized file
+- Sections by agent type
+- Wave integration clearly defined
+- Emergency protocols included
 
-### Consistency
-- **Universal Standards**: All agents follow same core protocols
-- **Specialization**: Role-specific rules ensure proper specialization
-- **Quality Assurance**: Consistent quality standards across all agents
+## Creating New Agent Types
 
-## Adding New Rule Sets
+1. Use `agent_template.md` as the base
+2. Add to appropriate section in `specialized_agent_rules.md`
+3. Ensure wave assignment is clear
+4. Define handoff protocols
+5. Test integration with existing agents
 
-### Creating New Role Rules
-1. Create new file: `.shadow/agent_rules/[role]_agent_rules.md`
-2. Follow the established format and structure
-3. Focus on behavioral requirements specific to that role
-4. Update injection protocol in main Shadow Clone prompt
+## Rule Priority
 
-### Creating Project-Type Rules
-1. Create new file: `.shadow/agent_rules/[project_type]_agent_rules.md`
-2. Define project-specific behavioral requirements
-3. Ensure compatibility with core and role-specific rules
-4. Document when these rules should be injected
+1. **Core Rules** - Non-negotiable
+2. **Common Standards** - Apply to all
+3. **Agent-Specific Rules** - Role requirements
+4. **Template Structure** - Consistency mandate
 
-## Rule Priority and Conflicts
-
-### Priority Order
-1. **Core Rules**: Universal requirements, highest priority
-2. **Project-Type Rules**: Project-specific requirements
-3. **Role-Specific Rules**: Specialization requirements
-4. **Custom Assignment**: Specific task instructions
-
-### Conflict Resolution
-- Core rules always take precedence
-- Project-type rules override role-specific where conflicts exist
-- Custom assignments provide specific implementation guidance
-- Escalate unresolvable conflicts to constitutional authority
-
-## Usage in Main Prompt
-
-The main Shadow Clone prompt references this system:
-
-```markdown
-**Enhanced Task Assignment Template (Multi-Agent Teams)**
-For each agent, inject appropriate rule sets:
-
-RULE INJECTION:
-- Core Rules: Load .shadow/agent_rules/core_agent_rules.md
-- Role Rules: Load .shadow/agent_rules/[agent_role]_agent_rules.md  
-- Project Rules: Load .shadow/agent_rules/[project_type]_agent_rules.md
-
-AGENT ASSIGNMENT:
-[Specific task, file reservations, and context]
-```
-
-This creates consistent, well-behaved agents while keeping the main orchestration prompt focused and manageable. 
+The system is designed for clarity and efficiency - get the job done right.
