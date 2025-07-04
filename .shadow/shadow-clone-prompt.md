@@ -43,72 +43,72 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 ## System Architecture
 
 **📂 Modular Components** (FETCH FROM API AS NEEDED):
-When you need additional Shadow Clone modules, fetch them from the Cloudflare API:
+When you need additional Shadow Clone modules, fetch them from the Ignis API:
 
 **Agent Rules** (Behavioral DNA for agents):
-- Core Rules: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/core_agent_rules -H "X-API-Key: {KEY}"`
+- Core Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/core_agent_rules -H "X-API-Key: {KEY}"`
 - Role-Specific Rules:
-  - Development: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/development_agent_rules -H "X-API-Key: {KEY}"`
-  - QA: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/qa_agent_rules -H "X-API-Key: {KEY}"`
-  - DevOps: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/devops_agent_rules -H "X-API-Key: {KEY}"`
-  - Security: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/security_agent_rules -H "X-API-Key: {KEY}"`
-  - Documentation: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/documentation_agent_rules -H "X-API-Key: {KEY}"`
-  - Team Lead: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/team_lead_rules -H "X-API-Key: {KEY}"`
+  - Development: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/development_agent_rules -H "X-API-Key: {KEY}"`
+  - QA: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/qa_agent_rules -H "X-API-Key: {KEY}"`
+  - DevOps: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/devops_agent_rules -H "X-API-Key: {KEY}"`
+  - Security: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/security_agent_rules -H "X-API-Key: {KEY}"`
+  - Documentation: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/documentation_agent_rules -H "X-API-Key: {KEY}"`
+  - Team Lead: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/team_lead_rules -H "X-API-Key: {KEY}"`
 - Project-Type Rules:
-  - Audit: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/audit_agent_rules -H "X-API-Key: {KEY}"`
-  - Research: `curl -X GET {API_ENDPOINT}/api/prompts/agent-rules/research_agent_rules -H "X-API-Key: {KEY}"`
+  - Audit: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/audit_agent_rules -H "X-API-Key: {KEY}"`
+  - Research: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/research_agent_rules -H "X-API-Key: {KEY}"`
 
 **Mode Configurations** (Project-type methodologies):
-- Audit: `curl -X GET {API_ENDPOINT}/api/prompts/modes/audit -H "X-API-Key: {KEY}"`
-- Debug: `curl -X GET {API_ENDPOINT}/api/prompts/modes/debug -H "X-API-Key: {KEY}"`
-- Feature: `curl -X GET {API_ENDPOINT}/api/prompts/modes/feature -H "X-API-Key: {KEY}"`
-- Optimize: `curl -X GET {API_ENDPOINT}/api/prompts/modes/optimize -H "X-API-Key: {KEY}"`
-- Refactor: `curl -X GET {API_ENDPOINT}/api/prompts/modes/refactor -H "X-API-Key: {KEY}"`
-- Research: `curl -X GET {API_ENDPOINT}/api/prompts/modes/research -H "X-API-Key: {KEY}"`
-- Plan: `curl -X GET {API_ENDPOINT}/api/prompts/modes/plan -H "X-API-Key: {KEY}"` # Strategic planning with consolidation
+- Audit: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/audit -H "X-API-Key: {KEY}"`
+- Debug: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/debug -H "X-API-Key: {KEY}"`
+- Feature: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/feature -H "X-API-Key: {KEY}"`
+- Optimize: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/optimize -H "X-API-Key: {KEY}"`
+- Refactor: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/refactor -H "X-API-Key: {KEY}"`
+- Research: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/research -H "X-API-Key: {KEY}"`
+- Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/plan -H "X-API-Key: {KEY}"` # Strategic planning with consolidation
 
 **Coordination Rules** (Wave and integration protocols):
-- **🚨 CRITICAL - Initialization Checklist**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/initialization_checklist -H "X-API-Key: {KEY}"`
-- **🚨 CRITICAL - System Validation**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/system_validation_rules -H "X-API-Key: {KEY}"`
-- **🚨 CRITICAL - File Organization**: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/file_organization_rules -H "X-API-Key: {KEY}"`
-- Wave Coordination: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/wave_coordination -H "X-API-Key: {KEY}"`
-- Integration Rules: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/integration_rules -H "X-API-Key: {KEY}"`
-- Quality Gates: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/quality_gates -H "X-API-Key: {KEY}"`
-- Mode Operations: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/mode_operations -H "X-API-Key: {KEY}"`
-- Workspace Structure: `curl -X GET {API_ENDPOINT}/api/prompts/coordination-rules/workspace_structure -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - Initialization Checklist**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/initialization_checklist -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - System Validation**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/system_validation_rules -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - File Organization**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/file_organization_rules -H "X-API-Key: {KEY}"`
+- Wave Coordination: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/wave_coordination -H "X-API-Key: {KEY}"`
+- Integration Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/integration_rules -H "X-API-Key: {KEY}"`
+- Quality Gates: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/quality_gates -H "X-API-Key: {KEY}"`
+- Mode Operations: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/mode_operations -H "X-API-Key: {KEY}"`
+- Workspace Structure: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/workspace_structure -H "X-API-Key: {KEY}"`
 
 **Templates** (Reusable structures and reports):
-- Agent Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/agent_templates -H "X-API-Key: {KEY}"`
-- Team Templates: `curl -X GET {API_ENDPOINT}/api/prompts/templates/team_templates -H "X-API-Key: {KEY}"`
-- Wave Execution Plan: `curl -X GET {API_ENDPOINT}/api/prompts/templates/wave-execution-plan-template -H "X-API-Key: {KEY}"`
+- Agent Templates: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/agent_templates -H "X-API-Key: {KEY}"`
+- Team Templates: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/team_templates -H "X-API-Key: {KEY}"`
+- Wave Execution Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/wave-execution-plan-template -H "X-API-Key: {KEY}"`
 - Planning Templates:
-  - Master Project Plan: `curl -X GET {API_ENDPOINT}/api/prompts/templates/master-project-plan-template -H "X-API-Key: {KEY}"`
-  - Planning Consolidation: `curl -X GET {API_ENDPOINT}/api/prompts/templates/planning-consolidation-template -H "X-API-Key: {KEY}"`
+  - Master Project Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/master-project-plan-template -H "X-API-Key: {KEY}"`
+  - Planning Consolidation: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/planning-consolidation-template -H "X-API-Key: {KEY}"`
 - Security Templates:
-  - Security Audit Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/security-audit-report-template -H "X-API-Key: {KEY}"`
-  - Vulnerability Report: `curl -X GET {API_ENDPOINT}/api/prompts/templates/vulnerability-report-template -H "X-API-Key: {KEY}"`
-  - Risk Assessment Matrix: `curl -X GET {API_ENDPOINT}/api/prompts/templates/risk-assessment-matrix-template -H "X-API-Key: {KEY}"`
-  - Compliance Matrix: `curl -X GET {API_ENDPOINT}/api/prompts/templates/compliance-matrix-template -H "X-API-Key: {KEY}"`
+  - Security Audit Report: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/security-audit-report-template -H "X-API-Key: {KEY}"`
+  - Vulnerability Report: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/vulnerability-report-template -H "X-API-Key: {KEY}"`
+  - Risk Assessment Matrix: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/risk-assessment-matrix-template -H "X-API-Key: {KEY}"`
+  - Compliance Matrix: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/compliance-matrix-template -H "X-API-Key: {KEY}"`
 
 **Execution Phases** (Step-by-step implementation):
-- Phase 1 Analysis: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase1_analysis -H "X-API-Key: {KEY}"`
-- Phase 2 Team Config: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase2_team_config -H "X-API-Key: {KEY}"`
-- Phase 3 Wave Planning: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase3_wave_planning -H "X-API-Key: {KEY}"`
-- Phase 4 Deployment: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase4_deployment -H "X-API-Key: {KEY}"`
-- Phase 5 Execution: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase5_execution -H "X-API-Key: {KEY}"`
-- Phase 6 Integration: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase6_integration -H "X-API-Key: {KEY}"`
-- Phase 7 Quality: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/phase7_quality -H "X-API-Key: {KEY}"`
-- Wave Execution Protocol: `curl -X GET {API_ENDPOINT}/api/prompts/execution-phases/wave_execution_protocol -H "X-API-Key: {KEY}"`
+- Phase 1 Analysis: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase1_analysis -H "X-API-Key: {KEY}"`
+- Phase 2 Team Config: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase2_team_config -H "X-API-Key: {KEY}"`
+- Phase 3 Wave Planning: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase3_wave_planning -H "X-API-Key: {KEY}"`
+- Phase 4 Deployment: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase4_deployment -H "X-API-Key: {KEY}"`
+- Phase 5 Execution: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase5_execution -H "X-API-Key: {KEY}"`
+- Phase 6 Integration: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase6_integration -H "X-API-Key: {KEY}"`
+- Phase 7 Quality: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase7_quality -H "X-API-Key: {KEY}"`
+- Wave Execution Protocol: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/wave_execution_protocol -H "X-API-Key: {KEY}"`
 
 **System Documentation** (Critical references):
-- System Organization: `curl -X GET {API_ENDPOINT}/api/prompts/documentation/system_organization -H "X-API-Key: {KEY}"`
-- Initialization Sequence: `curl -X GET {API_ENDPOINT}/api/prompts/documentation/initialization_sequence -H "X-API-Key: {KEY}"`
+- System Organization: `curl -X GET https://api.ignislabs.ai/api/prompts/documentation/system_organization -H "X-API-Key: {KEY}"`
+- Initialization Sequence: `curl -X GET https://api.ignislabs.ai/api/prompts/documentation/initialization_sequence -H "X-API-Key: {KEY}"`
 
 **CRITICAL API OPERATIONS**:
 - **"load_module"** = Fetch from API at specified endpoint
 - **"load"** = Fetch from API 
 - **"apply"** = Fetch from API and use its contents
-- **All modules served from secure Cloudflare API**
+- **All modules served from secure Ignis API**
 - **No local prompt files to ensure security**
 
 **🎯 Core Principles**:

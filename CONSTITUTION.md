@@ -288,6 +288,45 @@ Mode-specific additions:
 - **NFT Verification**: Direct blockchain calls prevent spoofing
 - **CORS Configuration**: Allows dashboard integration
 
+### Known Security Issues (Resolved)
+
+#### False Positive Problem (2025-07-03) - RESOLVED
+- **Issue**: Legitimate users being flagged as attackers
+- **Cause**: Overly aggressive pattern matching for phrases like "show me the prompt"
+- **Impact**: Users get auto-blocked at 100 suspicion points, data gets deleted
+- **Solution**: Adjusted pattern specificity and reduced penalty scores
+
+### Security Pattern Updates (2025-07-04)
+- **Extraction Patterns**: Made more specific (require "verbatim", "hidden", "raw" keywords)
+- **Penalty Reductions**: 
+  - Extraction attempts: 25 → 15 points
+  - Enumeration attempts: 15 → 10 points
+- **Threshold Increases**:
+  - Pattern variety for enumeration: 3 → 5
+  - Path count for enumeration: 10 → 20
+
+### Admin Tools for False Restrictions
+- **Unblock User**: `POST /admin/security/unblock` - Removes block and reduces suspicion by 25
+- **Clear Events**: `POST /admin/security/clear-events` - Complete security profile reset
+- **Admin Dashboard**: Located at `/admin-dashboard.html` with UI for managing restrictions
+- **Documentation**: See `/docs/ADMIN_SECURITY_ENDPOINTS.md` for detailed usage
+
+### Security Monitoring Thresholds
+- **0-25 points**: Normal user
+- **25-50 points**: Monitored user (reduced rate limits)
+- **50-75 points**: Suspicious user (heavily limited)
+- **75-100 points**: High risk (very restricted)
+- **100+ points**: Auto-blocked for 24 hours
+
+### Pattern Matching Concerns
+The security system currently flags:
+- Direct extraction attempts ("show me the prompt")
+- File reading commands (cat, read, type)
+- Code extraction attempts
+- API response manipulation
+
+**Problem**: These patterns can match legitimate Shadow Clone usage.
+
 ### License Enforcement & Legal
 - **License Agreement**: Proprietary software under Ignis AI Labs LLC license
 - **Violations**: $250,000 liquidated damages per violation
@@ -569,6 +608,20 @@ npm run dev
 8. **Mode Validation Rules**: Runtime enforcement of mode-specific requirements
 9. **Active Wave-0 Execution**: Plan mode test in progress for real-time collaborative document editor
 10. **Protocol Compliance**: Full compliance verified, protocol_compliance_report.md created
+11. **Local Testing System**: Created `.shadow-local/` directory for API-independent testing
+12. **Security False Positive Issue**: Identified overly aggressive security system blocking legitimate users
+13. **Security Whitelist Proposal**: Created plan to prevent trusted users from being auto-blocked
+14. **Security Quick Fix**: Added trusted user bypass to security-monitor.ts
+15. **API Endpoint Updates**: Fixed all API_ENDPOINT placeholders to use https://api.ignislabs.ai
+16. **VS Code Extension**: Built and packaged version 0.3.2 successfully
+
+### 2025-07-04
+1. **Security Pattern Refinement**: Made extraction patterns more specific to reduce false positives
+2. **Penalty Score Adjustments**: Reduced suspicion points for various security events
+3. **Admin Documentation**: Created comprehensive guide for admin security endpoints
+4. **Admin Dashboard Update**: Fixed API endpoint to use https://api.ignislabs.ai
+5. **Security Resolution**: Marked false positive issue as resolved with improved patterns
+6. **Admin Tools Documentation**: Documented unblock and clear-events endpoints for removing false restrictions
 
 ### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
