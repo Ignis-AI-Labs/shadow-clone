@@ -3,32 +3,26 @@ LOCAL VERSION FOR TESTING ONLY
 This version reads from local files instead of API
 -->
 
-# Shadow Clone System - Local Mode
+# Shadow Clone System - Local Version
 
-This version of the Shadow Clone orchestrator loads components from local files when `source=local` is specified, enabling testing without API dependencies.
+This LOCAL version of the Shadow Clone orchestrator always loads components from local files in the `.shadow-local/` directory. This version is for testing and development only.
 
 **🗾 Master Craftsman Philosophy**: Every agent is a domain master capable of handling entire projects independently, but when masters collaborate with proper coordination, they create something far superior through collective expertise.
 
-## 🚨 CRITICAL: Source Mode Detection
+## 🚨 CRITICAL: Local Mode Configuration
 
-**FIRST**, check the source parameter:
+**This is the LOCAL version** - Always uses local files:
 ```python
-# Extract source from arguments (default: "api")
-source_mode = extract_argument("source", default="api")
-
-if source_mode == "local":
-    # Use local file loading
-    base_path = "/root/repos/shadow-clone/.shadow-local"
-    load_method = read_local_file
-else:
-    # Use API fetching
-    load_method = fetch_from_api
+# LOCAL VERSION - Fixed configuration
+base_path = "/root/repos/shadow-clone/.shadow-local"
+load_method = read_local_file
+source_mode = "local"  # Always local for this version
 ```
 
 ## 🚨 CRITICAL: Mandatory Initialization Sequence
 
 **BEFORE ANY EXECUTION**, the system MUST:
-1. Load the initialization_checklist.md from local files or API
+1. Load the core_system_rules.md from local files or API
 2. Verify ALL critical system components exist
 3. Create wave-0 directory for planning
 4. Initialize all tracking systems
@@ -36,29 +30,40 @@ else:
 
 **FAILURE TO INITIALIZE = SYSTEM FAILURE**
 
-## Local File Mappings
+## Local File Structure (Simplified)
 
-When `source=local`, use these mappings:
+This LOCAL version uses the following simplified file structure:
 
-### Agent Rules
-- `core_agent_rules` → `{base_path}/agent_rules/core_agent_rules.md`
-- `development_agent_rules` → `{base_path}/agent_rules/development_agent_rules.md`
-- `qa_agent_rules` → `{base_path}/agent_rules/qa_agent_rules.md`
-- `security_agent_rules` → `{base_path}/agent_rules/security_agent_rules.md`
-- `record_keeper_agent_rules` → `{base_path}/agent_rules/record_keeper_agent_rules.md`
-- etc.
+### Agent Rules (6 files total)
+- `core_rules.md` - Universal rules for all agents
+- `technical_rules.md` - Development, QA, DevOps, Security
+- `analytical_rules.md` - Planning, Research, Audit, Documentation  
+- `leadership_rules.md` - Team Lead, Record Keeper
+- `agent_template.md` - Template for new agent types
+- `README.md` - Documentation
 
-### Mode Configurations  
-- `plan` → `{base_path}/mode_configs/shadow-clone-plan.md`
-- `audit` → `{base_path}/mode_configs/shadow-clone-audit.md`
-- `feature` → `{base_path}/mode_configs/shadow-clone-feature.md`
-- etc.
+### Coordination Rules (4 files total)
+- `core_system_rules.md` - Initialization, validation, quality standards
+- `file_and_workspace_rules.md` - File organization, git operations
+- `wave_execution_protocol.md` - Wave planning and execution
+- `constitution_protocol.md` - Context preservation
 
-### Coordination Rules
-- `initialization_checklist` → `{base_path}/coordination_rules/initialization_checklist.md`
-- `file_organization_rules` → `{base_path}/coordination_rules/file_organization_rules.md`
-- `wave_coordination` → `{base_path}/coordination_rules/wave_coordination.md`
-- etc.
+### Templates (6 files total)
+- `project-execution-template.md` - Planning and execution
+- `team-agent-templates.md` - Agent and team configurations
+- `security-assessment-template.md` - Security documentation
+- `quality-validation-template.md` - Quality assurance
+- `compliance-remediation-template.md` - Compliance planning
+- `automation-scan-template.md` - Tool results
+
+### Mode Configurations (7 modes)
+- `shadow-clone-plan.md` - Planning mode
+- `shadow-clone-feature.md` - Feature development
+- `shadow-clone-audit.md` - Security audit
+- `shadow-clone-debug.md` - Debugging
+- `shadow-clone-optimize.md` - Performance optimization
+- `shadow-clone-refactor.md` - Code refactoring
+- `shadow-clone-research.md` - Research tasks
 
 ## Base Arguments Configuration
 
@@ -85,21 +90,15 @@ source=local  # CRITICAL: Determines local vs API mode
 
 ```python
 # STEP 0: MANDATORY INITIALIZATION CHECKLIST
-if source_mode == "local":
-    # Read from local files
-    initialization_checklist = read_file(f"{base_path}/coordination_rules/initialization_checklist.md")
-    system_validation_rules = read_file(f"{base_path}/coordination_rules/system_validation_rules.md")
-    file_organization_rules = read_file(f"{base_path}/coordination_rules/file_organization_rules.md")
-else:
-    # Fetch from API
-    initialization_checklist = fetch_from_api("/api/prompts/coordination-rules/initialization_checklist")
-    system_validation_rules = fetch_from_api("/api/prompts/coordination-rules/system_validation_rules")
-    file_organization_rules = fetch_from_api("/api/prompts/coordination-rules/file_organization_rules")
+# LOCAL VERSION - Always read from local files
+core_system_rules = read_file(f"{base_path}/coordination_rules/core_system_rules.md")
+file_and_workspace_rules = read_file(f"{base_path}/coordination_rules/file_and_workspace_rules.md")
+wave_execution_protocol = read_file(f"{base_path}/coordination_rules/wave_execution_protocol.md")
 
-# Apply the loaded rules
-apply_rules(initialization_checklist)
-apply_rules(system_validation_rules)
-apply_rules(file_organization_rules)
+# Apply the loaded rules (simplified)
+apply_rules(core_system_rules)
+apply_rules(file_and_workspace_rules)
+apply_rules(wave_execution_protocol)
 
 # Create mandatory wave-0 directory
 create_directory(f"{waves_directory}/wave-0/")
@@ -108,11 +107,8 @@ create_directory(f"{waves_directory}/wave-0/")
 ### Phase 2: Team Configuration
 
 ```python
-# Load team templates based on source mode
-if source_mode == "local":
-    team_templates = read_file(f"{base_path}/templates/team_templates.md")
-else:
-    team_templates = fetch_from_api("/api/prompts/templates/team_templates")
+# Load team templates - LOCAL VERSION
+team_templates = read_file(f"{base_path}/templates/team-agent-templates.md")
 
 teams = configure_teams(
     project_type=project_context.type,
@@ -125,11 +121,8 @@ teams = configure_teams(
 ### Phase 3: Wave Planning
 
 ```python
-# Load wave coordination rules
-if source_mode == "local":
-    wave_rules = read_file(f"{base_path}/coordination_rules/wave_coordination.md")
-else:
-    wave_rules = fetch_from_api("/api/prompts/coordination-rules/wave_coordination")
+# Load wave coordination rules - LOCAL VERSION
+wave_rules = read_file(f"{base_path}/coordination_rules/wave_execution_protocol.md")
 
 waves = plan_waves(
     teams=teams,
@@ -144,32 +137,26 @@ waves = plan_waves(
 **CRITICAL: This is where LOCAL MODE differs most!**
 
 ```python
-# Load core rules and templates
-if source_mode == "local":
-    agent_templates = read_file(f"{base_path}/templates/agent_templates.md")
-    core_rules = read_file(f"{base_path}/agent_rules/core_agent_rules.md")
-else:
-    agent_templates = fetch_from_api("/api/prompts/templates/agent_templates")
-    core_rules = fetch_from_api("/api/prompts/agent-rules/core_agent_rules")
+# Load core rules and templates - LOCAL VERSION
+agent_templates = read_file(f"{base_path}/templates/team-agent-templates.md")
+core_rules = read_file(f"{base_path}/agent_rules/core_rules.md")
 
 for wave in waves:
     agents_to_deploy = []
     
     for team in wave.teams:
         for agent in team.agents:
-            # MANDATORY RULE INJECTION PROTOCOL
-            if source_mode == "local":
-                # Read role-specific rules from local files
-                role_rules = read_file(f"{base_path}/agent_rules/{agent.role}_agent_rules.md")
-                
-                # Read project-specific rules if applicable
-                if project_type != "auto":
-                    project_rules = read_file(f"{base_path}/agent_rules/{project_type}_agent_rules.md")
+            # MANDATORY RULE INJECTION PROTOCOL - LOCAL VERSION
+            # Map roles to new simplified structure
+            if agent.role in ["development", "qa", "devops", "security"]:
+                role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
+            elif agent.role in ["planning", "research", "audit", "documentation"]:
+                role_rules = read_file(f"{base_path}/agent_rules/analytical_rules.md")
+            elif agent.role in ["team_lead", "record_keeper"]:
+                role_rules = read_file(f"{base_path}/agent_rules/leadership_rules.md")
             else:
-                # Fetch from API
-                role_rules = fetch_from_api(f"/api/prompts/agent-rules/{agent.role}_rules")
-                if project_type != "auto":
-                    project_rules = fetch_from_api(f"/api/prompts/agent-rules/{project_type}_rules")
+                # Default to technical rules for unknown roles
+                role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
             
             # CRITICAL FOR LOCAL MODE: Include actual rule content in agent prompt
             agent_prompt = f"""
@@ -181,11 +168,11 @@ CORE RULES:
 ROLE-SPECIFIC RULES:
 {role_rules}
 
-FILE ORGANIZATION RULES:
-{file_organization_rules}
+FILE AND WORKSPACE RULES:
+{file_and_workspace_rules}
 
-PROJECT CONTEXT:
-{project_rules if project_rules else "General project"}
+PROJECT TYPE:
+{project_type if project_type != "auto" else "General project"}
 
 TEAM CONTEXT:
 {team.context}
@@ -211,47 +198,55 @@ QUALITY COMMITMENT: "I am a master of my craft. There are no weak links in our s
 ### Phase 5: Mode-Specific Execution
 
 ```python
-# Load mode-specific configuration
+# Load mode-specific configuration - LOCAL VERSION
 if mode == "EXECUTION":
     execute_standard_mode()
 elif mode == "PLANNING":
-    if source_mode == "local":
-        plan_config = read_file(f"{base_path}/mode_configs/shadow-clone-plan.md")
-    else:
-        plan_config = fetch_from_api("/api/prompts/modes/plan")
+    plan_config = read_file(f"{base_path}/mode_configs/shadow-clone-plan.md")
     execute_planning_mode(plan_config)
-# ... other modes
+elif mode == "FEATURE":
+    feature_config = read_file(f"{base_path}/mode_configs/shadow-clone-feature.md")
+    execute_feature_mode(feature_config)
+elif mode == "AUDIT":
+    audit_config = read_file(f"{base_path}/mode_configs/shadow-clone-audit.md")
+    execute_audit_mode(audit_config)
+elif mode == "DEBUG":
+    debug_config = read_file(f"{base_path}/mode_configs/shadow-clone-debug.md")
+    execute_debug_mode(debug_config)
+elif mode == "OPTIMIZE":
+    optimize_config = read_file(f"{base_path}/mode_configs/shadow-clone-optimize.md")
+    execute_optimize_mode(optimize_config)
+elif mode == "REFACTOR":
+    refactor_config = read_file(f"{base_path}/mode_configs/shadow-clone-refactor.md")
+    execute_refactor_mode(refactor_config)
+elif mode == "RESEARCH":
+    research_config = read_file(f"{base_path}/mode_configs/shadow-clone-research.md")
+    execute_research_mode(research_config)
 ```
 
 ### Phase 6: Integration & Quality Assurance
 
 ```python
-# Load integration and quality rules
-if source_mode == "local":
-    integration_rules = read_file(f"{base_path}/coordination_rules/integration_rules.md")
-    quality_gates = read_file(f"{base_path}/coordination_rules/quality_gates.md")
-else:
-    integration_rules = fetch_from_api("/api/prompts/coordination-rules/integration_rules")
-    quality_gates = fetch_from_api("/api/prompts/coordination-rules/quality_gates")
+# Load integration and quality rules - LOCAL VERSION
+# Integration rules are now part of wave_execution_protocol
+# Quality gates are now part of core_system_rules
+# Both were already loaded in Phase 1
 
-results = integrate_deliverables(waves, integration_rules)
-validate_quality(results, quality_gates)
+results = integrate_deliverables(waves, wave_execution_protocol)
+validate_quality(results, core_system_rules)
 ```
 
 ### Phase 7: Final Quality & Commit
 
 ```python
-# Load git commit protocol
-if source_mode == "local":
-    git_protocol = read_file(f"{base_path}/coordination_rules/git_commit_protocol.md")
-else:
-    git_protocol = fetch_from_api("/api/prompts/coordination-rules/git_commit_protocol")
+# Git commit protocol is now part of file_and_workspace_rules - LOCAL VERSION
+# Already loaded in Phase 1
 
 # Run final audit
 final_audit()
 
-# Create single atomic commit
-create_single_commit(git_protocol)
+# Create single atomic commit (using file_and_workspace_rules)
+create_single_commit(file_and_workspace_rules)
 ```
 
 ## Critical Success Factors for Local Mode
