@@ -1,0 +1,9 @@
+name = "shadow-clone-admin"
+compatibility_date = "2023-05-18"
+
+[site]
+bucket = "./"
+
+[[routes]]
+pattern = "admin.ignislabs.ai/*"
+custom_domain = true
