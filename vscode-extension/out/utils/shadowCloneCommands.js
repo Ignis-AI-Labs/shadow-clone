@@ -4,12 +4,12 @@ exports.ShadowCloneMacros = exports.SHADOW_CLONE_COMMANDS = void 0;
 // Shadow Clone command templates
 exports.SHADOW_CLONE_COMMANDS = {
     DEPLOY: 'Fetch Shadow Clone prompt from API and execute with project_plan=./project-plan.md workspace_dir=./ waves_directory=./.waves/',
-    RESEARCH: 'Fetch Shadow Clone prompt from API and execute with project_type=research',
-    DEBUG: 'Fetch Shadow Clone prompt from API and execute with project_type=debug',
-    FEATURE: 'Fetch Shadow Clone prompt from API and execute with project_type=feature',
-    REFACTOR: 'Fetch Shadow Clone prompt from API and execute with project_type=refactor',
-    OPTIMIZE: 'Fetch Shadow Clone prompt from API and execute with project_type=optimize',
-    AUDIT: 'Fetch Shadow Clone prompt from API and execute with project_type=audit',
+    RESEARCH: 'Fetch Shadow Clone prompt from API and execute with mode=research',
+    DEBUG: 'Fetch Shadow Clone prompt from API and execute with mode=debug',
+    FEATURE: 'Fetch Shadow Clone prompt from API and execute with mode=feature',
+    REFACTOR: 'Fetch Shadow Clone prompt from API and execute with mode=refactor',
+    OPTIMIZE: 'Fetch Shadow Clone prompt from API and execute with mode=optimize',
+    AUDIT: 'Fetch Shadow Clone prompt from API and execute with mode=audit',
     RESUME: 'Fetch Shadow Clone prompt from API and resume',
     STATUS: 'Fetch Shadow Clone prompt from API and status',
     PLAN: 'Fetch Shadow Clone prompt from API and plan',
