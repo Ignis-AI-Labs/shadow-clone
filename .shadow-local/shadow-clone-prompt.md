@@ -30,6 +30,15 @@ source_mode = "local"  # Always local for this version
 
 **FAILURE TO INITIALIZE = SYSTEM FAILURE**
 
+## 🔑 SACRED RULE: Record Keeper is Mandatory
+
+**CONTEXT IS SACRED** - Every team MUST include a Record Keeper agent:
+- Record Keeper maintains CONSTITUTION.md as single source of truth
+- Deployed WITH the team (never separately)
+- Has same tools and access as other agents
+- Preserves project memory across all waves
+- System will FAIL if any team lacks a Record Keeper
+
 ## Local File Structure (Simplified)
 
 This LOCAL version uses the following simplified file structure:
@@ -116,6 +125,12 @@ teams = configure_teams(
     team_composition=team_composition,
     templates=team_templates
 )
+
+# CRITICAL: Record Keeper is MANDATORY for every team
+# Context is sacred - ensure every team has a Record Keeper
+for team in teams:
+    if not has_record_keeper(team):
+        add_record_keeper_to_team(team)
 ```
 
 ### Phase 3: Wave Planning
@@ -145,6 +160,8 @@ for wave in waves:
     agents_to_deploy = []
     
     for team in wave.teams:
+        # VERIFY: Record Keeper is present (context is sacred)
+        assert has_record_keeper(team), f"CRITICAL: Team {team.name} missing Record Keeper!"
         for agent in team.agents:
             # MANDATORY RULE INJECTION PROTOCOL - LOCAL VERSION
             # Map roles to new simplified structure

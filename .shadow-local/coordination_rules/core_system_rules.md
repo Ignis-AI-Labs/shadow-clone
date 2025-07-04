@@ -76,6 +76,15 @@ Every agent requires:
 - Tool access configured
 - Communication protocols set
 
+### Team Composition
+Every team MUST include:
+- **Record Keeper Agent**: Mandatory member for constitution maintenance
+  - Deployed together with team (never separately)
+  - Maintains CONSTITUTION.md as single source of truth
+  - Documents all decisions and context changes
+  - Ensures knowledge transfer between waves
+  - Has same access and tools as other team members
+
 ### Wave Completion
 Before marking wave complete:
 - All assigned tasks finished
