@@ -46,17 +46,9 @@ This streamlined orchestrator manages the Shadow Clone System through modular co
 When you need additional Shadow Clone modules, fetch them from the Ignis API:
 
 **Agent Rules** (Behavioral DNA for agents):
-- Core Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/core_agent_rules -H "X-API-Key: {KEY}"`
-- Role-Specific Rules:
-  - Development: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/development_agent_rules -H "X-API-Key: {KEY}"`
-  - QA: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/qa_agent_rules -H "X-API-Key: {KEY}"`
-  - DevOps: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/devops_agent_rules -H "X-API-Key: {KEY}"`
-  - Security: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/security_agent_rules -H "X-API-Key: {KEY}"`
-  - Documentation: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/documentation_agent_rules -H "X-API-Key: {KEY}"`
-  - Team Lead: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/team_lead_rules -H "X-API-Key: {KEY}"`
-- Project-Type Rules:
-  - Audit: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/audit_agent_rules -H "X-API-Key: {KEY}"`
-  - Research: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/research_agent_rules -H "X-API-Key: {KEY}"`
+- Core Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/core_rules -H "X-API-Key: {KEY}"`
+- Specialized Agent Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/specialized_agent_rules -H "X-API-Key: {KEY}"`
+- Agent Template: `curl -X GET https://api.ignislabs.ai/api/prompts/agent-rules/agent_template -H "X-API-Key: {KEY}"`
 
 **Mode Configurations** (Project-type methodologies):
 - Audit: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/audit -H "X-API-Key: {KEY}"`
@@ -68,27 +60,16 @@ When you need additional Shadow Clone modules, fetch them from the Ignis API:
 - Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/modes/plan -H "X-API-Key: {KEY}"` # Strategic planning with consolidation
 
 **Coordination Rules** (Wave and integration protocols):
-- **🚨 CRITICAL - Initialization Checklist**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/initialization_checklist -H "X-API-Key: {KEY}"`
-- **🚨 CRITICAL - System Validation**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/system_validation_rules -H "X-API-Key: {KEY}"`
-- **🚨 CRITICAL - File Organization**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/file_organization_rules -H "X-API-Key: {KEY}"`
-- Wave Coordination: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/wave_coordination -H "X-API-Key: {KEY}"`
-- Integration Rules: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/integration_rules -H "X-API-Key: {KEY}"`
-- Quality Gates: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/quality_gates -H "X-API-Key: {KEY}"`
-- Mode Operations: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/mode_operations -H "X-API-Key: {KEY}"`
-- Workspace Structure: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/workspace_structure -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - System Core Rules**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/system_core_rules -H "X-API-Key: {KEY}"`
+- **🚨 CRITICAL - Wave Coordination Protocol**: `curl -X GET https://api.ignislabs.ai/api/prompts/coordination-rules/wave_coordination_protocol -H "X-API-Key: {KEY}"`
 
 **Templates** (Reusable structures and reports):
-- Agent Templates: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/agent_templates -H "X-API-Key: {KEY}"`
-- Team Templates: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/team_templates -H "X-API-Key: {KEY}"`
-- Wave Execution Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/wave-execution-plan-template -H "X-API-Key: {KEY}"`
-- Planning Templates:
-  - Master Project Plan: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/master-project-plan-template -H "X-API-Key: {KEY}"`
-  - Planning Consolidation: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/planning-consolidation-template -H "X-API-Key: {KEY}"`
-- Security Templates:
-  - Security Audit Report: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/security-audit-report-template -H "X-API-Key: {KEY}"`
-  - Vulnerability Report: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/vulnerability-report-template -H "X-API-Key: {KEY}"`
-  - Risk Assessment Matrix: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/risk-assessment-matrix-template -H "X-API-Key: {KEY}"`
-  - Compliance Matrix: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/compliance-matrix-template -H "X-API-Key: {KEY}"`
+- Team & Agent Templates: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/team-agent-templates -H "X-API-Key: {KEY}"`
+- Project Execution Template: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/project-execution-template -H "X-API-Key: {KEY}"`
+- Security Assessment Template: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/security-assessment-template -H "X-API-Key: {KEY}"`
+- Quality Validation Template: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/quality-validation-template -H "X-API-Key: {KEY}"`
+- Compliance Remediation Template: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/compliance-remediation-template -H "X-API-Key: {KEY}"`
+- Automation Scan Template: `curl -X GET https://api.ignislabs.ai/api/prompts/templates/automation-scan-template -H "X-API-Key: {KEY}"`
 
 **Execution Phases** (Step-by-step implementation):
 - Phase 1 Analysis: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase1_analysis -H "X-API-Key: {KEY}"`
@@ -99,10 +80,6 @@ When you need additional Shadow Clone modules, fetch them from the Ignis API:
 - Phase 6 Integration: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase6_integration -H "X-API-Key: {KEY}"`
 - Phase 7 Quality: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/phase7_quality -H "X-API-Key: {KEY}"`
 - Wave Execution Protocol: `curl -X GET https://api.ignislabs.ai/api/prompts/execution-phases/wave_execution_protocol -H "X-API-Key: {KEY}"`
-
-**System Documentation** (Critical references):
-- System Organization: `curl -X GET https://api.ignislabs.ai/api/prompts/documentation/system_organization -H "X-API-Key: {KEY}"`
-- Initialization Sequence: `curl -X GET https://api.ignislabs.ai/api/prompts/documentation/initialization_sequence -H "X-API-Key: {KEY}"`
 
 **CRITICAL API OPERATIONS**:
 - **"load_module"** = Fetch from API at specified endpoint
@@ -186,17 +163,15 @@ elif project_type != "auto":
 ```python
 # STEP 0: MANDATORY INITIALIZATION CHECKLIST
 # This MUST happen before ANY other operation
-initialization_checklist = fetch_from_api("/api/prompts/coordination-rules/initialization_checklist")
-system_validation_rules = fetch_from_api("/api/prompts/coordination-rules/system_validation_rules")
-file_organization_rules = fetch_from_api("/api/prompts/coordination-rules/file_organization_rules")
+system_core_rules = fetch_from_api("/api/prompts/coordination-rules/system_core_rules")
+wave_coordination_protocol = fetch_from_api("/api/prompts/coordination-rules/wave_coordination_protocol")
 
 # Verify ALL critical components are loaded
 CRITICAL_COMPONENTS = [
-    "core_agent_rules",
-    "file_organization_rules", 
-    "wave_coordination",
-    "system_validation_rules",
-    "workspace_structure"
+    "core_rules",
+    "specialized_agent_rules",
+    "system_core_rules",
+    "wave_coordination_protocol"
 ]
 
 for component in CRITICAL_COMPONENTS:
@@ -234,7 +209,7 @@ if is_new_project() and not wave_0_complete():
 ### Phase 2: Team Configuration
 ```python
 # Fetch team templates from API
-team_templates = fetch_from_api("/api/prompts/templates/team_templates")
+team_templates = fetch_from_api("/api/prompts/templates/team-agent-templates")
 teams = configure_teams(
     project_type=project_context.type,
     num_teams=num_teams,
@@ -245,13 +220,13 @@ teams = configure_teams(
 
 ### Phase 3: Wave Planning
 ```python
-# Fetch wave coordination rules from API
-wave_rules = fetch_from_api("/api/prompts/coordination-rules/wave_coordination")
+# Fetch wave coordination rules from API (already loaded in Phase 1)
+# wave_coordination_protocol was loaded during initialization
 waves = plan_waves(
     teams=teams,
     wave_strategy=wave_strategy,
     wave_count=wave_count,
-    rules=wave_rules
+    rules=wave_coordination_protocol
 )
 
 # CREATE CLEAR WAVE EXECUTION PLAN FOR USER REVIEW
@@ -275,8 +250,9 @@ create_directory(f"{waves_directory}")  # Single directory for all deliverables
 
 ```python
 # Fetch core rules and templates from API
-agent_templates = fetch_from_api("/api/prompts/templates/agent_templates")
-core_rules = fetch_from_api("/api/prompts/agent-rules/core_agent_rules")
+team_agent_templates = fetch_from_api("/api/prompts/templates/team-agent-templates")
+core_rules = fetch_from_api("/api/prompts/agent-rules/core_rules")
+specialized_rules = fetch_from_api("/api/prompts/agent-rules/specialized_agent_rules")
 
 for wave in waves:
     agents_to_deploy = []  # Collect ALL agents for this wave
@@ -284,8 +260,8 @@ for wave in waves:
     for team in wave.teams:
         for agent in team.agents:
             # MANDATORY RULE INJECTION PROTOCOL
-            # Fetch role-specific rules from API
-            role_rules = fetch_from_api(f"/api/prompts/agent-rules/{agent.role}_rules")
+            # Role-specific rules are now part of specialized_agent_rules
+            # which contains all role specializations in one file
             
             # Fetch project-specific rules if applicable
             project_rules = None
@@ -296,11 +272,12 @@ for wave in waves:
                 # 1. Universal Excellence (MANDATORY)
                 core_rules=core_rules,
                 
-                # 2. File Organization Rules (MANDATORY)
-                file_org_rules=file_organization_rules,
+                # 2. System Core Rules (MANDATORY) - includes file ops, quality gates
+                system_core_rules=system_core_rules,
                 
-                # 3. Role Specialization (MANDATORY)
-                role_rules=role_rules,
+                # 3. Role Specialization (MANDATORY) - from consolidated file
+                specialized_rules=specialized_rules,
+                agent_role=agent.role,
                 
                 # 4. Project Context (CONDITIONAL) 
                 project_rules=project_rules,
@@ -308,8 +285,8 @@ for wave in waves:
                 # 5. Team Context (MANDATORY)
                 team_context=team.context,
                 
-                # 6. Wave-0 Requirements (MANDATORY)
-                wave_0_enforcement="All planning must occur in wave-0 before implementation",
+                # 6. Wave Coordination (MANDATORY)
+                wave_coordination_protocol=wave_coordination_protocol,
                 
                 # 7. Specific Assignment
                 assignment=agent.assignment
@@ -388,13 +365,13 @@ elif mode == "RESEARCH":
 
 ### Phase 6: Integration & Quality Assurance
 ```python
-# Fetch integration protocols from API
-integration_rules = fetch_from_api("/api/prompts/coordination-rules/integration_rules")
-quality_gates = fetch_from_api("/api/prompts/coordination-rules/quality_gates")
+# Integration and quality rules are part of the already-loaded protocols
+# system_core_rules contains quality gates
+# wave_coordination_protocol contains integration rules
 
 # Execute integration with quality checks
-results = integrate_deliverables(waves, integration_rules)
-validate_quality(results, quality_gates)
+results = integrate_deliverables(waves, wave_coordination_protocol)
+validate_quality(results, system_core_rules)
 ```
 
 ## Module Interface Specifications

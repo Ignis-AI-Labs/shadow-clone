@@ -1,41 +1,35 @@
-# Simplified Coordination Rules
+# Consolidated Coordination Rules
 
-This directory contains the consolidated and simplified Shadow Clone coordination rules, reduced from 11 files to 4 essential files.
+This directory contains the streamlined Shadow Clone coordination rules, reduced to 2 essential files.
 
 ## File Structure
 
-1. **core_system_rules.md** - Essential system initialization, validation, and quality standards
-   - Consolidated from: initialization_checklist.md, system_validation_rules.md, quality_gates.md, mode_validation_rules.md
+1. **system_core_rules.md** - System infrastructure and requirements
+   - System initialization and validation
+   - Team composition requirements
+   - File operations and git rules
+   - Quality gates and standards
+   - Constitution management
 
-2. **file_and_workspace_rules.md** - All file organization, workspace structure, and git operations
-   - Consolidated from: file_organization_rules.md, workspace_structure.md, git_commit_protocol.md
-
-3. **wave_execution_protocol.md** - Wave planning, coordination, and execution flow
-   - Consolidated from: wave_coordination.md, integration_rules.md, mode_operations.md
-
-4. **constitution_protocol.md** - Project context preservation and documentation
-   - Kept as-is (already well-structured)
+2. **wave_coordination_protocol.md** - Wave execution and process flow
+   - Wave execution patterns
+   - Mode-specific protocols
+   - Pre-flight checks
+   - Emergency procedures
+   - Common project patterns
 
 ## Key Improvements
 
-- **60-70% reduction** in redundant content
-- **Clear separation** of concerns
-- **Practical focus** - removed theoretical/unused rules
-- **Simplified language** - removed bureaucratic terminology
-- **Adaptive approach** - rules scale with project complexity
+- **75% reduction** in file count (4 files → 2 files)
+- **Zero overlap** between files
+- **Clear separation**: Infrastructure (rules) vs Process (protocols)
+- **Focused content** - removed all fluff and redundancy
+- **Practical approach** - what agents need to know to do their job
 
 ## Usage
 
-For small tasks (<1 day):
-- Focus on core_system_rules.md
-- Optional wave-0 planning
-- Simplified quality gates
+All agents must follow both files:
+- **system_core_rules.md** - How the system works
+- **wave_coordination_protocol.md** - How to execute waves
 
-For complex projects:
-- Use all 4 files
-- Full wave-0 planning required
-- Strict quality enforcement
-
-## Migration from Old Rules
-
-The original 11 files are archived in `/archive/coordination_rules/`. This simplified version maintains all critical functionality while being more practical and maintainable.
+The files reference each other for complete coverage while maintaining clear boundaries.
