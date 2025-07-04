@@ -4,6 +4,9 @@ import { MODE_OPERATIONS } from './mode-operations';
 import { QUALITY_GATES } from './quality-gates';
 import { WAVE_COORDINATION_RULES } from './wave-coordination';
 import { WORKSPACE_STRUCTURE } from './workspace-structure';
+import { FILE_ORGANIZATION_RULES } from './file-organization';
+import { INITIALIZATION_CHECKLIST } from './initialization-checklist';
+import { SYSTEM_VALIDATION_RULES } from './system-validation';
 
 // Export individually
 export { INTEGRATION_RULES } from './integration';

@@ -319,6 +319,8 @@ Mode-specific additions:
 - **Session Management**: 1-hour secure tokens
 - **Dual Auth Support**: API keys and wallet tokens both work
 - **Portal Structure**: Centralized hub for all admin functions
+- **Tech Stack**: Next.js 14, RainbowKit v2, TypeScript, Tailwind CSS
+- **Deployment**: Cloudflare Pages (shadow-clone-admin-portal)
 
 ### Security Monitoring Thresholds
 - **0-25 points**: Normal user
@@ -637,6 +639,10 @@ npm run dev
 10. **Dual Auth System**: Admin endpoints now support both API keys and wallet tokens
 11. **Custom Domain Setup**: Admin portal configured for admin.ignislabs.ai
 12. **Portal Structure**: Created expandable admin portal hub for future modules
+13. **Modern Admin Portal**: Migrated from static HTML to Next.js with RainbowKit
+14. **Portal Deployment**: Deployed to Cloudflare Pages as shadow-clone-admin-portal
+15. **Wallet Auth Fix**: Simplified authentication to client-side only verification
+16. **Portal Security Enhancement**: Removed API endpoints, authentication now purely client-side with wallet signature
 
 ### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)
