@@ -27,7 +27,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/shadow-clone`
+                `${getApiEndpoint()}/api/prompts/shadow-clone-prompt`
             );
             
             const prompt = response.data as ShadowClonePrompt;
@@ -92,7 +92,7 @@ export class PromptService {
         const parts: string[] = [];
         
         parts.push('Fetch the Shadow Clone orchestration prompt from the API:');
-        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
+        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"`);
         parts.push('');
         parts.push('Then execute it with the following parameters:');
         
