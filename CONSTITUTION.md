@@ -313,10 +313,12 @@ Mode-specific additions:
 - **Documentation**: See `/docs/ADMIN_SECURITY_ENDPOINTS.md` and `/docs/ADMIN_DASHBOARD_WEB3.md`
 
 ### Web3 Admin Authentication
+- **Admin Portal URL**: `https://admin.ignislabs.ai`
 - **Admin Wallet**: `0x4faa0fac32F844ACAF59b5B5a72C0D38de8bd0CD`
 - **Authentication**: MetaMask signature verification
 - **Session Management**: 1-hour secure tokens
 - **Dual Auth Support**: API keys and wallet tokens both work
+- **Portal Structure**: Centralized hub for all admin functions
 
 ### Security Monitoring Thresholds
 - **0-25 points**: Normal user
@@ -633,6 +635,8 @@ npm run dev
 8. **Wallet Authentication**: Implemented secure admin authentication via Ethereum signatures
 9. **Admin Deployment**: Created Cloudflare Pages deployment for admin dashboard
 10. **Dual Auth System**: Admin endpoints now support both API keys and wallet tokens
+11. **Custom Domain Setup**: Admin portal configured for admin.ignislabs.ai
+12. **Portal Structure**: Created expandable admin portal hub for future modules
 
 ### 2025-06-29
 1. **License System**: Updated to Ignis AI Labs LLC (Puerto Rico)

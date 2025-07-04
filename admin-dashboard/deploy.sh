@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Shadow Clone Admin Dashboard Deployment Script
-# Deploys to Cloudflare Pages
+# Deploys to Cloudflare Pages with custom domain support
 
 echo "🚀 Deploying Shadow Clone Admin Dashboard to Cloudflare Pages..."
 
@@ -13,13 +13,20 @@ fi
 
 # Project name
 PROJECT_NAME="shadow-clone-admin"
+CUSTOM_DOMAIN="admin.ignislabs.ai"
 
 # Deploy to Cloudflare Pages
 echo "📦 Deploying to Cloudflare Pages..."
 wrangler pages deploy . --project-name=$PROJECT_NAME
 
 echo "✅ Deployment complete!"
-echo "📍 Your admin dashboard should be available at: https://${PROJECT_NAME}.pages.dev"
 echo ""
-echo "⚠️  Important: Make sure the Cloudflare Worker API is deployed first!"
-echo "📖 See docs/ADMIN_DASHBOARD_WEB3.md for usage instructions"
+echo "📍 Default URL: https://${PROJECT_NAME}.pages.dev"
+echo "🌐 Custom domain: https://${CUSTOM_DOMAIN}"
+echo ""
+echo "⚠️  Next steps:"
+echo "1. Add CNAME record: admin -> ${PROJECT_NAME}.pages.dev"
+echo "2. Configure custom domain in Cloudflare Pages dashboard"
+echo "3. Ensure Cloudflare Worker API is deployed"
+echo ""
+echo "📖 See docs/CUSTOM_DOMAIN_SETUP.md for detailed instructions"
