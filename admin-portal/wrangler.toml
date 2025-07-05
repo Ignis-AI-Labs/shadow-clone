@@ -5,8 +5,8 @@ pages_build_output_dir = "out"
 # KV Namespaces for admin functionality
 [[kv_namespaces]]
 binding = "ADMIN_SESSIONS"
-id = "YOUR_ADMIN_SESSIONS_KV_ID"
+id = "8ece60099c784bef8441a62e37cfa0a6"
 
 [[kv_namespaces]]
 binding = "SECURITY_DATA"
-id = "YOUR_SECURITY_DATA_KV_ID"
+id = "776e540640884c2f9efdc9827eb0f777"
