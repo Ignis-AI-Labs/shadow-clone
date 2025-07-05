@@ -15,6 +15,12 @@
 - Both local (.shadow-local) and API (.shadow) modes fully operational
 
 ### Recent Changes (2025-07-05)
+- **API Consolidation**:
+  - Removed redundant cloudflare-worker directory
+  - All API functionality handled by main dashboard at api.ignislabs.ai
+  - Admin portal deployed to admin.ignislabs.ai with integrated security monitoring
+  - Eliminated dual API confusion - single source of truth
+
 - **Security System Converted to Monitoring-Only Mode**:
   - Removed automatic enforcement of security measures
   - Implemented visual warnings and admin notifications
