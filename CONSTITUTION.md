@@ -4,12 +4,12 @@
 **Project Name**: Shadow Clone - Multi-Agent Orchestration System
 **Current Branch**: dev-testing
 **Last Updated**: 2025-07-05
-**Status**: Production Ready - v0.3.3
+**Status**: Production Ready - v0.3.4
 
 ## Project State
 
 ### Current Focus
-- Production deployment of streamlined Shadow Clone system v0.3.3
+- Production deployment of streamlined Shadow Clone system v0.3.4
 - API endpoints consolidated and deployed to Cloudflare
 - VSCode extension updated with new endpoint structure
 - Both local (.shadow-local) and API (.shadow) modes fully operational
@@ -34,7 +34,7 @@
   - Consolidated endpoints by category: `/api/prompts/{category}/{filename}`
   - Deployed to Cloudflare for production use
 
-- **VSCode Extension v0.3.3**:
+- **VSCode Extension v0.3.4**:
   - Updated all API endpoints to match new structure
   - Built and packaged for deployment
   - Maintained full macro command functionality
@@ -119,7 +119,7 @@
 
 ## Recent Updates
 
-### 2025-07-05 - Production Release v0.3.3 & Security Update
+### 2025-07-05 - Production Release v0.3.4 & Security Update
 - **Security System Overhaul**: 
   - Converted to monitoring-only mode
   - No automatic blocking or enforcement
@@ -137,9 +137,9 @@
 - Established "Context is sacred" principle
 
 ## Production Status
-- **Version**: v0.3.3
+- **Version**: v0.3.4
 - **API**: Deployed to Cloudflare with streamlined endpoints
-- **VSCode Extension**: Built and packaged (shadow-clone-0.3.3.vsix)
+- **VSCode Extension**: Built and packaged (shadow-clone-0.3.4.vsix)
 - **Documentation**: Updated to reflect new structure
 - **Testing**: Both local and API modes validated
 
