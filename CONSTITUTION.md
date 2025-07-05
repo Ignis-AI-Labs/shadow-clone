@@ -15,6 +15,14 @@
 - Both local (.shadow-local) and API (.shadow) modes fully operational
 
 ### Recent Changes (2025-07-05)
+- **Security System Converted to Monitoring-Only Mode**:
+  - Removed automatic enforcement of security measures
+  - Implemented visual warnings and admin notifications
+  - Created admin dashboard for reviewing security events
+  - Added configurable security modes (monitor vs enforce)
+  - Philosophy: Human judgment required for security decisions
+  - Full documentation in `/docs/SECURITY_MONITORING.md`
+
 - **Streamlined System Architecture**: Reduced from 69 to 31 files
   - Consolidated agent rules from 8 individual files to 3 core files
   - Simplified coordination rules from 8 files to 2 essential protocols
@@ -30,6 +38,7 @@
   - Updated all API endpoints to match new structure
   - Built and packaged for deployment
   - Maintained full macro command functionality
+  - Updated security telemetry to be less intrusive
 
 - **Record Keeper Global Rule**: Made Record Keeper a mandatory component for all teams
   - Updated core_system_rules.md to include team composition requirements
@@ -50,6 +59,20 @@
 - **Coordination**: Constitution-based context preservation
 
 ## Technical Decisions
+
+### Security Monitoring Philosophy (2025-07-05)
+**Decision**: Convert security system from enforcement to monitoring-only
+**Rationale**: AI systems lack genuine discernment for judicial security decisions
+**Implementation**:
+- Security monitor logs warnings without blocking
+- Middleware adds warning headers but allows requests
+- Admin dashboard shows security events for review
+- Human administrators make all enforcement decisions
+**Benefits**:
+- Avoids false positives disrupting legitimate users
+- Builds trust while maintaining visibility
+- Allows contextual judgment for each case
+- Enables continuous improvement based on real data
 
 ### Record Keeper Integration (2025-07-04)
 **Decision**: Record Keeper must be included in every team, not deployed separately
@@ -96,7 +119,12 @@
 
 ## Recent Updates
 
-### 2025-07-05 - Production Release v0.3.3
+### 2025-07-05 - Production Release v0.3.3 & Security Update
+- **Security System Overhaul**: 
+  - Converted to monitoring-only mode
+  - No automatic blocking or enforcement
+  - Admin review required for all actions
+  - Comprehensive logging and alerting
 - **System Streamlining**: Reduced from 69 to 31 files without functionality loss
 - **API Deployment**: All endpoints updated and deployed to Cloudflare
 - **VSCode Extension**: Updated to v0.3.3 with new endpoint structure
@@ -121,6 +149,7 @@
 - **Parallel Agent Deployment**: Teams work concurrently within waves
 - **Context Preservation**: Record Keeper ensures continuity
 - **Quality Gates**: Automated validation at wave boundaries
+- **Security Monitoring**: Non-intrusive activity monitoring with admin review
 
 ## Active Protocols
 - Wave-0 mandatory for all executions
@@ -128,6 +157,8 @@
 - Constitution updates after each wave
 - File reservation system active
 - Quality gates enforced at wave boundaries
+- Security monitoring in effect (non-blocking)
+- Admin review for security decisions
 
 ## Dependencies
 - Local file system access required
@@ -140,6 +171,9 @@
 - Wave isolation prevents interference
 - Git branching protects main codebase
 - Test mode allows safe validation
+- Security monitoring without disruption
+- Human review for security actions
+- Transparent security practices
 
 ---
 *This constitution serves as the living memory of the Shadow Clone project*
