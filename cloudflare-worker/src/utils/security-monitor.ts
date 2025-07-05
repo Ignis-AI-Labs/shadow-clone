@@ -136,16 +136,25 @@ export class SecurityMonitor {
   /**
    * Check rate limits for a user
    */
-  async checkRateLimits(userId: string): Promise<{ allowed: boolean; limit?: string }> {
+  async checkRateLimits(userId: string): Promise<{ allowed: boolean; limit?: string; warning?: boolean }> {
     const profile = await this.getUserSecurityProfile(userId);
     
-    // Check if user is blocked
+    // Check if user would be blocked (but only warn)
     if (profile.isBlocked && profile.blockUntil) {
       const blockTime = new Date(profile.blockUntil);
       if (blockTime > new Date()) {
-        return { allowed: false, limit: 'blocked' };
+        // Log warning but allow request
+        await this.logSecurityEvent({
+          userId,
+          apiKey: '',
+          timestamp: new Date().toISOString(),
+          eventType: 'rate_limit',
+          details: 'User would be blocked but enforcement is disabled',
+          requestPath: 'rate-limit-check',
+        });
+        return { allowed: true, warning: true, limit: 'would-be-blocked' };
       }
-      // Unblock if time has passed
+      // Clear old block flag
       profile.isBlocked = false;
       profile.blockUntil = undefined;
     }
@@ -156,15 +165,39 @@ export class SecurityMonitor {
       ? { minute: limits.MINUTE.suspicious, hour: limits.HOUR.suspicious, day: limits.DAY.suspicious }
       : { minute: limits.MINUTE.normal, hour: limits.HOUR.normal, day: limits.DAY.normal };
     
-    // Check limits
+    // Check limits but only warn (don't enforce)
     if (profile.accessCounts.minute > userLimits.minute) {
-      return { allowed: false, limit: 'minute' };
+      await this.logSecurityEvent({
+        userId,
+        apiKey: '',
+        timestamp: new Date().toISOString(),
+        eventType: 'rate_limit',
+        details: `Minute rate limit exceeded: ${profile.accessCounts.minute}/${userLimits.minute}`,
+        requestPath: 'rate-limit-check',
+      });
+      return { allowed: true, warning: true, limit: 'minute-exceeded' };
     }
     if (profile.accessCounts.hour > userLimits.hour) {
-      return { allowed: false, limit: 'hour' };
+      await this.logSecurityEvent({
+        userId,
+        apiKey: '',
+        timestamp: new Date().toISOString(),
+        eventType: 'rate_limit',
+        details: `Hour rate limit exceeded: ${profile.accessCounts.hour}/${userLimits.hour}`,
+        requestPath: 'rate-limit-check',
+      });
+      return { allowed: true, warning: true, limit: 'hour-exceeded' };
     }
     if (profile.accessCounts.day > userLimits.day) {
-      return { allowed: false, limit: 'day' };
+      await this.logSecurityEvent({
+        userId,
+        apiKey: '',
+        timestamp: new Date().toISOString(),
+        eventType: 'rate_limit',
+        details: `Day rate limit exceeded: ${profile.accessCounts.day}/${userLimits.day}`,
+        requestPath: 'rate-limit-check',
+      });
+      return { allowed: true, warning: true, limit: 'day-exceeded' };
     }
     
     // Update counts
@@ -291,10 +324,28 @@ export class SecurityMonitor {
     const profile = await this.getUserSecurityProfile(userId);
     profile.suspicionScore += points;
     
-    // Auto-block if score too high
+    // Log warning if score too high (no auto-blocking)
     if (profile.suspicionScore >= 100) {
-      profile.isBlocked = true;
-      profile.blockUntil = new Date(Date.now() + 86400000).toISOString(); // 24 hour block
+      // Visual warning only - admins will review and decide
+      await this.logSecurityEvent({
+        userId,
+        apiKey: '',
+        timestamp: new Date().toISOString(),
+        eventType: 'suspicious_pattern',
+        details: `High suspicion score: ${profile.suspicionScore} - Manual review recommended`,
+        requestPath: 'system',
+      });
+      
+      // Send alert to admins but don't block
+      const reporter = new AuditReporter(this.env);
+      await reporter.sendRealtimeAlert({
+        userId,
+        apiKey: '',
+        timestamp: new Date().toISOString(),
+        eventType: 'suspicious_pattern',
+        details: `User ${userId} has suspicion score of ${profile.suspicionScore}`,
+        requestPath: 'system',
+      });
     }
     
     await this.saveUserSecurityProfile(profile);
