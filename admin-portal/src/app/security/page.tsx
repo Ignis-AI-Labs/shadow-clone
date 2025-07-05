@@ -53,7 +53,8 @@ export default function SecurityDashboard() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://api.ignislabs.ai/admin/security/analytics', {
+      const adminApiEndpoint = process.env.NEXT_PUBLIC_ADMIN_API_ENDPOINT || 'http://localhost:8787';
+      const response = await fetch(`${adminApiEndpoint}/security/analytics`, {
         headers: { 'X-Admin-Token': authToken! },
       });
       
@@ -72,7 +73,8 @@ export default function SecurityDashboard() {
     if (!confirm(`Unblock user ${userId}?`)) return;
 
     try {
-      const response = await fetch('https://api.ignislabs.ai/admin/security/unblock', {
+      const adminApiEndpoint = process.env.NEXT_PUBLIC_ADMIN_API_ENDPOINT || 'http://localhost:8787';
+      const response = await fetch(`${adminApiEndpoint}/security/unblock`, {
         method: 'POST',
         headers: {
           'X-Admin-Token': authToken!,
@@ -94,7 +96,8 @@ export default function SecurityDashboard() {
     if (!confirm(`Clear all events for user ${userId}? This cannot be undone.`)) return;
 
     try {
-      const response = await fetch('https://api.ignislabs.ai/admin/security/clear-events', {
+      const adminApiEndpoint = process.env.NEXT_PUBLIC_ADMIN_API_ENDPOINT || 'http://localhost:8787';
+      const response = await fetch(`${adminApiEndpoint}/security/clear-events`, {
         method: 'POST',
         headers: {
           'X-Admin-Token': authToken!,

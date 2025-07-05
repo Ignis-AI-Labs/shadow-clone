@@ -17,7 +17,8 @@ import {
   handleUnblockUser,
   handleClearUserEvents,
   handleGenerateReport,
-  handleConfigureNotifications
+  handleConfigureNotifications,
+  handleSecurityEvent
 } from './handlers/admin';
 import { handleWalletAuth } from './handlers/admin-wallet';
 import {
@@ -88,11 +89,15 @@ router.get('/api/prompts/templates/:template', handleGetTemplateSecure);
 // Execution phases
 router.get('/api/prompts/execution-phases/:phase', handleGetExecutionPhaseSecure);
 
-// Admin routes
+// Admin routes (both old paths and new simplified paths)
 router.post('/admin/auth/wallet', handleWalletAuth);
+router.post('/auth/wallet', handleWalletAuth); // New simplified path
 router.get('/admin/security/analytics', handleGetSecurityAnalytics);
+router.get('/security/analytics', handleGetSecurityAnalytics); // New simplified path
 router.post('/admin/security/unblock', handleUnblockUser);
+router.post('/security/unblock', handleUnblockUser); // New simplified path
 router.post('/admin/security/clear-events', handleClearUserEvents);
+router.post('/security/clear-events', handleClearUserEvents); // New simplified path
 router.post('/admin/security/generate-report', handleGenerateReport);
 router.post('/admin/security/configure-notifications', handleConfigureNotifications);
 router.get('/admin/telemetry/analytics', handleGetTelemetryAnalytics);
@@ -100,6 +105,7 @@ router.get('/admin/telemetry/analytics', handleGetTelemetryAnalytics);
 // Telemetry routes
 router.post('/api/telemetry/events', handleTelemetryEvents);
 router.post('/api/security/high-risk-alert', handleHighRiskAlert);
+router.post('/security/event', handleSecurityEvent); // New endpoint for security events
 
 // License API routes (for Ignis Labs dashboard integration)
 router.post('/api/license/claim/ignis', handleClaimIgnisLicense);

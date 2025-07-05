@@ -2,7 +2,7 @@ import { useAccount, useSignMessage } from 'wagmi';
 import { useEffect, useState } from 'react';
 
 const ADMIN_WALLET = '0x4faa0fac32F844ACAF59b5B5a72C0D38de8bd0CD'.toLowerCase();
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.ignislabs.ai';
+const ADMIN_API_ENDPOINT = process.env.NEXT_PUBLIC_ADMIN_API_ENDPOINT || 'http://localhost:8787';
 
 export function useAdminAuth() {
   const { address, isConnected } = useAccount();
@@ -31,8 +31,25 @@ export function useAdminAuth() {
       // Sign the message to prove wallet ownership
       const signature = await signMessageAsync({ message });
       
-      // Since we already verified this is the admin wallet, just create a session token
-      const token = `admin-${address}-${timestamp}-${Math.random().toString(36).substring(2, 15)}`;
+      // Authenticate with the backend
+      const response = await fetch(`${ADMIN_API_ENDPOINT}/auth/wallet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          signature,
+          wallet: address,
+        }),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Authentication failed');
+      }
+      
+      const { token } = await response.json();
       
       setAuthToken(token);
       

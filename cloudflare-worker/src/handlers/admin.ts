@@ -468,3 +468,57 @@ export async function handleScheduledReport(
     console.error('Failed to generate scheduled report:', error);
   }
 }
+
+/**
+ * Handle security event logging (internal endpoint)
+ */
+export async function handleSecurityEvent(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  // This endpoint doesn't require admin auth as it's used internally
+  // You might want to add a server-to-server auth token here
+  
+  try {
+    const event = await request.json() as any;
+    const monitor = new SecurityMonitor(env);
+    
+    // Log the security event
+    await monitor.logSecurityEvent({
+      userId: event.userId,
+      apiKey: event.apiKey || '',
+      timestamp: event.timestamp || new Date().toISOString(),
+      eventType: event.eventType,
+      details: event.details,
+      requestPath: event.requestPath,
+      userAgent: event.userAgent,
+      ip: event.ip,
+    });
+    
+    return new Response(
+      JSON.stringify({ success: true }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Error logging security event:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to log security event',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
+  }
+}

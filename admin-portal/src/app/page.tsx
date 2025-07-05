@@ -30,7 +30,8 @@ export default function Home() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('https://api.ignislabs.ai/admin/security/analytics', {
+      const adminApiEndpoint = process.env.NEXT_PUBLIC_ADMIN_API_ENDPOINT || 'http://localhost:8787';
+      const response = await fetch(`${adminApiEndpoint}/security/analytics`, {
         headers: { 'X-Admin-Token': authToken! },
       });
       
