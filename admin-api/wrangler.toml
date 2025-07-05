@@ -1,0 +1,15 @@
+name = "shadow-clone-admin-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+kv_namespaces = [
+  { binding = "SECURITY_DATA", id = "your_security_kv_id" },
+  { binding = "ADMIN_SESSIONS", id = "your_sessions_kv_id" }
+]
+
+[env.development]
+kv_namespaces = [
+  { binding = "SECURITY_DATA", id = "your_security_kv_id" },
+  { binding = "ADMIN_SESSIONS", id = "your_sessions_kv_id" }
+]

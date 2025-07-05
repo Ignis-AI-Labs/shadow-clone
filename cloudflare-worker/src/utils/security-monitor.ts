@@ -1,5 +1,6 @@
 import { Env } from '../index';
 import { AuditReporter } from '../services/audit-reporter';
+import { AdminBridge } from '../services/admin-bridge';
 
 // Suspicious patterns that might indicate extraction attempts
 // Made more specific to avoid false positives with legitimate Shadow Clone usage
@@ -314,6 +315,16 @@ export class SecurityMonitor {
     
     await this.env.USERS.put(listKey, JSON.stringify(events), {
       expirationTtl: 86400 * 30,
+    });
+    
+    // Send to admin API for dashboard
+    await AdminBridge.sendSecurityEvent({
+      userId: event.userId,
+      eventType: event.eventType,
+      details: event.details,
+      requestPath: event.requestPath,
+      timestamp: event.timestamp,
+      ip: event.ip,
     });
   }
 
