@@ -68,75 +68,75 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
 
     private macros: MacroItem[] = [
         new MacroItem(
-            'Deploy Project', 
-            'deploy', 
-            'Complete project build - Creates architecture, implements features, adds tests', 
-            'deploy'
+            'Plan Mode', 
+            'plan', 
+            'Creates detailed project plan - Agents analyze requirements and design architecture without coding', 
+            'plan'
         ),
         new MacroItem(
-            'Debug Issues', 
-            'debug', 
-            'Analyzes errors and fixes bugs - Great for test failures or runtime issues', 
-            'debug'
+            'Deploy Project', 
+            'deploy', 
+            'Complete project build - Creates full architecture, implements all features, writes tests', 
+            'deploy'
         ),
         new MacroItem(
             'Build Feature', 
             'feature', 
-            'Adds new functionality - Use with feature-spec.md for best results', 
+            'Adds new functionality - Implements a specific feature with tests and documentation', 
             'feature'
+        ),
+        new MacroItem(
+            'Debug Issues', 
+            'debug', 
+            'Analyzes and fixes bugs - Investigates errors, traces issues, and implements fixes', 
+            'debug'
         ),
         new MacroItem(
             'Refactor Code', 
             'refactor', 
-            'Improves code quality - Extracts components, updates patterns, modernizes', 
+            'Improves code quality - Extracts components, updates patterns, removes duplication', 
             'refactor'
         ),
         new MacroItem(
             'Optimize Performance', 
             'optimize', 
-            'Makes code faster - Database queries, rendering, algorithms', 
+            'Makes code faster - Optimizes database queries, caching, rendering, and algorithms', 
             'optimize'
         ),
         new MacroItem(
             'Security Audit', 
             'audit', 
-            'Finds vulnerabilities - OWASP checks, penetration testing, hardening', 
+            'Finds vulnerabilities - OWASP security checks, penetration testing, and hardening', 
             'audit'
         ),
         new MacroItem(
             'Research Mode', 
             'research', 
-            'Analyzes without changing - Understand codebase, plan changes', 
+            'Analyzes without changing - Explores codebase, understands patterns, plans improvements', 
             'research'
         ),
         new MacroItem(
             'Resume Session', 
             'resume', 
-            'Continues previous work - Picks up where agents left off', 
+            'Continues previous work - Picks up from last wave execution with full context', 
             'resume'
-        ),
-        new MacroItem(
-            'Plan Mode', 
-            'plan', 
-            'Creates detailed project plan - Agents analyze and plan without coding', 
-            'plan'
         ),
         new MacroItem(
             'Custom Command', 
             'custom', 
-            'Build your own - Set custom parameters for specific needs', 
+            'Build your own prompt - Set custom parameters and instructions for specific needs', 
             'custom'
         ),
         new MacroItem(
             '❓ Help / Legend', 
             'help', 
-            'Learn Shadow Clone commands - Full documentation and examples', 
+            'Learn Shadow Clone commands - Full documentation, examples, and best practices', 
             'help'
         ),
         new MacroItem(
             '⚙️ Build Parameters', 
             'params', 
-            'Interactive parameter builder - Select and configure execution arguments', 
+            'Interactive parameter builder - Select and configure all execution options', 
             'params'
         )
     ];

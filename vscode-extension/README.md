@@ -2,45 +2,130 @@
 
 Deploy teams of specialized AI agents to complete complex software projects directly from VS Code.
 
-## Quick Start
+## System Requirements
 
-1. **Install the Extension**
-   - Search for "Shadow Clone AI" in VS Code Marketplace
-   - Click Install
+### Required Dependencies
+- **VS Code**: Version 1.74.0 or higher  
+- **Node.js**: Version 18.0.0 or higher ([Download](https://nodejs.org))
+- **Claude Code CLI**: Latest version (`npm install -g @anthropic/claude-code`)
+- **Operating System Requirements**:
+  - **Windows**: Windows 10/11 with WSL2 installed
+  - **macOS**: macOS 10.15 or higher
+  - **Linux**: Ubuntu 20.04+ or equivalent
+- **Internet**: Stable connection for API access
+- **License**: Active Shadow Clone NFT license
 
-2. **Automatic Setup**
-   - The extension will check for required dependencies on first launch
-   - If anything is missing, click "Setup Now" when prompted
-   - Follow the interactive setup guide
+### Hardware Requirements
+- **RAM**: Minimum 8GB (16GB recommended)
+- **Storage**: 2GB free space for agent outputs
+- **CPU**: 4+ cores recommended for optimal performance
 
-3. **Get Your License**
-   - Obtain a Shadow Clone NFT license (Ignis Elite holders have automatic access)
-   - Get your API key from the [Shadow Clone dashboard](https://shadow-clone.ai)
-   - Click the Shadow Clone icon in VS Code and authenticate
+## Installation & Setup
 
-That's it! The extension handles all dependency installation for you.
+### Quick Install (Recommended)
+1. **Install Extension**: Search "Shadow Clone AI" in VS Code Marketplace → Install
+2. **Automatic Setup**: Extension checks dependencies on first launch
+3. **Get License**: Obtain from [Ignis Labs Dashboard](https://dashboard.ignislabs.ai)
+4. **Authenticate**: Click Shadow Clone icon → Enter API key
 
-## Manual Setup (Advanced Users)
+### Platform-Specific Setup Guides
 
-If the automatic setup doesn't work or you prefer manual installation:
+#### Windows Setup
+```bash
+# 1. Install WSL2 (PowerShell as Admin)
+wsl --install
 
-1. **Windows Users**: Install WSL from PowerShell (Admin): `wsl --install`
-2. **Install Node.js 18+**: Download from [nodejs.org](https://nodejs.org)
-3. **Install Claude Code**: Run the setup script from the extension folder:
-   ```bash
-   # Navigate to where the extension is installed
-   cd ~/.vscode/extensions/IgnisAILabsLLC.shadow-clone-*/scripts
-   bash setup-wsl.sh
-   ```
+# 2. Restart computer, then open WSL terminal
+# 3. Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
-## Troubleshooting
+# 4. Install Claude Code
+npm install -g @anthropic/claude-code
 
-**Missing Dependencies Warning**
-- Click the warning in VS Code status bar
-- Follow the interactive setup guide
-- Or run: `Cmd/Ctrl + Shift + P` → "Shadow Clone: Check Dependencies"
+# 5. Verify installation
+claude --version
+```
 
-**Permission Errors (npm install)**
+#### macOS Setup
+```bash
+# 1. Install Homebrew (if not installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install Node.js
+brew install node@18
+
+# 3. Install Claude Code
+npm install -g @anthropic/claude-code
+
+# 4. Verify installation
+claude --version
+```
+
+#### Linux Setup
+```bash
+# Ubuntu/Debian
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install Claude Code
+npm install -g @anthropic/claude-code
+
+# Verify installation
+claude --version
+```
+
+### Manual Installation
+```bash
+# Download .vsix file from releases
+code --install-extension shadow-clone-*.vsix
+```
+
+## Getting Started
+
+1. **Authenticate**: 
+   - Open Command Palette (`Cmd/Ctrl + Shift + P`)
+   - Run "Shadow Clone: Authenticate"
+   - Enter your API key from dashboard
+
+2. **Create Your First Project**:
+   - Click Shadow Clone icon in sidebar
+   - Click "+" to create new project
+   - Select project type and parameters
+
+3. **Deploy Agents**:
+   - Open project → Click "Deploy Agents"
+   - Choose execution mode (Plan, Deploy, Debug, etc.)
+   - Monitor progress in output panel
+
+## Execution Modes (Prompts)
+
+Access via Shadow Clone sidebar → Prompts panel:
+
+1. **Plan Mode** - Analyzes requirements and creates detailed project architecture
+2. **Deploy Project** - Complete implementation with tests and documentation
+3. **Build Feature** - Add specific functionality to existing codebase
+4. **Debug Issues** - Investigate and fix bugs systematically
+5. **Refactor Code** - Improve code quality and structure
+6. **Optimize Performance** - Speed up queries, caching, and algorithms
+7. **Security Audit** - OWASP checks and vulnerability scanning
+8. **Research Mode** - Analyze codebase without making changes
+9. **Resume Session** - Continue from previous wave execution
+
+## Common Issues & Solutions
+
+### Dependency Issues
+
+**"Claude command not found"**
+```bash
+# Reinstall globally
+npm install -g @anthropic/claude-code
+
+# Add to PATH if needed
+export PATH=$PATH:$(npm prefix -g)/bin
+```
+
+**NPM Permission Errors**
 ```bash
 # Fix npm permissions
 mkdir -p ~/.npm-global
@@ -49,145 +134,58 @@ echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-**Can't Find Claude Command**
+**WSL Issues (Windows)**
 ```bash
-# Check if installed
-which claude
+# Enable WSL features
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
-# If not found, reinstall
-npm install -g @anthropic/claude-code
-
-# Restart VS Code after installation
+# Update WSL
+wsl --update
 ```
 
-## Features
+### Extension Issues
 
-- **Automatic Dependency Setup**: Built-in setup assistant for all requirements
-- **AI Agent Orchestration**: Deploy up to 10 specialized AI agents per wave
-- **Real-time Progress Tracking**: Monitor agent activity and project status
-- **Integrated Project Management**: Create and manage projects from the sidebar
-- **Secure Authentication**: API key-based access with license verification
-- **Wave-based Deployment**: Organize large projects into manageable waves
-- **Claude Code Integration**: Launch Claude with embedded Shadow Clone prompts
-- **Intellectual Property Protection**: Prompts served via API, never stored locally
-
-## Installation
-
-1. Install from VS Code Marketplace: Search for "Shadow Clone AI"
-2. Or install manually: Download the `.vsix` file and run:
-   ```bash
-   code --install-extension shadow-clone-*.vsix
-   ```
-
-## Getting Started
-
-1. **Authenticate**: Click the Shadow Clone icon in the activity bar and authenticate with your API key
-2. **Create Project**: Use `Cmd/Ctrl + Shift + P` → "Shadow Clone: Create New Project"
-3. **Deploy Agents**: Select your project and deploy AI agents
-4. **Monitor Progress**: View real-time updates in the Shadow Clone output panel
-
-## Commands
-
-- `Shadow Clone: Authenticate` - Connect your Shadow Clone account
-- `Shadow Clone: Create New Project` - Start a new AI-powered project
-- `Shadow Clone: Deploy AI Agents` - Deploy agents to work on your project
-- `Shadow Clone: Show Project Status` - View account and project information
-- `Shadow Clone: Launch Claude` - Open Claude Code with Shadow Clone prompts
-- `Shadow Clone: Show Sessions` - View active Claude sessions
-- `Shadow Clone: Build Custom Command` - Create custom Shadow Clone commands
-
-## Exclusive Access
-
-Shadow Clone uses NFT-based licensing for security and exclusivity:
-
-### 🔥 Ignis Elite NFT Collection (777 Total)
-- **Phase 1**: 100 NFTs - Original holders
-- **Phase 2**: 200 NFTs - Second release
-- **Phase 3**: 477 NFTs - Final release
-- All 777 Ignis Elite NFT holders receive complimentary lifetime access
-- Premium tier benefits for all Ignis Elite holders
-
-### 🚀 Pioneer Access (500 NFTs)
-- Planned future release
-- Early adopter benefits
-- Details coming soon
-
-### 🏗️ Builder Access (500 NFTs)
-- Planned future release
-- Agency/team features
-- Partner verification required
-- Details coming soon
-
-### 💎 Reserve Access (223 NFTs)
-- Planned future release
-- Premium support tier
-- Limited availability
-- Details coming soon
-
-**Total Platform Capacity**: 2,000 NFT licenses
-**Current Access**: Ignis Elite NFT holders only (777 total)
-**Security Model**: All access controlled via NFT ownership to ensure platform integrity
-
-## Claude Code Integration
-
-Shadow Clone works seamlessly with Claude Code:
-
-1. **Launch from VS Code**: Click "Launch Claude" button in status bar
-2. **Select Mode**: Choose from audit, feature, debug, etc.
-3. **Secure Prompts**: Prompts are fetched from API and embedded in commands
-4. **Paste & Execute**: Copy command and paste in Claude terminal
-
-### Intellectual Property Protection
-
-- **No Local Prompt Files**: All prompts served dynamically via API
-- **Session-Based Access**: Prompts are ephemeral and tied to sessions
-- **Authentication Required**: Valid license required to access prompts
-- **Copy Protection**: Prompts cannot be saved or exported
-- **Encrypted Transmission**: All API communication via HTTPS
-
-## System Requirements
-
-- **VS Code**: Version 1.74.0 or higher
-- **Node.js**: Version 18.0.0 or higher
-- **Operating System**: Windows (with WSL), macOS, or Linux
-- **Claude Code CLI**: Latest version (`@anthropic/claude-code`)
-- **Internet**: Stable connection for API access
-- **License**: Active Shadow Clone NFT license
+- **Missing Dependencies Warning**: Click warning → Follow setup wizard
+- **Authentication Failed**: Check API key in dashboard
+- **No Projects Visible**: Refresh with `Cmd/Ctrl + R` in sidebar
 
 ## Configuration
 
-Access settings through VS Code preferences:
+Settings available in VS Code preferences (`Cmd/Ctrl + ,`):
 
-- `shadowClone.apiEndpoint`: API endpoint (default: https://api.shadowclone.ai)
-- `shadowClone.wavesDirectory`: Directory for agent outputs (default: .waves)
-- `shadowClone.maxAgentsPerWave`: Maximum agents per deployment (default: 10)
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `shadowClone.apiEndpoint` | API server URL | `https://api.ignislabs.ai` |
+| `shadowClone.wavesDirectory` | Output directory | `.waves` |
+| `shadowClone.maxAgentsPerWave` | Agent limit | `10` |
 
-## Security
+## License & Access
 
-- **API Key Storage**: Secured using VS Code's secret storage
-- **Encrypted Communication**: All API calls via HTTPS
-- **Source Protection**: Extension code obfuscated with Webpack
-- **Prompt Protection**: Shadow Clone prompts never stored locally
-- **Server Validation**: All operations verified server-side
-- **Session Isolation**: Each Claude session has unique access tokens
-- **No File Access**: Prompts delivered via API, not filesystem
-- **Audit Trail**: All prompt access logged for security
+### Current Access (777 Total)
+- **Ignis Elite NFT Holders**: Complimentary lifetime access
+- **License Management**: Via [Ignis Labs Dashboard](https://dashboard.ignislabs.ai)
+
+### Future Releases
+- Pioneer Access (500 NFTs)
+- Builder Access (500 NFTs)  
+- Reserve Access (223 NFTs)
+
+**Total Platform Capacity**: 2,000 NFT licenses
+
+## Security & Privacy
+
+- **Prompt Protection**: All prompts served via encrypted API
+- **No Local Storage**: Prompts never saved to disk
+- **Session Isolation**: Each execution has unique tokens
+- **Minimal Telemetry**: Only authentication and errors logged
 
 ## Support
 
-- **Documentation**: https://docs.shadowclone.ai
-- **Issues**: https://github.com/shadow-clone/support/issues
-- **Email**: support@shadowclone.ai
-
-## Privacy
-
-Shadow Clone extension collects minimal telemetry:
-- Authentication events
-- Project creation (anonymous)
-- Error reports (opt-in)
-
-No source code or project details are transmitted without explicit deployment.
+- **Documentation**: [docs.shadowclone.ai](https://docs.shadowclone.ai)
+- **Issues**: [GitHub Issues](https://github.com/shadow-clone/support/issues)
+- **Dashboard**: [dashboard.ignislabs.ai](https://dashboard.ignislabs.ai)
 
 ---
 
-© 2024 Shadow Clone AI. All rights reserved.
+© 2024 Ignis AI Labs LLC. All rights reserved.
