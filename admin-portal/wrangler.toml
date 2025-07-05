@@ -1,3 +1,12 @@
 name = "shadow-clone-admin-portal"
 compatibility_date = "2023-05-18"
 pages_build_output_dir = "out"
+
+# KV Namespaces for admin functionality
+[[kv_namespaces]]
+binding = "ADMIN_SESSIONS"
+id = "YOUR_ADMIN_SESSIONS_KV_ID"
+
+[[kv_namespaces]]
+binding = "SECURITY_DATA"
+id = "YOUR_SECURITY_DATA_KV_ID"
