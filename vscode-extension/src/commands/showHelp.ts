@@ -3,6 +3,74 @@ import * as vscode from 'vscode';
 export async function showHelpCommand() {
     const helpContent = `# Shadow Clone Command Reference
 
+## 📋 System Requirements & Setup
+
+### Required Dependencies
+- **VS Code**: v1.74.0+
+- **Node.js**: v18.0.0+ ([nodejs.org](https://nodejs.org))
+- **Claude Code CLI**: Latest version
+- **Operating System**:
+  - Windows 10/11 with WSL2
+  - macOS 10.15+
+  - Linux Ubuntu 20.04+
+- **Hardware**: 8GB RAM minimum, 16GB recommended
+
+### Platform Setup Guides
+
+#### Windows Setup
+\`\`\`bash
+# 1. Install WSL2 (PowerShell as Admin)
+wsl --install
+
+# 2. Restart, then in WSL:
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 3. Install Claude Code
+npm install -g @anthropic/claude-code
+
+# 4. Verify
+claude --version
+\`\`\`
+
+#### macOS Setup
+\`\`\`bash
+# 1. Install Homebrew (if needed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install Node.js
+brew install node@18
+
+# 3. Install Claude Code
+npm install -g @anthropic/claude-code
+\`\`\`
+
+#### Linux Setup
+\`\`\`bash
+# Ubuntu/Debian
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install -g @anthropic/claude-code
+\`\`\`
+
+### Common Setup Issues
+
+**NPM Permissions Error:**
+\`\`\`bash
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
+source ~/.bashrc
+\`\`\`
+
+**Claude Command Not Found:**
+\`\`\`bash
+# Add to PATH
+export PATH=$PATH:$(npm prefix -g)/bin
+# Or reinstall
+npm install -g @anthropic/claude-code
+\`\`\`
+
 ## 🚀 Quick Start
 Shadow Clone commands tell Claude to fetch AI agent orchestration prompts from a secure API and execute them with your specified parameters.
 

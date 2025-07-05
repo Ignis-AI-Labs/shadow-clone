@@ -194,9 +194,9 @@
         },
         {
           "id": "shadowClone.macros",
-          "name": "Macros",
+          "name": "Prompts",
           "icon": "$(code)",
-          "contextualTitle": "Shadow Clone Macros"
+          "contextualTitle": "Shadow Clone Prompts"
         }
       ]
     },
