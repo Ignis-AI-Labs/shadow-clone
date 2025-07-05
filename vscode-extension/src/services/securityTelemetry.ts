@@ -131,68 +131,68 @@ export class SecurityTelemetryService {
   }
 
   /**
-   * Handle suspicious activity
+   * Handle suspicious activity (monitoring only)
    */
   private async handleSuspiciousActivity(check: SecurityCheck): Promise<void> {
     this.suspicionScore += 10;
 
-    // Log suspicious activity
+    // Log suspicious activity for admin review
     this.logEvent('suspicious_activity', {
       check,
       suspicionScore: this.suspicionScore,
+      mode: 'monitoring-only',
     });
 
-    // Show warning if score is high
-    if (this.suspicionScore >= 50) {
-      vscode.window.showWarningMessage(
-        'Unusual activity detected. This session is being monitored for security.',
-        'Acknowledge'
+    // Show informational message (not warning) if score is high
+    if (this.suspicionScore >= 50 && this.suspicionScore < 60) {
+      // Only show once when crossing threshold
+      vscode.window.showInformationMessage(
+        'Security Notice: Your activity patterns are being logged for quality assurance.',
+        'OK'
       );
     }
 
-    // Upload telemetry immediately
+    // Upload telemetry for admin review
     await this.uploadTelemetry();
 
-    // Extreme measures for very high scores
+    // Log high scores but don't take action
     if (this.suspicionScore >= 100) {
-      await this.handleHighRiskActivity();
+      console.log(`[Security Monitor] High suspicion score (${this.suspicionScore}) for session ${this.sessionId}`);
+      // Just notify admins, don't restrict functionality
+      await this.notifyAdminsOfHighScore();
     }
   }
 
   /**
-   * Handle high-risk activity
+   * Notify admins of high score (no enforcement)
    */
-  private async handleHighRiskActivity(): Promise<void> {
-    // Notify the backend
+  private async notifyAdminsOfHighScore(): Promise<void> {
+    // Notify the backend for admin review
     try {
       const apiKey = await this.authProvider.getApiKey();
       if (!apiKey) return;
 
-      await fetch(`${getApiEndpoint()}/api/security/high-risk-alert`, {
+      await fetch(`${getApiEndpoint()}/api/security/monitoring-alert`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-API-Key': apiKey,
+          'X-Security-Mode': 'monitoring-only',
         },
         body: JSON.stringify({
           sessionId: this.sessionId,
           suspicionScore: this.suspicionScore,
           events: this.telemetryQueue.slice(-20), // Last 20 events
+          severity: 'high',
+          actionTaken: 'none-monitoring-only',
         }),
       });
     } catch (error) {
-      console.error('Failed to send high-risk alert:', error);
+      console.error('Failed to send monitoring alert:', error);
     }
 
-    // Consider disabling certain features
-    vscode.window.showErrorMessage(
-      'Security violation detected. Some features may be restricted.',
-      'Contact Support'
-    ).then(selection => {
-      if (selection === 'Contact Support') {
-        vscode.env.openExternal(vscode.Uri.parse('https://shadow-clone.ai/support'));
-      }
-    });
+    // Don't show error or restrict features
+    // Admins will review and decide on any action
   }
 
   /**
@@ -206,10 +206,13 @@ export class SecurityTelemetryService {
         
         // Check if clipboard contains prompt-like content
         if (this.looksLikePromptContent(clipboardText)) {
+          // Just log for monitoring, don't take action
           this.logEvent('suspicious_activity', {
-            type: 'clipboard_extraction',
+            type: 'clipboard_monitoring',
             contentLength: clipboardText.length,
-            preview: clipboardText.substring(0, 100),
+            preview: clipboardText.substring(0, 50), // Shorter preview for privacy
+            mode: 'monitoring-only',
+            actionTaken: 'logged-for-review',
           });
         }
       } catch (error) {
