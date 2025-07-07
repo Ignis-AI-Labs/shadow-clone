@@ -45,7 +45,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/modes`
+                `${getApiEndpoint()}/api/prompts/mode_configs`
             );
             
             const modes = response.data.modes as string[];
@@ -63,7 +63,7 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/modes/${modeName}`
+                `${getApiEndpoint()}/api/prompts/mode_configs/shadow-clone-${modeName}`
             );
             
             const mode = response.data as ShadowCloneMode;
@@ -110,7 +110,7 @@ export class PromptService {
         if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
             parts.push(`Also fetch the ${options.mode} mode configuration from:`);
-            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
+            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         
         if (options.additionalParams) {

@@ -1,25 +1,23 @@
 {
   "name": "shadow-clone-admin-portal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "wrangler pages deploy out --project-name shadow-clone-admin-portal"
   },
   "dependencies": {
-    "@rainbow-me/rainbowkit": "^2.1.0",
-    "@tanstack/react-query": "^5.28.4",
     "ethers": "^6.15.0",
     "lucide-react": "^0.525.0",
     "next": "14.2.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "viem": "^2.7.0",
-    "wagmi": "^2.5.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250705.0",
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
