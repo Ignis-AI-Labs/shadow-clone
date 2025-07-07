@@ -6,8 +6,8 @@ export async function showHelpCommand() {
 ## 📋 System Requirements & Setup
 
 ### Required Dependencies
-- **VS Code**: v1.74.0+
-- **Node.js**: v18.0.0+ ([nodejs.org](https://nodejs.org))
+- **VS Code**: Latest version ([Download](https://code.visualstudio.com))
+- **Node.js**: Latest LTS version ([Download](https://nodejs.org))
 - **Claude Code CLI**: Latest version
 - **Operating System**:
   - Windows 10/11 with WSL2
@@ -23,14 +23,14 @@ export async function showHelpCommand() {
 wsl --install
 
 # 2. Restart, then in WSL:
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # 3. Install Claude Code
 npm install -g @anthropic/claude-code
 
 # 4. Verify
-claude --version
+node --version && claude --version
 \`\`\`
 
 #### macOS Setup
@@ -38,8 +38,8 @@ claude --version
 # 1. Install Homebrew (if needed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Install Node.js
-brew install node@18
+# 2. Install Node.js (Latest)
+brew install node
 
 # 3. Install Claude Code
 npm install -g @anthropic/claude-code
@@ -47,8 +47,8 @@ npm install -g @anthropic/claude-code
 
 #### Linux Setup
 \`\`\`bash
-# Ubuntu/Debian
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# Ubuntu/Debian - Latest LTS
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 npm install -g @anthropic/claude-code
 \`\`\`
@@ -82,7 +82,7 @@ Each command has three parts:
 
 ## 🎯 Available Modes
 
-### Deploy Project (Full Deployment)
+### Build Project (Full Build)
 **What it does:** Deploys a complete team of AI agents to build your entire project
 **When to use:** Starting a new project or major feature
 **Example usage:** Building a full-stack app, creating a new service, major refactoring

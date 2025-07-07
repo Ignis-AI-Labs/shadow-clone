@@ -1,9 +1,9 @@
 'use client';
 
-import { AdminGuard } from '@/components/AdminGuard';
+import { SimpleAdminGuard } from '@/components/SimpleAdminGuard';
 import { Header } from '@/components/Header';
 import { PortalCard } from '@/components/PortalCard';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuthSimple } from '@/hooks/useAdminAuthSimple';
 import { useEffect, useState } from 'react';
 
 interface Stats {
@@ -14,7 +14,7 @@ interface Stats {
 }
 
 export default function Home() {
-  const { authToken } = useAdminAuth();
+  const { authToken } = useAdminAuthSimple();
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
     activeProjects: 0,
@@ -49,7 +49,7 @@ export default function Home() {
   };
 
   return (
-    <AdminGuard>
+    <SimpleAdminGuard>
       <div className="min-h-screen bg-ignis-dark">
         <Header />
         
@@ -150,6 +150,6 @@ export default function Home() {
           </div>
         </main>
       </div>
-    </AdminGuard>
+    </SimpleAdminGuard>
   );
 }

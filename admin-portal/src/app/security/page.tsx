@@ -1,8 +1,8 @@
 'use client';
 
-import { AdminGuard } from '@/components/AdminGuard';
+import { SimpleAdminGuard } from '@/components/SimpleAdminGuard';
 import { Header } from '@/components/Header';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuthSimple } from '@/hooks/useAdminAuthSimple';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -33,7 +33,7 @@ interface SecurityData {
 }
 
 export default function SecurityDashboard() {
-  const { authToken } = useAdminAuth();
+  const { authToken } = useAdminAuthSimple();
   const [data, setData] = useState<SecurityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(0);
@@ -122,7 +122,7 @@ export default function SecurityDashboard() {
   };
 
   return (
-    <AdminGuard>
+    <SimpleAdminGuard>
       <div className="min-h-screen bg-ignis-dark">
         <Header />
         
@@ -289,6 +289,6 @@ export default function SecurityDashboard() {
           )}
         </main>
       </div>
-    </AdminGuard>
+    </SimpleAdminGuard>
   );
 }

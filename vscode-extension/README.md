@@ -5,8 +5,8 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 ## System Requirements
 
 ### Required Dependencies
-- **VS Code**: Version 1.74.0 or higher  
-- **Node.js**: Version 18.0.0 or higher ([Download](https://nodejs.org))
+- **VS Code**: Latest version ([Download](https://code.visualstudio.com))
+- **Node.js**: Latest LTS version ([Download](https://nodejs.org))
 - **Claude Code CLI**: Latest version (`npm install -g @anthropic/claude-code`)
 - **Operating System Requirements**:
   - **Windows**: Windows 10/11 with WSL2 installed
@@ -36,14 +36,15 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 wsl --install
 
 # 2. Restart computer, then open WSL terminal
-# 3. Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# 3. Install Node.js (Latest LTS)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # 4. Install Claude Code
 npm install -g @anthropic/claude-code
 
 # 5. Verify installation
+node --version
 claude --version
 ```
 
@@ -52,26 +53,28 @@ claude --version
 # 1. Install Homebrew (if not installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Install Node.js
-brew install node@18
+# 2. Install Node.js (Latest)
+brew install node
 
 # 3. Install Claude Code
 npm install -g @anthropic/claude-code
 
 # 4. Verify installation
+node --version
 claude --version
 ```
 
 #### Linux Setup
 ```bash
-# Ubuntu/Debian
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# Ubuntu/Debian - Install Latest LTS
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install Claude Code
 npm install -g @anthropic/claude-code
 
 # Verify installation
+node --version
 claude --version
 ```
 
