@@ -39,6 +39,74 @@ const vscode = __importStar(require("vscode"));
 async function showHelpCommand() {
     const helpContent = `# Shadow Clone Command Reference
 
+## 📋 System Requirements & Setup
+
+### Required Dependencies
+- **VS Code**: Latest version ([Download](https://code.visualstudio.com))
+- **Node.js**: Latest LTS version ([Download](https://nodejs.org))
+- **Claude Code CLI**: Latest version
+- **Operating System**:
+  - Windows 10/11 with WSL2
+  - macOS 10.15+
+  - Linux Ubuntu 20.04+
+- **Hardware**: 8GB RAM minimum, 16GB recommended
+
+### Platform Setup Guides
+
+#### Windows Setup
+\`\`\`bash
+# 1. Install WSL2 (PowerShell as Admin)
+wsl --install
+
+# 2. Restart, then in WSL:
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 3. Install Claude Code
+npm install -g @anthropic/claude-code
+
+# 4. Verify
+node --version && claude --version
+\`\`\`
+
+#### macOS Setup
+\`\`\`bash
+# 1. Install Homebrew (if needed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install Node.js (Latest)
+brew install node
+
+# 3. Install Claude Code
+npm install -g @anthropic/claude-code
+\`\`\`
+
+#### Linux Setup
+\`\`\`bash
+# Ubuntu/Debian - Latest LTS
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install -g @anthropic/claude-code
+\`\`\`
+
+### Common Setup Issues
+
+**NPM Permissions Error:**
+\`\`\`bash
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
+source ~/.bashrc
+\`\`\`
+
+**Claude Command Not Found:**
+\`\`\`bash
+# Add to PATH
+export PATH=$PATH:$(npm prefix -g)/bin
+# Or reinstall
+npm install -g @anthropic/claude-code
+\`\`\`
+
 ## 🚀 Quick Start
 Shadow Clone commands tell Claude to fetch AI agent orchestration prompts from a secure API and execute them with your specified parameters.
 
@@ -50,7 +118,7 @@ Each command has three parts:
 
 ## 🎯 Available Modes
 
-### Deploy Project (Full Deployment)
+### Build Project (Full Build)
 **What it does:** Deploys a complete team of AI agents to build your entire project
 **When to use:** Starting a new project or major feature
 **Example usage:** Building a full-stack app, creating a new service, major refactoring

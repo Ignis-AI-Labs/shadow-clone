@@ -9,21 +9,15 @@ export class MacroItem extends vscode.TreeItem {
     ) {
         super(label, vscode.TreeItemCollapsibleState.None);
         this.tooltip = `${this.label} - ${this.description}`;
-        this.contextValue = 'macro';
+        this.contextValue = 'prompt mode';
         
         // Set icon based on command type
         switch (commandType) {
-            case 'deploy':
+            case 'plan':
+                this.iconPath = new vscode.ThemeIcon('checklist');
+                break;
+            case 'build':
                 this.iconPath = new vscode.ThemeIcon('rocket');
-                break;
-            case 'debug':
-                this.iconPath = new vscode.ThemeIcon('bug');
-                break;
-            case 'feature':
-                this.iconPath = new vscode.ThemeIcon('sparkle');
-                break;
-            case 'refactor':
-                this.iconPath = new vscode.ThemeIcon('sync');
                 break;
             case 'optimize':
                 this.iconPath = new vscode.ThemeIcon('dashboard');
@@ -31,14 +25,20 @@ export class MacroItem extends vscode.TreeItem {
             case 'audit':
                 this.iconPath = new vscode.ThemeIcon('shield');
                 break;
+            case 'feature':
+                this.iconPath = new vscode.ThemeIcon('sparkle');
+                break;
+            case 'debug':
+                this.iconPath = new vscode.ThemeIcon('bug');
+                break;
+            case 'refactor':
+                this.iconPath = new vscode.ThemeIcon('sync');
+                break;
             case 'research':
                 this.iconPath = new vscode.ThemeIcon('search');
                 break;
             case 'resume':
                 this.iconPath = new vscode.ThemeIcon('history');
-                break;
-            case 'plan':
-                this.iconPath = new vscode.ThemeIcon('checklist');
                 break;
             case 'custom':
                 this.iconPath = new vscode.ThemeIcon('edit');
@@ -68,16 +68,22 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
 
     private macros: MacroItem[] = [
         new MacroItem(
+            'Research Mode', 
+            'research', 
+            'Analyzes without changing - Explores codebase, understands patterns, plans improvements', 
+            'research'
+        ),
+        new MacroItem(
             'Plan Mode', 
             'plan', 
             'Creates detailed project plan - Agents analyze requirements and design architecture without coding', 
             'plan'
         ),
         new MacroItem(
-            'Deploy Project', 
-            'deploy', 
+            'Build Project', 
+            'build', 
             'Complete project build - Creates full architecture, implements all features, writes tests', 
-            'deploy'
+            'build'
         ),
         new MacroItem(
             'Build Feature', 
@@ -92,16 +98,16 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
             'debug'
         ),
         new MacroItem(
-            'Refactor Code', 
-            'refactor', 
-            'Improves code quality - Extracts components, updates patterns, removes duplication', 
-            'refactor'
-        ),
-        new MacroItem(
             'Optimize Performance', 
             'optimize', 
             'Makes code faster - Optimizes database queries, caching, rendering, and algorithms', 
             'optimize'
+        ),
+        new MacroItem(
+            'Refactor Code', 
+            'refactor', 
+            'Improves code quality - Extracts components, updates patterns, removes duplication', 
+            'refactor'
         ),
         new MacroItem(
             'Security Audit', 
@@ -110,34 +116,22 @@ export class MacroProvider implements vscode.TreeDataProvider<MacroItem> {
             'audit'
         ),
         new MacroItem(
-            'Research Mode', 
-            'research', 
-            'Analyzes without changing - Explores codebase, understands patterns, plans improvements', 
-            'research'
-        ),
-        new MacroItem(
             'Resume Session', 
             'resume', 
             'Continues previous work - Picks up from last wave execution with full context', 
             'resume'
         ),
         new MacroItem(
-            'Custom Command', 
-            'custom', 
-            'Build your own prompt - Set custom parameters and instructions for specific needs', 
-            'custom'
+            '⚙️ Build Parameters', 
+            'params', 
+            'Interactive parameter builder - Select and configure all execution options or create custom commands', 
+            'params'
         ),
         new MacroItem(
             '❓ Help / Legend', 
             'help', 
             'Learn Shadow Clone commands - Full documentation, examples, and best practices', 
             'help'
-        ),
-        new MacroItem(
-            '⚙️ Build Parameters', 
-            'params', 
-            'Interactive parameter builder - Select and configure all execution options', 
-            'params'
         )
     ];
 

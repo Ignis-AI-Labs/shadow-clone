@@ -11,7 +11,7 @@ import { showStatusCommand } from './commands/showStatus';
 import { authenticateCommand } from './commands/authenticate';
 import { launchClaudeCommand, launchClaudeWithArgumentsCommand } from './commands/claudeLauncher';
 import { ShadowCloneMacros } from './utils/shadowCloneCommands';
-import { injectShadowCloneCommand, injectDeployCommand, injectDebugCommand, injectFeatureCommand, injectCustomCommand } from './commands/injectCommand';
+import { injectShadowCloneCommand, injectBuildCommand, injectDebugCommand, injectFeatureCommand } from './commands/injectCommand';
 import { showHelpCommand, showQuickReferenceCommand } from './commands/showHelp';
 import { buildParametersCommand, injectParametersCommand, injectParameterSnippet } from './commands/parameterBuilder';
 import { SecurityTelemetryService } from './services/securityTelemetry';
@@ -220,17 +220,14 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('shadowClone.injectCommand', () =>
             injectShadowCloneCommand(authProvider)
         ),
-        vscode.commands.registerCommand('shadowClone.injectDeploy', () =>
-            injectDeployCommand(authProvider)
+        vscode.commands.registerCommand('shadowClone.injectBuild', () =>
+            injectBuildCommand(authProvider)
         ),
         vscode.commands.registerCommand('shadowClone.injectDebug', () =>
             injectDebugCommand(authProvider)
         ),
         vscode.commands.registerCommand('shadowClone.injectFeature', () =>
             injectFeatureCommand(authProvider)
-        ),
-        vscode.commands.registerCommand('shadowClone.injectCustom', () =>
-            injectCustomCommand(authProvider)
         ),
         vscode.commands.registerCommand('shadowClone.executeMacro', (commandType: string) =>
             injectShadowCloneCommand(authProvider, commandType)
@@ -406,10 +403,10 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(helpButton);
 
     // Quick command buttons (hidden by default, shown when authenticated)
-    const deployButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 96);
-    deployButton.text = '$(rocket)';
-    deployButton.command = 'shadowClone.injectDeploy';
-    deployButton.tooltip = 'Inject deploy command';
+    const buildButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 96);
+    buildButton.text = '$(rocket)';
+    buildButton.command = 'shadowClone.injectBuild';
+    buildButton.tooltip = 'Inject build command';
     
     const debugButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 95);
     debugButton.text = '$(bug)';
@@ -431,7 +428,7 @@ export async function activate(context: vscode.ExtensionContext) {
             statusBarItem.show();
             claudeButton.show();
             injectButton.show();
-            deployButton.show();
+            buildButton.show();
             debugButton.show();
             featureButton.show();
         } else if (hasAuth && !isActive) {
@@ -440,7 +437,7 @@ export async function activate(context: vscode.ExtensionContext) {
             // Hide action buttons
             claudeButton.hide();
             injectButton.hide();
-            deployButton.hide();
+            buildButton.hide();
             debugButton.hide();
             featureButton.hide();
         } else {
@@ -448,7 +445,7 @@ export async function activate(context: vscode.ExtensionContext) {
             statusBarItem.hide();
             claudeButton.hide();
             injectButton.hide();
-            deployButton.hide();
+            buildButton.hide();
             debugButton.hide();
             featureButton.hide();
             sessionsIndicator.hide();
@@ -462,7 +459,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // Initial update
     await updateAllStatusBarItems();
     
-    context.subscriptions.push(deployButton);
+    context.subscriptions.push(buildButton);
     context.subscriptions.push(debugButton);
     context.subscriptions.push(featureButton);
 

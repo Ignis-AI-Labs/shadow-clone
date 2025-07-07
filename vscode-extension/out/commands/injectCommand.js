@@ -34,10 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.injectShadowCloneCommand = injectShadowCloneCommand;
-exports.injectDeployCommand = injectDeployCommand;
+exports.injectBuildCommand = injectBuildCommand;
 exports.injectDebugCommand = injectDebugCommand;
 exports.injectFeatureCommand = injectFeatureCommand;
-exports.injectCustomCommand = injectCustomCommand;
 const vscode = __importStar(require("vscode"));
 const constants_1 = require("../utils/constants");
 const telemetryHandler_1 = require("../services/telemetryHandler");
@@ -61,16 +60,15 @@ async function injectShadowCloneCommand(authProvider, commandType) {
     if (!commandType) {
         // Show quick pick for command type
         const commandTypes = [
-            { label: '$(rocket) Full Deploy', value: 'deploy', description: 'Complete project deployment' },
-            { label: '$(bug) Debug Mode', value: 'debug', description: 'Fix issues with AI agents' },
-            { label: '$(sparkle) New Feature', value: 'feature', description: 'Build new functionality' },
-            { label: '$(sync) Refactor', value: 'refactor', description: 'Improve existing code' },
+            { label: '$(checklist) Plan', value: 'plan', description: 'Create project plan without coding' },
+            { label: '$(rocket) Build Project', value: 'build', description: 'Complete project build' },
             { label: '$(dashboard) Optimize', value: 'optimize', description: 'Performance improvements' },
             { label: '$(shield) Security Audit', value: 'audit', description: 'Security assessment' },
+            { label: '$(sparkle) New Feature', value: 'feature', description: 'Build new functionality' },
+            { label: '$(bug) Debug Mode', value: 'debug', description: 'Fix issues with AI agents' },
+            { label: '$(sync) Refactor', value: 'refactor', description: 'Improve existing code' },
             { label: '$(search) Research', value: 'research', description: 'Analyze without changes' },
-            { label: '$(history) Resume', value: 'resume', description: 'Continue previous session' },
-            { label: '$(checklist) Plan', value: 'plan', description: 'Create project plan without coding' },
-            { label: '$(list-flat) Custom', value: 'custom', description: 'Custom command' }
+            { label: '$(history) Resume', value: 'resume', description: 'Continue previous session' }
         ];
         const selected = await vscode.window.showQuickPick(commandTypes, {
             placeHolder: 'Select Shadow Clone command to inject'
@@ -81,8 +79,8 @@ async function injectShadowCloneCommand(authProvider, commandType) {
     }
     // Build the command text
     switch (commandType) {
-        case 'deploy':
-            command = `# Shadow Clone Deploy Command
+        case 'build':
+            command = `# Shadow Clone Build Command
 
 ## Project Description
 [Describe what you want to build here - be specific about features, tech stack, and requirements]
@@ -108,7 +106,7 @@ mode=debug waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/debug -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-debug -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -124,7 +122,7 @@ mode=feature project_plan=./feature-spec.md waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/feature -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-feature -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -140,7 +138,7 @@ mode=refactor waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/refactor -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-refactor -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -156,7 +154,7 @@ mode=optimize waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/optimize -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-optimize -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -172,7 +170,7 @@ mode=audit waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/audit -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-audit -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompts and execute with the parameters above.`;
             break;
@@ -188,15 +186,16 @@ mode=research waves_directory=./.waves/
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-research -H "X-API-Key: ${apiKey}"
 
-Then load the returned prompt and execute with the parameters above.`;
+Then load the returned prompts and execute with the parameters above.`;
             break;
         case 'resume':
             command = `# Shadow Clone Resume Command
 # Resume previous Shadow Clone session
 
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
 
 Then load the returned prompt and execute the 'resume' command.`;
             break;
@@ -212,31 +211,14 @@ Use 'plan' command to create detailed project plan without implementation
 ## Now fetch and execute Shadow Clone
 Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
 curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
+curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-plan -H "X-API-Key: ${apiKey}"
 
-Then load the returned prompt and execute the 'plan' command.`;
+Then load the returned prompts and execute the 'plan' command.`;
             break;
         case 'custom':
-            const customParams = await vscode.window.showInputBox({
-                prompt: 'Enter custom parameters',
-                placeHolder: 'e.g., mode=custom project_plan=./plan.md waves_directory=./.waves/',
-                value: 'waves_directory=./.waves/'
-            });
-            if (!customParams)
-                return;
-            command = `# Shadow Clone Custom Command
-
-## Project Context
-[Describe what you want Shadow Clone to do]
-
-## Execution Parameters
-${customParams}
-
-## Now fetch and execute Shadow Clone
-Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompt and execute with the parameters above.`;
-            break;
+            // Redirect to params builder for custom commands
+            vscode.commands.executeCommand('shadowClone.buildParameters');
+            return;
         case 'help':
             // Don't inject anything, just show help
             vscode.commands.executeCommand('shadowClone.showHelp');
@@ -275,16 +257,13 @@ Then load the returned prompt and execute with the parameters above.`;
     }
 }
 // Quick inject functions for specific commands
-async function injectDeployCommand(authProvider) {
-    return injectShadowCloneCommand(authProvider, 'deploy');
+async function injectBuildCommand(authProvider) {
+    return injectShadowCloneCommand(authProvider, 'build');
 }
 async function injectDebugCommand(authProvider) {
     return injectShadowCloneCommand(authProvider, 'debug');
 }
 async function injectFeatureCommand(authProvider) {
     return injectShadowCloneCommand(authProvider, 'feature');
-}
-async function injectCustomCommand(authProvider) {
-    return injectShadowCloneCommand(authProvider, 'custom');
 }
 //# sourceMappingURL=injectCommand.js.map

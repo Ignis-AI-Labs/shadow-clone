@@ -53,7 +53,7 @@
   - Context preservation is now a sacred system principle
 
 ### System Architecture
-- **Execution Modes**: Planning, Feature, Audit, Debug, Optimize, Refactor, Research
+- **Execution Modes**: Research, Planning, Feature, Debug, Optimize, Refactor, Audit
 - **Wave System**: Sequential wave-based execution with mandatory wave-0
 - **File Structure**: 
   - `.shadow/` - Production API-based configuration (31 files)
@@ -63,6 +63,14 @@
   - Source code in project directories
 - **Agent Types**: Technical, Analytical, Leadership roles
 - **Coordination**: Constitution-based context preservation
+
+### Key Component Locations
+- **Macro Injections**: `/vscode-extension/src/providers/macroProvider.ts` - Defines all macro commands and their UI
+- **API Endpoints**: `/vscode-extension/src/utils/constants.ts` - Contains API base URLs (api.ignislabs.ai)
+- **Prompt Service**: `/vscode-extension/src/services/promptService.ts` - Constructs API endpoint paths
+- **Command Injection**: `/vscode-extension/src/commands/injectCommand.ts` - Builds curl commands with API URLs
+- **Endpoint Manifest**: `/CLOUDFLARE_UPLOAD_MANIFEST.md` - Documents all 31 API endpoints
+- **Extension Entry**: `/vscode-extension/src/extension.ts` - Registers commands and activates extension
 
 ## Technical Decisions
 
@@ -150,7 +158,7 @@
 - **Testing**: Both local and API modes validated
 
 ## System Capabilities
-- **7 Execution Modes**: Plan, Feature, Audit, Debug, Optimize, Refactor, Research
+- **7 Execution Modes**: Research, Plan, Feature, Debug, Optimize, Refactor, Audit
 - **Dynamic Wave System**: Adaptive wave-based execution
 - **Parallel Agent Deployment**: Teams work concurrently within waves
 - **Context Preservation**: Record Keeper ensures continuity

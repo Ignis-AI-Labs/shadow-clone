@@ -43,20 +43,14 @@ class MacroItem extends vscode.TreeItem {
         this.description = description;
         this.commandType = commandType;
         this.tooltip = `${this.label} - ${this.description}`;
-        this.contextValue = 'macro';
+        this.contextValue = 'prompt mode';
         // Set icon based on command type
         switch (commandType) {
-            case 'deploy':
+            case 'plan':
+                this.iconPath = new vscode.ThemeIcon('checklist');
+                break;
+            case 'build':
                 this.iconPath = new vscode.ThemeIcon('rocket');
-                break;
-            case 'debug':
-                this.iconPath = new vscode.ThemeIcon('bug');
-                break;
-            case 'feature':
-                this.iconPath = new vscode.ThemeIcon('sparkle');
-                break;
-            case 'refactor':
-                this.iconPath = new vscode.ThemeIcon('sync');
                 break;
             case 'optimize':
                 this.iconPath = new vscode.ThemeIcon('dashboard');
@@ -64,14 +58,20 @@ class MacroItem extends vscode.TreeItem {
             case 'audit':
                 this.iconPath = new vscode.ThemeIcon('shield');
                 break;
+            case 'feature':
+                this.iconPath = new vscode.ThemeIcon('sparkle');
+                break;
+            case 'debug':
+                this.iconPath = new vscode.ThemeIcon('bug');
+                break;
+            case 'refactor':
+                this.iconPath = new vscode.ThemeIcon('sync');
+                break;
             case 'research':
                 this.iconPath = new vscode.ThemeIcon('search');
                 break;
             case 'resume':
                 this.iconPath = new vscode.ThemeIcon('history');
-                break;
-            case 'plan':
-                this.iconPath = new vscode.ThemeIcon('checklist');
                 break;
             case 'custom':
                 this.iconPath = new vscode.ThemeIcon('edit');
@@ -99,18 +99,17 @@ class MacroProvider {
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
         this.macros = [
-            new MacroItem('Deploy Project', 'deploy', 'Complete project build - Creates architecture, implements features, adds tests', 'deploy'),
-            new MacroItem('Debug Issues', 'debug', 'Analyzes errors and fixes bugs - Great for test failures or runtime issues', 'debug'),
-            new MacroItem('Build Feature', 'feature', 'Adds new functionality - Use with feature-spec.md for best results', 'feature'),
-            new MacroItem('Refactor Code', 'refactor', 'Improves code quality - Extracts components, updates patterns, modernizes', 'refactor'),
-            new MacroItem('Optimize Performance', 'optimize', 'Makes code faster - Database queries, rendering, algorithms', 'optimize'),
-            new MacroItem('Security Audit', 'audit', 'Finds vulnerabilities - OWASP checks, penetration testing, hardening', 'audit'),
-            new MacroItem('Research Mode', 'research', 'Analyzes without changing - Understand codebase, plan changes', 'research'),
-            new MacroItem('Resume Session', 'resume', 'Continues previous work - Picks up where agents left off', 'resume'),
-            new MacroItem('Plan Mode', 'plan', 'Creates detailed project plan - Agents analyze and plan without coding', 'plan'),
-            new MacroItem('Custom Command', 'custom', 'Build your own - Set custom parameters for specific needs', 'custom'),
-            new MacroItem('❓ Help / Legend', 'help', 'Learn Shadow Clone commands - Full documentation and examples', 'help'),
-            new MacroItem('⚙️ Build Parameters', 'params', 'Interactive parameter builder - Select and configure execution arguments', 'params')
+            new MacroItem('Research Mode', 'research', 'Analyzes without changing - Explores codebase, understands patterns, plans improvements', 'research'),
+            new MacroItem('Plan Mode', 'plan', 'Creates detailed project plan - Agents analyze requirements and design architecture without coding', 'plan'),
+            new MacroItem('Build Project', 'build', 'Complete project build - Creates full architecture, implements all features, writes tests', 'build'),
+            new MacroItem('Build Feature', 'feature', 'Adds new functionality - Implements a specific feature with tests and documentation', 'feature'),
+            new MacroItem('Debug Issues', 'debug', 'Analyzes and fixes bugs - Investigates errors, traces issues, and implements fixes', 'debug'),
+            new MacroItem('Optimize Performance', 'optimize', 'Makes code faster - Optimizes database queries, caching, rendering, and algorithms', 'optimize'),
+            new MacroItem('Refactor Code', 'refactor', 'Improves code quality - Extracts components, updates patterns, removes duplication', 'refactor'),
+            new MacroItem('Security Audit', 'audit', 'Finds vulnerabilities - OWASP security checks, penetration testing, and hardening', 'audit'),
+            new MacroItem('Resume Session', 'resume', 'Continues previous work - Picks up from last wave execution with full context', 'resume'),
+            new MacroItem('⚙️ Build Parameters', 'params', 'Interactive parameter builder - Select and configure all execution options or create custom commands', 'params'),
+            new MacroItem('❓ Help / Legend', 'help', 'Learn Shadow Clone commands - Full documentation, examples, and best practices', 'help')
         ];
     }
     refresh() {
