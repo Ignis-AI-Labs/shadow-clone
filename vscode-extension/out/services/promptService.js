@@ -29,7 +29,7 @@ class PromptService {
         if (cached)
             return cached;
         try {
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/modes`);
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/mode_configs`);
             const modes = response.data.modes;
             this.setCache(cacheKey, modes);
             return modes;
@@ -44,7 +44,7 @@ class PromptService {
         if (cached)
             return cached;
         try {
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/modes/${modeName}`);
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/mode_configs/shadow-clone-${modeName}`);
             const mode = response.data;
             this.setCache(cacheKey, mode);
             return mode;
@@ -77,7 +77,7 @@ class PromptService {
         if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
             parts.push(`Also fetch the ${options.mode} mode configuration from:`);
-            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
+            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         if (options.additionalParams) {
             for (const [key, value] of Object.entries(options.additionalParams)) {
