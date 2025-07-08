@@ -10,9 +10,10 @@
 
 ### Integration Protocol
 - Follow handoff format in agent_template.md
-- Update Record Keeper at each milestone
+- **MANDATORY: Report to Record Keeper at each milestone**
 - Clear status communication to next agent
 - File reservations mandatory
+- Record Keeper tracks all integrations
 
 ### Todo Management
 - Break complex tasks into atomic units
@@ -36,19 +37,78 @@
 - Make architectural decisions when needed
 - Handle emergency escalations
 
-### Record Keeper
+### Record Keeper - CONVERGENCE NEXUS
 **Wave:** All waves (embedded in teams)
+**Authority:** Central point of collective awareness
+**Completion:** ALWAYS LAST - Never marks complete until all agents report final status
+
 **Core Duties:**
-- Maintain project CONSTITUTION.md
-- Track decisions and context
-- Document wave outcomes
-- Preserve system state
+- Act as convergence point for ALL agent activities
+- **SOLE MAINTAINER of CONSTITUTION.md** - no other agent modifies it
+- Track all decisions, progress, and blockers
+- Document wave outcomes and collective state
+- Enable system-wide progress recognition
+- Transform agent reports into coherent project narrative
+- **MUST BE LAST AGENT TO COMPLETE IN EVERY WAVE**
 
 **Critical Tasks:**
+- Receive reports from ALL agents (including Team Lead)
 - Never deployed alone - always with a team
-- Update constitution after each wave
-- Create audit trails for decisions
-- Enable project continuity
+- Update constitution after each significant event
+- Create comprehensive audit trails
+- Synthesize team progress into coherent narrative
+- Alert Team Lead when convergence issues arise
+
+**Protection Protocols:**
+1. **Queue Management**
+   - Maintain `.waves/wave-N/RECORD_KEEPER_STATUS.md`
+   - Process one agent report at a time
+   - Update status: AVAILABLE → BUSY:[Agent] → AVAILABLE
+   - Never process simultaneous reports
+
+2. **Checkpoint Creation**
+   - Checkpoint after every 10 reports
+   - Checkpoint at wave completion
+   - Save to `.waves/wave-N/checkpoints/`
+   - Include: constitution state, report count, timestamp
+
+3. **Self-Integrity Checks**
+   - Verify constitution coherence after each update
+   - Check for duplicate or missing reports
+   - Maintain report sequence log
+   - Alert Team Lead if corruption detected
+
+4. **Integrity Tracking**
+   - Maintain `.waves/wave-N/RECORD_KEEPER_LOG.md`:
+   ```
+   [2024-01-01 10:00:00] Report #001 from Backend Dev - Added
+   [2024-01-01 10:05:00] Constitution updated - Section: Progress
+   [2024-01-01 10:10:00] Report #002 from QA Engineer - Added
+   [2024-01-01 10:15:00] Checkpoint created - checkpoint-001.md
+   [2024-01-01 10:20:00] Report #003 from Team Lead - Added
+   ```
+   - Sequential report numbers prevent gaps
+   - Timestamps enable timeline reconstruction
+   - Cross-reference with black box recordings
+
+5. **Wave Completion Protocol**
+   - Track all agents assigned to current wave
+   - Maintain checklist of final reports received
+   - DO NOT mark self as complete until:
+     * All agents have reported "Complete" status
+     * All handoffs are documented
+     * Final wave summary is written
+     * Constitution is updated with wave outcomes
+   - Create `.waves/wave-N/WAVE_COMPLETE.md` only after all agents done
+
+**Reporting Structure:**
+```
+All Agents → [Queue] → Record Keeper → Constitution
+     ↓                      ↓
+Team Lead → [Queue] → Record Keeper → Constitution
+                           ↓
+                    [Checkpoints]
+```
 
 ## Technical Agents
 

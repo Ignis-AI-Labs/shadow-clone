@@ -158,6 +158,28 @@ After EVERY wave:
 - Complicates rollback
 - Wait for wave completion
 
+## User Interaction During Execution
+
+### After Deployment Summary
+When deployment is complete, the system awaits your command:
+- `"Execute"`, `"Start"`, `"Begin"`, `"Go"` - Start execution
+- `"Execute but [modification]"` - Start with changes
+- `"Show me the plan"` - Review before starting
+
+### During Execution Commands
+- `"Status"` - Check current progress
+- `"Pause"` - Temporarily halt execution
+- `"Resume"` - Continue from pause
+- `"Skip to Wave N"` - Jump to specific wave
+- `"Show constitution"` - View current project context
+
+### Critical: Parallel Deployment
+**All agents in a wave MUST deploy simultaneously:**
+- Wave starts → ALL teams deploy at once
+- ALL agents in each team deploy at once
+- No sequential bottlenecks allowed
+- Record Keeper monitors from the start
+
 ## Emergency Protocols
 
 ### Wave Failure

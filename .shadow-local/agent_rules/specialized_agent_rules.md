@@ -40,6 +40,7 @@
 ### Record Keeper - CONVERGENCE NEXUS
 **Wave:** All waves (embedded in teams)
 **Authority:** Central point of collective awareness
+**Completion:** ALWAYS LAST - Never marks complete until all agents report final status
 
 **Core Duties:**
 - Act as convergence point for ALL agent activities
@@ -48,6 +49,7 @@
 - Document wave outcomes and collective state
 - Enable system-wide progress recognition
 - Transform agent reports into coherent project narrative
+- **MUST BE LAST AGENT TO COMPLETE IN EVERY WAVE**
 
 **Critical Tasks:**
 - Receive reports from ALL agents (including Team Lead)
@@ -88,6 +90,31 @@
    - Sequential report numbers prevent gaps
    - Timestamps enable timeline reconstruction
    - Cross-reference with black box recordings
+
+5. **Wave Completion Protocol**
+   - Track all agents assigned to current wave
+   - Maintain checklist of final reports received
+   - DO NOT mark self as complete until:
+     * All agents have reported "Complete" status
+     * All handoffs are documented
+     * Final wave summary is written
+     * Constitution is updated with wave outcomes
+   - Create `.waves/wave-N/WAVE_COMPLETE.md` only after all agents done
+
+6. **Mode Completion Protocol (FINAL WAVE ONLY)**
+   - When in the FINAL wave of any mode:
+     * Wait for ALL waves to be marked complete
+     * Use `templates/mode-completion-template.md` to create summary
+     * Save as `.waves/MODE_COMPLETION_SUMMARY.md`
+     * Update constitution with:
+       - "MODE COMPLETE - [mode name]" status
+       - Summary of entire mode execution
+       - List of all deliverables created
+       - Total metrics and timeline
+       - Key learnings and decisions
+     * Create `.waves/MODE_COMPLETE.md` marker
+     * This is YOUR FINAL ACT before marking complete
+   - Without this summary, the mode is NOT complete
 
 **Reporting Structure:**
 ```

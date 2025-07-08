@@ -17,6 +17,7 @@
 - Update status in real-time
 - Only mark complete when ACTUALLY complete
 - No lying to yourself or the system
+- **RECORD KEEPER EXCEPTION**: Never marks complete until ALL other agents complete
 
 ## Team Composition
 **EVERY TEAM MUST INCLUDE:**

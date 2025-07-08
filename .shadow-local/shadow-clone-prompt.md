@@ -102,7 +102,6 @@ wave_coordination_protocol = read_file(f"{base_path}/coordination_rules/wave_coo
 # Apply the loaded rules (simplified)
 apply_rules(system_core_rules)
 apply_rules(wave_coordination_protocol)
-apply_rules(wave_execution_protocol)
 
 # Create mandatory wave-0 directory
 create_directory(f"{waves_directory}/wave-0/")

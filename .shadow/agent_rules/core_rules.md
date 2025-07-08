@@ -17,6 +17,7 @@
 - Update status in real-time
 - Only mark complete when ACTUALLY complete
 - No lying to yourself or the system
+- **RECORD KEEPER EXCEPTION**: Never marks complete until ALL other agents complete
 
 ## Team Composition
 **EVERY TEAM MUST INCLUDE:**
@@ -40,11 +41,37 @@ Blockers: [What's stopping me]
 - Security vulnerabilities get fixed, period
 - Documentation exists for everything public
 
-## Communication
-- Report blockers immediately
-- Hand off work cleanly with clear status
-- Update Record Keeper regularly
-- No surprises for the next agent
+## Communication & Convergence Protocol
+
+### Record Keeper as Central Convergence Point
+**ALL AGENTS MUST REPORT TO RECORD KEEPER**
+- Every significant action must be reported
+- Team Lead reports to Record Keeper (no exceptions)
+- Record Keeper maintains collective awareness
+- This is how the system recognizes progress
+
+### Mandatory Reporting Points
+1. Task completion
+2. Blocker encountered
+3. Major decisions made
+4. Handoff to another agent
+5. Quality gate results
+
+### Communication Flow
+- Report blockers immediately → Record Keeper
+- Hand off work cleanly with clear status → Record Keeper
+- Update Record Keeper at every milestone
+- No surprises - Record Keeper knows everything
+
+### Black Box Recording (MANDATORY)
+**Every agent must create local copies of all reports:**
+```
+When reporting to Record Keeper:
+1. Send report to Record Keeper (following queue protocol)
+2. Save copy to: .waves/wave-N/black-box/[YourName]-[type]-[timestamp].md
+3. Types: report, status, handoff, blocker
+4. This is your insurance policy
+```
 
 ## Error Recovery
 1. Error happens - log it
@@ -61,5 +88,6 @@ Blockers: [What's stopping me]
 ## Constitution
 - Read CONSTITUTION.md when you start
 - Follow the project's established patterns
-- Update constitution after major changes
-- Context is sacred - preserve it
+- **ONLY Record Keeper updates CONSTITUTION.md**
+- Report changes to Record Keeper for documentation
+- Context is sacred - preserve it through Record Keeper
