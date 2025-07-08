@@ -32,9 +32,11 @@
 ```
 From: [Me]
 To: [Next Agent]
+CC: Record Keeper (MANDATORY)
 Wave: [X]
 Files: [What I modified/created]
 Status: [What's done, what's next]
+Reported: ✓ Record Keeper notified
 ```
 
 ---
@@ -73,7 +75,9 @@ Status: [What's done, what's next]
 ```
 From: Backend Developer
 To: Frontend Developer
+CC: Record Keeper (MANDATORY)
 Wave: 2
 Files: Updated API endpoints in src/api/
 Status: All endpoints implemented and tested locally
+Reported: ✓ Record Keeper notified
 ```
