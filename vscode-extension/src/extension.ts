@@ -1,12 +1,8 @@
 import * as vscode from 'vscode';
 import { AuthProvider } from './auth/authProvider';
-import { ProjectProvider } from './providers/projectProvider';
-import { AgentProvider } from './providers/agentProvider';
 import { ClaudeSessionProvider } from './providers/claudeSessionProvider';
 import { MacroProvider } from './providers/macroProvider';
 import { ClaudeSessionManager } from './utils/claudeSessionManager';
-import { createProjectCommand } from './commands/createProject';
-import { deployAgentsCommand } from './commands/deployAgents';
 import { showStatusCommand } from './commands/showStatus';
 import { authenticateCommand } from './commands/authenticate';
 import { launchClaudeCommand, launchClaudeWithArgumentsCommand } from './commands/claudeLauncher';
@@ -102,14 +98,10 @@ export async function activate(context: vscode.ExtensionContext) {
     }
     
     // Initialize tree data providers
-    const projectProvider = new ProjectProvider(authProvider);
-    const agentProvider = new AgentProvider(authProvider);
     const claudeSessionProvider = new ClaudeSessionProvider(sessionManager);
     const macroProvider = new MacroProvider();
 
     // Register tree views
-    vscode.window.registerTreeDataProvider('shadowClone.projectView', projectProvider);
-    vscode.window.registerTreeDataProvider('shadowClone.agentView', agentProvider);
     vscode.window.registerTreeDataProvider('shadowClone.claudeSessions', claudeSessionProvider);
     vscode.window.registerTreeDataProvider('shadowClone.macros', macroProvider);
 
@@ -131,20 +123,8 @@ export async function activate(context: vscode.ExtensionContext) {
             });
             vscode.window.showInformationMessage('License status refreshed');
         }),
-        vscode.commands.registerCommand('shadowClone.createProject', () => 
-            createProjectCommand(authProvider, projectProvider)
-        ),
-        vscode.commands.registerCommand('shadowClone.deployAgents', () => 
-            deployAgentsCommand(authProvider, agentProvider)
-        ),
         vscode.commands.registerCommand('shadowClone.showStatus', () => 
             showStatusCommand(authProvider, licenseStatusManager)
-        ),
-        vscode.commands.registerCommand('shadowClone.refreshProjects', () => 
-            projectProvider.refresh()
-        ),
-        vscode.commands.registerCommand('shadowClone.refreshAgents', () => 
-            agentProvider.refresh()
         ),
         
         // Dependency management command

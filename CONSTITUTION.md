@@ -4,7 +4,7 @@
 **Project Name**: Shadow Clone - Multi-Agent Orchestration System
 **Current Branch**: dev-testing
 **Last Updated**: 2025-07-05
-**Status**: Production Ready - v0.3.6
+**Status**: Production Ready - v0.3.7
 
 ## Project State
 
@@ -40,7 +40,7 @@
   - Consolidated endpoints by category: `/api/prompts/{category}/{filename}`
   - Deployed to Cloudflare for production use
 
-- **VSCode Extension v0.3.6**:
+- **VSCode Extension v0.3.7**:
   - Updated all API endpoints to match new structure
   - Built and packaged for deployment
   - Maintained full macro command functionality
@@ -65,6 +65,7 @@
 - **Coordination**: Constitution-based context preservation
 
 ### Key Component Locations
+- **VSCode Extension**: `/vscode-extension/` - All VSCode extension development work
 - **Macro Injections**: `/vscode-extension/src/providers/macroProvider.ts` - Defines all macro commands and their UI
 - **API Endpoints**: `/vscode-extension/src/utils/constants.ts` - Contains API base URLs (api.ignislabs.ai)
 - **Prompt Service**: `/vscode-extension/src/services/promptService.ts` - Constructs API endpoint paths
@@ -133,6 +134,12 @@
 
 ## Recent Updates
 
+### 2025-07-08 - UI Reorganization v0.3.7
+- **UI Changes**:
+  - Moved PROMPTS section to the top of the VSCode sidebar
+  - Removed non-functional PROJECTS and ACTIVE AGENTS sections
+  - Simplified UI to focus on working features
+
 ### 2025-07-05 - Production Release v0.3.6 & Security Update
 - **Security System Overhaul**: 
   - Converted to monitoring-only mode
@@ -151,9 +158,9 @@
 - Established "Context is sacred" principle
 
 ## Production Status
-- **Version**: v0.3.6
+- **Version**: v0.3.7
 - **API**: Deployed to Cloudflare with streamlined endpoints
-- **VSCode Extension**: Built and packaged (shadow-clone-0.3.6.vsix)
+- **VSCode Extension**: Built and packaged (shadow-clone-0.3.7.vsix)
 - **Documentation**: Updated to reflect new structure
 - **Testing**: Both local and API modes validated
 

@@ -2,7 +2,7 @@
   "name": "shadow-clone",
   "displayName": "Shadow Clone AI Agent Orchestrator",
   "description": "Deploy teams of specialized AI agents to complete complex software projects. Currently exclusive to Ignis Elite NFT holders.",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "publisher": "IgnisAILabsLLC",
   "private": false,
   "license": "Proprietary",
@@ -175,28 +175,16 @@
     "views": {
       "shadowClone": [
         {
-          "id": "shadowClone.projectView",
-          "name": "Projects",
-          "icon": "$(project)",
-          "contextualTitle": "Shadow Clone Projects"
-        },
-        {
-          "id": "shadowClone.agentView",
-          "name": "Active Agents",
-          "icon": "$(account)",
-          "contextualTitle": "Shadow Clone Agents"
+          "id": "shadowClone.macros",
+          "name": "Prompts",
+          "icon": "$(code)",
+          "contextualTitle": "Shadow Clone Prompts"
         },
         {
           "id": "shadowClone.claudeSessions",
           "name": "Claude Sessions",
           "icon": "$(terminal)",
           "contextualTitle": "Shadow Clone Claude Sessions"
-        },
-        {
-          "id": "shadowClone.macros",
-          "name": "Prompts",
-          "icon": "$(code)",
-          "contextualTitle": "Shadow Clone Prompts"
         }
       ]
     },
