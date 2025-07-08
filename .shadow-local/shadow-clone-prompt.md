@@ -248,17 +248,45 @@ results = integrate_deliverables(waves, wave_execution_protocol)
 validate_quality(results, system_core_rules)
 ```
 
-### Phase 7: Final Quality & Commit
+### Phase 7: Final Quality & Development Branch Commit
 
 ```python
 # Git commit protocol is now part of system_core_rules - LOCAL VERSION
 # Already loaded in Phase 1
+
+# CRITICAL: Ensure we're on a development branch
+current_branch = get_current_branch()
+if current_branch in ["main", "master", "production"]:
+    # Create and switch to dev branch
+    dev_branch_name = f"dev-{mode.lower()}-{project_descriptor}"
+    create_and_switch_branch(dev_branch_name)
+    print(f"NOTICE: Created development branch '{dev_branch_name}' for safe development")
 
 # Run final audit
 final_audit()
 
 # Create single atomic commit (using system_core_rules)
 create_single_commit(system_core_rules)
+
+# Provide merge guidance
+print("""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 DEVELOPMENT COMPLETE - READY FOR REVIEW
+
+Your changes are safely committed to the development branch.
+
+NEXT STEPS:
+1. Test your changes thoroughly in the dev branch
+2. Review all modifications and ensure quality
+3. When satisfied, merge to main/production:
+   
+   git checkout main
+   git merge {dev_branch_name}
+   git push origin main
+
+This workflow ensures production stability and control.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+""")
 ```
 
 ## Critical Success Factors for Local Mode
@@ -283,6 +311,32 @@ create_single_commit(system_core_rules)
 - Check agent prompts contain actual rules
 - Ensure wave-0 planning compliance
 - Validate single commit protocol
+
+## Git Workflow Philosophy
+
+### Why Development Branches Matter
+Shadow Clone empowers non-developers to create production-quality software, but with great power comes the need for safe practices:
+
+1. **Protection**: Main/production branches are sacred - they represent what users see
+2. **Learning**: Using dev branches teaches real-world development workflows
+3. **Safety**: Mistakes on dev branches don't affect production
+4. **Confidence**: Test thoroughly before merging gives peace of mind
+
+### The Educational Journey
+This system replaces millions of dollars of development work by:
+- Teaching proper version control habits
+- Demonstrating professional development workflows
+- Building confidence through safe experimentation
+- Providing clear merge instructions when ready
+
+### From Idea to Production
+The complete workflow:
+1. **Idea**: Define what you want to build
+2. **Development**: Shadow Clone creates it on a dev branch
+3. **Testing**: You verify everything works as expected
+4. **Review**: Understand what was built and why
+5. **Merge**: You control when it goes to production
+6. **Success**: Your idea is now live!
 
 ## Remember
 
