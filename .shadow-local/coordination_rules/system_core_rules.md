@@ -8,6 +8,20 @@
 - .shadow-local/ directory structure intact
 - Sufficient disk space for artifacts
 
+### Mandatory System Initialization (FIRST STEP)
+**Before ANY execution, the system MUST:**
+1. Load system_core_rules.md and wave_coordination_protocol.md
+2. Verify all required files exist:
+   - `.shadow-local/agent_rules/core_rules.md`
+   - `.shadow-local/agent_rules/specialized_agent_rules.md`
+   - `.shadow-local/coordination_rules/system_core_rules.md`
+   - `.shadow-local/coordination_rules/wave_coordination_protocol.md`
+3. Create wave-0 directory structure
+4. Initialize tracking systems (RECORD_KEEPER_STATUS.md, etc.)
+5. Validate git branch strategy
+
+**FAILURE TO INITIALIZE = SYSTEM FAILURE**
+
 ### Team Composition (MANDATORY)
 **Every deployment MUST include:**
 - Technical agents (developers, architects)
@@ -32,6 +46,8 @@ project/
 │   ├── wave-0/            # Planning wave
 │   ├── wave-1/            # Implementation waves
 │   └── wave-N/            # Final convergence
+│       ├── AGENT_ROSTER.md # List of all agents in wave
+│       └── COMPLETION_STATUS.md # Tracks who has completed
 ├── .waves-archive/         # Archived waves from previous sprints
 │   ├── [mode]-[date]/     # Archived by mode and timestamp
 │   └── README.md          # Archive index and history
@@ -169,6 +185,31 @@ If detected:
 - Document what was done
 - Clear next steps for receiver
 - **Confirm Record Keeper has logged handoff**
+
+### Wave Completion Order (MANDATORY)
+**Record Keeper is ALWAYS the last agent to complete:**
+1. All technical agents complete their work
+2. All agents report final status to Record Keeper
+3. Record Keeper collects and synthesizes all reports
+4. Record Keeper updates constitution with wave summary
+5. Record Keeper creates final checkpoint
+6. ONLY THEN does Record Keeper mark self as complete
+
+**VIOLATION = SYSTEM FAILURE**: If Record Keeper completes before other agents, the wave is invalid
+
+### Mode Completion Protocol (CRITICAL)
+**When ALL waves in a mode are complete:**
+1. Record Keeper creates MODE COMPLETION SUMMARY
+2. Updates constitution with:
+   - Final status: "MODE COMPLETE - [mode name]"
+   - Summary of all wave outcomes
+   - Key deliverables produced
+   - Total time and resources used
+   - Lessons learned
+3. Creates `.waves/MODE_COMPLETE.md` marker file
+4. ONLY after these steps can mode be considered finished
+
+**NO MODE IS COMPLETE WITHOUT RECORD KEEPER'S FINAL SUMMARY**
 
 ## Mode Transitions & Wave Archiving
 
