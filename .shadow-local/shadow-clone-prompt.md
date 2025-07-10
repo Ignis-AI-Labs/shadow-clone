@@ -14,7 +14,7 @@ This LOCAL version of the Shadow Clone orchestrator always loads components from
 **This is the LOCAL version** - Always uses local files:
 ```python
 # LOCAL VERSION - Fixed configuration
-base_path = "/root/repos/shadow-clone/.shadow-local"
+base_path = "/root/.shadow-local"
 load_method = read_local_file
 source_mode = "local"  # Always local for this version
 ```
