@@ -63,10 +63,12 @@ Identifies vulnerabilities, compliance gaps, and provides actionable remediation
 ### Final Wave: Consolidation & Reporting
 **Team**: Audit Lead, Senior Security Analyst, Compliance Officer, Technical Writer, Record Keeper
 
-**Outputs**:
-- SECURITY_AUDIT_REPORT.md - Executive summary and critical findings
-- VULNERABILITY_REGISTER.md - Prioritized vulnerabilities with remediation
-- COMPLIANCE_MATRIX.md - Framework compliance status
+**Primary Output**: `SECURITY_AUDIT_REPORT.md` - Comprehensive security assessment
+**Template**: Uses `templates/SECURITY_AUDIT_REPORT_TEMPLATE.md` for complete coverage
+
+**Additional Outputs**:
+- VULNERABILITY_REGISTER.md - Detailed vulnerability inventory
+- COMPLIANCE_MATRIX.md - Framework compliance tracking
 
 ## Key Deliverables
 - Comprehensive security assessment
