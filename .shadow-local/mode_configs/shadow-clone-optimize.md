@@ -1,142 +1,97 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
+# Optimize Mode
 
-# Shadow Clone Optimize Mode Configuration
+## Purpose
+Improve system performance, scalability, and resource efficiency without compromising functionality.
 
-## ⚡ Security-First Optimization Framework
+## Wave Structure
 
-Transform audit findings into fortress strength while maintaining security posture.
+### Wave-0: Performance Analysis & Team Assembly
+**Team**: Performance Lead, System Profiler, Cost Analyst, Record Keeper
 
-## Optimization Phases
+**Critical Tasks**:
+- Establish comprehensive performance baselines
+- Profile system to identify optimization opportunities
+- Analyze cost-to-performance ratios
+- **Determine specialized teams based on bottlenecks found**
+- Set measurable optimization targets
 
-### Phase 1: Critical Security (Wave 1)
-- Authentication/authorization vulnerabilities
-- Input validation and injection flaws
-- Cryptographic implementation errors
-- Access control bypass vulnerabilities
-- Data exposure and privacy violations
+**Outputs**:
+- Performance baseline report with metrics
+- **Dynamic team roster** for optimization waves:
+  - Database bottlenecks: Database Optimizer, Query Analyst, Index Specialist
+  - Algorithm inefficiencies: Algorithm Expert, Complexity Analyst, Parallel Computing Specialist
+  - Frontend slowness: Frontend Performance Expert, Bundle Optimizer, CDN Specialist
+  - API latency: API Architect, Caching Expert, GraphQL Specialist
+  - Infrastructure limits: Cloud Architect, Scaling Expert, Container Specialist
+  - Memory/Resource issues: Memory Analyst, Garbage Collection Expert, Resource Manager
+- Prioritized optimization roadmap by ROI
+- Wave allocation:
+  - Quick wins: 1-2 waves (low-hanging fruit)
+  - Targeted optimization: 3-4 waves (specific subsystems)
+  - Complete overhaul: 5+ waves (architectural changes)
 
-### Phase 2: Performance Security (Wave 2)
-- Database query security optimization
-- Session management performance
-- Encryption/decryption optimization
-- API rate limiting and security
-- Caching with security controls
+### Wave-1 to Wave-N: Dynamic Optimization
+**Team Structure**: Determined by Wave-0 findings (always includes Record Keeper)
 
-### Phase 3: Quality Security (Wave 3)
-- Code quality with security focus
-- Security testing integration
-- CI/CD security automation
-- Documentation enhancement
-- Monitoring optimization
+**Optimization Patterns**:
+1. **Cascading Optimization**: Database → Backend → API → Frontend
+2. **Parallel Attack**: Multiple teams on independent bottlenecks
+3. **Iterative Refinement**: Measure → Optimize → Validate → Repeat
+4. **Architecture Evolution**: Refactor → Optimize → Scale
 
-## Security Masters
+**Focus Areas** (based on Wave-0 analysis):
+- **Algorithm Optimization**: Time/space complexity, parallelization
+- **Database Performance**: Query plans, indexing, caching strategies
+- **Infrastructure Scaling**: Auto-scaling, load distribution, edge computing
+- **Frontend Performance**: Bundle optimization, lazy loading, render efficiency
+- **API Efficiency**: Response compression, batching, protocol optimization
+- **Resource Management**: Memory optimization, connection pooling, thread management
 
-**Critical Security Master**: High-severity remediation, authentication fixes, cryptography
-**Performance Security Master**: Secure optimization, database security, API performance
-**Quality Security Master**: Code quality enhancement, testing integration, automation
-**Infrastructure Security Master**: Configuration hardening, deployment automation, cloud security
+**Required Outputs per Wave**:
+- Before/after performance metrics
+- Cost impact analysis
+- Implementation documentation
+- Rollback procedures
+- Load test results
 
-## Agent Template
-```
-SECURE OPTIMIZATION AGENT: [Domain Master]
-FOCUS: [Critical/Performance/Quality/Infrastructure]
-WAVE: [Number]
-FRAMEWORKS: [OWASP/NIST/Industry]
+### Final Wave: Validation & Monitoring Setup
+**Team**: Performance Test Lead, DevOps Engineer, Monitoring Specialist, Record Keeper
 
-WORKSPACE: /root/repos/shadow-clone
-WAVES DIRECTORY: $waves_directory
+**Comprehensive Validation**:
+- Load testing at 2x expected capacity
+- Stress testing to find breaking points
+- Endurance testing for memory leaks
+- Cost projection validation
+- User experience verification
 
-CONTEXT:
-- Audit Findings: [Previous reports]
-- Priority: [Critical/High/Medium]
-- Scope: [Security/Performance/Quality]
-- Compliance: [Requirements]
+**Outputs**:
+- `OPTIMIZATION_REPORT.md` - Complete performance gains summary
+- `MONITORING_SETUP.md` - Alerts and dashboards configuration
+- Performance regression test suite
+- Capacity planning documentation
+- Cost savings projection
 
-REQUIREMENTS:
-1. Vulnerability Remediation
-2. Security Enhancement
-3. Performance Without Compromise
-4. Compliance Achievement
-5. Quality Integration
-6. Testing Coverage
-7. Documentation Updates
+## Key Deliverables
+- Performance improvement metrics (target: 30%+ improvement)
+- Optimized components with benchmarks
+- Auto-scaling configuration
+- Real-time monitoring dashboards
+- ROI analysis with payback period
 
-DELIVERABLES:
-- Optimized Code: /root/repos/shadow-clone/src/
-- Security Report: $waves_directory/wave-X/security_improvements.md
-- Remediation Log: $waves_directory/wave-X/vulnerability_fixes.md
-- Compliance Status: $waves_directory/wave-X/compliance_status.md
-```
+## Mode-Specific Rules
+- **Wave-0 drives team composition** - specialists matched to actual bottlenecks
+- **Data-driven decisions only** - no optimization without measurements
+- **ROI-focused prioritization** - biggest impact for least effort first
+- **Record Keeper in every wave** - tracks performance evolution
+- **Preserve functionality** - performance can't break features
+- **Document trade-offs** - space vs time, cost vs performance
+- **Incremental validation** - measure impact after each change
+- **Real-world testing** - optimize against production-like loads
 
-## Technology-Specific Optimizations
-
-### Frontend
-- CSP optimization
-- XSS prevention enhancement
-- CSRF protection improvement
-- Secure state management
-- Routing security
-
-### Backend
-- Middleware security optimization
-- Session management enhancement
-- Authentication performance
-- Authorization optimization
-- Error handling security
-
-### Infrastructure
-- Container security optimization
-- Cloud configuration hardening
-- Network security enhancement
-- Monitoring optimization
-- Backup security
-
-## Validation
-
-### Pre-Optimization
-- Security control inventory
-- Risk assessment
-- Test suite creation
-
-### Post-Optimization
-- Comprehensive testing
-- Control validation
-- Performance assessment
-- Compliance verification
-
-## Example Wave Directory Structure
-
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
-
-**Optimize Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── audit_findings.md      # Summary of audit findings
-│   ├── optimization_scope.md  # Optimization priorities
-│   ├── security_baseline.md   # Current security posture
-│   ├── performance_metrics.md # Baseline measurements
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── critical_security_fixes/
-│   ├── vulnerability_patches/
-│   ├── security_enhancements.md
-│   └── WAVE_1_CRITICAL.md
-├── wave-2/
-│   ├── performance_optimizations/
-│   ├── database_improvements/
-│   ├── api_enhancements.md
-│   └── WAVE_2_PERFORMANCE.md
-├── wave-3/
-│   ├── quality_improvements/
-│   ├── test_coverage_updates/
-│   ├── documentation_updates.md
-│   └── WAVE_3_QUALITY.md
-└── OPTIMIZATION_REPORT.md
-```
+## Success Criteria
+- Performance targets achieved (specific metrics from Wave-0)
+- Zero functionality regression
+- Cost reduction of 20%+ OR performance gain of 30%+
+- All optimizations documented with rationale
+- Monitoring dashboards operational
+- Load tests prove scalability improvements

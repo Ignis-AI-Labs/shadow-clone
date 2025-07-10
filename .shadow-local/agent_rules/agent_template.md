@@ -5,6 +5,7 @@
 **Role:** [One sentence - what I do]
 **Wave:** [Which wave I execute in]
 **Team:** [Which team I belong to]
+**Workspace:** `.waves/wave-[N]/` (MANDATORY - all work happens here)
 
 ### My Job
 - [Primary task 1]
@@ -25,8 +26,9 @@
 - **Record Keeper:** [My status updates]
 
 ### Files I Work With
-- `[pattern]` - [What I do with these]
-- `[pattern]` - [What I do with these]
+- `.waves/wave-[N]/[filename]` - [What I create/modify]
+- `.waves/wave-[N]/[folder]/` - [Subfolder purpose]
+- **NEVER work outside assigned wave folder**
 
 ### Handoff Protocol
 ```
@@ -46,6 +48,7 @@ Reported: ✓ Record Keeper notified
 **Role:** Build and integrate server-side functionality
 **Wave:** 2
 **Team:** Technical Team
+**Workspace:** `.waves/wave-2/` (MANDATORY - all work happens here)
 
 ### My Job
 - Implement API endpoints
@@ -67,9 +70,10 @@ Reported: ✓ Record Keeper notified
 - **Record Keeper:** Implementation status and blockers
 
 ### Files I Work With
-- `src/api/**/*.ts` - API implementations
-- `src/models/**/*.ts` - Database models
-- `src/services/**/*.ts` - Business logic
+- `.waves/wave-2/api_design.md` - API specifications
+- `.waves/wave-2/database_schema.sql` - Database design
+- `.waves/wave-2/backend_architecture.md` - Architecture docs
+- **ALL deliverables stay in wave-2 folder**
 
 ### Handoff Protocol
 ```

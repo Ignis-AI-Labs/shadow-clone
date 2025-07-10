@@ -1,316 +1,82 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
+# Research Mode
 
-# Shadow Clone Research Mode Configuration
-*"Seeking knowledge while guarding the sacred scrolls"*
+## Purpose
+Investigate technologies, solutions, and approaches to inform technical decisions with evidence-based recommendations.
 
-## 🔬 Secure Research Framework
+## Wave Structure
 
-This module guides the Shadow Clone System in conducting comprehensive research while maintaining security awareness and ensuring that research activities produce actionable, security-informed insights.
+### Wave-0: Research Definition & Methodology
+**Team**: Research Lead, Domain Expert, Technical Analyst, Cost Analyst, Record Keeper
 
-## 🛡️ Security-Informed Research
+**Critical Tasks**:
+- Define research questions if not provided by user
+- Identify evaluation criteria and constraints
+- Determine research depth needed
+- Select research methodology
+- Plan proof-of-concept requirements
 
-### Research Security Methodology
+**Outputs**:
+- Research charter with clear objectives
+- Evaluation framework (technical, cost, risk, scalability)
+- Success criteria definition
+- Research plan with wave allocation:
+  - Quick assessment: 1 wave (existing knowledge synthesis)
+  - Technology comparison: 2-3 waves (hands-on evaluation)
+  - Deep investigation: 4+ waves (POCs and production testing)
 
-#### 1. Security-Aware Research Planning
-**Research Domain Security Assessment:**
-- Technology security landscape analysis
-- Threat intelligence integration
-- Compliance requirement research
-- Industry security standards investigation
-- Emerging security trend analysis
+### Wave-1 to Wave-N: Systematic Investigation (Dynamic)
+**Consistent Team Structure**: Research Engineer, Domain Expert, Implementation Specialist, Record Keeper
 
-**Research Security Objectives:**
-- Security-first technology evaluation
-- Risk assessment of research findings
-- Compliance impact analysis
-- Security trade-off evaluation
-- Threat model integration
+**Research Domains** (depth based on Wave-0):
+1. **Technology Evaluation**: Framework comparison, performance testing, learning curve assessment
+2. **Architecture Patterns**: Scalability analysis, reliability patterns, security implications
+3. **Integration Feasibility**: API compatibility, data migration paths, ecosystem maturity
+4. **Cost Analysis**: Licensing, infrastructure, maintenance, opportunity costs
+5. **Risk Assessment**: Technical debt, vendor lock-in, community support, longevity
+6. **Implementation Planning**: Resource requirements, timeline estimation, skill gaps
 
-#### 2. Secure Research Environment
-**Research Environment Security:**
-- Secure research data handling
-- Research artifact protection
-- Intellectual property security
-- Research communication security
-- Research tool security assessment
+**Required Evidence per Wave**:
+- Hands-on proof of concept
+- Performance benchmarks
+- Cost calculations
+- Risk mitigation strategies
+- Implementation complexity analysis
 
-### Security Research Masters
+### Final Wave: Synthesis & Decision Framework
+**Team**: Research Lead, Senior Architect, Business Analyst, Technical Writer, Record Keeper
 
-#### Security-Focused Research Teams
-**Security Research Master:**
-- Cybersecurity framework research
-- Threat landscape analysis
-- Security technology evaluation
-- Compliance requirement research
-- Security best practices investigation
+**Synthesis Requirements**:
+- Consolidate findings from all waves
+- Create decision matrix with weighted criteria
+- Develop implementation roadmap
+- Prepare stakeholder presentation
+- Document lessons learned
 
-**Technology Security Master:**
-- Technology stack security assessment
-- Framework security evaluation
-- Library and dependency security research
-- Cloud platform security analysis
-- Integration security research
+**Outputs**:
+- `RESEARCH_FINDINGS.md` - Comprehensive analysis with evidence
+- `DECISION_MATRIX.md` - Scoring framework for options
+- `IMPLEMENTATION_ROADMAP.md` - Phased adoption plan
+- Proof of concept repository
+- Risk register with mitigation plans
 
-**Compliance Research Master:**
-- Regulatory requirement research
-- Industry standard investigation
-- Compliance framework analysis
-- Privacy regulation research
-- Audit requirement investigation
+## Key Deliverables
+- Evidence-based technology recommendations
+- Working proof of concepts (runnable code)
+- Total cost of ownership analysis
+- Migration/implementation playbook
+- Executive decision brief (2-page summary)
 
-**Risk Assessment Master:**
-- Security risk analysis
-- Business impact assessment
-- Threat modeling research
-- Vulnerability assessment research
-- Security control effectiveness research
+## Mode-Specific Rules
+- **No opinions without evidence** - every recommendation backed by data
+- **Build before recommending** - hands-on validation required
+- **Consider total cost** - not just initial implementation
+- **Document failed paths** - negative results are valuable
+- **Maintain objectivity** - present trade-offs honestly
+- **Future-proof thinking** - consider 3-5 year implications
 
-### Secure Research Templates
-
-#### Security-Enhanced Research Agent Template
-```
-SECURE RESEARCH AGENT: [Research Domain Master]
-RESEARCH SECURITY FOCUS: [Security/Technology/Compliance/Risk]
-RESEARCH WAVE: [Wave Number]
-SECURITY FRAMEWORKS: [OWASP/NIST/Industry-Specific]
-
-WORKSPACE: /root/repos/shadow-clone
-RESEARCH WORKING DIRECTORY: $waves_directory/secure_research_[domain]
-WAVES DIRECTORY: $waves_directory  # Configurable via waves_directory argument
-
-SECURE RESEARCH CONTEXT:
-- Research Domain: [What area is being researched]
-- Security Criticality: [How security-sensitive the research is]
-- Business Context: [Industry, compliance requirements, threat landscape]
-- Technology Focus: [Specific technologies or frameworks being researched]
-- Decision Timeline: [When research findings need to inform decisions]
-
-SECURITY-INFORMED RESEARCH REQUIREMENTS:
-1. **Security First**: Prioritize security considerations in all research
-2. **Risk Assessment**: Evaluate security risks of all findings
-3. **Compliance Integration**: Consider regulatory and compliance implications
-4. **Threat Awareness**: Integrate current threat landscape into research
-5. **Best Practices**: Focus on industry security best practices
-6. **Actionable Insights**: Provide security-informed recommendations
-7. **Documentation Security**: Ensure research documentation maintains security
-
-ASSIGNED RESEARCH AREAS:
-- [Security Domain 1]: [Specific research topics] - [Security focus]
-- [Security Domain 2]: [Specific research topics] - [Security approach]
-- [Continue for all assigned areas...]
-
-RESEARCH SECURITY PROTOCOLS:
-- Use secure research methods and tools
-- Protect sensitive research information
-- Follow intellectual property security guidelines
-- Maintain research data confidentiality
-- Document security implications of findings
-
-DELIVERABLES:
-
-**MANDATORY WAVE FOLDER STRUCTURE**: All deliverables must be organized in the wave folder pattern ($waves_directory/wave-1/, wave-2/, etc.) to ensure proper coordination between multiple agents. The waves_directory parameter is configurable via the waves_directory argument.
-- Security-Informed Research Report: $waves_directory/wave-[X]/research_security_[domain].md
-- Technology Security Assessment: $waves_directory/wave-[X]/technology_security_[domain].md
-- Risk Analysis Matrix: $waves_directory/wave-[X]/risk_analysis_[domain].md
-- Compliance Impact Report: $waves_directory/wave-[X]/compliance_impact_[domain].md
-- Security Recommendations: $waves_directory/wave-[X]/security_recommendations_[domain].md
-
-SECURITY COORDINATION:
-- Cross-team security research validation
-- Security expertise integration
-- Risk assessment collaboration
-- Compliance requirement verification
-```
-
-### Technology Security Research
-
-#### Framework Security Assessment
-**Frontend Framework Security Research:**
-- React, Angular, Vue security features and vulnerabilities
-- Component security patterns and anti-patterns
-- State management security implications
-- Client-side security control effectiveness
-- Browser security feature integration
-
-**Backend Framework Security Research:**
-- Node.js, Python, Java, .NET security capabilities
-- Framework security middleware evaluation
-- API security framework assessment
-- Database integration security analysis
-- Authentication and authorization framework research
-
-#### Cloud Platform Security Research
-**Cloud Security Service Evaluation:**
-- AWS, Azure, GCP security service comparison
-- Cloud-native security tool assessment
-- Container and serverless security research
-- Cloud compliance and governance research
-- Multi-cloud security architecture research
-
-### Compliance and Regulatory Research
-
-#### Regulatory Framework Research
-**Privacy Regulation Research:**
-- GDPR compliance requirement analysis
-- CCPA privacy requirement research
-- Regional privacy law investigation
-- Cross-border data transfer research
-- Privacy by design implementation research
-
-**Industry Compliance Research:**
-- HIPAA healthcare compliance research
-- PCI DSS payment security research
-- SOX financial compliance research
-- Industry-specific security standard research
-- Audit requirement and preparation research
-
-### Security Technology Research
-
-#### Authentication and Authorization Research
-**Identity Management Research:**
-- OAuth 2.0, OIDC, SAML security comparison
-- Multi-factor authentication technology research
-- Identity provider security assessment
-- Single sign-on security evaluation
-- Zero-trust architecture research
-
-**Authorization Framework Research:**
-- Role-based access control implementation research
-- Attribute-based access control research
-- Policy-based authorization research
-- Fine-grained authorization research
-- Authorization performance and security trade-offs
-
-#### Cryptographic Technology Research
-**Encryption Technology Assessment:**
-- Symmetric and asymmetric encryption research
-- Key management system evaluation
-- Post-quantum cryptography research
-- Cryptographic protocol security research
-- Performance and security optimization research
-
-### Threat Intelligence Research
-
-#### Threat Landscape Analysis
-**Current Threat Research:**
-- OWASP Top Ten evolution research
-- Industry-specific threat intelligence
-- Attack technique and tool research
-- Vulnerability disclosure analysis
-- Security incident and breach research
-
-**Emerging Threat Research:**
-- AI/ML security threat research
-- IoT and edge security threat analysis
-- Supply chain attack research
-- Cloud security threat landscape
-- Quantum computing security implications
-
-### Security Architecture Research
-
-#### Security Design Pattern Research
-**Architecture Security Patterns:**
-- Secure software architecture research
-- Microservices security pattern research
-- API security architecture research
-- Event-driven security architecture research
-- Serverless security architecture research
-
-**Security Control Research:**
-- Defense in depth strategy research
-- Security control effectiveness research
-- Security monitoring and detection research
-- Incident response architecture research
-- Security automation and orchestration research
-
-### Security Tool and Technology Evaluation
-
-#### Security Tool Assessment
-**Security Testing Tool Research:**
-- SAST tool comparison and evaluation
-- DAST tool effectiveness research
-- IAST tool integration research
-- Security testing automation research
-- Security tool integration and workflow research
-
-**Security Monitoring Tool Research:**
-- SIEM solution comparison research
-- Security analytics platform research
-- Threat detection tool evaluation
-- Security orchestration tool research
-- Compliance monitoring tool assessment
-
-### Research Quality and Validation
-
-#### Research Validation Methodology
-**Security Research Validation:**
-- Expert review and validation
-- Industry benchmark comparison
-- Security community feedback integration
-- Peer review and verification
-- Real-world testing and validation
-
-#### Research Documentation Security
-**Secure Research Documentation:**
-- Sensitive information protection in research
-- Intellectual property security in documentation
-- Research finding classification and handling
-- Secure research sharing and collaboration
-- Research artifact security and retention
-
-### Research Integration and Application
-
-#### Research Finding Integration
-**Security-Informed Decision Making:**
-- Research finding risk assessment
-- Business impact analysis of research
-- Implementation roadmap development
-- Security trade-off analysis
-- Compliance impact evaluation
-
-#### Continuous Research Framework
-**Ongoing Security Research:**
-- Technology landscape monitoring
-- Threat intelligence integration
-- Compliance requirement updates
-- Security best practice evolution
-- Industry trend and standard updates
-
-This secure research framework ensures that all research activities maintain security awareness and produce actionable insights that enhance rather than compromise security posture.
-
-## Example Wave Directory Structure
-
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
-
-**Research Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── research_objectives.md # Research goals and questions
-│   ├── domain_analysis.md     # Domain landscape assessment
-│   ├── methodology.md         # Research approach
-│   ├── security_context.md    # Security considerations
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── technology_assessment.md
-│   ├── security_landscape.md
-│   ├── compliance_requirements.md
-│   └── WAVE_1_FINDINGS.md
-├── wave-2/
-│   ├── framework_evaluation.md
-│   ├── tool_comparison.md
-│   ├── best_practices.md
-│   └── WAVE_2_ANALYSIS.md
-├── wave-3/
-│   ├── recommendations.md
-│   ├── implementation_guide.md
-│   ├── risk_matrix.md
-│   └── WAVE_3_SYNTHESIS.md
-└── RESEARCH_REPORT.md
-``` 
+## Success Criteria
+- All research questions answered with evidence
+- At least 3 viable options evaluated
+- Clear winner identified OR trade-offs documented
+- Implementation path validated through POC
+- Stakeholder confidence in recommendations

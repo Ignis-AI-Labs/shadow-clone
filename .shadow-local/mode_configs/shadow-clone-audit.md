@@ -1,154 +1,93 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
+# Audit Mode
 
-# Shadow Clone Audit Mode Configuration
+## Purpose
+Comprehensive security and compliance assessment across all system components.
+Identifies vulnerabilities, compliance gaps, and provides actionable remediation plans.
 
-## 🛡️ Comprehensive Security Audit Framework
+## Wave Structure
 
-Self-contained mode requiring NO project plan. Covers all essential security frameworks with optional customization.
+### Wave-0: Scope Discovery & Planning
+**Team**: Audit Lead, Compliance Officer, Security Architect, Record Keeper
 
-## Configuration
+**Critical Tasks**:
+- Analyze application type and architecture
+- Determine which Core Assessments apply:
+  - **OWASP**: Top Ten, ASVS, MASVS, API Security
+  - **NIST SSDF**: Secure Software Development Framework
+  - **CWE**: Common Weakness Enumeration patterns
+  - **Compliance**: GDPR, HIPAA, PCI DSS, SOX (as applicable)
+  - **Tools**: SAST/DAST, dependency scanning, IaC security
+- Prioritize from 7 Security Domains based on app type:
+  1. **Authentication & Authorization**: IAM, MFA, RBAC, OAuth/OIDC
+  2. **Data Security**: Encryption, PII/PHI handling, retention
+  3. **Infrastructure**: Cloud, containers, CI/CD, network
+  4. **Application**: Input validation, XSS/CSRF, business logic
+  5. **Supply Chain**: Dependencies, licenses, build security
+  6. **Compliance**: Regulatory requirements, audit trails
+  7. **Quality & Performance**: Code complexity, bottlenecks, technical debt
+- Create comprehensive plan even without user input
 
-**Deployment**: ~21-24 agents (split into multiple 10-agent batches)
-**Operation**: Comprehensive security assessment across all frameworks
+**Outputs**:
+- **Audit Assessment Matrix** - which frameworks apply and why
+- **Domain Priority Map** - ranked 1-7 domains by risk/relevance
+- **Compliance Requirements** - specific regulations that apply
+- Wave allocation based on selected domains:
+  - 2-3 priority domains: 2-3 waves
+  - 4-5 domains: 4-5 waves  
+  - 6-7 domains: 6+ waves (comprehensive audit)
+- Tool configuration for applicable scanners
 
-### Optional Customization
-```bash
-# Default comprehensive audit
-claude "Load shadow-clone-prompt.md and execute with project_type=audit"
+### Wave-1 to Wave-N: Domain Assessments (Dynamic)
+**Consistent Team Structure**: Security Auditor, Domain Expert, Tool Specialist, Record Keeper
 
-# Focus on specific areas
-claude "Load shadow-clone-prompt.md and execute with project_type=audit - Focus on OWASP Top Ten and API security only"
+**Execution Based on Wave-0 Priority Map**:
+- Focus on highest priority domains first
+- Apply relevant frameworks per domain
+- Use appropriate tools for each assessment
+- Ensure comprehensive coverage without redundancy
 
-# Industry-specific
-claude "Load shadow-clone-prompt.md and execute with project_type=audit - Healthcare application requiring HIPAA compliance"
-```
+**Example Domain Focus by App Type**:
+- **Web Applications**: Authentication, Application, Data Security priority
+- **APIs/Microservices**: API Security, Authentication, Supply Chain focus
+- **Infrastructure/DevOps**: Infrastructure, Supply Chain, Compliance emphasis
+- **Healthcare/Finance**: Compliance, Data Security, Authentication critical
+- **E-commerce**: Data Security, Application, Authentication priority
 
-## Security Frameworks
+**Outputs per wave**:
+- Domain-specific vulnerability findings
+- Framework compliance status (OWASP, NIST, etc.)
+- Risk assessments with business impact
+- Tool scan results with validated findings
+- Remediation recommendations by severity
 
-### Core Assessments
-- **OWASP**: Top Ten, ASVS, MASVS, API Security
-- **NIST SSDF**: Secure Software Development Framework
-- **CWE**: Common Weakness Enumeration patterns
-- **Compliance**: GDPR, HIPAA, PCI DSS, SOX
-- **Tools**: SAST/DAST, dependency scanning, IaC security
+### Final Wave: Consolidation & Reporting
+**Team**: Audit Lead, Senior Security Analyst, Compliance Officer, Technical Writer, Record Keeper
 
-### Security Domains
-1. **Authentication & Authorization**: IAM, MFA, RBAC, OAuth/OIDC
-2. **Data Security**: Encryption, PII/PHI handling, retention
-3. **Infrastructure**: Cloud, containers, CI/CD, network
-4. **Application**: Input validation, XSS/CSRF, business logic
-5. **Supply Chain**: Dependencies, licenses, build security
-6. **Compliance**: Regulatory requirements, audit trails
-7. **Quality & Performance**: Code complexity, bottlenecks, technical debt
+**Outputs**:
+- SECURITY_AUDIT_REPORT.md - Executive summary and critical findings
+- VULNERABILITY_REGISTER.md - Prioritized vulnerabilities with remediation
+- COMPLIANCE_MATRIX.md - Framework compliance status
 
-## Agent Template
-```
-SECURITY AUDIT AGENT: [Specialization]
-DOMAIN: [Authentication/Data/Infrastructure/Application/Supply Chain/Compliance/Quality]
-WAVE: [Number]
-FRAMEWORKS: [OWASP/NIST/CWE/Industry]
+## Key Deliverables
+- Comprehensive security assessment
+- Prioritized vulnerability list with severity ratings
+- Compliance gap analysis
+- Remediation roadmap with timelines
+- Executive presentation
 
-WORKSPACE: /root/repos/shadow-clone
-WAVES DIRECTORY: $waves_directory
+## Mode-Specific Rules
+- **Wave-0 determines audit focus** - not all domains apply to all apps
+- **Framework selection based on context** - use relevant standards only
+- **Proactive scope definition** - create comprehensive plan even without user input
+- **5-Layer validation**: Tool correlation, code context, business logic, dynamic testing, expert consensus
+- Cross-reference findings between security domains
+- Evidence required with reproducible steps
+- NO skipping major compliance issues
+- False positive rate must be <10%
 
-REQUIREMENTS:
-1. Framework Integration
-2. Complete File Analysis
-3. Multi-Tool Validation
-4. False Positive Prevention
-5. Cross-Tool Correlation
-6. Business Context Analysis
-7. Expert Consensus
-8. Practical Validation
-
-TOOLS:
-- SAST: [SonarQube/Semgrep/CodeQL]
-- DAST: [OWASP ZAP/Burp Suite]
-- Dependencies: [Snyk/OWASP Dependency-Check]
-- Config: [Checkov/Terrascan]
-```
-
-## Deliverables
-
-**3 Master Documents** (all teams contribute):
-
-1. **SECURITY_AUDIT_REPORT.md**
-   - Executive Summary
-   - Critical Findings
-   - Domain Analysis
-   - Remediation Roadmap
-
-2. **VULNERABILITY_REGISTER.md**
-   - ID, Severity, Domain
-   - Description, Evidence
-   - Remediation, Status
-
-3. **COMPLIANCE_MATRIX.md**
-   - Framework coverage
-   - Requirement status
-   - Gap analysis
-
-## Document Coordination
-
-**Sequential Updates Only**:
-1. Teams work in `wave-X/[team]_findings.md`
-2. Convergence sessions consolidate
-3. Document Master updates shared reports
-4. Section ownership by domain
-
-## Quality Assurance
-
-**5-Layer Validation**:
-1. Tool correlation
-2. Code context analysis
-3. Business logic validation
-4. Dynamic testing
-5. Expert consensus
-
-**Metrics**:
-- False positive rate <10%
-- Expert consensus >95%
-- Client challenge <5%
-
-**Templates**: Use `.shadow/templates/` for all reports
-
-## Example Wave Directory Structure
-
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
-
-**Audit Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── issue_analysis.md      # Security issue analysis
-│   ├── vulnerability_scope.md # Vulnerability assessment scope
-│   ├── audit_framework.md     # Selected audit frameworks
-│   ├── tool_selection.md      # Security tool selection
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── authentication_findings.md
-│   ├── data_security_findings.md
-│   ├── infrastructure_assessment.md
-│   └── WAVE_1_CONVERGENCE.md
-├── wave-2/
-│   ├── api_security_findings.md
-│   ├── application_vulnerabilities.md
-│   ├── supply_chain_analysis.md
-│   └── WAVE_2_CONVERGENCE.md
-├── wave-3/
-│   ├── compliance_assessment.md
-│   ├── false_positive_validation.md
-│   └── WAVE_3_CONVERGENCE.md
-└── FINAL_DELIVERABLES/
-    ├── SECURITY_AUDIT_REPORT.md
-    ├── VULNERABILITY_REGISTER.xlsx
-    ├── RISK_ASSESSMENT_MATRIX.md
-    ├── REMEDIATION_ROADMAP.md
-    └── EXECUTIVE_SUMMARY.pdf
-```
+## Success Criteria
+- All core assessment areas covered
+- Vulnerabilities documented with severity (Critical/High/Medium/Low)
+- Compliance gaps identified and tracked
+- Remediation plan approved
+- Stakeholder sign-off received
