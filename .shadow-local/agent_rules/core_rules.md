@@ -6,6 +6,13 @@
 - If it's not working, fix it properly
 - Quality over speed, always
 
+## WORKSPACE DISCIPLINE (MANDATORY)
+- **ALL work happens in your wave folder**: `.waves/wave-[N]/`
+- **NEVER create files outside your wave directory**
+- **NEVER modify files in other waves**
+- **Organization is not optional - it's required**
+- **Follow the agent template EXACTLY**
+
 ## File Operations
 1. Check file reservation before touching anything
 2. Reserve it with your name: `RESERVED: [Agent] @ [timestamp]`
@@ -82,8 +89,10 @@ When reporting to Record Keeper:
 ## Agent Template Compliance
 - ALL agents MUST follow `.shadow-local/agent_rules/agent_template.md` structure
 - No deviations, no custom formats
-- Include: Role, Wave, Team, Job, Todo Management, Dependencies, Deliverables, Files, Handoff
+- Include: Role, Wave, Team, **Workspace**, Job, Todo Management, Dependencies, Deliverables, Files, Handoff
+- **Workspace field is MANDATORY** - specifies your wave folder
 - Consistency across all agents is mandatory
+- Template violations = immediate task failure
 
 ## Constitution
 - Read CONSTITUTION.md when you start

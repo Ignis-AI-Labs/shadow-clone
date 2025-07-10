@@ -1,180 +1,89 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
+# Feature Mode
 
-# Shadow Clone Feature Mode Configuration
+## Purpose
+Build new capabilities with security-first approach and comprehensive testing.
 
-## 🔨 Security-First Feature Development Framework
+## Wave Structure
 
-Build new capabilities that strengthen rather than weaken security posture.
+### Wave-0: Feature Analysis & Team Composition
+**Team**: Feature Architect, Technical Analyst, Security Analyst, Record Keeper
 
-## Pre-Development Planning
+**Critical Tasks**:
+- Analyze requested feature(s) in detail
+- Determine required technical domains
+- Assess security implications
+- Define optimal team composition for subsequent waves
+- Estimate complexity and wave count
 
-### Threat Modeling (STRIDE)
-- **Spoofing**: Authentication requirements
-- **Tampering**: Data integrity protection
-- **Repudiation**: Audit logging needs
-- **Information Disclosure**: Access control
-- **Denial of Service**: Resource protection
-- **Elevation of Privilege**: Authorization
+**Outputs**:
+- Feature breakdown and dependencies
+- **Dynamic team roster** for implementation waves:
+  - Backend-heavy: Database Architect, API Developer, Backend Engineer
+  - Frontend-heavy: UI/UX Designer, Frontend Developer, Accessibility Expert
+  - Full-stack: Mix of backend/frontend specialists
+  - Data-intensive: Data Engineer, ETL Specialist, Analytics Expert
+  - Integration-focused: Systems Integrator, API Designer, Middleware Expert
+  - ML/AI features: ML Engineer, Data Scientist, Model Validator
+- Security threat model
+- Wave allocation:
+  - Simple features: 2 waves (implement + validate)
+  - Standard features: 3-4 waves (design, implement, integrate, validate)
+  - Complex features: 5+ waves (architecture, multiple implementations, optimization)
 
-### Security Requirements
-**Functional**: Authentication, validation, encryption, logging, error handling
-**Non-Functional**: Performance security, scalability, compliance
+### Wave-1 to Wave-N: Dynamic Implementation
+**Team Structure**: Determined by Wave-0 analysis (always includes Record Keeper)
 
-## Development Phases
+**Common Patterns**:
+1. **API-First Development**: Backend team → API team → Frontend team
+2. **UI-First Prototyping**: Design team → Frontend team → Backend team
+3. **Parallel Development**: Backend + Frontend teams working simultaneously
+4. **Iterative Enhancement**: Core team → Specialized teams → Polish team
 
-### Phase 1: Secure Design
-- Integration points security analysis
-- API security requirements
-- Database security considerations
-- Access control mechanisms
-- Input validation strategies
-
-### Phase 2: Secure Implementation
-- Language-specific security guidelines
-- Framework security best practices
-- Security testing integration
-- Code review checklists
-
-### Phase 3: Secure Deployment
-- Configuration verification
-- Environment security settings
-- Monitoring setup
-- Incident response integration
-
-## Security Masters
-
-**Frontend Security Master**: Client-side security, XSS/CSRF prevention, authentication flows
-**Backend Security Master**: API security, authorization, database protection, business logic
-**Integration Security Master**: Third-party services, cross-service auth, monitoring
-**Database Security Master**: Schema design, query security, encryption, audit trails
-
-## Agent Template
-```
-SECURE FEATURE AGENT: [Domain Master]
-FOCUS: [Frontend/Backend/Integration/Database]
-WAVE: [Number]
-FRAMEWORKS: [OWASP/NIST/Industry]
-
-WORKSPACE: /root/repos/shadow-clone
-WAVES DIRECTORY: $waves_directory
-
-CONTEXT:
-- Feature: [New capability]
-- Security Level: [Low/Medium/High/Critical]
-- Integration Points: [Systems]
-- Data Sensitivity: [Classification]
-
-REQUIREMENTS:
-1. Threat Model Validation
-2. Secure Design Patterns
-3. Input Validation
-4. Output Encoding
-5. Access Control
-6. Audit Logging
-7. Error Handling
-
-DELIVERABLES:
-- Implementation: /root/repos/shadow-clone/src/
-- Design Docs: $waves_directory/wave-X/security_design.md
-- Threat Model: $waves_directory/wave-X/threat_model.md
-- Test Suite: /root/repos/shadow-clone/tests/security/
-```
-
-## Technology Guidelines
-
-### Frontend
-- Component access control
-- State management security
-- Routing guards
-- Token management
-- CORS configuration
-
-### Backend
-- Middleware security
-- Session management
-- Query parameterization
-- File upload security
-- Error handling
-
-### Database
-- Parameterized queries
-- Access control
-- Connection security
-- Audit logging
-- Encryption
-
-## Security Testing
-
-### Automated
-- Pre-commit scanning
-- CI/CD security gates
-- Security unit tests
-- SAST integration
-
-### Manual
-- Code security review
-- Architecture assessment
-- Configuration verification
-- Integration testing
-
-## Compliance Integration
-
-**GDPR**: Data minimization, consent, privacy by design
-**HIPAA**: PHI handling, access control, audit logging
-**PCI DSS**: Cardholder protection, payment security
-
-## Monitoring
-
-### Security Events
-- Authentication events
-- Authorization failures
-- Validation failures
-- Error conditions
+**Required Outputs per Wave**:
+- Working code for assigned components
+- Unit tests with >80% coverage
+- Integration points documented
 - Performance metrics
+- Security considerations addressed
 
-### Alerts
-- Security thresholds
-- Anomaly detection
-- Incident response
-- Escalation procedures
+### Final Wave: Validation & Release Preparation
+**Team**: QA Lead, Security Auditor, Performance Engineer, DevOps Engineer, Technical Writer, Record Keeper
 
-## Example Wave Directory Structure
+**Comprehensive Validation**:
+- End-to-end feature testing
+- Security penetration testing
+- Performance under load
+- Accessibility compliance
+- Cross-browser/platform testing
 
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
+**Outputs**:
+- Complete test report
+- Security clearance certificate
+- Performance benchmarks
+- Deployment package
+- User documentation
+- Release notes
 
-**Feature Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── feature_analysis.md    # Feature requirements breakdown
-│   ├── impact_assessment.md   # Code impact analysis
-│   ├── security_review.md     # Security implications
-│   ├── architecture_plan.md   # High-level design
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── architecture_design.md
-│   ├── database_schema.sql
-│   ├── api_specification.yaml
-│   └── WAVE_1_SUMMARY.md
-├── wave-2/
-│   ├── backend/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   └── services/
-│   ├── frontend/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   └── styles/
-│   └── WAVE_2_SUMMARY.md
-├── wave-3/
-│   ├── tests/
-│   ├── documentation/
-│   └── WAVE_3_SUMMARY.md
-└── FEATURE_COMPLETE.md
-```
+## Key Deliverables
+- Working feature code in `/src`
+- Comprehensive test coverage
+- Security assessment report
+- User documentation
+- Deployment artifacts
+
+## Mode-Specific Rules
+- **Wave-0 determines all subsequent teams** - no predetermined agent lists
+- **Adapt team size to feature complexity** - simple features need fewer agents
+- **Record Keeper in every wave** - non-negotiable for context preservation
+- Security threat modeling before implementation
+- Test-driven development approach
+- Feature flags for gradual rollout
+- Cross-functional expertise matched to feature needs
+
+## Success Criteria
+- Feature fully functional per specifications
+- All tests passing (>80% coverage minimum)
+- Security review passed with no critical issues
+- Performance meets or exceeds targets
+- Documentation complete (user and technical)
+- Successfully deployed to staging environment

@@ -1,173 +1,97 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
+# Refactor Mode
 
-# Shadow Clone Refactor Mode Configuration
+## Purpose
+Break down monolithic code into modular, maintainable components while preserving exact functionality.
 
-## 🔄 Security-Preserving Refactoring Framework
+## Wave Structure
 
-Reshape code while preserving and enhancing security controls.
+### Wave-0: Code Analysis & Team Assembly
+**Team**: Lead Architect, Code Quality Analyst, Tech Debt Assessor, Record Keeper
 
-## Pre-Refactoring Assessment
+**Critical Tasks**:
+- Analyze codebase to identify refactoring opportunities
+- Measure technical debt and code smells
+- Map monolithic components and tight coupling
+- **Determine specialized teams based on refactoring needs**
+- Ensure test coverage baseline (>80% required)
 
-### Security Control Inventory
-- Authentication/authorization implementations
-- Input validation and sanitization
-- Encryption and cryptographic implementations
-- Error handling and logging systems
-- Security test coverage
+**Outputs**:
+- Code quality metrics (complexity, duplication, coupling)
+- **Dynamic team roster** for refactoring waves:
+  - Monolith breakdown: Modularization Expert, Domain Architect, API Designer
+  - Code smell cleanup: Clean Code Expert, Pattern Specialist, Naming Consultant
+  - Architecture issues: System Architect, Dependency Expert, Layer Specialist
+  - Legacy modernization: Migration Expert, Compatibility Engineer, Test Retrofitter
+  - Performance refactoring: Algorithm Expert, Memory Optimizer, Cache Specialist
+  - Database refactoring: Schema Designer, Query Optimizer, Data Migration Expert
+- Dependency visualization and target architecture
+- Refactoring roadmap with priorities:
+  - Quick wins: 1-2 waves (rename, extract methods, remove dead code)
+  - Structural changes: 3-4 waves (extract modules, introduce patterns)
+  - Architecture transformation: 5+ waves (complete restructuring)
 
-### Risk Assessment
-- Impact on existing security controls
-- Potential for new vulnerabilities
-- Effect on compliance requirements
-- Security validation checkpoints
+### Wave-1 to Wave-N: Dynamic Refactoring
+**Team Structure**: Determined by Wave-0 analysis (always includes Record Keeper)
 
-## Refactoring Phases
+**Refactoring Strategies**:
+1. **Bottom-Up**: Start with leaf classes → work up to core
+2. **Top-Down**: Architecture first → implementation details
+3. **Strangler Pattern**: Gradually replace legacy with new structure
+4. **Parallel Refactoring**: Multiple teams on independent modules
 
-### Phase 1: Security Planning
-- Document existing security implementations
-- Create security control test suite
-- Establish validation criteria
-- Identify enhancement opportunities
+**Focus Areas** (based on Wave-0 findings):
+- **Code Structure**: Extract methods/classes, reduce complexity, improve naming
+- **Design Patterns**: Introduce appropriate patterns, remove anti-patterns
+- **Dependencies**: Invert dependencies, reduce coupling, improve cohesion
+- **Modularity**: Extract modules, define interfaces, establish boundaries
+- **Testing**: Improve testability, add missing tests, refactor test code
+- **Performance**: Algorithm improvements without changing behavior
 
-### Phase 2: Incremental Refactoring
-- Maintain security controls during changes
-- Validate functionality at each step
-- Monitor for security regressions
-- Implement security patterns
+**Required Process per Wave**:
+- Run full test suite (must stay green)
+- Apply refactoring pattern
+- Verify behavior unchanged
+- Update/add tests for better coverage
+- Document architectural decisions
 
-### Phase 3: Security Validation
-- Comprehensive security testing
-- Control functionality validation
-- Performance security assessment
-- Compliance verification
+### Final Wave: Integration & Quality Validation
+**Team**: Integration Lead, QA Engineer, Performance Tester, Documentation Writer, Record Keeper
 
-## Security Masters
+**Validation Requirements**:
+- 100% backward compatibility verification
+- Performance benchmarking (must not degrade)
+- Integration testing across all modules
+- Documentation completeness check
+- Security audit of changes
 
-**Security Architecture Master**: Overall architecture, patterns, consolidation
-**Code Security Master**: Critical code refactoring, logic optimization, reviews
-**Testing Security Master**: Test suite maintenance, regression testing, coverage
-**Configuration Security Master**: Config refactoring, environment optimization, policies
+**Outputs**:
+- `REFACTORING_REPORT.md` - Changes made and rationale
+- `ARCHITECTURE_GUIDE.md` - New structure documentation
+- Module dependency diagram
+- Migration guide for dependent systems
+- Performance comparison report
 
-## Agent Template
-```
-SECURE REFACTORING AGENT: [Domain Master]
-FOCUS: [Architecture/Code/Testing/Configuration]
-WAVE: [Number]
-FRAMEWORKS: [OWASP/NIST/Industry]
+## Key Deliverables
+- Modularized codebase with clear boundaries
+- Comprehensive test suite (>90% coverage)
+- Architecture documentation with diagrams
+- Technical debt reduction metrics (target: 50%+ reduction)
+- Zero-downtime migration plan
 
-WORKSPACE: /root/repos/shadow-clone
-WAVES DIRECTORY: $waves_directory
+## Mode-Specific Rules
+- **Wave-0 determines refactoring teams** - specialists matched to code issues
+- **Behavior preservation is sacred** - not one functional change allowed
+- **Test-driven refactoring** - tests must pass at every step
+- **Record Keeper in every wave** - tracks structural evolution
+- **Incremental changes** - never break the build
+- **Document architectural decisions** - explain the "why" behind changes
+- **No feature creep** - reject any "while we're at it" additions
+- **Performance monitoring** - ensure no degradation
 
-CONTEXT:
-- Scope: [Code sections]
-- Risk Level: [Low/Medium/High]
-- Security Controls: [Existing mechanisms]
-- Audit Findings: [Previous issues]
-- Compliance: [Requirements]
-
-REQUIREMENTS:
-1. Control Preservation
-2. Security Enhancement
-3. Audit Integration
-4. Regression Prevention
-5. Compliance Maintenance
-6. Testing Coverage
-7. Documentation Updates
-
-DELIVERABLES:
-- Refactored Code: /root/repos/shadow-clone/src/
-- Control Documentation: $waves_directory/wave-X/security_controls.md
-- Enhancement Report: $waves_directory/wave-X/security_improvements.md
-- Test Updates: /root/repos/shadow-clone/tests/security/
-```
-
-## Refactoring Patterns
-
-### Authentication/Authorization
-- Centralize authentication logic
-- Implement secure patterns
-- Enhance session management
-- Consolidate authorization checks
-
-### Input/Output Security
-- Centralize validation logic
-- Implement validation frameworks
-- Consolidate output encoding
-- Context-aware encoding
-
-### Error Handling/Logging
-- Secure error patterns
-- Prevent information disclosure
-- Centralize security logging
-- Structured audit trails
-
-## Technology-Specific
-
-### Frontend
-- Component security patterns
-- State management security
-- Routing security improvement
-- CSP implementation
-
-### Backend
-- Middleware security patterns
-- API security improvement
-- Database interaction security
-- Service integration review
-
-### Database
-- Query security optimization
-- Connection security
-- Access control enhancement
-- Audit trail implementation
-
-## Quality Metrics
-
-### Security Tracking
-- Vulnerability reduction
-- Control coverage improvement
-- Code security quality
-- Compliance score enhancement
-
-### Performance Monitoring
-- Control performance impact
-- Authentication/authorization performance
-- Encryption overhead
-- Logging efficiency
-
-## Example Wave Directory Structure
-
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
-
-**Refactor Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── code_analysis.md       # Current code structure analysis
-│   ├── refactor_goals.md      # Refactoring objectives
-│   ├── security_controls.md   # Existing security inventory
-│   ├── risk_assessment.md     # Refactoring risk analysis
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── refactor_analysis.md
-│   ├── dependency_graph.md
-│   ├── technical_debt_assessment.md
-│   └── WAVE_1_PLAN.md
-├── wave-2/
-│   ├── refactored_code/
-│   │   ├── before/
-│   │   └── after/
-│   ├── migration_scripts/
-│   └── WAVE_2_CHANGES.md
-├── wave-3/
-│   ├── test_updates/
-│   ├── performance_benchmarks.md
-│   └── WAVE_3_VALIDATION.md
-└── REFACTOR_SUMMARY.md
-```
+## Success Criteria
+- All original tests pass without modification
+- Code quality metrics improved (complexity, coupling, cohesion)
+- Target architecture achieved per Wave-0 plan
+- Zero functional changes - only structural improvements
+- Technical debt reduced by targeted percentage
+- Build and deployment times improved

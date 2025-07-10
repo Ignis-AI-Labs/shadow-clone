@@ -22,13 +22,15 @@ source_mode = "local"  # Always local for this version
 ## 🚨 CRITICAL: Mandatory Initialization Sequence
 
 **BEFORE ANY EXECUTION**, the system MUST:
-1. Load the system_core_rules.md from local files or API
-2. Verify ALL critical system components exist
-3. Create wave-0 directory for planning
-4. Initialize all tracking systems
-5. Validate everything is properly configured
+1. Verify all system components exist (agent_rules, templates, mode_configs)
+2. Create wave-0 directory structure with all subdirectories
+3. Initialize tracking systems (RECORD_KEEPER_STATUS.md, AGENT_ROSTER.md, COMPLETION_STATUS.md)
+4. Validate git branch strategy (never on main/master)
+5. Confirm Record Keeper presence in all teams
 
 **FAILURE TO INITIALIZE = SYSTEM FAILURE**
+
+See System Coordination Rules section for detailed initialization requirements.
 
 ## 🔑 SACRED RULE: Record Keeper is Mandatory
 
@@ -39,6 +41,364 @@ source_mode = "local"  # Always local for this version
 - Preserves project memory across all waves
 - System will FAIL if any team lacks a Record Keeper
 
+### Record Keeper - CONVERGENCE NEXUS
+**Wave:** All waves (embedded in teams)
+**Authority:** Central point of collective awareness
+**Completion:** ALWAYS LAST - Never marks complete until all agents report final status
+
+**Core Duties:**
+- Act as convergence point for ALL agent activities
+- **SOLE MAINTAINER of CONSTITUTION.md** - no other agent modifies it
+- Track all decisions, progress, and blockers
+- Document wave outcomes and collective state
+- Enable system-wide progress recognition
+- Transform agent reports into coherent project narrative
+- **MUST BE LAST AGENT TO COMPLETE IN EVERY WAVE**
+
+**Critical Tasks:**
+- Receive reports from ALL agents (including Team Lead)
+- Never deployed alone - always with a team
+- Update constitution after each significant event
+- Create comprehensive audit trails
+- Synthesize team progress into coherent narrative
+- Alert Team Lead when convergence issues arise
+
+**Protection Protocols:**
+1. **Queue Management**
+   - Maintain `.waves/wave-N/RECORD_KEEPER_STATUS.md`
+   - Process one agent report at a time
+   - Update status: AVAILABLE → BUSY:[Agent] → AVAILABLE
+   - Never process simultaneous reports
+
+2. **Checkpoint Creation**
+   - Checkpoint after every 3 reports
+   - Checkpoint at wave completion
+   - Save to `.waves/wave-N/checkpoints/`
+   - Include: constitution state, report count, timestamp
+
+3. **Self-Integrity Checks**
+   - Verify constitution coherence after each update
+   - Check for duplicate or missing reports
+   - Maintain report sequence log
+   - Alert Team Lead if corruption detected
+
+4. **Integrity Tracking**
+   - Maintain `.waves/wave-N/RECORD_KEEPER_LOG.md`:
+   ```
+   [2024-01-01 10:00:00] Report #001 from Backend Dev - Added
+   [2024-01-01 10:05:00] Constitution updated - Section: Progress
+   [2024-01-01 10:10:00] Report #002 from QA Engineer - Added
+   [2024-01-01 10:15:00] Checkpoint created - checkpoint-001.md
+   [2024-01-01 10:20:00] Report #003 from Team Lead - Added
+   ```
+   - Sequential report numbers prevent gaps
+   - Timestamps enable timeline reconstruction
+   - Cross-reference with black box recordings
+
+5. **Wave Completion Protocol**
+   - Track all agents assigned to current wave
+   - Maintain checklist of final reports received
+   - DO NOT mark self as complete until:
+     * All agents have reported "Complete" status
+     * All handoffs are documented
+     * Final wave summary is written
+     * Constitution is updated with wave outcomes
+   - Create `.waves/wave-N/WAVE_COMPLETE.md` only after all agents done
+
+6. **Mode Completion Protocol (FINAL WAVE ONLY)**
+   - When in the FINAL wave of any mode:
+     * Wait for ALL waves to be marked complete
+     * Use `templates/mode-completion-template.md` to create summary
+     * Save as `.waves/MODE_COMPLETION_SUMMARY.md`
+     * Update constitution with:
+       - "MODE COMPLETE - [mode name]" status
+       - Summary of entire mode execution
+       - List of all deliverables created
+       - Total metrics and timeline
+       - Key learnings and decisions
+     * Create `.waves/MODE_COMPLETE.md` marker
+     * This is YOUR FINAL ACT before marking complete
+   - Without this summary, the mode is NOT complete
+
+**Reporting Structure:**
+```
+All Agents → [Queue] → Record Keeper → Constitution
+     ↓                      ↓
+Team Lead → [Queue] → Record Keeper → Constitution
+                           ↓
+                    [Checkpoints]
+```
+
+## System Coordination Rules
+
+### Pre-Execution Requirements
+- Valid git repository with clean working tree
+- CONSTITUTION.md exists and is readable
+- .shadow-local/ directory structure intact
+- Sufficient disk space for artifacts
+
+### Mandatory System Initialization
+**BEFORE ANY EXECUTION**, the system MUST:
+1. Load and verify all system components:
+   - `.shadow-local/agent_rules/core_rules.md`
+   - `.shadow-local/agent_rules/specialized_agent_rules.md`
+   - `.shadow-local/templates/` (all template files)
+   - `.shadow-local/mode_configs/` (selected mode)
+2. Create wave-0 directory structure:
+   ```
+   .waves/wave-0/
+   ├── deliverables/
+   ├── research/
+   ├── drafts/
+   ├── black-box/
+   └── WAVE_STATUS.md
+   ```
+3. Initialize tracking systems:
+   - `RECORD_KEEPER_STATUS.md`
+   - `AGENT_ROSTER.md`
+   - `COMPLETION_STATUS.md`
+4. Validate git branch strategy (never on main/master)
+5. Confirm Record Keeper presence in all teams
+
+**FAILURE TO INITIALIZE = SYSTEM FAILURE**
+
+### Workspace Structure
+```
+project/
+├── .shadow-local/          # System files (this directory)
+│   ├── agent_rules/        # Agent behavior definitions
+│   ├── templates/          # Document templates
+│   ├── mode_configs/       # Execution mode configurations
+│   └── shadow-clone-prompt.md # This file
+├── .waves/                 # Active wave execution
+│   ├── wave-0/            # Planning wave (mandatory)
+│   ├── wave-1/            # Implementation waves
+│   └── wave-N/            # Final convergence
+│       ├── AGENT_ROSTER.md
+│       ├── COMPLETION_STATUS.md
+│       ├── RECORD_KEEPER_STATUS.md
+│       ├── RECORD_KEEPER_LOG.md
+│       ├── checkpoints/
+│       └── black-box/
+├── .waves-archive/         # Historical waves
+│   ├── [mode]-[date]/     # e.g., feature-2025-07-10-1430
+│   └── README.md          # Archive index
+├── src/                   # Source code
+└── CONSTITUTION.md        # Project memory (Record Keeper only)
+```
+
+### File Operations & Reservation System
+
+#### File Locking Protocol
+Before modifying ANY file, agents MUST:
+1. Check for existing reservation
+2. Add reservation header: `RESERVED: [AgentName] @ [ISO-8601 timestamp]`
+3. Work on the file
+4. Remove reservation when complete
+5. One agent per file at any time
+
+#### File Placement Rules (STRICT)
+**Wave Folder Isolation:**
+- ALL agent work: `.waves/wave-N/` ONLY
+- NO files created outside assigned wave
+- NO modification of previous wave files
+- NO work in project root during execution
+
+**Required Folder Structure Per Wave:**
+```
+.waves/wave-N/
+├── deliverables/     # Final outputs only
+├── research/         # Background research
+├── drafts/          # Work in progress
+├── black-box/       # Agent report backups
+├── checkpoints/     # Record Keeper checkpoints
+└── WAVE_STATUS.md   # Wave progress tracking
+```
+
+**Violations = IMMEDIATE FAILURE:**
+- Creating files in project root
+- Modifying other wave files
+- Working outside wave folder
+- Skipping file reservation
+
+### Git Workflow & Branch Strategy
+
+#### Branch Management
+- **ALWAYS work on development branches**
+- Format: `dev-[mode]-[description]` (e.g., `dev-feature-auth-system`)
+- Main/master/production branches are READ-ONLY
+- Create dev branch if on protected branch
+
+#### Commit Protocol
+- NO commits during wave execution
+- Clean working tree between waves
+- Single atomic commit per wave with descriptive message
+- Format: "Wave N: [summary of changes]"
+
+#### Merge Process
+1. Complete all waves on dev branch
+2. Run all tests and quality checks
+3. Notify user that development is complete
+4. User reviews changes on dev branch
+5. User manually merges to main after approval
+6. Educational opportunity for git best practices
+
+### Quality Gates
+
+#### Code Standards
+- Production-ready code only
+- No commented-out code blocks
+- Proper error handling throughout
+- Security vulnerabilities = immediate stop
+- Follow language-specific best practices
+
+#### Testing Requirements
+- 100% test pass rate before wave completion
+- Integration tests for all APIs
+- Security scan must pass
+- Performance within requirements
+- No regression in existing functionality
+
+#### Documentation Standards
+- All public APIs documented
+- Architecture decisions recorded in ADRs
+- Complex logic explained inline
+- README updated with new features
+- User guides for new functionality
+
+### Wave Execution Patterns
+
+#### Wave 0 - Planning (MANDATORY)
+**Purpose:** Define project scope and approach
+**Team:** Team Lead, Planning Strategist, Research Analyst, System Architect, Record Keeper
+**Outputs:**
+- Requirements breakdown
+- Wave structure definition
+- Agent assignments
+- Technical approach
+- Risk assessment
+
+#### Wave 1-N - Implementation
+**Purpose:** Build solution incrementally
+**Patterns:**
+- **Sequential**: Dependencies between tasks
+- **Parallel**: Independent tasks (max 10 agents)
+- **Mixed**: Optimize for efficiency
+
+#### Final Wave - Convergence
+**Purpose:** Finalize and validate everything
+**Team:** Team Lead, Audit Specialist, Technical Writer, DevOps, Record Keeper
+**Critical:** Record Keeper creates MODE COMPLETION SUMMARY
+
+### Wave Execution Anti-Patterns (AVOID)
+- **Skipping Wave 0**: Leads to coordination failures
+- **Deploying Record Keeper Alone**: Context preservation fails
+- **Committing During Waves**: Breaks atomicity
+- **Parallel File Edits**: Causes conflicts
+- **Ignoring Quality Gates**: Technical debt accumulation
+
+### Mode Transitions & Wave Archiving
+
+#### Sprint Lifecycle
+When transitioning between modes or starting new sprints:
+
+1. **Pre-Transition Checklist**
+   - Ensure all waves complete
+   - Run final quality validation
+   - Update CONSTITUTION.md
+   - Commit changes to dev branch
+
+2. **Archive Protocol**
+   ```bash
+   # Archive format: .waves-archive/[mode]-[YYYY-MM-DD-HHMM]/
+   mv .waves/ .waves-archive/feature-2025-07-10-1430/
+   ```
+   - Create archive README with summary
+   - Update CONSTITUTION.md with reference
+   - Start fresh .waves/ directory
+
+3. **Mode Transition Map**
+   - Research → Plan: Archive findings, prepare planning
+   - Plan → Feature: Archive plans, create feature branch
+   - Feature → Debug: Maintain branch, focus on fixes
+   - Debug → Optimize: Archive logs, baseline performance
+   - Any → Audit: Full archive, separate audit branch
+
+### Agent Communication Protocol
+
+#### Status Reporting (to Record Keeper)
+```
+Agent: [Name]
+Wave: [N]
+Status: [Working/Blocked/Complete]
+Files: [Reserved files list]
+Blockers: [Issues preventing progress]
+Next: [Planned next steps]
+```
+
+#### Handoff Protocol
+1. Complete all assigned work
+2. Report completion to Record Keeper
+3. Update status to "Complete"
+4. Release all file reservations
+5. Document deliverables location
+6. Clear next steps for receiver
+
+### Record Keeper Recovery System
+
+#### Black Box Recording
+Every agent maintains local report copies:
+```
+.waves/wave-N/black-box/
+├── [AgentName]-report-[timestamp].md
+├── [AgentName]-status-[timestamp].md
+└── [AgentName]-handoff-[timestamp].md
+```
+
+#### Recovery Protocol
+If Record Keeper fails:
+1. **Immediate**: All agents STOP
+2. **Collect**: Gather black box recordings
+3. **Restore**: From last checkpoint + recordings
+4. **Validate**: Against git history
+5. **Resume**: With new Record Keeper if needed
+
+#### Prevention Measures
+- Dedicated Record Keeper files only
+- Simple append operations
+- Checkpoint every 10 reports
+- Clear read/write separation
+
+### Emergency Protocols
+
+#### System Failures
+1. Stop all work immediately
+2. Document failure in black box
+3. Alert Team Lead
+4. Create recovery plan
+5. Resume from last stable state
+
+#### Critical Blockers
+1. 15-minute self-resolution attempt
+2. Consult parallel agents
+3. Escalate to Team Lead
+4. Document resolution
+5. Update CONSTITUTION.md
+
+### User Interaction Commands
+
+#### Deployment Commands
+- `"Execute"`, `"Start"`, `"Begin"`, `"Go"` - Start execution
+- `"Execute but [modification]"` - Start with changes
+- `"Show me the plan"` - Review before starting
+
+#### During Execution
+- `"Status"` - Current progress
+- `"Pause"` - Halt execution
+- `"Resume"` - Continue
+- `"Skip to Wave N"` - Jump to wave
+- `"Show constitution"` - View project state
+
 ## Local File Structure (Simplified)
 
 This LOCAL version uses the following simplified file structure:
@@ -48,17 +408,14 @@ This LOCAL version uses the following simplified file structure:
 - `specialized_agent_rules.md` - All agent specializations (Technical, Analytical, Leadership)
 - `agent_template.md` - Template for new agent types
 
-### Coordination Rules (2 files total)
-- `system_core_rules.md` - System requirements, file operations, quality gates
-- `wave_coordination_protocol.md` - Wave execution flow and protocols
+### Coordination Rules
+- All coordination rules are now integrated into this prompt file
 
-### Templates (6 files total)
-- `project-execution-template.md` - Planning and execution
+### Templates (4 essential files)
+- `MASTER_PLAN_TEMPLATE.md` - Comprehensive project planning for planning mode
+- `SECURITY_AUDIT_REPORT_TEMPLATE.md` - Complete audit report for audit mode
+- `mode-completion-template.md` - Mode completion summary (Record Keeper)
 - `team-agent-templates.md` - Agent and team configurations
-- `security-assessment-template.md` - Security documentation
-- `quality-validation-template.md` - Quality assurance
-- `compliance-remediation-template.md` - Compliance planning
-- `automation-scan-template.md` - Tool results
 
 ### Mode Configurations (7 modes)
 - `shadow-clone-plan.md` - Planning mode
@@ -94,17 +451,22 @@ source=local  # CRITICAL: Determines local vs API mode
 
 ```python
 # STEP 0: MANDATORY INITIALIZATION CHECKLIST
-# LOCAL VERSION - Always read from local files
-system_core_rules = read_file(f"{base_path}/coordination_rules/system_core_rules.md")
-# Load consolidated coordination rules
-wave_coordination_protocol = read_file(f"{base_path}/coordination_rules/wave_coordination_protocol.md")
+# LOCAL VERSION - Coordination rules are integrated into this prompt
 
-# Apply the loaded rules (simplified)
-apply_rules(system_core_rules)
-apply_rules(wave_coordination_protocol)
+# All coordination rules are now part of this prompt file
+# No need to load separate coordination_rules files
 
-# Create mandatory wave-0 directory
+# Create mandatory wave-0 directory with proper structure
 create_directory(f"{waves_directory}/wave-0/")
+create_directory(f"{waves_directory}/wave-0/deliverables/")
+create_directory(f"{waves_directory}/wave-0/research/")
+create_directory(f"{waves_directory}/wave-0/drafts/")
+create_directory(f"{waves_directory}/wave-0/black-box/")
+
+# Initialize tracking systems
+create_file(f"{waves_directory}/wave-0/RECORD_KEEPER_STATUS.md", "STATUS: AVAILABLE")
+create_file(f"{waves_directory}/wave-0/AGENT_ROSTER.md", "# Wave 0 Agent Roster")
+create_file(f"{waves_directory}/wave-0/COMPLETION_STATUS.md", "# Wave 0 Completion Tracking")
 ```
 
 ### Phase 2: Team Configuration
@@ -130,14 +492,13 @@ for team in teams:
 ### Phase 3: Wave Planning
 
 ```python
-# Load wave coordination rules - LOCAL VERSION
-wave_rules = read_file(f"{base_path}/coordination_rules/wave_coordination_protocol.md")
+# Wave coordination rules are now integrated into this prompt
 
 waves = plan_waves(
     teams=teams,
     wave_strategy=wave_strategy,
-    wave_count=wave_count,
-    rules=wave_rules
+    wave_count=wave_count
+    # Wave patterns and anti-patterns defined in System Coordination Rules section
 )
 ```
 
@@ -169,9 +530,13 @@ for wave in waves:
                 # Default to technical rules for unknown roles
                 role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
             
-            # CRITICAL FOR LOCAL MODE: Include actual rule content in agent prompt
+            # Include actual rule content in agent prompt
             agent_prompt = f"""
 You are {agent.name}, a master craftsman agent in the Shadow Clone System.
+
+CRITICAL WORKSPACE RULE:
+You MUST work ONLY in your assigned wave folder: {waves_directory}/wave-{wave.number}/
+NEVER create files outside this directory. ALL deliverables go here.
 
 CORE RULES:
 {core_rules}
@@ -179,8 +544,13 @@ CORE RULES:
 ROLE-SPECIFIC RULES:
 {role_rules}
 
-FILE AND WORKSPACE RULES:
-{system_core_rules}
+SYSTEM COORDINATION:
+See System Coordination Rules in the main Shadow Clone prompt for:
+- File operations and reservation system
+- Git workflow and branch strategy
+- Quality gates and standards
+- Wave execution patterns
+- Emergency protocols
 
 PROJECT TYPE:
 {project_type if project_type != "auto" else "General project"}
@@ -189,10 +559,12 @@ TEAM CONTEXT:
 {team.context}
 
 WAVE: {wave.number}
-WORKSPACE: {waves_directory}/wave-{wave.number}/
+WORKSPACE: {waves_directory}/wave-{wave.number}/ (USE ONLY THIS FOLDER)
 
 YOUR ASSIGNMENT:
 {agent.assignment}
+
+REMINDER: Follow the agent template structure EXACTLY. Include your Workspace field.
 
 QUALITY COMMITMENT: "I am a master of my craft. There are no weak links in our system."
 """
@@ -238,20 +610,18 @@ elif mode == "RESEARCH":
 ### Phase 6: Integration & Quality Assurance
 
 ```python
-# Load integration and quality rules - LOCAL VERSION
-# Integration rules are now part of wave_execution_protocol
-# Quality gates are now part of system_core_rules
-# Both were already loaded in Phase 1
+# Integration and quality rules are integrated into this prompt
+# See System Coordination Rules section for details
 
-results = integrate_deliverables(waves, wave_execution_protocol)
-validate_quality(results, system_core_rules)
+results = integrate_deliverables(waves)
+validate_quality(results)
+# Quality gates and integration patterns defined in System Coordination Rules
 ```
 
 ### Phase 7: Final Quality & Development Branch Commit
 
 ```python
-# Git commit protocol is now part of system_core_rules - LOCAL VERSION
-# Already loaded in Phase 1
+# Git commit protocol integrated into System Coordination Rules
 
 # CRITICAL: Ensure we're on a development branch
 current_branch = get_current_branch()
@@ -264,8 +634,8 @@ if current_branch in ["main", "master", "production"]:
 # Run final audit
 final_audit()
 
-# Create single atomic commit (using system_core_rules)
-create_single_commit(system_core_rules)
+# Create single atomic commit per System Coordination Rules
+create_single_commit()
 
 # Provide merge guidance
 print("""
