@@ -161,13 +161,13 @@ For internal development and testing, authorized personnel can validate the Shad
 ### Local Testing (Development)
 ```bash
 # Single command that loads the test file AND executes the test
-Load /root/repos/shadow-clone/.shadow-local/testing/test_mode.md and execute with mode=plan
+Load {current_dir}/.shadow-local/testing/test_mode.md and execute with mode=plan
 ```
 
 ### API Testing (Production Verification)
 ```bash
 # Single command that loads the test file AND executes the test
-Load /root/repos/shadow-clone/.shadow/testing/test_mode.md and execute with mode=feature
+Load {current_dir}/.shadow/testing/test_mode.md and execute with mode=feature
 ```
 
 **Available test modes**: audit, debug, feature, optimize, refactor, research, plan
