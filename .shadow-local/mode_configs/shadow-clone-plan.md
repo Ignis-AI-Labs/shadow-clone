@@ -36,6 +36,7 @@ Based on Wave-0 assessment, deploy specialized teams:
 **Team**: Master Plan Architect, Technical Consolidator, Execution Strategist, Quality Validator, Record Keeper
 
 **Single Output**: `MASTER_PLAN.md` - Complete project blueprint
+**Template**: Uses `templates/MASTER_PLAN_TEMPLATE.md` for consistent structure
 
 ## MASTER_PLAN Contents
 1. Executive Summary & Vision
