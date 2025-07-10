@@ -6,6 +6,13 @@
 - If it's not working, fix it properly
 - Quality over speed, always
 
+## GIT DISCIPLINE (NON-NEGOTIABLE)
+- **NEVER work with uncommitted changes**
+- **System WILL NOT start if git is dirty**
+- **Professional standards are enforced**
+- **Clean git = clean mind = clean code**
+- If you see uncommitted changes, STOP and report
+
 ## WORKSPACE DISCIPLINE (MANDATORY)
 - **ALL work happens in your wave folder**: `.waves/wave-[N]/`
 - **NEVER create files outside your wave directory**

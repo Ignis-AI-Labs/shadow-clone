@@ -132,14 +132,32 @@ Team Lead → [Queue] → Record Keeper → Constitution
 ## System Coordination Rules
 
 ### Pre-Execution Requirements
-- Valid git repository with clean working tree
+- Valid git repository with **MANDATORY CLEAN WORKING TREE**
 - CONSTITUTION.md exists and is readable
 - .shadow-local/ directory structure intact
 - Sufficient disk space for artifacts
 
 ### Mandatory System Initialization
 **BEFORE ANY EXECUTION**, the system MUST:
-1. Load and verify all system components:
+1. **CRITICAL: Verify Git Status**
+   ```bash
+   # MANDATORY - System MUST NOT proceed with uncommitted changes
+   git_status=$(git status --porcelain)
+   if [ -n "$git_status" ]; then
+       echo "❌ CRITICAL FAILURE: Uncommitted changes detected"
+       echo "Shadow Clone enforces clean git state before execution"
+       echo "Please commit or stash your changes before proceeding"
+       echo "This ensures proper version control and prevents confusion"
+       exit 1
+   fi
+   ```
+   **VIOLATION = IMMEDIATE TERMINATION**
+   - No uncommitted files allowed
+   - No staged but uncommitted changes
+   - Working tree must be clean
+   - This is non-negotiable - we enforce professional practices
+
+2. Load and verify all system components:
    - `.shadow-local/agent_rules/core_rules.md`
    - `.shadow-local/agent_rules/specialized_agent_rules.md`
    - `.shadow-local/templates/` (all template files)
@@ -452,6 +470,21 @@ source=local  # CRITICAL: Determines local vs API mode
 ```python
 # STEP 0: MANDATORY INITIALIZATION CHECKLIST
 # LOCAL VERSION - Coordination rules are integrated into this prompt
+
+# CRITICAL FIRST CHECK - Git must be clean
+git_status = run_command("git status --porcelain")
+if git_status.strip():
+    print("❌ CRITICAL FAILURE: Uncommitted changes detected")
+    print("❌ Shadow Clone REFUSES to execute with uncommitted changes")
+    print("❌ This is a professional system that enforces best practices")
+    print("\nDetected changes:")
+    print(git_status)
+    print("\nOptions:")
+    print("1. Commit your changes: git add . && git commit -m 'Your message'")
+    print("2. Stash your changes: git stash")
+    print("3. Discard changes: git reset --hard HEAD (CAUTION: loses changes)")
+    print("\nShadow Clone will not proceed until git is clean.")
+    sys.exit(1)
 
 # All coordination rules are now part of this prompt file
 # No need to load separate coordination_rules files
