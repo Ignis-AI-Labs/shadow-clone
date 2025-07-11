@@ -350,6 +350,15 @@ source=local  # CRITICAL: Determines local vs API mode
 ### Common Functions
 
 ```python
+# CRITICAL DEPLOYMENT INSTRUCTION:
+# When you see deploy_agents_parallel(), you MUST:
+# 1. Create ALL agents in the list using Task() 
+# 2. Execute them SIMULTANEOUSLY in a single message
+# 3. Do NOT deploy them one by one
+# Example:
+#   Task(agent1), Task(agent2), Task(agent3) <- ALL IN ONE MESSAGE
+#   NOT: Task(agent1) then Task(agent2) then Task(agent3)
+
 def verify_git_clean():
     """Enforce professional git practices - no uncommitted changes allowed"""
     git_status = run_command("git status --porcelain")
@@ -607,6 +616,40 @@ def create_record_keeper_collective(num_record_keepers):
     
     return collective
 
+def deploy_agents_parallel(agents_list):
+    """
+    CRITICAL: This function indicates that ALL agents in the list
+    must be deployed SIMULTANEOUSLY in a SINGLE operation.
+    
+    The orchestrator MUST:
+    1. Create Task() for each agent in agents_list
+    2. Execute ALL Tasks in ONE message (parallel execution)
+    3. NOT deploy them sequentially
+    
+    Example of CORRECT deployment:
+    ```
+    # All 3 RKs deployed together:
+    results = [
+        Task("Lead Record Keeper (Pre-Wave)", prompt=...),
+        Task("Technical Record Keeper (Pre-Wave)", prompt=...),
+        Task("Progress Record Keeper (Pre-Wave)", prompt=...)
+    ]
+    ```
+    
+    Example of INCORRECT deployment:
+    ```
+    # DON'T DO THIS - Sequential deployment:
+    Task("Lead Record Keeper (Pre-Wave)", prompt=...)
+    # wait for completion
+    Task("Technical Record Keeper (Pre-Wave)", prompt=...)
+    # wait for completion  
+    Task("Progress Record Keeper (Pre-Wave)", prompt=...)
+    ```
+    """
+    # This is a directive to the orchestrator
+    # Actual implementation happens at orchestrator level
+    pass
+
 def enforce_wave_dependencies(wave, mode, waves_directory):
     """Enforce wave dependency requirements"""
     if wave.number > 0:
@@ -661,7 +704,8 @@ def deploy_wave_agents(wave, all_main_agents, needs_sub_waves, num_sub_waves, ru
                     "prompt": agent_prompt
                 })
             
-            deploy_agents_in_batches(agents_to_deploy, batch_size=10)
+            # Deploy this sub-wave batch in PARALLEL
+            deploy_agents_parallel(agents_to_deploy)
             wait_for_sub_wave_completion(wave_id)
     else:
         # Standard deployment (≤10 agents)
@@ -745,8 +789,12 @@ for wave in waves:
             "prompt": pre_wave_prompt
         })
     
-    # Deploy all RKs at once as a team
-    deploy_agents_in_batches(rk_agents_to_deploy, batch_size=10)
+    # Deploy all RKs at once as a team in PARALLEL
+    print(f"Deploying {len(rk_agents_to_deploy)} Record Keepers in parallel...")
+    
+    # CRITICAL: Deploy all RK Collective members SIMULTANEOUSLY
+    # The system MUST create these agents as a single batch for parallel execution
+    deploy_agents_parallel(rk_agents_to_deploy)
     
     # Wait for Pre-Wave Record Keeper Collective to complete
     wait_for_agents_completion(record_keeper_collective)
@@ -793,8 +841,9 @@ for wave in waves:
             "prompt": post_prompt
         })
     
-    # Deploy all Post-Wave RKs at once as a team
-    deploy_agents_in_batches(rk_post_agents, batch_size=10)
+    # Deploy all Post-Wave RKs at once as a team in PARALLEL
+    print(f"Deploying {len(rk_post_agents)} Post-Wave Record Keepers in parallel...")
+    deploy_agents_parallel(rk_post_agents)
     
     # Wait for Post-Wave Record Keeper Collective to complete
     wait_for_agents_completion(record_keeper_collective)
