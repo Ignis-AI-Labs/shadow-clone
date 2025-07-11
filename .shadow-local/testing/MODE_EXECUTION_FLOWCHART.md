@@ -1,5 +1,40 @@
 # Shadow Clone Mode Execution Flowchart & Validation Framework
 
+## Critical Updates: Record Keeper Collective Model
+
+### Key Changes:
+1. **NO Team Lead Role** - Record Keeper Collective handles all leadership
+2. **Minimum 3 Record Keepers** per wave (scales with project size)
+3. **Two-Phase RK Deployment** - Pre-Wave (setup) and Post-Wave (finalize)
+4. **10-Agent Deployment Limit** - All deployments in batches of max 10
+
+### RK Collective Scaling:
+```
+num_record_keepers = max(3, ceil(total_agents / 5))
+- 10 agents → 3 RKs
+- 20 agents → 4 RKs
+- 50 agents → 10 RKs
+```
+
+### Wave Execution Patterns:
+
+#### Standard Wave (≤10 agents):
+1. **Pre-Wave**: RK Collective deploys first, sets up everything
+2. **Main Wave**: Team agents execute (single deployment)
+3. **Post-Wave**: RK Collective returns to finalize
+
+#### Large Wave (>10 agents) - Sub-Wave System:
+1. **Wave Na Pre-Wave**: RK Collective deploys, sets up entire wave
+2. **Wave Na Main**: First 10 agents execute
+3. **Wave Nb**: Next 10 agents (no RK deployment)
+4. **Wave Nc**: Final agents execute
+5. **Wave Nc Post-Wave**: RK Collective returns to finalize ALL sub-waves
+
+Example: Wave 1 with 25 agents becomes:
+- Wave 1a: RK Pre-Wave + 10 agents
+- Wave 1b: 10 agents
+- Wave 1c: 5 agents + RK Post-Wave
+
 ## Universal Flow (All Modes)
 
 ```
@@ -16,30 +51,44 @@
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
-│ Team Configuration  │ ✓ Check: Record Keeper in EVERY team
-│ - Load templates    │ ✓ Check: Teams match mode needs
-│ - Assign agents     │ ✓ Check: No team > 10 agents
+│ Team Configuration  │ ✓ Check: Min 3 Record Keepers per wave
+│ - Load templates    │ ✓ Check: RK Collective scales with agents
+│ - Assign agents     │ ✓ Check: No separate Team Lead role
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
-│ Wave-0 Execution    │ ✓ Check: Planning only, NO implementation
+│ Wave-0 Pre-Wave RK  │ ✓ Check: RK Collective deploys FIRST
+│ - 3+ RKs deploy     │ ✓ Check: Creates DELIVERABLES_REQUIRED.md
+│ - Set requirements  │ ✓ Check: Defines AGENT_ASSIGNMENTS.md
+│ - Lay foundations   │ ✓ Check: All tracking systems initialized
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│ Wave-0 Main Team    │ ✓ Check: Planning only, NO implementation
 │ - Scope analysis    │ ✓ Check: Dynamic team roster created
 │ - Team selection    │ ✓ Check: Wave count determined
-│ - Create plan       │ ✓ Check: All work in .waves/wave-0/
+│ - Create plan       │ ✓ Check: Max 10 agents per batch
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│ Wave-0 Post-Wave RK │ ✓ Check: Same RK Collective returns
+│ - Validate outputs  │ ✓ Check: Constitution updated
+│ - Gather results    │ ✓ Check: Wave summary created
+│ - Finalize wave     │ ✓ Check: WAVE_COMPLETE.md exists
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
 │ Wave 1-N Execution  │ ✓ Check: All work in .waves/wave-N/
-│ - Deploy teams      │ ✓ Check: File reservations used
-│ - Execute tasks     │ ✓ Check: Reports to Record Keeper and Record Keeper finalizes each wave
-│ - Quality gates     │ ✓ Check: Tests pass before proceeding
+│ Pre → Main → Post   │ ✓ Check: 3-phase pattern per wave
+│ - Deploy in batches │ ✓ Check: Max 10 agents per batch
+│ - RK leads & closes │ ✓ Check: RK Collective handles leadership
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
-│ Final Wave          │ ✓ Check: Record Keeper LAST to complete
-│ - Consolidation     │ ✓ Check: Mode-specific deliverables
-│ - Validation        │ ✓ Check: MODE_COMPLETION_SUMMARY.md
-│ - Record Keeper     │ ✓ Check: CONSTITUTION.md updated
+│ Final Wave          │ ✓ Check: RK Post-Wave creates summary
+│ - Pre-Wave setup    │ ✓ Check: RK Collective plans closure
+│ - Main execution    │ ✓ Check: Final deliverables created
+│ - Post-Wave close   │ ✓ Check: MODE_COMPLETION_SUMMARY.md
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
@@ -53,14 +102,30 @@
 
 ### PLANNING MODE
 ```
-Wave-0 (Discovery):
+Wave-0 Pre-Wave (RK Collective Setup):
+├── ✓ Min 3 Record Keepers deployed first
+├── ✓ DELIVERABLES_REQUIRED.md created
+├── ✓ AGENT_ASSIGNMENTS.md defined
+├── ✓ Tracking systems initialized
+└── ✓ No Team Lead role exists
+
+Wave-0 Main (Discovery):
 ├── ✓ project_vision.md exists
 ├── ✓ scope_assessment.md exists
 ├── ✓ initial_requirements.md exists
 ├── ✓ planning_strategy.md exists
-└── ✓ wave_plan.md exists
+├── ✓ wave_plan.md exists
+└── ✓ Agents deployed in batches of 10
+
+Wave-0 Post-Wave (RK Collective Finalize):
+├── ✓ All deliverables validated
+├── ✓ Constitution updated
+├── ✓ Wave summary created
+└── ✓ WAVE_COMPLETE.md exists
 
 Dynamic Waves (1-N):
+├── ✓ Each wave follows 3-phase pattern
+├── ✓ RK Collective leads each wave
 ├── ✓ Teams match Wave-0 recommendations
 ├── ✓ Each wave builds on previous
 └── ✓ NO implementation code
@@ -69,31 +134,37 @@ Final Wave:
 ├── ✓ MASTER_PLAN.md created
 ├── ✓ Uses MASTER_PLAN_TEMPLATE.md
 ├── ✓ Contains all 8 required sections
-└── ✓ Record Keeper creates MODE_COMPLETION_SUMMARY.md
+└── ✓ RK Collective Post-Wave creates MODE_COMPLETION_SUMMARY.md
 ```
 
 ### FEATURE MODE
 ```
-Wave-0 (Analysis):
+Wave-0 (Analysis with RK Collective):
+├── ✓ RK Collective Pre-Wave sets requirements
 ├── ✓ Feature breakdown created
-├── ✓ Dynamic team roster based on feature type
+├── ✓ Dynamic team roster (no Team Lead)
 ├── ✓ Security threat model exists
 ├── ✓ Wave allocation matches complexity
-└── ✓ All assessments in .waves/wave-0/
+├── ✓ RK Collective Post-Wave validates
+└── ✓ All work in .waves/wave-0/
 
 Dynamic Waves (1-N):
+├── ✓ Each wave: Pre → Main → Post phases
+├── ✓ RK Collective orchestrates each wave
 ├── ✓ Code in appropriate directories (/src, etc.)
 ├── ✓ Unit tests >80% coverage
 ├── ✓ Integration points documented
 ├── ✓ Performance metrics recorded
-└── ✓ Security considerations addressed
+├── ✓ Security considerations addressed
+└── ✓ Max 10 agents per deployment batch
 
 Final Wave:
+├── ✓ RK Collective Pre-Wave plans validation
 ├── ✓ End-to-end testing complete
 ├── ✓ Security clearance obtained
 ├── ✓ Documentation complete
 ├── ✓ Deployment package ready
-└── ✓ Record Keeper last to finish
+└── ✓ RK Collective Post-Wave creates MODE_COMPLETION_SUMMARY.md
 ```
 
 ### AUDIT MODE

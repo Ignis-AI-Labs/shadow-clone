@@ -54,3 +54,29 @@ Based on Wave-0 assessment, deploy specialized teams:
 - Each wave builds on previous work
 - Wave count adapts to project needs
 - All work stays in wave folders
+
+## Wave Dependencies (ENFORCED)
+
+### Wave-0 Required Outputs
+These MUST exist before Wave-1 can start:
+- `deliverables/project_vision.md`
+- `deliverables/scope_assessment.md`
+- `deliverables/initial_requirements.md`
+- `deliverables/planning_strategy.md`
+- `deliverables/wave_plan.md`
+- `WAVE_COMPLETE.md` (created by Record Keeper)
+
+### Planning Wave Dependencies
+Each planning wave (1 to N-1) must:
+- Read and build upon previous wave outputs
+- Create deliverables in their wave folder
+- Have Record Keeper finalize with WAVE_COMPLETE.md
+- NO wave can proceed if previous wave incomplete
+
+### Final Wave Requirements
+Cannot start unless:
+- ALL previous waves marked complete
+- All planning deliverables exist
+- Record Keeper has documented all decisions
+
+**System enforces these dependencies - no exceptions**

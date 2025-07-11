@@ -9,6 +9,18 @@ This LOCAL version of the Shadow Clone orchestrator always loads components from
 
 **🗾 Master Craftsman Philosophy**: Every agent is a domain master capable of handling entire projects independently, but when masters collaborate with proper coordination, they create something far superior through collective expertise.
 
+## System Constants
+```python
+# Deployment Limits
+MAX_AGENTS_PER_DEPLOYMENT = 10
+MIN_RECORD_KEEPERS = 3
+RECORD_KEEPER_SCALING = lambda total_agents: max(MIN_RECORD_KEEPERS, math.ceil(total_agents / 5))
+
+# Critical Files
+CONSTITUTION_FILE = "CONSTITUTION.md"
+CORE_RULES_PATH = ".shadow-local/agent_rules/core_rules.md"
+```
+
 ## 🚨 CRITICAL: Local Mode Configuration
 
 **This is the LOCAL version** - Always uses local files:
@@ -19,115 +31,17 @@ load_method = read_local_file
 source_mode = "local"  # Always local for this version
 ```
 
-## 🚨 CRITICAL: Mandatory Initialization Sequence
-
-**BEFORE ANY EXECUTION**, the system MUST:
-1. Verify all system components exist (agent_rules, templates, mode_configs)
-2. Create wave-0 directory structure with all subdirectories
-3. Initialize tracking systems (RECORD_KEEPER_STATUS.md, AGENT_ROSTER.md, COMPLETION_STATUS.md)
-4. Validate git branch strategy (never on main/master)
-5. Confirm Record Keeper presence in all teams
-
-**FAILURE TO INITIALIZE = SYSTEM FAILURE**
-
-See System Coordination Rules section for detailed initialization requirements.
 
 ## 🔑 SACRED RULE: Record Keeper is Mandatory
 
 **CONTEXT IS SACRED** - Every team MUST include a Record Keeper agent:
+- System will FAIL if any team lacks a Record Keeper
 - Record Keeper maintains CONSTITUTION.md as single source of truth
 - Deployed WITH the team (never separately)
 - Has same tools and access as other agents
 - Preserves project memory across all waves
-- System will FAIL if any team lacks a Record Keeper
 
-### Record Keeper - CONVERGENCE NEXUS
-**Wave:** All waves (embedded in teams)
-**Authority:** Central point of collective awareness
-**Completion:** ALWAYS LAST - Never marks complete until all agents report final status
-
-**Core Duties:**
-- Act as convergence point for ALL agent activities
-- **SOLE MAINTAINER of CONSTITUTION.md** - no other agent modifies it
-- Track all decisions, progress, and blockers
-- Document wave outcomes and collective state
-- Enable system-wide progress recognition
-- Transform agent reports into coherent project narrative
-- **MUST BE LAST AGENT TO COMPLETE IN EVERY WAVE**
-
-**Critical Tasks:**
-- Receive reports from ALL agents (including Team Lead)
-- Never deployed alone - always with a team
-- Update constitution after each significant event
-- Create comprehensive audit trails
-- Synthesize team progress into coherent narrative
-- Alert Team Lead when convergence issues arise
-
-**Protection Protocols:**
-1. **Queue Management**
-   - Maintain `.waves/wave-N/RECORD_KEEPER_STATUS.md`
-   - Process one agent report at a time
-   - Update status: AVAILABLE → BUSY:[Agent] → AVAILABLE
-   - Never process simultaneous reports
-
-2. **Checkpoint Creation**
-   - Checkpoint after every 3 reports
-   - Checkpoint at wave completion
-   - Save to `.waves/wave-N/checkpoints/`
-   - Include: constitution state, report count, timestamp
-
-3. **Self-Integrity Checks**
-   - Verify constitution coherence after each update
-   - Check for duplicate or missing reports
-   - Maintain report sequence log
-   - Alert Team Lead if corruption detected
-
-4. **Integrity Tracking**
-   - Maintain `.waves/wave-N/RECORD_KEEPER_LOG.md`:
-   ```
-   [2024-01-01 10:00:00] Report #001 from Backend Dev - Added
-   [2024-01-01 10:05:00] Constitution updated - Section: Progress
-   [2024-01-01 10:10:00] Report #002 from QA Engineer - Added
-   [2024-01-01 10:15:00] Checkpoint created - checkpoint-001.md
-   [2024-01-01 10:20:00] Report #003 from Team Lead - Added
-   ```
-   - Sequential report numbers prevent gaps
-   - Timestamps enable timeline reconstruction
-   - Cross-reference with black box recordings
-
-5. **Wave Completion Protocol**
-   - Track all agents assigned to current wave
-   - Maintain checklist of final reports received
-   - DO NOT mark self as complete until:
-     * All agents have reported "Complete" status
-     * All handoffs are documented
-     * Final wave summary is written
-     * Constitution is updated with wave outcomes
-   - Create `.waves/wave-N/WAVE_COMPLETE.md` only after all agents done
-
-6. **Mode Completion Protocol (FINAL WAVE ONLY)**
-   - When in the FINAL wave of any mode:
-     * Wait for ALL waves to be marked complete
-     * Use `templates/mode-completion-template.md` to create summary
-     * Save as `.waves/MODE_COMPLETION_SUMMARY.md`
-     * Update constitution with:
-       - "MODE COMPLETE - [mode name]" status
-       - Summary of entire mode execution
-       - List of all deliverables created
-       - Total metrics and timeline
-       - Key learnings and decisions
-     * Create `.waves/MODE_COMPLETE.md` marker
-     * This is YOUR FINAL ACT before marking complete
-   - Without this summary, the mode is NOT complete
-
-**Reporting Structure:**
-```
-All Agents → [Queue] → Record Keeper → Constitution
-     ↓                      ↓
-Team Lead → [Queue] → Record Keeper → Constitution
-                           ↓
-                    [Checkpoints]
-```
+**CRITICAL**: All Record Keeper protocols, responsibilities, and procedures are defined in `.shadow-local/agent_rules/core_rules.md` under "The Record Keeper - Central Convergence Authority" section. This ensures ALL agents have consistent understanding of the Record Keeper role and workflow.
 
 ## System Coordination Rules
 
@@ -137,48 +51,6 @@ Team Lead → [Queue] → Record Keeper → Constitution
 - .shadow-local/ directory structure intact
 - Sufficient disk space for artifacts
 
-### Mandatory System Initialization
-**BEFORE ANY EXECUTION**, the system MUST:
-1. **CRITICAL: Verify Git Status**
-   ```bash
-   # MANDATORY - System MUST NOT proceed with uncommitted changes
-   git_status=$(git status --porcelain)
-   if [ -n "$git_status" ]; then
-       echo "❌ CRITICAL FAILURE: Uncommitted changes detected"
-       echo "Shadow Clone enforces clean git state before execution"
-       echo "Please commit or stash your changes before proceeding"
-       echo "This ensures proper version control and prevents confusion"
-       exit 1
-   fi
-   ```
-   **VIOLATION = IMMEDIATE TERMINATION**
-   - No uncommitted files allowed
-   - No staged but uncommitted changes
-   - Working tree must be clean
-   - This is non-negotiable - we enforce professional practices
-
-2. Load and verify all system components:
-   - `.shadow-local/agent_rules/core_rules.md`
-   - `.shadow-local/agent_rules/specialized_agent_rules.md`
-   - `.shadow-local/templates/` (all template files)
-   - `.shadow-local/mode_configs/` (selected mode)
-2. Create wave-0 directory structure:
-   ```
-   .waves/wave-0/
-   ├── deliverables/
-   ├── research/
-   ├── drafts/
-   ├── black-box/
-   └── WAVE_STATUS.md
-   ```
-3. Initialize tracking systems:
-   - `RECORD_KEEPER_STATUS.md`
-   - `AGENT_ROSTER.md`
-   - `COMPLETION_STATUS.md`
-4. Validate git branch strategy (never on main/master)
-5. Confirm Record Keeper presence in all teams
-
-**FAILURE TO INITIALIZE = SYSTEM FAILURE**
 
 ### Workspace Structure
 ```
@@ -190,14 +62,16 @@ project/
 │   └── shadow-clone-prompt.md # This file
 ├── .waves/                 # Active wave execution
 │   ├── wave-0/            # Planning wave (mandatory)
-│   ├── wave-1/            # Implementation waves
-│   └── wave-N/            # Final convergence
+│   │   ├── deliverables/
+│   │   ├── research/
+│   │   ├── drafts/
+│   │   └── WAVE_STATUS.md
+│   └── wave-N/            # Implementation waves
 │       ├── AGENT_ROSTER.md
 │       ├── COMPLETION_STATUS.md
 │       ├── RECORD_KEEPER_STATUS.md
 │       ├── RECORD_KEEPER_LOG.md
-│       ├── checkpoints/
-│       └── black-box/
+│       └── checkpoints/
 ├── .waves-archive/         # Historical waves
 │   ├── [mode]-[date]/     # e.g., feature-2025-07-10-1430
 │   └── README.md          # Archive index
@@ -222,16 +96,6 @@ Before modifying ANY file, agents MUST:
 - NO modification of previous wave files
 - NO work in project root during execution
 
-**Required Folder Structure Per Wave:**
-```
-.waves/wave-N/
-├── deliverables/     # Final outputs only
-├── research/         # Background research
-├── drafts/          # Work in progress
-├── black-box/       # Agent report backups
-├── checkpoints/     # Record Keeper checkpoints
-└── WAVE_STATUS.md   # Wave progress tracking
-```
 
 **Violations = IMMEDIATE FAILURE:**
 - Creating files in project root
@@ -284,11 +148,21 @@ Before modifying ANY file, agents MUST:
 - README updated with new features
 - User guides for new functionality
 
-### Wave Execution Patterns
+### Wave Execution Patterns (Two-Phase Record Keeper Model)
+
+#### Wave Execution Flow
+Each wave follows this THREE-PHASE pattern:
+1. **Pre-Wave**: Record Keeper deploys FIRST to lay foundations
+2. **Main Wave**: Team agents execute with clear requirements
+3. **Post-Wave**: Record Keeper deploys AGAIN to gather and finalize
 
 #### Wave 0 - Planning (MANDATORY)
 **Purpose:** Define project scope and approach
-**Team:** Team Lead, Planning Strategist, Research Analyst, System Architect, Record Keeper
+**Team:** Record Keeper Collective (3+), Planning Strategist, Research Analyst, System Architect
+**Execution:**
+- Phase 1: RK Collective orchestrates planning and creates templates
+- Phase 2: Planning team develops project vision and approach
+- Phase 3: RK Collective gathers outputs and updates Constitution
 **Outputs:**
 - Requirements breakdown
 - Wave structure definition
@@ -298,6 +172,10 @@ Before modifying ANY file, agents MUST:
 
 #### Wave 1-N - Implementation
 **Purpose:** Build solution incrementally
+**Execution:**
+- Phase 1: Record Keeper defines deliverables for each agent
+- Phase 2: Implementation team builds assigned components
+- Phase 3: Record Keeper validates and integrates deliverables
 **Patterns:**
 - **Sequential**: Dependencies between tasks
 - **Parallel**: Independent tasks (max 10 agents)
@@ -305,8 +183,12 @@ Before modifying ANY file, agents MUST:
 
 #### Final Wave - Convergence
 **Purpose:** Finalize and validate everything
-**Team:** Team Lead, Audit Specialist, Technical Writer, DevOps, Record Keeper
-**Critical:** Record Keeper creates MODE COMPLETION SUMMARY
+**Team:** Record Keeper Collective (3+), Audit Specialist, Technical Writer, DevOps
+**Execution:**
+- Phase 1: RK Collective prepares final validation checklist
+- Phase 2: Convergence team performs final quality checks
+- Phase 3: RK Collective creates MODE COMPLETION SUMMARY
+**Critical:** RK Collective's Post-Wave phase creates final mode summary
 
 ### Wave Execution Anti-Patterns (AVOID)
 - **Skipping Wave 0**: Leads to coordination failures
@@ -314,6 +196,55 @@ Before modifying ANY file, agents MUST:
 - **Committing During Waves**: Breaks atomicity
 - **Parallel File Edits**: Causes conflicts
 - **Ignoring Quality Gates**: Technical debt accumulation
+
+### Wave Dependency Enforcement (CRITICAL)
+
+**NO WAVE PROCEEDS WITHOUT PREVIOUS WAVE SUCCESS**
+
+#### Wave Transition Requirements
+Before ANY wave can start, the system MUST verify:
+
+1. **Previous Wave Completion**
+   ```python
+   # MANDATORY check before wave N starts
+   previous_wave_status = check_wave_completion(wave_number - 1)
+   if not previous_wave_status.complete:
+       print(f"❌ CRITICAL: Wave {wave_number-1} incomplete")
+       print(f"❌ Cannot proceed to Wave {wave_number}")
+       print("\nMissing from previous wave:")
+       for item in previous_wave_status.missing:
+           print(f"  - {item}")
+       sys.exit(1)
+   ```
+
+2. **Deliverables Verification**
+   - Required deliverables must exist
+   - Files must have actual content (>0 bytes)
+   - Record Keeper must have finalized wave
+   - `WAVE_COMPLETE.md` must exist
+
+3. **Planning Mode Specific**
+   - Wave-0 MUST produce wave_plan.md
+   - Each planning wave MUST build on previous
+   - NO wave can skip if dependencies missing
+   - Final wave CANNOT start without all planning done
+
+4. **Enforcement Mechanism**
+   ```yaml
+   wave_dependencies:
+     wave-0: 
+       required_outputs: [project_vision.md, scope_assessment.md, wave_plan.md]
+       blocks: ALL subsequent waves
+     wave-N:
+       requires: wave-(N-1) complete
+       validates: deliverables exist
+       blocks: wave-(N+1)
+   ```
+
+**VIOLATION = IMMEDIATE HALT**
+- System refuses to deploy next wave
+- Clear error about what's missing
+- Forces proper completion before proceeding
 
 ### Mode Transitions & Wave Archiving
 
@@ -364,42 +295,21 @@ Next: [Planned next steps]
 
 ### Record Keeper Recovery System
 
-#### Black Box Recording
-Every agent maintains local report copies:
-```
-.waves/wave-N/black-box/
-├── [AgentName]-report-[timestamp].md
-├── [AgentName]-status-[timestamp].md
-└── [AgentName]-handoff-[timestamp].md
-```
-
-#### Recovery Protocol
-If Record Keeper fails:
-1. **Immediate**: All agents STOP
-2. **Collect**: Gather black box recordings
-3. **Restore**: From last checkpoint + recordings
-4. **Validate**: Against git history
-5. **Resume**: With new Record Keeper if needed
-
-#### Prevention Measures
-- Dedicated Record Keeper files only
-- Simple append operations
-- Checkpoint every 10 reports
-- Clear read/write separation
+Record Keeper recovery protocols and prevention measures are defined in `.shadow-local/agent_rules/core_rules.md`. All agents must understand these protocols to ensure system resilience.
 
 ### Emergency Protocols
 
 #### System Failures
 1. Stop all work immediately
-2. Document failure in black box
-3. Alert Team Lead
+2. Document failure in RECORD_KEEPER_LOG.md
+3. Alert Record Keeper Collective
 4. Create recovery plan
 5. Resume from last stable state
 
 #### Critical Blockers
 1. 15-minute self-resolution attempt
 2. Consult parallel agents
-3. Escalate to Team Lead
+3. Escalate to Record Keeper Collective
 4. Document resolution
 5. Update CONSTITUTION.md
 
@@ -417,32 +327,6 @@ If Record Keeper fails:
 - `"Skip to Wave N"` - Jump to wave
 - `"Show constitution"` - View project state
 
-## Local File Structure (Simplified)
-
-This LOCAL version uses the following simplified file structure:
-
-### Agent Rules (3 files total)
-- `core_rules.md` - Universal rules for all agents
-- `specialized_agent_rules.md` - All agent specializations (Technical, Analytical, Leadership)
-- `agent_template.md` - Template for new agent types
-
-### Coordination Rules
-- All coordination rules are now integrated into this prompt file
-
-### Templates (4 essential files)
-- `MASTER_PLAN_TEMPLATE.md` - Comprehensive project planning for planning mode
-- `SECURITY_AUDIT_REPORT_TEMPLATE.md` - Complete audit report for audit mode
-- `mode-completion-template.md` - Mode completion summary (Record Keeper)
-- `team-agent-templates.md` - Agent and team configurations
-
-### Mode Configurations (7 modes)
-- `shadow-clone-plan.md` - Planning mode
-- `shadow-clone-feature.md` - Feature development
-- `shadow-clone-audit.md` - Security audit
-- `shadow-clone-debug.md` - Debugging
-- `shadow-clone-optimize.md` - Performance optimization
-- `shadow-clone-refactor.md` - Code refactoring
-- `shadow-clone-research.md` - Research tasks
 
 ## Base Arguments Configuration
 
@@ -463,215 +347,220 @@ source=local  # CRITICAL: Determines local vs API mode
 
 ## Execution Flow
 
-### Phase 1: MANDATORY System Initialization & Project Analysis
-
-**🚨 CRITICAL: NO EXECUTION WITHOUT INITIALIZATION**
+### Common Functions
 
 ```python
-# STEP 0: MANDATORY INITIALIZATION CHECKLIST
-# LOCAL VERSION - Coordination rules are integrated into this prompt
+def verify_git_clean():
+    """Enforce professional git practices - no uncommitted changes allowed"""
+    git_status = run_command("git status --porcelain")
+    if git_status.strip():
+        print("❌ CRITICAL FAILURE: Uncommitted changes detected")
+        print("❌ Shadow Clone enforces clean git state")
+        print("\nOptions:")
+        print("1. Commit: git add . && git commit -m 'Your message'")
+        print("2. Stash: git stash")
+        print("3. Discard: git reset --hard HEAD (CAUTION)")
+        sys.exit(1)
 
-# CRITICAL FIRST CHECK - Git must be clean
-git_status = run_command("git status --porcelain")
-if git_status.strip():
-    print("❌ CRITICAL FAILURE: Uncommitted changes detected")
-    print("❌ Shadow Clone REFUSES to execute with uncommitted changes")
-    print("❌ This is a professional system that enforces best practices")
-    print("\nDetected changes:")
-    print(git_status)
-    print("\nOptions:")
-    print("1. Commit your changes: git add . && git commit -m 'Your message'")
-    print("2. Stash your changes: git stash")
-    print("3. Discard changes: git reset --hard HEAD (CAUTION: loses changes)")
-    print("\nShadow Clone will not proceed until git is clean.")
-    sys.exit(1)
+def load_rules():
+    """Load rules once for reuse"""
+    return {
+        "core": read_file(f"{base_path}/agent_rules/core_rules.md"),
+        "specialized": read_file(f"{base_path}/agent_rules/specialized_agent_rules.md")
+    }
 
-# All coordination rules are now part of this prompt file
-# No need to load separate coordination_rules files
-
-# Create mandatory wave-0 directory with proper structure
-create_directory(f"{waves_directory}/wave-0/")
-create_directory(f"{waves_directory}/wave-0/deliverables/")
-create_directory(f"{waves_directory}/wave-0/research/")
-create_directory(f"{waves_directory}/wave-0/drafts/")
-create_directory(f"{waves_directory}/wave-0/black-box/")
-
-# Initialize tracking systems
-create_file(f"{waves_directory}/wave-0/RECORD_KEEPER_STATUS.md", "STATUS: AVAILABLE")
-create_file(f"{waves_directory}/wave-0/AGENT_ROSTER.md", "# Wave 0 Agent Roster")
-create_file(f"{waves_directory}/wave-0/COMPLETION_STATUS.md", "# Wave 0 Completion Tracking")
-```
-
-### Phase 2: Team Configuration
-
-```python
-# Load team templates - LOCAL VERSION
-team_templates = read_file(f"{base_path}/templates/team-agent-templates.md")
-
-teams = configure_teams(
-    project_type=project_context.type,
-    num_teams=num_teams,
-    team_composition=team_composition,
-    templates=team_templates
-)
-
-# CRITICAL: Record Keeper is MANDATORY for every team
-# Context is sacred - ensure every team has a Record Keeper
-for team in teams:
-    if not has_record_keeper(team):
-        add_record_keeper_to_team(team)
-```
-
-### Phase 3: Wave Planning
-
-```python
-# Wave coordination rules are now integrated into this prompt
-
-waves = plan_waves(
-    teams=teams,
-    wave_strategy=wave_strategy,
-    wave_count=wave_count
-    # Wave patterns and anti-patterns defined in System Coordination Rules section
-)
-```
-
-### Phase 4: Agent Deployment with Rule Injection
-
-**CRITICAL: This is where LOCAL MODE differs most!**
-
-```python
-# Load core rules and templates - LOCAL VERSION
-agent_templates = read_file(f"{base_path}/templates/team-agent-templates.md")
-core_rules = read_file(f"{base_path}/agent_rules/core_rules.md")
-
-for wave in waves:
-    agents_to_deploy = []
+def get_rk_focus_duties(phase):
+    """Get focus-specific duties for each RK type"""
+    duties = {
+        "pre": {
+            "orchestration": "Define objectives, assign tasks, create AGENT_ASSIGNMENTS.md, set protocols, make decisions",
+            "technical": "Define deliverables, create DELIVERABLES_REQUIRED.md, set integration points and quality gates",
+            "progress": "Set up trackers, create timeline, initialize logs, define dependencies, set checkpoints",
+            "general": "Support documentation, create templates, assist coordination, maintain backups"
+        },
+        "post": {
+            "orchestration": "Review deliverables, assess quality, document decisions, identify next items, lead closure",
+            "technical": "Validate deliverables, update Constitution, document integration, assess quality, log debt",
+            "progress": "Update trackers, calculate metrics, create summary, document lessons, prepare handoff",
+            "general": "Support finalization, gather deliverables, assist Constitution updates, create backups"
+        }
+    }
     
-    for team in wave.teams:
-        # VERIFY: Record Keeper is present (context is sacred)
-        assert has_record_keeper(team), f"CRITICAL: Team {team.name} missing Record Keeper!"
-        for agent in team.agents:
-            # MANDATORY RULE INJECTION PROTOCOL - LOCAL VERSION
-            # Map roles to new simplified structure
-            if agent.role in ["development", "qa", "devops", "security"]:
-                role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
-            elif agent.role in ["planning", "research", "audit", "documentation"]:
-                role_rules = read_file(f"{base_path}/agent_rules/specialized_agent_rules.md")
-            elif agent.role in ["team_lead", "record_keeper"]:
-                role_rules = read_file(f"{base_path}/agent_rules/leadership_rules.md")
-            else:
-                # Default to technical rules for unknown roles
-                role_rules = read_file(f"{base_path}/agent_rules/technical_rules.md")
-            
-            # Include actual rule content in agent prompt
-            agent_prompt = f"""
-You are {agent.name}, a master craftsman agent in the Shadow Clone System.
+    focus_name = {
+        "orchestration": "LEAD RECORD KEEPER",
+        "technical": "TECHNICAL RECORD KEEPER",
+        "progress": "PROGRESS RECORD KEEPER",
+        "general": "ADDITIONAL RECORD KEEPER"
+    }
+    
+    return {
+        focus: f"Your focus as {focus_name[focus]}:\n- " + duties[phase][focus].replace(", ", "\n- ")
+        for focus in duties[phase]
+    }
 
-CRITICAL WORKSPACE RULE:
-You MUST work ONLY in your assigned wave folder: {waves_directory}/wave-{wave.number}/
-NEVER create files outside this directory. ALL deliverables go here.
+def create_rk_prompt(rk_agent, wave, phase, num_rk, rules=None):
+    """Generate Record Keeper prompt for pre/post wave phases"""
+    if not rules:
+        rules = load_rules()
+    
+    focus_duties = get_rk_focus_duties(phase)[rk_agent.get('focus', 'general')]
+    
+    phase_duties = {
+        "pre": """
+Collective Pre-Wave Duties (coordinate with other RKs):
+1. Create wave documentation structure in {waves_directory}/wave-{wave.number}/
+2. Orchestrate wave planning (combined Team Lead + RK responsibilities)
+3. Define deliverables and assignments for all agents
+4. Initialize all tracking and quality systems
+5. Prepare Constitution sections for wave outcomes
 
-CORE RULES:
-{core_rules}
+REMEMBER: You are part of the RK Collective that LEADS this wave. No separate Team Lead exists.""",
+        "post": """
+Collective Post-Wave Duties (coordinate with other RKs):
+1. Lead wave quality assessment (Team Lead functions)
+2. Validate all deliverables against requirements
+3. Update CONSTITUTION.md with all outcomes
+4. Create comprehensive wave closure documentation
+5. Prepare for next wave handoff
+6. Create WAVE_COMPLETE.md when ALL finalized
+
+REMEMBER: RK Collective provides wave leadership AND documentation."""
+    }
+    
+    return f"""
+You are {rk_agent['name']} in the Record Keeper Collective for Wave {wave.number}.
+
+CRITICAL: You are in {phase.upper()}-WAVE PHASE - Part of {num_rk} RKs orchestrating this wave.
+
+{focus_duties}
+
+{phase_duties.get(phase, '')}
+
+CORE RULES (INCLUDING RECORD KEEPER COLLECTIVE MODEL):
+{rules['core']}
 
 ROLE-SPECIFIC RULES:
-{role_rules}
+{rules['specialized']}
 
-SYSTEM COORDINATION:
-See System Coordination Rules in the main Shadow Clone prompt for:
-- File operations and reservation system
-- Git workflow and branch strategy
-- Quality gates and standards
-- Wave execution patterns
-- Emergency protocols
+WAVE: {wave.number} ({phase.upper()}-WAVE PHASE)
+WORKSPACE: {waves_directory}/wave-{wave.number}/
+COLLECTIVE SIZE: {num_rk} Record Keepers
 
-PROJECT TYPE:
-{project_type if project_type != "auto" else "General project"}
+{"Coordinate with other RKs. Mark complete ONLY after your focus area is ready." if phase == "pre" else "Review all deliverables thoroughly. Mark complete ONLY after full wave closure."}
+"""
 
-TEAM CONTEXT:
-{team.context}
+def create_agent_prompt(agent, wave, team, sub_wave_id=None, rules=None):
+    """Generate consistent agent prompt with all required rules"""
+    if not rules:
+        rules = load_rules()
+    
+    wave_info = f"WAVE: {wave.number}"
+    if sub_wave_id:
+        wave_info += f" (Sub-wave: {sub_wave_id})"
+    
+    return f"""
+You are {agent.name}, a master craftsman agent in the Shadow Clone System.
 
-WAVE: {wave.number}
+{wave_info}
 WORKSPACE: {waves_directory}/wave-{wave.number}/ (USE ONLY THIS FOLDER)
 
-YOUR ASSIGNMENT:
-{agent.assignment}
+PRE-WAVE PREPARATION BY RK COLLECTIVE:
+- DELIVERABLES_REQUIRED.md - Your specific deliverables
+- AGENT_ASSIGNMENTS.md - Your role and responsibilities
+- Report ALL progress to the Record Keeper Collective
+
+CORE RULES:
+{rules['core']}
+
+ROLE-SPECIFIC RULES:
+{rules['specialized']}
+
+SYSTEM COORDINATION:
+- ALL work in {waves_directory}/wave-{wave.number}/
+- File reservation required before editing
+- Report all progress to RK Collective
+- Follow quality gates and git workflow
+
+PROJECT TYPE: {project_type if project_type != "auto" else "General project"}
+TEAM CONTEXT: {team.context}
+YOUR ASSIGNMENT: {agent.assignment}
 
 REMINDER: Follow the agent template structure EXACTLY. Include your Workspace field.
-
 QUALITY COMMITMENT: "I am a master of my craft. There are no weak links in our system."
 """
-            
-            agents_to_deploy.append({
-                "name": agent.name,
-                "prompt": agent_prompt
-            })
+
+def initialize_system():
+    """Standard system initialization"""
+    # Verify all system components exist
+    verify_components_exist([
+        ".shadow-local/agent_rules/core_rules.md",
+        ".shadow-local/agent_rules/specialized_agent_rules.md",
+        ".shadow-local/templates/",
+        ".shadow-local/mode_configs/"
+    ])
     
-    # Deploy all agents in parallel (respecting 10-agent limit)
-    deploy_agents_in_batches(agents_to_deploy, batch_size=10)
-```
+    # Create wave-0 directory structure
+    create_wave_directory(0)
+    
+    # Initialize tracking systems
+    initialize_tracking_systems(wave=0)
+    
+    # Validate git branch strategy (never on main/master)
+    ensure_development_branch()
 
-### Phase 5: Mode-Specific Execution
+def configure_teams_with_rk(project_type, num_teams, team_composition):
+    """Configure teams ensuring RK Collective is included"""
+    team_templates = read_file(f"{base_path}/templates/team-agent-templates.md")
+    
+    teams = configure_teams(
+        project_type=project_type,
+        num_teams=num_teams,
+        team_composition=team_composition,
+        templates=team_templates
+    )
+    
+    # Ensure Record Keeper Collective in every team
+    for team in teams:
+        if not has_record_keeper(team):
+            add_record_keeper_to_team(team)
+    
+    return teams
 
-```python
-# Load mode-specific configuration - LOCAL VERSION
-if mode == "EXECUTION":
-    execute_standard_mode()
-elif mode == "PLANNING":
-    plan_config = read_file(f"{base_path}/mode_configs/shadow-clone-plan.md")
-    execute_planning_mode(plan_config)
-elif mode == "FEATURE":
-    feature_config = read_file(f"{base_path}/mode_configs/shadow-clone-feature.md")
-    execute_feature_mode(feature_config)
-elif mode == "AUDIT":
-    audit_config = read_file(f"{base_path}/mode_configs/shadow-clone-audit.md")
-    execute_audit_mode(audit_config)
-elif mode == "DEBUG":
-    debug_config = read_file(f"{base_path}/mode_configs/shadow-clone-debug.md")
-    execute_debug_mode(debug_config)
-elif mode == "OPTIMIZE":
-    optimize_config = read_file(f"{base_path}/mode_configs/shadow-clone-optimize.md")
-    execute_optimize_mode(optimize_config)
-elif mode == "REFACTOR":
-    refactor_config = read_file(f"{base_path}/mode_configs/shadow-clone-refactor.md")
-    execute_refactor_mode(refactor_config)
-elif mode == "RESEARCH":
-    research_config = read_file(f"{base_path}/mode_configs/shadow-clone-research.md")
-    execute_research_mode(research_config)
-```
+def execute_mode(mode):
+    """Execute mode with appropriate configuration"""
+    mode_configs = {
+        "PLANNING": "shadow-clone-plan.md",
+        "FEATURE": "shadow-clone-feature.md",
+        "AUDIT": "shadow-clone-audit.md",
+        "DEBUG": "shadow-clone-debug.md",
+        "OPTIMIZE": "shadow-clone-optimize.md",
+        "REFACTOR": "shadow-clone-refactor.md",
+        "RESEARCH": "shadow-clone-research.md"
+    }
+    
+    if mode == "EXECUTION":
+        execute_standard_mode()
+    elif mode in mode_configs:
+        config = read_file(f"{base_path}/mode_configs/{mode_configs[mode]}")
+        globals()[f"execute_{mode.lower()}_mode"](config)
 
-### Phase 6: Integration & Quality Assurance
-
-```python
-# Integration and quality rules are integrated into this prompt
-# See System Coordination Rules section for details
-
-results = integrate_deliverables(waves)
-validate_quality(results)
-# Quality gates and integration patterns defined in System Coordination Rules
-```
-
-### Phase 7: Final Quality & Development Branch Commit
-
-```python
-# Git commit protocol integrated into System Coordination Rules
-
-# CRITICAL: Ensure we're on a development branch
-current_branch = get_current_branch()
-if current_branch in ["main", "master", "production"]:
-    # Create and switch to dev branch
-    dev_branch_name = f"dev-{mode.lower()}-{project_descriptor}"
-    create_and_switch_branch(dev_branch_name)
-    print(f"NOTICE: Created development branch '{dev_branch_name}' for safe development")
-
-# Run final audit
-final_audit()
-
-# Create single atomic commit per System Coordination Rules
-create_single_commit()
-
-# Provide merge guidance
-print("""
+def finalize_and_commit(mode, project_descriptor):
+    """Handle final quality checks and git commit"""
+    # Ensure we're on a development branch
+    current_branch = get_current_branch()
+    if current_branch in ["main", "master", "production"]:
+        dev_branch_name = f"dev-{mode.lower()}-{project_descriptor}"
+        create_and_switch_branch(dev_branch_name)
+        print(f"NOTICE: Created development branch '{dev_branch_name}' for safe development")
+    
+    # Run final audit
+    final_audit()
+    
+    # Create single atomic commit
+    create_single_commit()
+    
+    # Provide merge guidance
+    print(f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 DEVELOPMENT COMPLETE - READY FOR REVIEW
 
@@ -688,7 +577,242 @@ NEXT STEPS:
 
 This workflow ensures production stability and control.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-""")
+    """)
+
+def create_record_keeper_collective(num_record_keepers):
+    """Create the Record Keeper Collective with appropriate roles"""
+    collective = []
+    
+    # Core RKs
+    collective.append({
+        "name": "Lead Record Keeper",
+        "role": "record_keeper",
+        "focus": "orchestration"
+    })
+    collective.append({
+        "name": "Technical Record Keeper", 
+        "role": "record_keeper",
+        "focus": "technical"
+    })
+    collective.append({
+        "name": "Progress Record Keeper",
+        "role": "record_keeper", 
+        "focus": "progress"
+    })
+    
+    # Additional RKs if needed
+    for i in range(3, num_record_keepers):
+        collective.append({
+            "name": f"Record Keeper {i+1}",
+            "role": "record_keeper",
+            "focus": "general"
+        })
+    
+    return collective
+
+def enforce_wave_dependencies(wave, mode, waves_directory):
+    """Enforce wave dependency requirements"""
+    if wave.number > 0:
+        # Check previous wave completion
+        prev_wave_path = f"{waves_directory}/wave-{wave.number - 1}"
+        wave_complete_file = f"{prev_wave_path}/WAVE_COMPLETE.md"
+        
+        if not os.path.exists(wave_complete_file):
+            print(f"❌ CRITICAL FAILURE: Wave {wave.number - 1} not complete")
+            print(f"❌ Cannot proceed to Wave {wave.number}")
+            print(f"❌ Missing: {wave_complete_file}")
+            print("\nWave dependency enforcement prevents proceeding.")
+            sys.exit(1)
+        
+        # For planning mode, check specific deliverables
+        if mode == "PLANNING" and wave.number == 1:
+            required_files = ["project_vision.md", "scope_assessment.md", "wave_plan.md"]
+            missing_files = []
+            for req_file in required_files:
+                if not os.path.exists(f"{prev_wave_path}/deliverables/{req_file}"):
+                    missing_files.append(req_file)
+            
+            if missing_files:
+                print(f"❌ Wave-0 incomplete - missing required deliverables:")
+                for mf in missing_files:
+                    print(f"  - {mf}")
+                sys.exit(1)
+
+def deploy_wave_agents(wave, all_main_agents, needs_sub_waves, num_sub_waves, rules):
+    """Deploy agents handling sub-waves if needed"""
+    if needs_sub_waves:
+        # Split agents into batches of 10
+        for sub_wave_idx in range(num_sub_waves):
+            sub_wave_letter = chr(ord('a') + sub_wave_idx)
+            wave_id = f"{wave.number}{sub_wave_letter}"
+            
+            if sub_wave_idx > 0:
+                print(f"=== Wave {wave_id}: Main Team Deployment (Continuation) ===")
+            
+            # Get agents for this sub-wave
+            start_idx = sub_wave_idx * 10
+            end_idx = min(start_idx + 10, len(all_main_agents))
+            sub_wave_agents = all_main_agents[start_idx:end_idx]
+            
+            print(f"  Deploying {len(sub_wave_agents)} agents in this sub-wave")
+            
+            agents_to_deploy = []
+            for team, agent in sub_wave_agents:
+                agent_prompt = create_agent_prompt(agent, wave, team, wave_id, rules)
+                agents_to_deploy.append({
+                    "name": agent.name,
+                    "prompt": agent_prompt
+                })
+            
+            deploy_agents_in_batches(agents_to_deploy, batch_size=10)
+            wait_for_sub_wave_completion(wave_id)
+    else:
+        # Standard deployment (≤10 agents)
+        print(f"=== Wave {wave.number}: Main Team Deployment ===")
+        
+        agents_to_deploy = []
+        for team, agent in all_main_agents:
+            agent_prompt = create_agent_prompt(agent, wave, team, None, rules)
+            agents_to_deploy.append({
+                "name": agent.name,
+                "prompt": agent_prompt
+            })
+        
+        deploy_agents_in_batches(agents_to_deploy, batch_size=10)
+        wait_for_main_team_completion(wave)
+```
+
+### Phase 1: MANDATORY System Initialization & Project Analysis
+
+```python
+# Use common git verification function
+verify_git_clean()
+
+# Initialize system with standard checks
+initialize_system()
+```
+
+### Phase 2: Team Configuration
+
+```python
+# Configure teams with mandatory Record Keeper
+teams = configure_teams_with_rk(project_context.type, num_teams, team_composition)
+```
+
+### Phase 3: Wave Planning
+
+```python
+waves = plan_waves(teams, wave_strategy, wave_count)
+```
+
+### Phase 4: Agent Deployment with Rule Injection (Two-Phase RK Model)
+
+```python
+# Use previously loaded rules
+rules = load_rules()  # Already defined in common functions
+
+for wave in waves:
+    # Calculate total agents and determine if sub-waves needed
+    total_agents_in_wave = sum(len(team.agents) for team in wave.teams)
+    # Exclude RK from main count as they deploy separately
+    non_rk_agents = total_agents_in_wave - sum(1 for team in wave.teams 
+                                               for agent in team.agents 
+                                               if agent.role == "record_keeper")
+    
+    # Calculate number of Record Keepers needed
+    num_record_keepers = RECORD_KEEPER_SCALING(total_agents_in_wave)
+    
+    # Determine sub-waves needed
+    needs_sub_waves = non_rk_agents > 10
+    num_sub_waves = math.ceil(non_rk_agents / 10) if needs_sub_waves else 1
+    
+    print(f"Wave {wave.number}: {total_agents_in_wave} total agents")
+    if needs_sub_waves:
+        print(f"  Splitting into {num_sub_waves} sub-waves due to 10-agent limit")
+    
+    # PHASE 1: Deploy RK Collective Pre-Wave (only at start of wave/sub-wave batch)
+    sub_wave_letter = 'a' if needs_sub_waves else ''
+    wave_id = f"{wave.number}{sub_wave_letter}"
+    
+    print(f"=== Wave {wave_id}: Pre-Wave Record Keeper Collective Phase ===")
+    
+    # Create Record Keeper Collective
+    record_keeper_collective = create_record_keeper_collective(num_record_keepers)
+    
+    # Deploy Record Keeper Collective with Pre-Wave duties
+    for rk_agent in record_keeper_collective:
+        pre_wave_prompt = create_rk_prompt(rk_agent, wave, "pre", num_record_keepers, rules)
+        deploy_agent({
+            "name": rk_agent['name'] + " (Pre-Wave)",
+            "prompt": pre_wave_prompt
+        })
+    
+    # Wait for Pre-Wave Record Keeper Collective to complete
+    wait_for_agents_completion(record_keeper_collective)
+    
+    # PHASE 2: Deploy Main Team (Record Keepers already handle leadership)
+    print(f"=== Wave {wave.number}: Main Team Deployment ===")
+    
+    # Enforce wave dependencies
+    enforce_wave_dependencies(wave, mode, waves_directory)
+    
+    # Collect all non-RK agents
+    all_main_agents = []
+    for team in wave.teams:
+        for agent in team.agents:
+            # Skip Record Keeper and Team Lead roles (RK Collective handles both)
+            if agent.role in ["record_keeper", "team_lead"]:
+                continue
+            all_main_agents.append((team, agent))
+    
+    # Deploy agents (handles sub-waves automatically)
+    deploy_wave_agents(wave, all_main_agents, needs_sub_waves, num_sub_waves, rules)
+    
+    # PHASE 3: Deploy Record Keeper Collective AGAIN (Post-Wave)
+    # Only after ALL sub-waves complete
+    if needs_sub_waves:
+        final_wave_id = f"{wave.number}{chr(ord('a') + num_sub_waves - 1)}"
+        print(f"=== Wave {final_wave_id}: Post-Wave Record Keeper Collective Phase ===")
+    else:
+        print(f"=== Wave {wave.number}: Post-Wave Record Keeper Collective Phase ===")
+    
+    # Deploy same RK Collective for Post-Wave
+    for rk_agent in record_keeper_collective:
+        # Add sub-wave info if needed
+        post_prompt = create_rk_prompt(rk_agent, wave, "post", num_record_keepers, rules)
+        if needs_sub_waves:
+            post_prompt = post_prompt.replace(
+                "CRITICAL: You are in POST-WAVE PHASE",
+                f"CRITICAL: You are in POST-WAVE PHASE\nThis wave was split into {num_sub_waves} sub-waves due to 10-agent limit."
+            )
+        
+        deploy_agent({
+            "name": rk_agent['name'] + " (Post-Wave)",
+            "prompt": post_prompt
+        })
+    
+    # Wait for Post-Wave Record Keeper Collective to complete
+    wait_for_agents_completion(record_keeper_collective)
+    print(f"=== Wave {wave.number} Complete ===\n")
+```
+
+### Phase 5: Mode-Specific Execution
+
+```python
+execute_mode(mode)  # Mode loading handled internally
+```
+
+### Phase 6: Integration & Quality Assurance
+
+```python
+results = integrate_deliverables(waves)
+validate_quality(results)
+```
+
+### Phase 7: Final Quality & Development Branch Commit
+
+```python
+finalize_and_commit(mode, project_descriptor)
 ```
 
 ## Critical Success Factors for Local Mode
