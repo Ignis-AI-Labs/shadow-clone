@@ -38,8 +38,8 @@
 - Handle emergency escalations
 
 ### Record Keeper
-**See:** Detailed Record Keeper rules in shadow-clone-prompt.md (SACRED RULE section)
-**Note:** Record Keeper rules are vital and maintained in the main prompt to ensure they're never lost
+**See:** Detailed Record Keeper rules in core_rules.md under "The Record Keeper - Central Convergence Authority"
+**Note:** Record Keeper rules are maintained in core rules to ensure ALL agents have consistent understanding
 
 ## Technical Agents
 

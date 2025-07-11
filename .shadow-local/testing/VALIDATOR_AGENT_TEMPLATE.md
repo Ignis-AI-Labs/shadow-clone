@@ -1,5 +1,18 @@
 # Shadow Clone Protocol Validator System
 
+## Critical Protocol Updates
+
+### Record Keeper Collective Model
+- **NO Team Lead Role**: RK Collective handles all leadership
+- **Minimum 3 RKs per wave**: Scales with project (max(3, ceil(agents/5)))
+- **Two-Phase Deployment**: Pre-Wave (setup) and Post-Wave (finalize)
+- **Three-Phase Wave Pattern**: Pre → Main → Post for every wave
+
+### Deployment Constraints
+- **10-Agent Maximum**: System can only deploy 10 agents simultaneously
+- **Batch Deployment**: Large teams deploy in sequential batches
+- **RK Collective Counts**: Each RK counts toward 10-agent limit
+
 ## Validation Architecture
 
 ### Core Validator Agent
@@ -39,37 +52,48 @@ for wave in range(0, wave_count):
 ### Step 2: Wave-Specific Analysis
 
 #### Wave-0 Validator
-**Focus**: Planning compliance and team assembly
+**Focus**: Planning compliance and RK Collective orchestration
 ```
 Checks:
+- ✓/✗ RK Collective (min 3) deployed in Pre-Wave phase
+- ✓/✗ DELIVERABLES_REQUIRED.md created by RK Collective
+- ✓/✗ AGENT_ASSIGNMENTS.md defined (no Team Lead role)
 - ✓/✗ Wave-0 executed before any implementation
 - ✓/✗ Required files created (per mode config)
 - ✓/✗ Dynamic team roster assembled correctly
+- ✓/✗ RK Collective scaled properly (3+ based on agent count)
 - ✓/✗ Wave count determination logical
 - ✓/✗ All work stayed in .waves/wave-0/
+- ✓/✗ RK Collective Post-Wave validated and finalized
 ```
 
 #### Wave-N Validators
-**Focus**: Execution compliance for each wave
+**Focus**: Three-phase execution compliance for each wave
 ```
 Checks:
-- ✓/✗ Team composition matches Wave-0 plan
+- ✓/✗ RK Collective Pre-Wave deployed first
+- ✓/✗ Pre-Wave created requirements and assignments
+- ✓/✗ Team composition matches Wave-0 plan (no Team Lead)
+- ✓/✗ Agents deployed in batches of max 10
 - ✓/✗ All work in correct wave directory
 - ✓/✗ File reservations properly used
-- ✓/✗ Reports submitted to Record Keeper
+- ✓/✗ Reports submitted to RK Collective
 - ✓/✗ Quality gates passed before proceeding
-- ✓/✗ Record Keeper finalized wave properly
+- ✓/✗ RK Collective Post-Wave gathered all deliverables
+- ✓/✗ Wave finalized with WAVE_COMPLETE.md
 ```
 
 #### Final Wave Validator
-**Focus**: Mode completion and deliverables
+**Focus**: Mode completion with RK Collective leadership
 ```
 Checks:
+- ✓/✗ RK Collective Pre-Wave planned final validation
 - ✓/✗ Mode-specific deliverables created
 - ✓/✗ Correct templates used (if applicable)
-- ✓/✗ Record Keeper was LAST to complete
-- ✓/✗ MODE_COMPLETION_SUMMARY.md exists
+- ✓/✗ RK Collective Post-Wave was final deployment
+- ✓/✗ MODE_COMPLETION_SUMMARY.md created by RK Collective
 - ✓/✗ CONSTITUTION.md properly updated
+- ✓/✗ No agents completed after RK Collective
 ```
 
 ### Step 3: Convergence and Synthesis
