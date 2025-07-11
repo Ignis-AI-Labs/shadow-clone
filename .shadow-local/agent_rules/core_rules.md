@@ -182,6 +182,26 @@ Examples:
 - 50 agents → 10 Record Keepers
 ```
 
+### CRITICAL FILE CREATION RULES
+
+**STOP CREATING EXCESSIVE DOCUMENTATION!**
+
+#### Pre-Wave Phase - CREATE ONLY:
+1. `DELIVERABLES_REQUIRED.md` - What each agent must deliver
+2. `AGENT_ASSIGNMENTS.md` - Who does what
+3. `RECORD_KEEPER_LOG.md` - RK activity log
+
+#### Post-Wave Phase - CREATE ONLY:
+1. `WAVE_COMPLETE.md` - Mark wave complete
+2. Update `CONSTITUTION.md` - Add outcomes
+
+**NEVER CREATE**:
+- Multiple tracking files or dashboards
+- Duplicate status files
+- Templates during execution
+- Checkpoint files (unless recovering from failure)
+- Any file not explicitly listed above
+
 ### TWO-PHASE DEPLOYMENT MODEL
 
 #### Phase 1: Pre-Wave Record Keeper Collective Deployment
@@ -198,33 +218,29 @@ Examples:
    - Create conflict resolution protocols
 
 2. **Create Wave Documentation Structure**
+   **ONLY CREATE THESE 3 FILES IN PRE-WAVE:**
    ```
    .waves/wave-N/
-   ├── WAVE_OBJECTIVES.md          # What this wave must achieve
-   ├── DELIVERABLES_REQUIRED.md    # What RK needs from each agent
-   ├── AGENT_ASSIGNMENTS.md        # Who does what
-   ├── DEPENDENCIES.md             # Task dependencies
-   ├── RECORD_KEEPER_LOG.md        # RK's activity log
-   └── AGENT_COMPLETION_TRACKER.md # Track agent progress
+   ├── DELIVERABLES_REQUIRED.md    # What each agent must deliver
+   ├── AGENT_ASSIGNMENTS.md        # Who does what  
+   └── RECORD_KEEPER_LOG.md        # RK activity log
    ```
+   **DO NOT CREATE**: CONSTITUTION.md, tracking files, dashboards, or any other files
 
-3. **Define Deliverable Requirements**
-   - Specify EXACTLY what each agent must deliver
-   - Create templates for expected outputs
+3. **Define Requirements in DELIVERABLES_REQUIRED.md**
+   - List what each agent must deliver
    - Set clear success criteria
-   - Document handoff protocols
-   - Define quality gates
+   - Keep it concise and actionable
 
-4. **Prepare Constitution Sections**
-   - Create placeholders for wave outcomes
-   - Note what decisions need documentation
-   - Prepare integration points
+4. **Define Assignments in AGENT_ASSIGNMENTS.md**
+   - Who does what
+   - Clear task ownership
+   - No overlapping responsibilities
 
-5. **Initialize Tracking Systems**
-   - Set up agent roster with assignments
-   - Create report collection structure
-   - Prepare checkpoint schedule
-   - Establish communication protocols
+5. **Start RECORD_KEEPER_LOG.md**
+   - Begin logging RK activities
+   - Track key decisions
+   - Note any blockers
 
 **Division of Labor (3 RK minimum):**
 - Lead RK: Wave objectives, agent assignments, decisions
@@ -259,19 +275,17 @@ Examples:
    - Update project state
    - Note team performance insights
 
-4. **Create Wave Summary**
-   - Compile comprehensive wave report
-   - List all deliverables created
-   - Document lessons learned
-   - Note carry-forward items
-   - Calculate wave metrics
+4. **Update CONSTITUTION.md**
+   - Add all wave outcomes
+   - Document key decisions
+   - Update project state
 
-5. **Finalize Wave Closure**
-   - Create WAVE_COMPLETE.md
-   - Archive all reports
-   - Update project metrics
-   - Prepare handoff to next wave
-   - Brief next wave RK Collective
+5. **Create ONLY WAVE_COMPLETE.md**
+   - Mark wave as complete
+   - List deliverables created
+   - Note items for next wave
+   
+**DO NOT CREATE**: Multiple tracking files, dashboards, or excessive documentation
 
 **Division of Labor (3 RK minimum):**
 - Lead RK: Quality assessment, decisions, approvals

@@ -407,24 +407,21 @@ def create_rk_prompt(rk_agent, wave, phase, num_rk, rules=None):
     
     phase_duties = {
         "pre": """
-Collective Pre-Wave Duties (coordinate with other RKs):
-1. Create wave documentation structure in {waves_directory}/wave-{wave.number}/
-2. Orchestrate wave planning (combined Team Lead + RK responsibilities)
-3. Define deliverables and assignments for all agents
-4. Initialize all tracking and quality systems
-5. Prepare Constitution sections for wave outcomes
+Collective Pre-Wave Duties - CREATE ONLY 3 FILES:
+1. DELIVERABLES_REQUIRED.md - What each agent must deliver
+2. AGENT_ASSIGNMENTS.md - Who does what
+3. RECORD_KEEPER_LOG.md - Start logging activities
 
-REMEMBER: You are part of the RK Collective that LEADS this wave. No separate Team Lead exists.""",
+DO NOT CREATE: CONSTITUTION.md, tracking dashboards, templates, or any other files!
+REMEMBER: You are part of the RK Collective that LEADS this wave.""",
         "post": """
-Collective Post-Wave Duties (coordinate with other RKs):
-1. Lead wave quality assessment (Team Lead functions)
-2. Validate all deliverables against requirements
-3. Update CONSTITUTION.md with all outcomes
-4. Create comprehensive wave closure documentation
-5. Prepare for next wave handoff
-6. Create WAVE_COMPLETE.md when ALL finalized
+Collective Post-Wave Duties - CREATE ONLY 1 FILE:
+1. Review all agent deliverables
+2. Update CONSTITUTION.md with outcomes
+3. Create WAVE_COMPLETE.md to mark completion
 
-REMEMBER: RK Collective provides wave leadership AND documentation."""
+DO NOT CREATE: Multiple tracking files, summaries, or dashboards!
+REMEMBER: Keep documentation minimal and focused."""
     }
     
     return f"""
