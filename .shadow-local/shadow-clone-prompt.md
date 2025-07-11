@@ -739,13 +739,17 @@ for wave in waves:
     # Create Record Keeper Collective
     record_keeper_collective = create_record_keeper_collective(num_record_keepers)
     
-    # Deploy Record Keeper Collective with Pre-Wave duties
+    # Deploy Record Keeper Collective with Pre-Wave duties (IN PARALLEL)
+    rk_agents_to_deploy = []
     for rk_agent in record_keeper_collective:
         pre_wave_prompt = create_rk_prompt(rk_agent, wave, "pre", num_record_keepers, rules)
-        deploy_agent({
+        rk_agents_to_deploy.append({
             "name": rk_agent['name'] + " (Pre-Wave)",
             "prompt": pre_wave_prompt
         })
+    
+    # Deploy all RKs at once as a team
+    deploy_agents_in_batches(rk_agents_to_deploy, batch_size=10)
     
     # Wait for Pre-Wave Record Keeper Collective to complete
     wait_for_agents_completion(record_keeper_collective)
@@ -776,7 +780,8 @@ for wave in waves:
     else:
         print(f"=== Wave {wave.number}: Post-Wave Record Keeper Collective Phase ===")
     
-    # Deploy same RK Collective for Post-Wave
+    # Deploy same RK Collective for Post-Wave (IN PARALLEL)
+    rk_post_agents = []
     for rk_agent in record_keeper_collective:
         # Add sub-wave info if needed
         post_prompt = create_rk_prompt(rk_agent, wave, "post", num_record_keepers, rules)
@@ -786,10 +791,13 @@ for wave in waves:
                 f"CRITICAL: You are in POST-WAVE PHASE\nThis wave was split into {num_sub_waves} sub-waves due to 10-agent limit."
             )
         
-        deploy_agent({
+        rk_post_agents.append({
             "name": rk_agent['name'] + " (Post-Wave)",
             "prompt": post_prompt
         })
+    
+    # Deploy all Post-Wave RKs at once as a team
+    deploy_agents_in_batches(rk_post_agents, batch_size=10)
     
     # Wait for Post-Wave Record Keeper Collective to complete
     wait_for_agents_completion(record_keeper_collective)

@@ -186,6 +186,7 @@ Examples:
 
 #### Phase 1: Pre-Wave Record Keeper Collective Deployment
 **Purpose:** Orchestrate wave planning and lay foundations
+**CRITICAL:** All RK Collective members deploy IN PARALLEL as a unified team
 
 **Pre-Wave Leadership & Documentation Duties:**
 
@@ -234,6 +235,7 @@ Examples:
 
 #### Phase 2: Post-Wave Record Keeper Collective Deployment
 **Purpose:** Lead wave closure, gather deliverables, and finalize documentation
+**CRITICAL:** All RK Collective members deploy IN PARALLEL as a unified team
 
 **Post-Wave Leadership & Finalization Duties:**
 
