@@ -70,13 +70,16 @@
     </description>
     <phases>
       <phase number="1" name="Pre-Wave">
-        Record Keeper Collective deploys first to establish foundations
+        ONLY Record Keeper Collective deploys (NO other agents)
+        Purpose: Establish foundations and requirements
       </phase>
       <phase number="2" name="Main Wave">
-        All team agents execute simultaneously (single deployment)
+        Implementation team agents execute (Record Keepers already deployed)
+        Maximum 10 agents per deployment batch
       </phase>
       <phase number="3" name="Post-Wave">
-        Record Keeper Collective returns to validate and finalize
+        ONLY Record Keeper Collective deploys again (NO other agents)
+        Purpose: Validate, gather deliverables, and finalize
       </phase>
     </phases>
   </pattern>
@@ -131,14 +134,15 @@
     <sub_stages>
       <sub_stage name="Pre-Wave">
         <actions>
-          <action>Deploy 3+ Record Keepers</action>
-          <action>Create DELIVERABLES_REQUIRED.md</action>
-          <action>Define AGENT_ASSIGNMENTS.md</action>
-          <action>Initialize all tracking systems</action>
+          <action>Deploy ONLY 3+ Record Keepers (NO other agents)</action>
+          <action>Record Keepers create DELIVERABLES_REQUIRED.md</action>
+          <action>Record Keepers define AGENT_ASSIGNMENTS.md</action>
+          <action>Record Keepers initialize all tracking systems</action>
         </actions>
         <validations>
-          <validation>✓ Record Keeper Collective deploys first</validation>
-          <validation>✓ All foundational documents created</validation>
+          <validation>✓ ONLY Record Keeper Collective deployed</validation>
+          <validation>✓ No implementation agents in pre-wave</validation>
+          <validation>✓ All foundational documents created by RK Collective</validation>
           <validation>✓ Tracking systems operational</validation>
         </validations>
       </sub_stage>
@@ -159,12 +163,14 @@
       
       <sub_stage name="Post-Wave">
         <actions>
-          <action>Validate all outputs meet requirements</action>
-          <action>Update constitution with decisions</action>
-          <action>Create comprehensive wave summary</action>
+          <action>Deploy ONLY Record Keeper Collective (NO other agents)</action>
+          <action>Record Keepers validate all outputs meet requirements</action>
+          <action>Record Keepers update constitution with decisions</action>
+          <action>Record Keepers create comprehensive wave summary</action>
         </actions>
         <validations>
-          <validation>✓ Same Record Keeper Collective returns</validation>
+          <validation>✓ ONLY Record Keeper Collective deployed</validation>
+          <validation>✓ No implementation agents in post-wave</validation>
           <validation>✓ Constitution reflects all decisions</validation>
           <validation>✓ WAVE_COMPLETE.md exists with summary</validation>
         </validations>
@@ -176,9 +182,10 @@
     <description>Execute the planned work across waves 1-N</description>
     <actions>
       <action>Follow three-phase pattern for each wave</action>
-      <action>Deploy agents in batches of 10 maximum</action>
+      <action>Pre-Wave: Deploy ONLY Record Keeper Collective</action>
+      <action>Main Wave: Deploy implementation agents (max 10 per batch)</action>
+      <action>Post-Wave: Deploy ONLY Record Keeper Collective</action>
       <action>Maintain workspace discipline (.waves/wave-N/)</action>
-      <action>Record Keeper Collective leads and closes each wave</action>
     </actions>
     <validations>
       <validation>✓ All work contained in appropriate wave directories</validation>
@@ -191,9 +198,9 @@
   <stage name="Final Wave & Completion">
     <description>Finalize all deliverables and prepare for deployment</description>
     <actions>
-      <action>Record Keeper Pre-Wave plans closure activities</action>
-      <action>Execute final deliverables and validations</action>
-      <action>Record Keeper Post-Wave creates MODE_COMPLETION_SUMMARY.md</action>
+      <action>Pre-Wave: Deploy ONLY Record Keepers to plan closure</action>
+      <action>Main Wave: Implementation agents execute final deliverables</action>
+      <action>Post-Wave: Deploy ONLY Record Keepers to create MODE_COMPLETION_SUMMARY.md</action>
     </actions>
     <validations>
       <validation>✓ All mode-specific deliverables created</validation>
@@ -229,10 +236,11 @@
     
     <wave_validations wave="0">
       <phase name="Pre-Wave">
-        <validation>Minimum 3 Record Keepers deployed first</validation>
-        <validation>DELIVERABLES_REQUIRED.md created with clear requirements</validation>
-        <validation>AGENT_ASSIGNMENTS.md defines all team roles</validation>
-        <validation>Tracking systems initialized for progress monitoring</validation>
+        <validation>ONLY 3+ Record Keepers deployed (no other agents)</validation>
+        <validation>DELIVERABLES_REQUIRED.md created by RK Collective</validation>
+        <validation>AGENT_ASSIGNMENTS.md defines all team roles for Main Wave</validation>
+        <validation>Tracking systems initialized by RK Collective</validation>
+        <validation>NO implementation work performed in pre-wave</validation>
       </phase>
       
       <phase name="Main">
@@ -245,16 +253,20 @@
       </phase>
       
       <phase name="Post-Wave">
-        <validation>All deliverables validated against requirements</validation>
-        <validation>Constitution updated with planning decisions</validation>
-        <validation>Comprehensive wave summary created</validation>
+        <validation>ONLY Record Keeper Collective deployed</validation>
+        <validation>All deliverables validated by RK Collective</validation>
+        <validation>Constitution updated by RK Collective</validation>
+        <validation>Comprehensive wave summary created by RK Collective</validation>
         <validation>WAVE_COMPLETE.md marks successful completion</validation>
+        <validation>NO new implementation work in post-wave</validation>
       </phase>
     </wave_validations>
     
     <wave_validations wave="Dynamic (1-N)">
       <validation>Each wave follows the three-phase pattern</validation>
-      <validation>Record Keeper Collective leads each wave</validation>
+      <validation>Pre-Wave: ONLY Record Keeper Collective deploys</validation>
+      <validation>Main Wave: Implementation teams deploy (no RK re-deployment)</validation>
+      <validation>Post-Wave: ONLY Record Keeper Collective deploys</validation>
       <validation>Teams match Wave-0 recommendations</validation>
       <validation>Each wave builds upon previous outputs</validation>
       <validation>Focus remains on planning (no implementation)</validation>
@@ -469,12 +481,14 @@
     </description>
     <requirements>
       <requirement>Create all new files within .waves/wave-N/ directories</requirement>
+      <requirement>NEVER create nested .waves directories inside existing waves</requirement>
       <requirement>Respect wave boundaries - never modify other waves</requirement>
       <requirement>Keep project root clean of temporary files</requirement>
       <requirement>Use file reservations to prevent conflicts</requirement>
     </requirements>
     <failure_conditions>
       <condition>Files created outside .waves/ directory structure</condition>
+      <condition>Nested .waves directories created (e.g., .waves/wave-0/.waves/)</condition>
       <condition>Files modified in waves other than current</condition>
       <condition>Work performed directly in project root</condition>
       <condition>Missing file reservations causing conflicts</condition>
@@ -486,15 +500,16 @@
       Record Keepers ensure comprehensive documentation and validation throughout execution.
     </description>
     <requirements>
-      <requirement>Include Record Keepers in every team deployment</requirement>
-      <requirement>Record Keepers complete work after all other agents</requirement>
+      <requirement>Pre-Wave: Deploy ONLY Record Keeper Collective</requirement>
+      <requirement>Main Wave: Deploy implementation agents (RKs already present)</requirement>
+      <requirement>Post-Wave: Deploy ONLY Record Keeper Collective again</requirement>
       <requirement>Create checkpoint files at each phase</requirement>
       <requirement>Update CONSTITUTION.md with all decisions</requirement>
       <requirement>Generate MODE_COMPLETION_SUMMARY.md at end</requirement>
     </requirements>
     <failure_conditions>
-      <condition>Team deployed without Record Keeper presence</condition>
-      <condition>Record Keeper completes before other agents</condition>
+      <condition>Implementation agents deployed in Pre-Wave or Post-Wave</condition>
+      <condition>Record Keepers re-deployed during Main Wave</condition>
       <condition>Missing checkpoint documentation files</condition>
       <condition>CONSTITUTION.md not updated with decisions</condition>
       <condition>No MODE_COMPLETION_SUMMARY.md at completion</condition>
