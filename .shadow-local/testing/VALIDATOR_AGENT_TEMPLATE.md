@@ -81,16 +81,17 @@ Deploy specialized validators based on executed waves:
 **Mission**: Verify three-phase execution pattern compliance
 
 **Validation Checklist**:
-✓ RK Collective Pre-Wave deployment timing
-✓ Pre-Wave requirements and assignments created
-✓ Team composition matches Wave-0 specifications
-✓ 10-agent deployment limit respected
+✓ Pre-Wave: ONLY RK Collective deployed (no other agents)
+✓ Pre-Wave requirements and assignments created by RK Collective
+✓ Main Wave: Implementation team deployed (RKs not re-deployed)
+✓ 10-agent deployment limit respected in Main Wave
 ✓ Wave directory isolation maintained
 ✓ File reservation system properly utilized
-✓ Agent reports submitted to RK Collective
-✓ Quality gates passed before wave progression
-✓ RK Collective Post-Wave deliverable gathering
-✓ WAVE_COMPLETE.md creation and content
+✓ Agent reports submitted during Main Wave execution
+✓ Quality gates passed before Post-Wave
+✓ Post-Wave: ONLY RK Collective deployed again
+✓ Post-Wave deliverable gathering by RK Collective
+✓ WAVE_COMPLETE.md creation by RK Collective
 
 **Evidence Collection**:
 - Deployment logs and timing
@@ -104,12 +105,13 @@ Deploy specialized validators based on executed waves:
 **Mission**: Ensure proper mode completion and consolidation
 
 **Validation Checklist**:
-✓ RK Collective Pre-Wave final validation planning
-✓ Mode-specific deliverables created and validated
+✓ Pre-Wave: ONLY RK Collective deployed for planning
+✓ Main Wave: Implementation agents create deliverables
+✓ Mode-specific deliverables validated
 ✓ Correct template usage (where applicable)
-✓ RK Collective Post-Wave as final deployment
+✓ Post-Wave: ONLY RK Collective deployed (final deployment)
 ✓ MODE_COMPLETION_SUMMARY.md creation by RK Collective
-✓ CONSTITUTION.md updates (if required)
+✓ CONSTITUTION.md updates by RK Collective (if required)
 ✓ No agent activity after RK Collective finalization
 
 **Evidence Collection**:
@@ -133,11 +135,11 @@ Deploy specialized validators based on executed waves:
 
 ### Example 1: Good Validation Finding
 <good_example>
-**Finding**: RK Collective deployment timing violation
+**Finding**: RK Collective deployment pattern violation
 **Evidence**: 
 - Git log shows RK-001 deployed at 10:32:15
-- Implementation Agent IA-001 deployed at 10:31:45
-- 30-second violation of Pre-Wave requirement
+- Implementation Agent IA-001 deployed at 10:31:45 (same phase)
+- Protocol requires: Pre-Wave = ONLY RKs, Main Wave = Implementation agents
 
 **Impact**: High - Protocol sequence broken
 **Root Cause**: Deployment script race condition

@@ -44,7 +44,10 @@ Shadow Clone system testing framework initialization
           Strategic planning of execution waves for optimal efficiency
         </phase>
         <phase number="4" name="Agent Deployment">
-          Parallel deployment of agents according to wave plan
+          Three-phase deployment per wave:
+          - Pre-Wave: ONLY Record Keeper Collective
+          - Main Wave: Implementation agents (max 10 per batch)
+          - Post-Wave: ONLY Record Keeper Collective
         </phase>
         <phase number="5" name="Mode-Specific Execution">
           Core execution logic specific to the selected mode
@@ -187,7 +190,7 @@ Shadow Clone system testing framework initialization
       </step>
       <step number="3">
         <action>Allow system to complete all 7 production phases</action>
-        <verification>Observe wave execution and agent deployment patterns</verification>
+        <verification>Observe three-phase pattern: Pre-Wave (RKs only), Main Wave (implementation), Post-Wave (RKs only)</verification>
       </step>
       <step number="4">
         <action>Wait for Phase 8 Validator Agent deployment</action>
