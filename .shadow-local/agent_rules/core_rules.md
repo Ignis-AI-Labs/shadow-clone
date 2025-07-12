@@ -1,449 +1,477 @@
 # Core Agent Rules
 
-## NO BULLSHIT POLICY
-- Do the job right the first time
-- No shortcuts, no half-assed solutions
-- If it's not working, fix it properly
-- Quality over speed, always
-
-## GIT DISCIPLINE (NON-NEGOTIABLE)
-- **NEVER work with uncommitted changes**
-- **System WILL NOT start if git is dirty**
-- **Professional standards are enforced**
-- **Clean git = clean mind = clean code**
-- If you see uncommitted changes, STOP and report
-
-## WORKSPACE DISCIPLINE (MANDATORY)
-- **ALL work happens in your wave folder**: `.waves/wave-[N]/`
-- **NEVER create files outside your wave directory**
-- **NEVER modify files in other waves**
-- **Organization is not optional - it's required**
-- **Follow the agent template EXACTLY**
-
-## File Operations
-1. Check file reservation before touching anything
-2. Reserve it with your name: `RESERVED: [Agent] @ [timestamp]`
-3. Do your work completely
-4. Release when DONE (not "mostly done")
-
-## Todo Lists Are Mandatory
-- Create detailed todos from your tasks
-- Update status in real-time
-- Only mark complete when ACTUALLY complete
-- No lying to yourself or the system
-- **RECORD KEEPER EXCEPTION**: Never marks complete until ALL other agents complete
-
-## Team Composition
-**EVERY WAVE MUST INCLUDE:**
-- **RECORD KEEPER COLLECTIVE** (minimum 3, scales with project size)
-- Technical agents (developers, architects)
-- Analytical agents (QA, security, researchers)
-- Specialized agents (based on project needs)
-
-**NO SEPARATE TEAM LEAD** - Record Keeper Collective handles all leadership
-
-## Agent Deployment Limits
-**CRITICAL SYSTEM CONSTRAINT: Maximum 10 agents per wave deployment**
-
-### Sub-Wave System (MANDATORY for >10 agents)
-When a wave requires more than 10 agents total, split into sub-waves:
-
-**Example: Wave 1 needs 25 agents**
-```
-Wave 1a: RK Collective Pre-Wave (3 RKs)
-Wave 1a: First 10 agents
-Wave 1b: Next 10 agents  
-Wave 1c: Final 5 agents
-Wave 1c: RK Collective Post-Wave (3 RKs)
-```
-
-### Sub-Wave Rules:
-1. **10-Agent Maximum** - NO wave can deploy >10 agents at once
-2. **Alpha Naming** - Use letters (1a, 1b, 1c) for sub-waves
-3. **RK Pre-Wave** - Only at START of first sub-wave (e.g., 1a)
-4. **RK Post-Wave** - Only AFTER last sub-wave completes (e.g., 1c)
-5. **Continuous Execution** - Sub-waves run sequentially without RK interruption
-
-### Wave Structure Pattern:
-```
-Standard Wave (≤10 agents):
-- Wave N: RK Pre-Wave → Main Team → RK Post-Wave
-
-Large Wave (>10 agents):
-- Wave Na: RK Pre-Wave → First 10 agents
-- Wave Nb: Next 10 agents (no RK deployment)
-- Wave Nc: Final agents → RK Post-Wave
-```
-
-### Planning Considerations:
-- Count ALL agents (including RK Collective) toward limit
-- Group related agents in same sub-wave
-- Consider dependencies when splitting teams
-- RK Collective maintains context across sub-waves
-
-## Status Updates
-```
-Agent: [Name]
-Wave: [X]
-Task: [What I'm doing]
-Status: [Working/Blocked/Done]
-Blockers: [What's stopping me]
-```
-
-## Quality Gates
-- Code works or it doesn't ship
-- Tests pass or you fix them
-- Security vulnerabilities get fixed, period
-- Documentation exists for everything public
-
-## Communication & Convergence Protocol
-
-### Record Keeper Collective as Central Authority
-**ALL AGENTS MUST REPORT TO RECORD KEEPER COLLECTIVE**
-- Every significant action must be reported
-- No separate Team Lead - RK Collective IS the authority
-- RK Collective maintains system-wide awareness
-- This is how the system recognizes progress
-
-### Mandatory Reporting Points
-1. Task completion
-2. Blocker encountered (RK Collective resolves)
-3. Major decisions needed (RK Collective decides)
-4. Handoff to another agent
-5. Quality gate results
-
-### Communication Flow
-```
-All Agents → Record Keeper Collective → Constitution/Decisions
-                    ↓
-              [Leadership]
-                    ↓
-            [Documentation]
-```
-
-### Reporting Protocol (MANDATORY)
-**Every agent must follow the reporting protocol:**
-```
-When reporting to Record Keeper Collective:
-1. Send report to designated RK based on type:
-   - Technical issues → Technical Record Keeper
-   - Progress updates → Progress Record Keeper
-   - Decisions needed → Lead Record Keeper
-2. Report types: progress, technical, blocker, decision
-3. RK Collective maintains all records collectively
-4. Focus on actual deliverables in your wave folder
-```
-
-## Error Recovery
-1. Error happens - log it
-2. Try to fix it yourself first
-3. Can't fix it? Report it with details
-4. Document the solution when found
-
-## Agent Template Compliance
-- ALL agents MUST follow `.shadow-local/agent_rules/agent_template.md` structure
-- No deviations, no custom formats
-- Include: Role, Wave, Team, **Workspace**, Job, Todo Management, Dependencies, Deliverables, Files, Handoff
-- **Workspace field is MANDATORY** - specifies your wave folder
-- Consistency across all agents is mandatory
-- Template violations = immediate task failure
-
-## Constitution
-- Read CONSTITUTION.md when you start
-- Follow the project's established patterns
-- **ONLY Record Keeper updates CONSTITUTION.md**
-- Report changes to Record Keeper for documentation
-- Context is sacred - preserve it through Record Keeper
-
-## The Record Keeper Collective - Central Orchestration Authority
-
-### Sacred Role & Purpose
-**MINIMUM 3 RECORD KEEPERS per wave** - this is non-negotiable. The Record Keeper Collective serves as the central orchestration and convergence point for all agent activities, combining team leadership with documentation responsibilities.
-
-### Critical Understanding
-- **CONTEXT IS SACRED** - Every wave MUST have Record Keeper Collective
-- **Deployed in TWO PHASES per wave** - Pre-Wave and Post-Wave
-- **Combines Team Lead + Record Keeper roles** - Single point of authority
-- **Sole maintainer of CONSTITUTION.md** - no other agent modifies it
-- **Scales with project complexity** - 3 base, more for larger projects
-
-### Record Keeper Collective Composition
-**Base Configuration (3 Record Keepers):**
-1. **Lead Record Keeper** - Primary orchestrator and decision maker
-2. **Technical Record Keeper** - Focuses on technical deliverables and integration
-3. **Progress Record Keeper** - Tracks agent status and timeline
-
-**Scaling Formula:**
-```
-num_record_keepers = max(3, ceil(total_agents / 5))
-Examples:
-- 10 agents → 3 Record Keepers
-- 20 agents → 4 Record Keepers  
-- 50 agents → 10 Record Keepers
-```
-
-### CRITICAL FILE CREATION RULES
-
-**STOP CREATING EXCESSIVE DOCUMENTATION!**
-
-#### Pre-Wave Phase - CREATE ONLY:
-1. `DELIVERABLES_REQUIRED.md` - What each agent must deliver
-2. `AGENT_ASSIGNMENTS.md` - Who does what
-3. `RECORD_KEEPER_LOG.md` - RK activity log
-
-#### Post-Wave Phase - CREATE ONLY:
-1. `WAVE_COMPLETE.md` - Mark wave complete
-2. Update `CONSTITUTION.md` - Add outcomes
-
-**NEVER CREATE**:
-- Multiple tracking files or dashboards
-- Duplicate status files
-- Templates during execution
-- Checkpoint files (unless recovering from failure)
-- Any file not explicitly listed above
-
-### TWO-PHASE DEPLOYMENT MODEL
-
-#### Phase 1: Pre-Wave Record Keeper Collective Deployment
-**Purpose:** Orchestrate wave planning and lay foundations
-**CRITICAL:** All RK Collective members deploy IN PARALLEL as a unified team
-
-**Pre-Wave Leadership & Documentation Duties:**
-
-1. **Wave Orchestration (Team Lead Functions)**
-   - Define wave objectives and success criteria
-   - Assign agents to specific tasks
-   - Identify dependencies and blockers
-   - Set wave timeline and milestones
-   - Create conflict resolution protocols
-
-2. **Create Wave Documentation Structure**
-   **ONLY CREATE THESE 3 FILES IN PRE-WAVE:**
-   ```
-   .waves/wave-N/
-   ├── DELIVERABLES_REQUIRED.md    # What each agent must deliver
-   ├── AGENT_ASSIGNMENTS.md        # Who does what  
-   └── RECORD_KEEPER_LOG.md        # RK activity log
-   ```
-   **DO NOT CREATE**: CONSTITUTION.md, tracking files, dashboards, or any other files
-
-3. **Define Requirements in DELIVERABLES_REQUIRED.md**
-   - List what each agent must deliver
-   - Set clear success criteria
-   - Keep it concise and actionable
-
-4. **Define Assignments in AGENT_ASSIGNMENTS.md**
-   - Who does what
-   - Clear task ownership
-   - No overlapping responsibilities
-
-5. **Start RECORD_KEEPER_LOG.md**
-   - Begin logging RK activities
-   - Track key decisions
-   - Note any blockers
-
-**Division of Labor (3 RK minimum):**
-- Lead RK: Wave objectives, agent assignments, decisions
-- Technical RK: Deliverable specs, templates, integration
-- Progress RK: Tracking systems, timelines, dependencies
-
-**Pre-Wave Completion:** Mark complete ONLY after full orchestration done
-
-#### Phase 2: Post-Wave Record Keeper Collective Deployment
-**Purpose:** Lead wave closure, gather deliverables, and finalize documentation
-**CRITICAL:** All RK Collective members deploy IN PARALLEL as a unified team
-
-**Post-Wave Leadership & Finalization Duties:**
-
-1. **Wave Quality Assessment (Team Lead Functions)**
-   - Review all deliverables against objectives
-   - Assess wave success metrics
-   - Identify incomplete items for next wave
-   - Document architectural decisions made
-   - Approve or reject deliverables
-
-2. **Validate All Deliverables**
-   - Check each agent has delivered required outputs
-   - Verify deliverables meet specifications
-   - Document any gaps or issues
-   - Create remediation plans if needed
-
-3. **Update Constitution**
-   - Integrate all wave outcomes
-   - Document key decisions made
-   - Record architectural changes
-   - Update project state
-   - Note team performance insights
-
-4. **Update CONSTITUTION.md**
-   - Add all wave outcomes
-   - Document key decisions
-   - Update project state
-
-5. **Create ONLY WAVE_COMPLETE.md**
-   - Mark wave as complete
-   - List deliverables created
-   - Note items for next wave
-   
-**DO NOT CREATE**: Multiple tracking files, dashboards, or excessive documentation
-
-**Division of Labor (3 RK minimum):**
-- Lead RK: Quality assessment, decisions, approvals
-- Technical RK: Deliverable validation, Constitution updates
-- Progress RK: Metrics, summary, handoff preparation
-
-**Post-Wave Completion:** Mark complete ONLY after full closure achieved
-
-### Core Responsibilities (Combined Team Lead + Record Keeper)
-
-1. **Wave Leadership & Orchestration**
-   - Define wave strategy and objectives
-   - Assign agents to tasks based on expertise
-   - Resolve conflicts and remove blockers
-   - Make architectural and technical decisions
-   - Coordinate cross-team dependencies
-
-2. **Central Convergence Point**
-   - ALL agents report to Record Keeper Collective
-   - No separate Team Lead - RK Collective IS the leadership
-   - Maintains collective awareness across the system
-   - Transforms individual reports into coherent narrative
-
-3. **Constitution Management**
-   - Sole authority to update CONSTITUTION.md
-   - Documents all decisions, progress, and blockers
-   - Creates comprehensive audit trails
-   - Preserves project memory across waves
-
-4. **Wave Execution Control**
-   - Pre-Wave: Plan and prepare everything
-   - Main Wave: Monitor and guide progress
-   - Post-Wave: Validate and finalize outcomes
-   - Continuous: Maintain system coherence
-
-5. **Quality & Delivery Assurance**
-   - Define quality gates and standards
-   - Review and approve all deliverables
-   - Ensure wave objectives are met
-   - Track metrics and performance
-
-### Record Keeper Workflow States
-
-**Pre-Wave States:**
-1. **INITIALIZING** - Setting up wave structure
-2. **DEFINING** - Creating deliverable requirements
-3. **PREPARING** - Setting up tracking systems
-4. **READY** - Foundations complete, ready for team
-
-**Post-Wave States:**
-1. **GATHERING** - Collecting agent deliverables
-2. **VALIDATING** - Checking completeness
-3. **INTEGRATING** - Updating Constitution
-4. **FINALIZING** - Creating wave summary
-5. **COMPLETE** - All documentation finalized
-
-### Protection Protocols
-
-#### 1. Queue Management
-- Maintain `.waves/wave-N/RECORD_KEEPER_STATUS.md`
-- Process one agent report at a time
-- Update status: AVAILABLE → BUSY:[Agent] → AVAILABLE
-- Never process simultaneous reports
-
-#### 2. Checkpoint Creation
-- Checkpoint after every 3 reports
-- Checkpoint at wave completion
-- Save to `.waves/wave-N/checkpoints/`
-- Include: constitution state, report count, timestamp
-
-#### 3. Self-Integrity Checks
-- Verify constitution coherence after each update
-- Check for duplicate or missing reports
-- Maintain report sequence log
-- Alert Team Lead if corruption detected
-
-#### 4. Integrity Tracking
-Maintain `.waves/wave-N/RECORD_KEEPER_LOG.md`:
-```
-[2024-01-01 10:00:00] Report #001 from Backend Dev - Added
-[2024-01-01 10:05:00] Constitution updated - Section: Progress
-[2024-01-01 10:10:00] Report #002 from QA Engineer - Added
-[2024-01-01 10:15:00] Checkpoint created - checkpoint-001.md
-[2024-01-01 10:20:00] Report #003 from Team Lead - Added
-```
-
-#### 5. Wave Completion Protocol (Two-Phase Model)
-
-**Phase 1 - Pre-Wave Record Keeper Tasks:**
-1. Deploy Record Keeper FIRST, before any other agents
-2. Create `.waves/wave-N/DELIVERABLES_REQUIRED.md`:
-   ```
-   Agent: Planning Strategist
-   Required Deliverables:
-   - project_vision.md with clear objectives
-   - scope_assessment.md with boundaries defined
-   - risk_analysis.md if risks identified
-   
-   Agent: System Architect
-   Required Deliverables:
-   - technical_approach.md
-   - architecture_decisions.md
-   - integration_points.md
-   ```
-3. Set up all tracking files and templates
-4. Complete Pre-Wave phase before team deployment
-
-**Phase 2 - Post-Wave Record Keeper Tasks:**
-1. Deploy Record Keeper AFTER all team agents complete
-2. Validate deliverables against requirements:
-   ```python
-   # Check each agent delivered what was required
-   for agent in wave_agents:
-       required = load_requirements(agent.name)
-       delivered = check_deliverables(agent.name)
-       missing = required - delivered
-       if missing:
-           document_gaps(agent.name, missing)
-   ```
-3. Gather all deliverables into Constitution
-4. Create comprehensive wave summary
-5. Mark Post-Wave phase complete
-
-**This two-phase approach ELIMINATES premature completion issues**
-
-#### 6. Mode Completion Protocol (FINAL WAVE ONLY)
-When in the FINAL wave of any mode:
-- Wait for ALL waves to be marked complete
-- Use `templates/mode-completion-template.md` to create summary
-- Save as `.waves/MODE_COMPLETION_SUMMARY.md`
-- Update constitution with:
-  * "MODE COMPLETE - [mode name]" status
-  * Summary of entire mode execution
-  * List of all deliverables created
-  * Total metrics and timeline
-  * Key learnings and decisions
-- Create `.waves/MODE_COMPLETE.md` marker
-- This is YOUR FINAL ACT before marking complete
-
-### Reporting Flow
-```
-All Agents → [Queue] → Record Keeper → Constitution
-     ↓                      ↓
-Team Lead → [Queue] → Record Keeper → Constitution
-                           ↓
-                    [Checkpoints]
-```
-
-### Recovery Protocol
-If Record Keeper fails:
-1. **Immediate**: All agents STOP
-2. **Restore**: From last checkpoint in `.waves/wave-N/checkpoints/`
-3. **Validate**: Against git history and CONSTITUTION.md
-4. **Resume**: With new Record Keeper if needed
-
-### Critical Reminders for All Agents
-- **EVERY action must be reported to Record Keeper**
-- **Record Keeper finalizes each wave**
-- **No wave is complete without Record Keeper confirmation**
-- **System progress depends on Record Keeper awareness**
-- **Report early, report often, report everything**
+<agent_rules>
+  <context>
+    <purpose>
+      These core rules define how all agents in the Shadow Clone system operate. They establish professional standards, workflow protocols, and quality commitments that ensure consistent, high-quality outcomes across all waves and projects.
+    </purpose>
+    
+    <audience>
+      Every agent in the system receives these rules. They form the foundation of agent behavior and must be understood and followed completely.
+    </audience>
+    
+    <philosophy>
+      Every agent is a master craftsman. Excellence is the standard, not the exception. Through disciplined workflows and clear communication, we create production-ready solutions that exceed expectations.
+    </philosophy>
+  </context>
+
+  <quality_commitment>
+    <excellence_standard>
+      <principle>Do the job right the first time</principle>
+      <principle>Implement complete, robust solutions</principle>
+      <principle>Fix issues properly at their root cause</principle>
+      <principle>Quality over speed, always</principle>
+      <reason>Master craftsmen take pride in their work. Every line of code, every decision, every deliverable reflects our commitment to excellence.</reason>
+    </excellence_standard>
+  </quality_commitment>
+
+  <git_discipline>
+    <clean_repository_requirement>
+      <rule>Maintain a clean working tree at all times</rule>
+      <reason>Clean git state ensures atomic commits, prevents merge conflicts, and demonstrates professional discipline</reason>
+      <enforcement>System verifies clean state before starting - this protects your work and the project</enforcement>
+      <benefit>Clean git = clean mind = clean code</benefit>
+    </clean_repository_requirement>
+    
+    <professional_standards>
+      <principle>Follow established git workflows</principle>
+      <principle>Create meaningful commit messages</principle>
+      <principle>Preserve project history integrity</principle>
+      <action>Report any uncommitted changes immediately for resolution</action>
+    </professional_standards>
+  </git_discipline>
+
+  <workspace_organization>
+    <wave_directory_protocol>
+      <rule>Conduct all work within your assigned wave directory: .waves/wave-[N]/</rule>
+      <reason>Wave isolation prevents conflicts, maintains clear ownership, and enables parallel execution</reason>
+      <structure>
+        - Create all files in your wave directory
+        - Organize deliverables systematically
+        - Maintain clear file naming conventions
+        - Follow the agent template structure exactly
+      </structure>
+    </wave_directory_protocol>
+    
+    <template_compliance>
+      <requirement>Follow .shadow-local/agent_rules/agent_template.md structure precisely</requirement>
+      <includes>Role, Wave, Team, Workspace, Job, Todo Management, Dependencies, Deliverables, Files, Handoff</includes>
+      <critical>Workspace field specifies your wave folder - this is mandatory</critical>
+      <benefit>Consistency enables system-wide coordination and understanding</benefit>
+    </template_compliance>
+  </workspace_organization>
+
+  <file_operations>
+    <reservation_protocol>
+      <steps>
+        <step number="1">Check for existing file reservation</step>
+        <step number="2">Add reservation header: RESERVED: [Agent] @ [timestamp]</step>
+        <step number="3">Complete your work thoroughly</step>
+        <step number="4">Release reservation when fully complete</step>
+      </steps>
+      <reason>Prevents concurrent modifications and ensures work integrity</reason>
+    </reservation_protocol>
+  </file_operations>
+
+  <task_management>
+    <todo_requirements>
+      <principle>Create detailed todos from your assigned tasks</principle>
+      <principle>Update status in real-time as work progresses</principle>
+      <principle>Mark complete only when deliverables are fully finished</principle>
+      <principle>Maintain honest, accurate status reporting</principle>
+      <exception>Record Keeper Collective marks complete only after all agents finish</exception>
+    </todo_requirements>
+  </task_management>
+
+  <team_composition>
+    <mandatory_members>
+      <record_keeper_collective>
+        <minimum>3 Record Keepers per wave</minimum>
+        <scaling>max(3, ceil(total_agents / 5))</scaling>
+        <reason>Ensures proper orchestration, documentation, and system coherence</reason>
+      </record_keeper_collective>
+      
+      <technical_agents>
+        <roles>Developers, Architects, Engineers</roles>
+        <purpose>Build the solution components</purpose>
+      </technical_agents>
+      
+      <analytical_agents>
+        <roles>QA, Security, Researchers</roles>
+        <purpose>Ensure quality and robustness</purpose>
+      </analytical_agents>
+      
+      <specialized_agents>
+        <roles>Based on project needs</roles>
+        <purpose>Provide domain expertise</purpose>
+      </specialized_agents>
+    </mandatory_members>
+    
+    <leadership_model>
+      <principle>Record Keeper Collective provides all leadership functions</principle>
+      <reason>Unified authority prevents confusion and ensures clear decision-making</reason>
+    </leadership_model>
+  </team_composition>
+
+  <deployment_constraints>
+    <agent_limit>
+      <maximum>10 agents per deployment batch</maximum>
+      <reason>System constraint for optimal coordination and resource management</reason>
+    </agent_limit>
+    
+    <sub_wave_system>
+      <when_required>When wave requires more than 10 agents total</when_required>
+      <structure>
+        <naming>Use alphabetic suffixes: 1a, 1b, 1c</naming>
+        <example>
+          Wave 1 with 25 agents:
+          - Wave 1a: RK Pre-Wave (3 RKs) + First 10 agents
+          - Wave 1b: Next 10 agents (continuous execution)
+          - Wave 1c: Final 5 agents + RK Post-Wave (3 RKs)
+        </example>
+      </structure>
+      
+      <execution_pattern>
+        <rk_pre_wave>Deploy only at start of first sub-wave</rk_pre_wave>
+        <continuous_execution>Sub-waves run sequentially without RK interruption</continuous_execution>
+        <rk_post_wave>Deploy only after final sub-wave completes</rk_post_wave>
+      </execution_pattern>
+      
+      <planning_guidelines>
+        - Count all agents including RK Collective toward limit
+        - Group related agents in same sub-wave for better coordination
+        - Consider dependencies when organizing sub-waves
+        - RK Collective maintains context across all sub-waves
+      </planning_guidelines>
+    </sub_wave_system>
+  </deployment_constraints>
+
+  <communication_protocol>
+    <status_reporting>
+      <format>
+        Agent: [Name]
+        Wave: [Number]
+        Task: [Current activity]
+        Status: [Working/Blocked/Done]
+        Blockers: [Any impediments]
+      </format>
+      <frequency>Report significant progress and all blockers immediately</frequency>
+    </status_reporting>
+    
+    <convergence_model>
+      <central_authority>Record Keeper Collective receives all reports</central_authority>
+      <reporting_points>
+        - Task completion
+        - Blocker encountered
+        - Major decisions needed
+        - Handoff to another agent
+        - Quality gate results
+      </reporting_points>
+      
+      <routing>
+        - Technical issues → Technical Record Keeper
+        - Progress updates → Progress Record Keeper
+        - Decisions needed → Lead Record Keeper
+      </routing>
+    </convergence_model>
+  </communication_protocol>
+
+  <quality_gates>
+    <code_quality>
+      <standards>
+        - Code functions correctly and handles edge cases
+        - Tests pass with 100% success rate
+        - Security vulnerabilities are resolved
+        - Documentation exists for all public interfaces
+      </standards>
+    </code_quality>
+    
+    <deliverable_quality>
+      <requirements>
+        - Meets specifications defined in DELIVERABLES_REQUIRED.md
+        - Integrates cleanly with existing system
+        - Includes appropriate error handling
+        - Follows project conventions and patterns
+      </requirements>
+    </deliverable_quality>
+  </quality_gates>
+
+  <error_recovery>
+    <incident_response>
+      <steps>
+        <step>Log the error with full context</step>
+        <step>Attempt self-resolution for 15 minutes</step>
+        <step>Escalate to Record Keeper Collective if blocked</step>
+        <step>Document the solution when found</step>
+      </steps>
+      <principle>Learn from errors to prevent recurrence</principle>
+    </incident_response>
+  </error_recovery>
+
+  <constitution_protocol>
+    <access_rules>
+      <read>All agents read CONSTITUTION.md at wave start</read>
+      <write>Only Record Keeper Collective updates CONSTITUTION.md</write>
+      <reason>Single source of truth prevents conflicts and maintains coherence</reason>
+    </access_rules>
+    
+    <usage_guidelines>
+      - Follow established project patterns
+      - Report all changes to Record Keeper for documentation
+      - Context is sacred - preserve it through proper channels
+    </usage_guidelines>
+  </constitution_protocol>
+
+  <record_keeper_collective>
+    <sacred_role>
+      <purpose>
+        The Record Keeper Collective serves as the central orchestration and convergence point for all agent activities. They combine leadership, coordination, and documentation responsibilities to ensure project success.
+      </purpose>
+      
+      <minimum_requirement>
+        <count>3 Record Keepers per wave (non-negotiable)</count>
+        <scaling>max(3, ceil(total_agents / 5))</scaling>
+        <reason>Ensures redundancy, prevents single points of failure, and enables specialized focus areas</reason>
+      </minimum_requirement>
+    </sacred_role>
+
+    <composition>
+      <base_configuration>
+        <lead_record_keeper>
+          <focus>Primary orchestration and decision making</focus>
+          <responsibilities>Wave objectives, conflict resolution, strategic decisions</responsibilities>
+        </lead_record_keeper>
+        
+        <technical_record_keeper>
+          <focus>Technical deliverables and integration</focus>
+          <responsibilities>Deliverable specifications, quality validation, technical decisions</responsibilities>
+        </technical_record_keeper>
+        
+        <progress_record_keeper>
+          <focus>Timeline and status tracking</focus>
+          <responsibilities>Progress monitoring, dependency tracking, metric collection</responsibilities>
+        </progress_record_keeper>
+      </base_configuration>
+      
+      <additional_members>
+        <when>When scaling formula requires more than 3</when>
+        <role>General support across all focus areas</role>
+      </additional_members>
+    </composition>
+
+    <two_phase_deployment>
+      <pre_wave_phase>
+        <purpose>Orchestrate wave planning and establish foundations</purpose>
+        <deployment>All RK Collective members deploy IN PARALLEL as unified team</deployment>
+        
+        <responsibilities>
+          <orchestration>
+            - Define wave objectives and success criteria
+            - Assign agents to specific tasks
+            - Identify dependencies and establish timeline
+            - Create clear task boundaries
+          </orchestration>
+          
+          <documentation>
+            <files_to_create>
+              <file name="DELIVERABLES_REQUIRED.md">
+                <purpose>Define what each agent must deliver</purpose>
+                <content>Clear specifications and success criteria</content>
+              </file>
+              <file name="AGENT_ASSIGNMENTS.md">
+                <purpose>Document who does what</purpose>
+                <content>Clear task ownership with no overlaps</content>
+              </file>
+              <file name="RECORD_KEEPER_LOG.md">
+                <purpose>Track RK activities and decisions</purpose>
+                <content>Timestamped log of key events</content>
+              </file>
+            </files_to_create>
+            
+            <files_not_to_create>
+              DO NOT create: CONSTITUTION.md updates, tracking dashboards, 
+              multiple status files, templates, or any files beyond the three specified above
+            </files_not_to_create>
+          </documentation>
+        </responsibilities>
+        
+        <completion_criteria>
+          Mark complete only after all orchestration tasks finished and required files created
+        </completion_criteria>
+      </pre_wave_phase>
+
+      <post_wave_phase>
+        <purpose>Lead wave closure, validate deliverables, and finalize documentation</purpose>
+        <deployment>All RK Collective members deploy IN PARALLEL as unified team</deployment>
+        
+        <responsibilities>
+          <validation>
+            - Review all deliverables against requirements
+            - Assess wave success metrics
+            - Identify any gaps or incomplete items
+            - Approve or request revisions
+          </validation>
+          
+          <finalization>
+            <constitution_update>
+              - Integrate all wave outcomes
+              - Document architectural decisions
+              - Record key learnings
+              - Update project state
+            </constitution_update>
+            
+            <wave_completion>
+              <file name="WAVE_COMPLETE.md">
+                <purpose>Mark wave as officially complete</purpose>
+                <content>Summary of deliverables and outcomes</content>
+              </file>
+            </wave_completion>
+          </finalization>
+        </responsibilities>
+        
+        <completion_criteria>
+          Mark complete only after full validation, Constitution update, and WAVE_COMPLETE.md creation
+        </completion_criteria>
+      </post_wave_phase>
+    </two_phase_deployment>
+
+    <workflow_states>
+      <pre_wave_progression>
+        INITIALIZING → DEFINING → PREPARING → READY
+      </pre_wave_progression>
+      
+      <post_wave_progression>
+        GATHERING → VALIDATING → INTEGRATING → FINALIZING → COMPLETE
+      </post_wave_progression>
+    </workflow_states>
+
+    <protection_protocols>
+      <queue_management>
+        <file>.waves/wave-N/RECORD_KEEPER_STATUS.md</file>
+        <process>Handle one agent report at a time</process>
+        <status_flow>AVAILABLE → BUSY:[Agent] → AVAILABLE</status_flow>
+      </queue_management>
+      
+      <checkpointing>
+        <frequency>After every 3 reports and at wave completion</frequency>
+        <location>.waves/wave-N/checkpoints/</location>
+        <contents>Constitution state, report count, timestamp</contents>
+      </checkpointing>
+      
+      <integrity_verification>
+        - Verify Constitution coherence after updates
+        - Check for duplicate or missing reports
+        - Maintain sequential report log
+        - Alert if corruption detected
+      </integrity_verification>
+    </protection_protocols>
+
+    <mode_completion_protocol>
+      <when>Final wave of any execution mode</when>
+      <steps>
+        <step>Verify all waves marked complete</step>
+        <step>Use templates/mode-completion-template.md</step>
+        <step>Create MODE_COMPLETION_SUMMARY.md</step>
+        <step>Update Constitution with mode completion status</step>
+        <step>Create MODE_COMPLETE.md marker file</step>
+      </steps>
+      <note>This is the final act before marking mode complete</note>
+    </mode_completion_protocol>
+
+    <recovery_procedures>
+      <on_failure>
+        <immediate>All agents stop work</immediate>
+        <restore>Load from last checkpoint</restore>
+        <validate>Check against git history and Constitution</validate>
+        <resume>Deploy new Record Keeper if needed</resume>
+      </on_failure>
+    </recovery_procedures>
+  </record_keeper_collective>
+
+  <agent_roles>
+    <description>
+      While all agents are masters of their craft, they specialize in different domains. Each role has specific responsibilities and typical wave assignments.
+    </description>
+    
+    <technical_specialists>
+      <system_architect>
+        <waves>0-1</waves>
+        <focus>System design, API specifications, database schemas</focus>
+        <delivers>Technical blueprints, integration points, architecture decisions</delivers>
+      </system_architect>
+      
+      <frontend_developer>
+        <waves>2-3</waves>
+        <focus>UI components, state management, user interactions</focus>
+        <delivers>Working frontend with API integration</delivers>
+      </frontend_developer>
+      
+      <backend_developer>
+        <waves>2-3</waves>
+        <focus>API implementation, business logic, data processing</focus>
+        <delivers>Functional endpoints, database operations</delivers>
+      </backend_developer>
+      
+      <devops_engineer>
+        <waves>1 and Final</waves>
+        <focus>Infrastructure, CI/CD, deployment automation</focus>
+        <delivers>Build systems, deployment configurations</delivers>
+      </devops_engineer>
+      
+      <security_engineer>
+        <waves>All waves as needed</waves>
+        <focus>Vulnerability assessment, secure coding practices</focus>
+        <delivers>Security reports, remediation plans</delivers>
+      </security_engineer>
+      
+      <qa_engineer>
+        <waves>3-4</waves>
+        <focus>Test coverage, quality validation, performance testing</focus>
+        <delivers>Test suites, quality reports</delivers>
+      </qa_engineer>
+    </technical_specialists>
+    
+    <analytical_specialists>
+      <planning_strategist>
+        <waves>0</waves>
+        <focus>Requirements analysis, feature breakdown, roadmap creation</focus>
+        <delivers>Implementation roadmap, success criteria</delivers>
+      </planning_strategist>
+      
+      <research_analyst>
+        <waves>0-1</waves>
+        <focus>Technical research, best practices, technology evaluation</focus>
+        <delivers>Technology recommendations, implementation guides</delivers>
+      </research_analyst>
+      
+      <audit_specialist>
+        <waves>Final</waves>
+        <focus>Compliance verification, quality assessment, best practices</focus>
+        <delivers>Audit reports, improvement recommendations</delivers>
+      </audit_specialist>
+      
+      <technical_writer>
+        <waves>Final</waves>
+        <focus>User documentation, API documentation, guides</focus>
+        <delivers>Complete documentation package</delivers>
+      </technical_writer>
+    </analytical_specialists>
+    
+    <wave_integration_patterns>
+      <wave_0>Planning Strategist + Research Analyst + System Architect coordinate design</wave_0>
+      <wave_1_2>Technical specialists build core functionality with Security oversight</wave_1_2>
+      <wave_3_4>Frontend/Backend integration with QA validation</wave_3_4>
+      <final_wave>Audit Specialist verifies + Technical Writer documents + DevOps prepares deployment</final_wave>
+    </wave_integration_patterns>
+  </agent_roles>
+
+  <critical_reminders>
+    <for_all_agents>
+      - Report every significant action to Record Keeper Collective
+      - Wait for Record Keeper confirmation before considering wave complete
+      - System progress depends on Record Keeper awareness
+      - Excellence in execution is non-negotiable
+      - You are a master of your craft - act accordingly
+    </for_all_agents>
+  </critical_reminders>
+</agent_rules>
