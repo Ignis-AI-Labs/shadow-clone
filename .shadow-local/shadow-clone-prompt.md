@@ -55,11 +55,33 @@ This version reads from local files instead of API
         <subdirectories>
           <wave number="0">
             <purpose>Mandatory planning phase</purpose>
-            <structure>deliverables/, research/, drafts/, WAVE_STATUS.md</structure>
+            <structure>
+              deliverables/  # Final polished documents
+              research/      # Research findings and analysis
+              drafts/        # Work-in-progress documents
+              rk-operations/ # Record Keeper specific files
+              WAVE_STATUS.md
+            </structure>
           </wave>
           <wave number="N">
             <purpose>Implementation phases</purpose>
-            <structure>AGENT_ROSTER.md, COMPLETION_STATUS.md, RECORD_KEEPER_STATUS.md, RECORD_KEEPER_LOG.md, checkpoints/</structure>
+            <structure>
+              deliverables/  # Final wave outputs
+              research/      # Technical research and POCs
+              drafts/        # Work-in-progress files
+              rk-operations/ # Record Keeper specific files
+              WAVE_STATUS.md
+            </structure>
+            <rk_operations_contents>
+              AGENT_ROSTER.md
+              AGENT_ASSIGNMENTS.md
+              DELIVERABLES_REQUIRED.md
+              RECORD_KEEPER_STATUS.md
+              RECORD_KEEPER_LOG.md
+              PRE_WAVE_COMPLETE.md
+              POST_WAVE_COMPLETE.md
+              WAVE_COMPLETE.md
+            </rk_operations_contents>
           </wave>
         </subdirectories>
       </directory>
@@ -137,8 +159,11 @@ This version reads from local files instead of API
       
       <placement_rules>
         <rule>All work in assigned wave directory only</rule>
-        <prohibited>Creating files in project root, modifying other waves</prohibited>
-        <reason>Maintains wave isolation and prevents interference</reason>
+        <rule>Use designated subdirectories (deliverables/, research/, drafts/, rk-operations/)</rule>
+        <rule>RK files MUST go in rk-operations/ subdirectory</rule>
+        <rule>NEVER create nested .waves directories</rule>
+        <prohibited>Creating files in project root, modifying other waves, creating .waves inside waves</prohibited>
+        <reason>Maintains wave isolation, organization, and prevents interference</reason>
       </placement_rules>
     </file_operations>
   </core_requirements>

@@ -36,10 +36,17 @@ This template provides the definitive structure for how agents communicate their
   
   <workspace_management>
     <files>
-      <file path=".waves/wave-[N]/[filename]" purpose="[What this file contains]"/>
-      <folder path=".waves/wave-[N]/[subfolder]/" purpose="[Organization purpose]"/>
+      <file path=".waves/wave-[N]/deliverables/[filename]" purpose="[Final deliverable]"/>
+      <file path=".waves/wave-[N]/research/[filename]" purpose="[Research/analysis]"/>
+      <file path=".waves/wave-[N]/drafts/[filename]" purpose="[Work in progress]"/>
     </files>
-    <rule>Work exclusively within assigned wave folder</rule>
+    <rules>
+      <rule>Work exclusively within assigned wave folder</rule>
+      <rule>Use deliverables/ for final outputs only</rule>
+      <rule>Place all research and POCs in research/</rule>
+      <rule>Keep drafts and iterations in drafts/</rule>
+      <rule>NEVER create files in rk-operations/ (RK only)</rule>
+    </rules>
   </workspace_management>
 </agent_profile>
 ```
@@ -77,7 +84,8 @@ Every agent must structure their reports using this XML format:
   
   <workspace_updates>
     <created>
-      <file path=".waves/wave-[N]/[filename]" description="[Purpose and contents]"/>
+      <file path=".waves/wave-[N]/deliverables/[filename]" description="[Final deliverable]"/>
+      <file path=".waves/wave-[N]/research/[filename]" description="[Research finding]"/>
     </created>
     <modified>
       <file path=".waves/wave-[N]/[filename]" changes="[What was updated]"/>

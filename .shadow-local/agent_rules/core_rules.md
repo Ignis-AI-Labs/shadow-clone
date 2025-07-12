@@ -45,12 +45,21 @@
     <wave_directory_protocol>
       <rule>Conduct all work within your assigned wave directory: .waves/wave-[N]/</rule>
       <reason>Wave isolation prevents conflicts, maintains clear ownership, and enables parallel execution</reason>
-      <structure>
-        - Create all files in your wave directory
-        - Organize deliverables systematically
-        - Maintain clear file naming conventions
-        - Follow the agent template structure exactly
-      </structure>
+      <mandatory_structure>
+        .waves/wave-N/
+        ├── deliverables/    # Final polished outputs
+        ├── research/        # Research findings, POCs, analysis
+        ├── drafts/          # Work-in-progress files
+        ├── rk-operations/   # Record Keeper specific files
+        └── WAVE_STATUS.md   # Wave status tracking
+      </mandatory_structure>
+      <file_placement>
+        - deliverables/: Final versions of required outputs only
+        - research/: All research, analysis, POCs, technical investigations
+        - drafts/: Iterations, temporary files, work-in-progress
+        - rk-operations/: ALL Record Keeper files (logs, assignments, status)
+        - NEVER create nested .waves directories
+      </file_placement>
     </wave_directory_protocol>
     
     <template_compliance>
@@ -274,17 +283,23 @@
           
           <documentation>
             <files_to_create>
-              <file name="DELIVERABLES_REQUIRED.md">
+              <directory name="rk-operations/">
+                <purpose>Centralize all RK-specific files</purpose>
+              </directory>
+              <file name="rk-operations/DELIVERABLES_REQUIRED.md">
                 <purpose>Define what each agent must deliver</purpose>
                 <content>Clear specifications and success criteria</content>
               </file>
-              <file name="AGENT_ASSIGNMENTS.md">
+              <file name="rk-operations/AGENT_ASSIGNMENTS.md">
                 <purpose>Document who does what</purpose>
                 <content>Clear task ownership with no overlaps</content>
               </file>
-              <file name="RECORD_KEEPER_LOG.md">
+              <file name="rk-operations/RECORD_KEEPER_LOG.md">
                 <purpose>Track RK activities and decisions</purpose>
                 <content>Timestamped log of key events</content>
+              </file>
+              <file name="rk-operations/PRE_WAVE_COMPLETE.md">
+                <purpose>Mark pre-wave setup as complete</purpose>
               </file>
             </files_to_create>
             
@@ -321,9 +336,12 @@
             </constitution_update>
             
             <wave_completion>
-              <file name="WAVE_COMPLETE.md">
+              <file name="rk-operations/WAVE_COMPLETE.md">
                 <purpose>Mark wave as officially complete</purpose>
                 <content>Summary of deliverables and outcomes</content>
+              </file>
+              <file name="rk-operations/POST_WAVE_COMPLETE.md">
+                <purpose>Mark post-wave validation as complete</purpose>
               </file>
             </wave_completion>
           </finalization>
