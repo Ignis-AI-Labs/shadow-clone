@@ -1,82 +1,206 @@
-# Planning Mode
+# Planning Mode Configuration
 
-## Purpose
-Transform your idea into a comprehensive MASTER_PLAN for project execution.
-Creates detailed project blueprint with technical architecture and implementation roadmap.
+<mode_overview>
+  <purpose>
+    Transform your innovative ideas into comprehensive, actionable project blueprints.
+    Planning Mode creates detailed MASTER_PLAN documents that guide successful project execution
+    through systematic discovery, architecture design, and strategic roadmap development.
+  </purpose>
+  
+  <motivation>
+    Great projects start with great plans. This mode ensures your vision is thoroughly analyzed,
+    technically architected, and strategically mapped before any code is written. By investing
+    in proper planning, you reduce risks, optimize resources, and create clear paths to success.
+  </motivation>
+</mode_overview>
 
-## Wave Structure
+<wave_structure>
+  <wave_0>
+    <name>Discovery Wave (Foundation)</name>
+    <description>
+      The critical first wave that establishes project vision, analyzes complexity,
+      and determines the optimal planning approach for your specific needs.
+    </description>
+    
+    <team_composition>
+      - Vision Architect: Shapes and clarifies the project vision
+      - Requirements Analyst: Identifies and documents core requirements
+      - Scope Assessor: Evaluates project complexity and technical challenges
+      - Planning Strategist: Designs the optimal wave structure
+      - Record Keeper: Documents all decisions and maintains project history
+    </team_composition>
+    
+    <deliverables>
+      <deliverable name="project_vision.md">
+        Clear, inspiring project vision that aligns all stakeholders
+      </deliverable>
+      <deliverable name="scope_assessment.md">
+        Comprehensive complexity analysis with technical considerations
+      </deliverable>
+      <deliverable name="initial_requirements.md">
+        Core functional and non-functional requirements
+      </deliverable>
+      <deliverable name="planning_strategy.md">
+        Recommended wave structure tailored to project needs
+      </deliverable>
+      <deliverable name="wave_plan.md">
+        Detailed execution approach for subsequent waves
+      </deliverable>
+    </deliverables>
+    
+    <key_outcome>
+      Determines the optimal number of planning waves (typically 1-5) based on
+      project complexity, ensuring efficient and thorough planning.
+    </key_outcome>
+  </wave_0>
+  
+  <dynamic_planning_waves>
+    <description>
+      Flexible waves (1 to N) that deploy specialized teams based on Wave-0 assessment.
+      Each wave builds upon previous work, creating comprehensive project documentation.
+    </description>
+    
+    <available_teams>
+      <team name="Technical Architecture Team">
+        Designs system architecture, technology stack, and integration patterns
+      </team>
+      <team name="Infrastructure Planning Team">
+        Plans deployment, scaling, monitoring, and operational requirements
+      </team>
+      <team name="Security & Compliance Team">
+        Ensures security best practices and regulatory compliance
+      </team>
+      <team name="Resource Planning Team">
+        Optimizes team structure, timeline, and budget allocation
+      </team>
+      <team name="UX/UI Design Team">
+        Creates user experience flows and interface design systems
+      </team>
+      <team name="Integration Strategy Team">
+        Plans external system integrations and data flow architecture
+      </team>
+    </available_teams>
+    
+    <complexity_guidelines>
+      <guideline complexity="simple">
+        1-2 planning waves for straightforward projects with clear requirements
+      </guideline>
+      <guideline complexity="medium">
+        2-3 planning waves for projects with multiple components or integrations
+      </guideline>
+      <guideline complexity="complex">
+        3-5 planning waves for enterprise solutions with extensive requirements
+      </guideline>
+    </complexity_guidelines>
+  </dynamic_planning_waves>
+  
+  <final_wave>
+    <name>Master Plan Consolidation</name>
+    <description>
+      The culminating wave that synthesizes all planning work into a single,
+      comprehensive MASTER_PLAN document ready for execution.
+    </description>
+    
+    <team_composition>
+      - Master Plan Architect: Synthesizes all planning outputs
+      - Technical Consolidator: Ensures technical coherence and completeness
+      - Execution Strategist: Creates actionable implementation roadmap
+      - Quality Validator: Verifies plan completeness and quality
+      - Record Keeper: Finalizes all documentation
+    </team_composition>
+    
+    <primary_output>
+      MASTER_PLAN.md - Your complete project blueprint following the
+      templates/MASTER_PLAN_TEMPLATE.md structure for consistency
+    </primary_output>
+  </final_wave>
+</wave_structure>
 
-### Wave-0: Discovery (Fixed)
-**Team**: Vision Architect, Requirements Analyst, Scope Assessor, Planning Strategist, Record Keeper
+<master_plan_contents>
+  <section number="1">Executive Summary & Vision</section>
+  <section number="2">Requirements & Scope</section>
+  <section number="3">Technical Architecture</section>
+  <section number="4">Implementation Roadmap</section>
+  <section number="5">Resource Allocation</section>
+  <section number="6">Risk Management</section>
+  <section number="7">Quality Standards</section>
+  <section number="8">Wave Execution Plan</section>
+</master_plan_contents>
 
-**Outputs**:
-- `project_vision.md` - Clear project vision
-- `scope_assessment.md` - Complexity analysis
-- `initial_requirements.md` - Core requirements
-- `planning_strategy.md` - Recommended wave structure
-- `wave_plan.md` - Execution approach
+<operating_principles>
+  <principle>
+    Focus exclusively on planning - implementation begins only after MASTER_PLAN completion
+  </principle>
+  <principle>
+    Create the MASTER_PLAN document exclusively in the final wave
+  </principle>
+  <principle>
+    Build each wave's work upon insights from previous waves
+  </principle>
+  <principle>
+    Adapt wave count dynamically based on project needs
+  </principle>
+  <principle>
+    Maintain all work within designated wave folders for organization
+  </principle>
+</operating_principles>
 
-**Key Decision**: Determines number of planning waves needed (1-5 typically)
+<wave_dependencies>
+  <wave_0_requirements>
+    <description>
+      These deliverables establish the foundation for all subsequent planning.
+      Wave-1 can begin only after these are complete and validated.
+    </description>
+    
+    <required_files>
+      - deliverables/project_vision.md
+      - deliverables/scope_assessment.md
+      - deliverables/initial_requirements.md
+      - deliverables/planning_strategy.md
+      - deliverables/wave_plan.md
+      - WAVE_COMPLETE.md (created by Record Keeper)
+    </required_files>
+  </wave_0_requirements>
+  
+  <planning_wave_requirements>
+    <description>
+      Each planning wave (1 through N-1) builds systematically on previous work,
+      ensuring comprehensive coverage and avoiding gaps.
+    </description>
+    
+    <wave_must>
+      - Read and incorporate insights from all previous wave outputs
+      - Create specialized deliverables in designated wave folder
+      - Have Record Keeper create WAVE_COMPLETE.md upon completion
+      - Enable subsequent waves through completed deliverables
+    </wave_must>
+  </planning_wave_requirements>
+  
+  <final_wave_prerequisites>
+    <description>
+      The final consolidation wave ensures all planning is complete before
+      creating the unified MASTER_PLAN document.
+    </description>
+    
+    <requirements>
+      - All previous waves marked complete with WAVE_COMPLETE.md files
+      - All planning deliverables present and validated
+      - Record Keeper documentation of all major decisions complete
+      - No gaps identified in planning coverage
+    </requirements>
+  </final_wave_prerequisites>
+  
+  <enforcement>
+    The system automatically validates these dependencies, ensuring proper
+    wave progression and preventing premature advancement. This maintains
+    planning quality and completeness throughout the process.
+  </enforcement>
+</wave_dependencies>
 
-### Dynamic Planning Waves (1 to N)
-Based on Wave-0 assessment, deploy specialized teams:
-- Technical Architecture Team
-- Infrastructure Planning Team
-- Security & Compliance Team
-- Resource Planning Team
-- UX/UI Design Team
-- Integration Strategy Team
-
-**Wave Count Guidelines**:
-- Simple projects: 1-2 planning waves
-- Medium complexity: 2-3 planning waves
-- Complex enterprise: 3-5 planning waves
-
-### Final Wave: Master Plan Consolidation (Fixed)
-**Team**: Master Plan Architect, Technical Consolidator, Execution Strategist, Quality Validator, Record Keeper
-
-**Single Output**: `MASTER_PLAN.md` - Complete project blueprint
-**Template**: Uses `templates/MASTER_PLAN_TEMPLATE.md` for consistent structure
-
-## MASTER_PLAN Contents
-1. Executive Summary & Vision
-2. Requirements & Scope
-3. Technical Architecture
-4. Implementation Roadmap
-5. Resource Allocation
-6. Risk Management
-7. Quality Standards
-8. Wave Execution Plan
-
-## Key Rules
-- MASTER_PLAN created ONLY in final wave
-- No implementation during planning
-- Each wave builds on previous work
-- Wave count adapts to project needs
-- All work stays in wave folders
-
-## Wave Dependencies (ENFORCED)
-
-### Wave-0 Required Outputs
-These MUST exist before Wave-1 can start:
-- `deliverables/project_vision.md`
-- `deliverables/scope_assessment.md`
-- `deliverables/initial_requirements.md`
-- `deliverables/planning_strategy.md`
-- `deliverables/wave_plan.md`
-- `WAVE_COMPLETE.md` (created by Record Keeper)
-
-### Planning Wave Dependencies
-Each planning wave (1 to N-1) must:
-- Read and build upon previous wave outputs
-- Create deliverables in their wave folder
-- Have Record Keeper finalize with WAVE_COMPLETE.md
-- NO wave can proceed if previous wave incomplete
-
-### Final Wave Requirements
-Cannot start unless:
-- ALL previous waves marked complete
-- All planning deliverables exist
-- Record Keeper has documented all decisions
-
-**System enforces these dependencies - no exceptions**
+<success_metrics>
+  <metric>Clear, actionable MASTER_PLAN ready for implementation</metric>
+  <metric>All stakeholder requirements captured and addressed</metric>
+  <metric>Technical architecture validated and documented</metric>
+  <metric>Risk mitigation strategies identified and planned</metric>
+  <metric>Resource allocation optimized for project success</metric>
+</success_metrics>

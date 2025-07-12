@@ -1,37 +1,31 @@
-# Agent Rules System (Streamlined)
+# Agent Rules System (Consolidated)
 
 ## Overview
-This directory contains streamlined behavioral rule sets for Shadow Clone agents, reduced to 3 essential files.
+This directory contains the consolidated behavioral rule sets for Shadow Clone agents, streamlined to just 2 essential files.
 
 ## File Structure
 
 ### Core Rules
-- **`core_rules.md`** - Universal rules every agent must follow
-  - NO BULLSHIT POLICY
-  - File operations and reservations
-  - Mandatory todo lists
-  - Team composition requirements
-  - Quality gates
-  - Communication protocols
-  - Template compliance
-
-### Specialized Rules
-- **`specialized_agent_rules.md`** - All agent specializations in one place
-  - **Common Standards** - Apply to all agents
-  - **Leadership Agents** - Team Lead, Record Keeper
-  - **Technical Agents** - Architect, Frontend, Backend, DevOps, Security, QA
-  - **Analytical Agents** - Planning, Research, Audit, Documentation
-  - **Wave Integration** - How agents work together across waves
-  - **Emergency Protocols** - Blocker resolution and failures
+- **`core_rules.md`** - Complete rules for all agents including:
+  - Universal rules every agent must follow
+  - Quality commitment and excellence standards
+  - Git discipline and workspace organization
+  - File operations and reservation protocols
+  - Team composition and deployment constraints
+  - Communication and convergence protocols
+  - Record Keeper Collective detailed procedures
+  - All agent role specializations (technical and analytical)
+  - Wave integration patterns
+  - Emergency and recovery procedures
 
 ### Template
 - **`agent_template.md`** - Standard format all agents must follow
-  - Role, Wave, Team
-  - Job description
-  - Todo management
-  - Dependencies and deliverables
-  - File patterns
-  - Handoff protocol
+  - XML-structured agent profile format
+  - Comprehensive filled examples for different agent types
+  - Todo management best practices
+  - Progress reporting formats
+  - Handoff protocol examples
+  - Communication guidelines
 
 ## Rule Injection Protocol
 
@@ -39,53 +33,51 @@ When creating agents, inject the necessary components:
 
 ```
 AGENT COMPOSITION:
-1. core_rules.md (ALWAYS)
-2. Agent-specific section from specialized_agent_rules.md
-3. Follow agent_template.md structure exactly
+1. core_rules.md (ALWAYS - contains all rules and specializations)
+2. Follow agent_template.md structure exactly
 ```
 
 ## Example Agent Creation
 
 **Backend Developer:**
 ```
-Load: core_rules.md
-Load: specialized_agent_rules.md → Technical Agents → Backend Developer
-Structure: Follow agent_template.md format
+Load: core_rules.md (includes all universal rules + backend developer specialization)
+Structure: Follow agent_template.md format with XML structure
 ```
 
 ## Key Improvements
 
 ### Maximum Efficiency
-- **83% file reduction** (18+ files → 3 files)
+- **Consolidated to 2 files** - All rules in core_rules.md
 - **Zero redundancy** - Each rule appears once
-- **Clear structure** - Easy to find what you need
-- **Enforced consistency** - Template compliance mandatory
-
-### Focus on Execution
-- No philosophy, just clear expectations
-- Todo lists for tracking
-- Quality gates that matter
-- Direct communication protocols
+- **Clear XML structure** - Easy to parse and understand
+- **Positive framing** - Focus on what to do
 
 ### Better Organization
-- All agents in one specialized file
-- Sections by agent type
-- Wave integration clearly defined
-- Emergency protocols included
+- All agent specializations integrated into core rules
+- XML tags for clear hierarchy
+- Context and motivation for every rule
+- Examples throughout templates
+
+### Comprehensive Coverage
+- Universal rules for all agents
+- Specific role definitions with wave assignments
+- Record Keeper Collective procedures
+- Emergency protocols and recovery procedures
+- Quality gates and success metrics
 
 ## Creating New Agent Types
 
-1. Use `agent_template.md` as the base
-2. Add to appropriate section in `specialized_agent_rules.md`
-3. Ensure wave assignment is clear
-4. Define handoff protocols
-5. Test integration with existing agents
+1. Add new role to `<agent_roles>` section in `core_rules.md`
+2. Define waves, focus, and deliverables
+3. Use `agent_template.md` examples as reference
+4. Ensure integration with existing wave patterns
 
 ## Rule Priority
 
-1. **Core Rules** - Non-negotiable
-2. **Common Standards** - Apply to all
-3. **Agent-Specific Rules** - Role requirements
-4. **Template Structure** - Consistency mandate
+1. **Core Rules** - All sections apply to all agents
+2. **Role-Specific Sections** - Additional requirements per role
+3. **Template Structure** - Consistency in communication
+4. **Record Keeper Authority** - Central coordination point
 
-The system is designed for clarity and efficiency - get the job done right.
+The system is designed for clarity, efficiency, and excellence - every agent is a master of their craft.
