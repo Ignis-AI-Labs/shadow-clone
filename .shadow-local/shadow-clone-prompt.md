@@ -169,6 +169,33 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </file_operations>
   </core_requirements>
 
+  <execution_flow_critical>
+    <warning>PHASES MUST EXECUTE IN ORDER - NO SKIPPING FOR ANY REASON</warning>
+    <sequence>
+      1. Initialization - Set up environment
+      2. Team Configuration - Assemble teams
+      3. Wave Planning - Determine number of waves DYNAMICALLY
+      4. Wave Execution - Execute ALL waves determined in planning
+         - Wave 0 (always planning)
+         - Wave 1 through N (dynamically determined)
+         - Final wave (always consolidation)
+      5. Mode Execution - Happens WITHIN wave execution
+      6. Quality Assurance - ONLY after ALL waves complete
+      7. Finalization - ONLY after QA complete (includes git commit)
+      8. Test Validation - ONLY if test=true AND Phase 7 git commit exists
+    </sequence>
+    
+    <absolute_rules>
+      - NEVER skip phases even if errors occur
+      - NEVER jump to validation early
+      - NEVER bypass wave execution
+      - Errors should be logged but execution continues
+      - Test mode means we need to see EVERYTHING that happens
+    </absolute_rules>
+    
+    <critical>Skipping ANY phase invalidates the test. Continue through ALL errors.</critical>
+  </execution_flow_critical>
+  
   <execution_phases>
     <phase number="1" name="initialization">
       <steps>
@@ -229,6 +256,10 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </phase>
 
     <phase number="5" name="mode_execution">
+      <critical_note>
+        Phase 5 is embedded within Phase 4 wave execution.
+        Do NOT skip to Phase 6 until ALL waves are complete.
+      </critical_note>
       <modes>
         <mode name="PLANNING" config="shadow-clone-plan.md"/>
         <mode name="FEATURE" config="shadow-clone-feature.md"/>
@@ -241,8 +272,10 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </phase>
 
     <phase number="6" name="quality_assurance">
+      <prerequisite>ALL waves must be complete before starting Phase 6</prerequisite>
+      <validation>Verify .waves/wave-0/, wave-1/, wave-2/... through final wave exist</validation>
       <steps>
-        <step>Integrate all wave deliverables</step>
+        <step>ONLY after all waves complete: Integrate all wave deliverables</step>
         <step>Run quality validation checks</step>
         <step>Ensure all tests pass</step>
         <step>Verify security requirements</step>
@@ -260,19 +293,31 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     
     <!-- TEST MODE ONLY - REMOVE THIS ENTIRE SECTION FOR PRODUCTION -->
     <phase number="8" name="test_validation" conditional="true">
-      <condition>ONLY execute if test=true parameter is present AND phase 7 is complete</condition>
+      <condition>ONLY execute if test=true parameter is present AND phase 7 is FULLY COMPLETE</condition>
       <warning>THIS IS FOR LOCAL TESTING ONLY - NEVER INCLUDE IN PRODUCTION</warning>
+      
+      <critical_test_rules>
+        <rule priority="ABSOLUTE">NEVER skip to validation early - this is CHEATING THE TEST</rule>
+        <rule priority="ABSOLUTE">Execute ALL phases 1-7 completely, even if errors occur</rule>
+        <rule priority="ABSOLUTE">Continue through errors - we need to see ALL issues</rule>
+        <rule priority="ABSOLUTE">Phase 8 ONLY starts after Phase 7 git commit completes</rule>
+        <enforcement>Skipping phases invalidates the entire test and provides ZERO value</enforcement>
+      </critical_test_rules>
+      
       <steps>
+        <step>VERIFY Phase 7 git commit exists before proceeding</step>
         <step>Deploy Shadow Clone Protocol Validator Agent</step>
         <step>Provide validator with .shadow-local/testing/MODE_EXECUTION_FLOWCHART.md</step>
         <step>Provide validator with .shadow-local/testing/VALIDATOR_AGENT_TEMPLATE.md</step>
         <step>Validator performs comprehensive compliance assessment</step>
         <step>Validator generates TEST_VALIDATION_REPORT.md in project root</step>
       </steps>
+      
       <validator_instructions>
         The validator agent has read-only access to all execution artifacts.
         It should assess compliance against the flowchart and create a detailed report.
         Agents executed in phases 1-7 have NO awareness of test mode.
+        Validator should report ALL issues found, not just the first failure.
       </validator_instructions>
     </phase>
     <!-- END TEST MODE SECTION -->
@@ -356,10 +401,12 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   <wave_dependencies>
     <enforcement>
       <rule>No wave can start without previous wave completion</rule>
+      <rule>Phases 6-7 CANNOT start until ALL waves complete</rule>
       <verification>
         - Check for WAVE_COMPLETE.md in previous wave
         - Verify all required deliverables exist
         - Ensure Record Keeper has finalized
+        - For Phase 6: Verify ALL waves (0 through final) are complete
       </verification>
       <failure_action>System exits with clear error message</failure_action>
     </enforcement>
@@ -400,12 +447,16 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   <test_mode_parameters>
     <warning>LOCAL TESTING ONLY - REMOVE ENTIRE SECTION FOR PRODUCTION</warning>
     <parameter name="test" type="boolean" default="false">
-      <description>When test=true, system executes phases 1-7 normally then runs validation</description>
+      <description>When test=true, system executes ALL phases then validates</description>
       <behavior>
-        - Phases 1-7 execute exactly as production
-        - Agents have NO test awareness
-        - Phase 8 automatically triggers after phase 7
-        - Validator deploys with read-only access
+        - Phases 1-7 execute COMPLETELY as production would
+        - Continue execution even if errors occur
+        - Number of waves determined dynamically during execution
+        - ALL waves must execute before proceeding
+        - Agents have NO test awareness whatsoever
+        - Phase 8 triggers ONLY after Phase 7 git commit
+        - Validator deploys with read-only access to ALL artifacts
+        - NO SHORTCUTS, NO SKIPPING, NO EARLY VALIDATION
       </behavior>
     </parameter>
   </test_mode_parameters>
