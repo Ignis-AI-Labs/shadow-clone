@@ -266,7 +266,8 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     <phase number="3" name="wave_planning">
       <steps>
         <step>Determine number of waves needed</step>
-        <step>Assign teams to waves</step>
+        <step>For PLANNING mode: Always use exactly 3 waves (Foundation, Research, Master Plan)</step>
+        <step>For other modes: Assign teams to waves based on complexity</step>
         <step>Check for sub-wave requirements (>10 agents)</step>
         <step>Create wave execution plan</step>
       </steps>
