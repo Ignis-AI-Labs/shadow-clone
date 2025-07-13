@@ -170,45 +170,65 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   </core_requirements>
 
   <execution_flow_critical>
-    <warning>PHASES MUST EXECUTE IN ORDER - NO SKIPPING FOR ANY REASON</warning>
+    <context>
+      <purpose>This section ensures proper test execution for accurate system validation</purpose>
+      <why>Complete execution reveals all issues, partial execution hides critical problems</why>
+      <audience>The orchestrator managing the Shadow Clone test execution</audience>
+    </context>
     
-    <forbidden_actions>
-      <action>NEVER abbreviate execution for "demonstration purposes"</action>
-      <action>NEVER simulate waves - execute them fully</action>
-      <action>NEVER use "simulated" or "abbreviated" deliverables</action>
-      <action>NEVER skip waves due to "length constraints"</action>
-      <action>NEVER jump from wave execution to Phase 6</action>
-      <action>NEVER create summary files instead of executing</action>
-    </forbidden_actions>
+    <instructions>
+      <instruction>Execute phases 1 through 7 in exact numerical order</instruction>
+      <instruction>Complete each phase fully before proceeding to the next</instruction>
+      <instruction>Execute ALL waves that were planned in Phase 3</instruction>
+      <instruction>Continue execution even when encountering errors</instruction>
+      <instruction>Document all issues but keep executing</instruction>
+      <instruction>Only proceed to Phase 8 after Phase 7 git commit completes</instruction>
+    </instructions>
     
     <sequence>
       1. Initialization - Set up environment
-      2. Team Configuration - Assemble teams
+      2. Team Configuration - Assemble teams  
       3. Wave Planning - Determine number of waves DYNAMICALLY
       4. Wave Execution - Execute ALL waves determined in planning
-         - Wave 0 (always planning)
-         - Wave 1 through N (ALL must execute FULLY)
-         - Final wave (always consolidation)
-         - If 5 waves planned, execute ALL 5 waves
-         - NO SHORTCUTS ALLOWED
       5. Mode Execution - Happens WITHIN wave execution
       6. Quality Assurance - ONLY after ALL waves complete
       7. Finalization - ONLY after QA complete (includes git commit)
       8. Test Validation - ONLY if test=true AND Phase 7 git commit exists
     </sequence>
     
-    <absolute_rules>
-      - NEVER skip phases even if errors occur
-      - NEVER jump to validation early
-      - NEVER bypass wave execution
-      - NEVER abbreviate for brevity
-      - NEVER simulate instead of execute
-      - Errors should be logged but execution continues
-      - Test mode means we need to see EVERYTHING that happens
-      - Length is irrelevant - full execution is MANDATORY
-    </absolute_rules>
+    <examples>
+      <example scenario="Planning mode with 5 waves">
+        <correct>
+          Phase 3: Determines 5 waves needed (0,1,2,3,4)
+          Phase 4: Executes wave-0, wave-1, wave-2, wave-3, wave-4
+          Phase 6: Begins only after wave-4 completes
+        </correct>
+        <incorrect>
+          Phase 3: Determines 5 waves needed
+          Phase 4: Executes wave-0, wave-1, then jumps to Phase 6
+          Result: TEST INVALID - incomplete execution
+        </incorrect>
+      </example>
+    </examples>
     
-    <critical>Skipping ANY phase or wave invalidates the ENTIRE test. NO EXCEPTIONS.</critical>
+    <execution_requirements>
+      <requirement reason="Complete data needed for optimization">
+        Execute every single wave that was planned in Phase 3
+      </requirement>
+      <requirement reason="Errors often cascade - we need the full picture">
+        Continue through all errors while documenting them
+      </requirement>
+      <requirement reason="Shortcuts hide integration issues">
+        Deploy actual agents and create real deliverables
+      </requirement>
+      <requirement reason="Test validity depends on complete execution">
+        Complete all 7 phases before validation begins
+      </requirement>
+    </execution_requirements>
+    
+    <success_criteria>
+      Success = All planned waves executed + All phases completed + Real deliverables created
+    </success_criteria>
   </execution_flow_critical>
   
   <execution_phases>
@@ -241,14 +261,22 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </phase>
 
     <phase number="4" name="wave_execution">
-      <critical_requirement>
-        Execute ALL waves determined in Phase 3 Wave Planning.
-        If planning determined 5 waves, you MUST execute all 5 waves.
-        NO ABBREVIATION. NO SIMULATION. NO SHORTCUTS.
-      </critical_requirement>
+      <context>
+        <purpose>Execute all waves to implement the planned work</purpose>
+        <why>Each wave builds on previous waves - skipping breaks the system</why>
+      </context>
+      
+      <instructions>
+        <instruction>Count the number of waves determined in Phase 3</instruction>
+        <instruction>Execute each wave from 0 to N using the three-phase pattern</instruction>
+        <instruction>Create a .waves/wave-N/ directory for each wave</instruction>
+        <instruction>Deploy actual agents (not simulations) in each wave</instruction>
+        <instruction>Wait for each wave to complete before starting the next</instruction>
+        <instruction>Verify WAVE_COMPLETE.md exists before proceeding</instruction>
+      </instructions>
       
       <for_each wave="waves">
-        <enforcement>Every single wave MUST be fully executed</enforcement>
+        <execution_pattern>Pre-Wave RK → Main Wave Agents → Post-Wave RK</execution_pattern>
         <substeps>
           <substep name="pre_wave_rk_deployment">
             <description>Deploy Record Keeper Collective with pre-wave duties</description>
@@ -277,10 +305,12 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         </substeps>
       </for_each>
       
-      <completion_requirement>
-        Phase 4 is ONLY complete when ALL planned waves have FULLY executed.
-        Check: Number of wave directories MUST equal number of planned waves.
-      </completion_requirement>
+      <completion_verification>
+        <check>Count .waves/wave-*/ directories</check>
+        <check>Verify count equals number planned in Phase 3</check>
+        <check>Confirm each wave has WAVE_COMPLETE.md</check>
+        <success>Phase 4 complete when all checks pass</success>
+      </completion_verification>
     </phase>
 
     <phase number="5" name="mode_execution">
