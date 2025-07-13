@@ -5,6 +5,22 @@ Shadow Clone system testing framework initialization
 
 # Shadow Clone Test Mode Execution Guide
 
+<test_execution_instructions>
+  <critical_note>
+    TEST MODE IS ONLY AVAILABLE IN THE LOCAL VERSION OF SHADOW CLONE.
+    The production version does NOT include test mode functionality.
+  </critical_note>
+  
+  <how_to_run_tests>
+    To execute a test:
+    1. Load the LOCAL shadow-clone-prompt.md (which includes test mode)
+    2. Add test=true parameter to your execution command
+    3. System will run phases 1-7 normally, then automatically trigger validation
+    
+    Example: Load .shadow-local/shadow-clone-prompt.md and execute with mode=plan test=true request="[request from scenario below]"
+  </how_to_run_tests>
+</test_execution_instructions>
+
 <test_framework>
   <context>
     <purpose>
