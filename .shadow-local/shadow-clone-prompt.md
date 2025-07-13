@@ -1,6 +1,7 @@
 <!--
 LOCAL VERSION FOR TESTING ONLY
 This version reads from local files instead of API
+INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 -->
 
 # Shadow Clone System - Local Version
@@ -256,6 +257,25 @@ This version reads from local files instead of API
         <step>Update Constitution with final state</step>
       </steps>
     </phase>
+    
+    <!-- TEST MODE ONLY - REMOVE THIS ENTIRE SECTION FOR PRODUCTION -->
+    <phase number="8" name="test_validation" conditional="true">
+      <condition>ONLY execute if test=true parameter is present AND phase 7 is complete</condition>
+      <warning>THIS IS FOR LOCAL TESTING ONLY - NEVER INCLUDE IN PRODUCTION</warning>
+      <steps>
+        <step>Deploy Shadow Clone Protocol Validator Agent</step>
+        <step>Provide validator with .shadow-local/testing/MODE_EXECUTION_FLOWCHART.md</step>
+        <step>Provide validator with .shadow-local/testing/VALIDATOR_AGENT_TEMPLATE.md</step>
+        <step>Validator performs comprehensive compliance assessment</step>
+        <step>Validator generates TEST_VALIDATION_REPORT.md in project root</step>
+      </steps>
+      <validator_instructions>
+        The validator agent has read-only access to all execution artifacts.
+        It should assess compliance against the flowchart and create a detailed report.
+        Agents executed in phases 1-7 have NO awareness of test mode.
+      </validator_instructions>
+    </phase>
+    <!-- END TEST MODE SECTION -->
   </execution_phases>
 
   <agent_deployment_instructions>
@@ -376,6 +396,21 @@ This version reads from local files instead of API
     </critical_blockers>
   </error_handling>
 
+  <!-- TEST MODE PARAMETERS - REMOVE FOR PRODUCTION -->
+  <test_mode_parameters>
+    <warning>LOCAL TESTING ONLY - REMOVE ENTIRE SECTION FOR PRODUCTION</warning>
+    <parameter name="test" type="boolean" default="false">
+      <description>When test=true, system executes phases 1-7 normally then runs validation</description>
+      <behavior>
+        - Phases 1-7 execute exactly as production
+        - Agents have NO test awareness
+        - Phase 8 automatically triggers after phase 7
+        - Validator deploys with read-only access
+      </behavior>
+    </parameter>
+  </test_mode_parameters>
+  <!-- END TEST MODE PARAMETERS -->
+  
   <user_commands>
     <deployment>
       <commands>Execute, Start, Begin, Go</commands>
