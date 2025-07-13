@@ -171,14 +171,26 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 
   <execution_flow_critical>
     <warning>PHASES MUST EXECUTE IN ORDER - NO SKIPPING FOR ANY REASON</warning>
+    
+    <forbidden_actions>
+      <action>NEVER abbreviate execution for "demonstration purposes"</action>
+      <action>NEVER simulate waves - execute them fully</action>
+      <action>NEVER use "simulated" or "abbreviated" deliverables</action>
+      <action>NEVER skip waves due to "length constraints"</action>
+      <action>NEVER jump from wave execution to Phase 6</action>
+      <action>NEVER create summary files instead of executing</action>
+    </forbidden_actions>
+    
     <sequence>
       1. Initialization - Set up environment
       2. Team Configuration - Assemble teams
       3. Wave Planning - Determine number of waves DYNAMICALLY
       4. Wave Execution - Execute ALL waves determined in planning
          - Wave 0 (always planning)
-         - Wave 1 through N (dynamically determined)
+         - Wave 1 through N (ALL must execute FULLY)
          - Final wave (always consolidation)
+         - If 5 waves planned, execute ALL 5 waves
+         - NO SHORTCUTS ALLOWED
       5. Mode Execution - Happens WITHIN wave execution
       6. Quality Assurance - ONLY after ALL waves complete
       7. Finalization - ONLY after QA complete (includes git commit)
@@ -189,11 +201,14 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       - NEVER skip phases even if errors occur
       - NEVER jump to validation early
       - NEVER bypass wave execution
+      - NEVER abbreviate for brevity
+      - NEVER simulate instead of execute
       - Errors should be logged but execution continues
       - Test mode means we need to see EVERYTHING that happens
+      - Length is irrelevant - full execution is MANDATORY
     </absolute_rules>
     
-    <critical>Skipping ANY phase invalidates the test. Continue through ALL errors.</critical>
+    <critical>Skipping ANY phase or wave invalidates the ENTIRE test. NO EXCEPTIONS.</critical>
   </execution_flow_critical>
   
   <execution_phases>
@@ -226,7 +241,14 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </phase>
 
     <phase number="4" name="wave_execution">
+      <critical_requirement>
+        Execute ALL waves determined in Phase 3 Wave Planning.
+        If planning determined 5 waves, you MUST execute all 5 waves.
+        NO ABBREVIATION. NO SIMULATION. NO SHORTCUTS.
+      </critical_requirement>
+      
       <for_each wave="waves">
+        <enforcement>Every single wave MUST be fully executed</enforcement>
         <substeps>
           <substep name="pre_wave_rk_deployment">
             <description>Deploy Record Keeper Collective with pre-wave duties</description>
@@ -241,6 +263,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
             <description>Deploy implementation agents</description>
             <batch_size>Maximum 10 agents per batch</batch_size>
             <sub_waves>Create if more than 10 agents</sub_waves>
+            <requirement>ACTUAL deployment and execution - no simulation</requirement>
           </substep>
           
           <substep name="post_wave_rk_deployment">
@@ -253,6 +276,11 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
           </substep>
         </substeps>
       </for_each>
+      
+      <completion_requirement>
+        Phase 4 is ONLY complete when ALL planned waves have FULLY executed.
+        Check: Number of wave directories MUST equal number of planned waves.
+      </completion_requirement>
     </phase>
 
     <phase number="5" name="mode_execution">
@@ -459,6 +487,19 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         - NO SHORTCUTS, NO SKIPPING, NO EARLY VALIDATION
       </behavior>
     </parameter>
+    
+    <test_integrity_requirements>
+      <requirement priority="ABSOLUTE">NEVER abbreviate test execution</requirement>
+      <requirement priority="ABSOLUTE">NEVER skip waves for demonstration</requirement>
+      <requirement priority="ABSOLUTE">NEVER simulate deliverables</requirement>
+      <requirement priority="ABSOLUTE">Execute EVERY planned wave FULLY</requirement>
+      <violation_consequences>
+        - Abbreviated tests provide ZERO value
+        - Skipped waves hide critical issues
+        - Simulated deliverables mask real problems
+        - Incomplete tests waste everyone's time
+      </violation_consequences>
+    </test_integrity_requirements>
   </test_mode_parameters>
   <!-- END TEST MODE PARAMETERS -->
   
