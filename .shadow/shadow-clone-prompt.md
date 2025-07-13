@@ -1,9 +1,9 @@
-# Shadow Clone System
+# Shadow Clone System - Production Version
 
 <task>
   <context>
     <purpose>
-      The Shadow Clone System is an AI orchestration framework that manages teams of specialized agents to complete complex software engineering tasks.
+      The Shadow Clone System is an AI orchestration framework that manages teams of specialized agents to complete complex software engineering tasks. This production version loads all configurations from the cloud API for scalable deployment.
     </purpose>
     
     <philosophy>
@@ -28,8 +28,8 @@
     
     <critical_files>
       <constitution>CONSTITUTION.md</constitution>
-      <core_rules>.shadow/agent_rules/core_rules.md</core_rules>
-      <base_url>https://api.ignislabs.ai/api/prompts</base_url>
+      <core_rules>https://api.ignislabs.ai/api/prompts/agent_rules/core_rules</core_rules>
+      <base_path>https://api.ignislabs.ai/api/prompts</base_path>
       <source_mode>api</source_mode>
     </critical_files>
   </system_constants>
@@ -178,7 +178,7 @@
   <execution_flow_critical>
     <context>
       <purpose>This section ensures proper execution for system reliability</purpose>
-      <why>Complete execution reveals all issues, partial execution hides critical problems</why>
+      <why>Complete execution ensures all tasks are properly handled</why>
       <audience>The orchestrator managing the Shadow Clone execution</audience>
     </context>
     
@@ -210,23 +210,23 @@
         <incorrect>
           Phase 3: Determines 5 waves needed
           Phase 4: Executes wave-0, wave-1, then jumps to Phase 6
-          Result: INCOMPLETE EXECUTION - critical issues hidden
+          Result: INCOMPLETE - missing critical implementation
         </incorrect>
       </example>
     </examples>
     
     <execution_requirements>
-      <requirement reason="Complete data needed for system reliability">
+      <requirement reason="Complete implementation needed">
         Execute every single wave that was planned in Phase 3
       </requirement>
       <requirement reason="Errors often cascade - we need the full picture">
         Continue through all errors while documenting them
       </requirement>
-      <requirement reason="Shortcuts hide integration issues">
+      <requirement reason="Real work produces real results">
         Deploy actual agents and create real deliverables
       </requirement>
-      <requirement reason="System reliability depends on complete execution">
-        Complete all 7 phases before marking execution complete
+      <requirement reason="System integrity depends on complete execution">
+        Complete all 7 phases before declaring success
       </requirement>
     </execution_requirements>
     
@@ -234,13 +234,13 @@
       Success = All planned waves executed + All phases completed + Real deliverables created
     </success_criteria>
   </execution_flow_critical>
-
+  
   <execution_phases>
     <phase number="1" name="initialization">
       <steps>
         <step>Verify git repository has clean working tree</step>
         <step>Ensure development branch (create if needed)</step>
-        <step>Load all .shadow components via API</step>
+        <step>Verify API access to all components</step>
         <step>Create wave-0 directory structure</step>
         <step>Initialize tracking systems</step>
       </steps>
@@ -337,13 +337,13 @@
         Do NOT skip to Phase 6 until ALL waves are complete.
       </critical_note>
       <modes>
-        <mode name="PLANNING" config="shadow-clone-plan.md"/>
-        <mode name="FEATURE" config="shadow-clone-feature.md"/>
-        <mode name="AUDIT" config="shadow-clone-audit.md"/>
-        <mode name="DEBUG" config="shadow-clone-debug.md"/>
-        <mode name="OPTIMIZE" config="shadow-clone-optimize.md"/>
-        <mode name="REFACTOR" config="shadow-clone-refactor.md"/>
-        <mode name="RESEARCH" config="shadow-clone-research.md"/>
+        <mode name="PLANNING" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-plan"/>
+        <mode name="FEATURE" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-feature"/>
+        <mode name="AUDIT" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-audit"/>
+        <mode name="DEBUG" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-debug"/>
+        <mode name="OPTIMIZE" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-optimize"/>
+        <mode name="REFACTOR" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-refactor"/>
+        <mode name="RESEARCH" config="https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-research"/>
       </modes>
     </phase>
 
@@ -573,11 +573,11 @@
 
   <success_factors>
     <api_mode_specific>
-      1. Fetch complete rule content from API endpoints
+      1. Fetch actual content from API endpoints
       2. Include full rule text in every agent prompt
-      3. Verify all API calls succeed
-      4. Handle API errors gracefully
-      5. Ensure all components loaded before deployment
+      3. Handle API failures gracefully with retries
+      4. Cache API responses for consistent execution
+      5. Verify API access before deployment
     </api_mode_specific>
 
     <general_principles>
@@ -588,5 +588,4 @@
       5. Quality gates maintain high standards
     </general_principles>
   </success_factors>
-
 </task>

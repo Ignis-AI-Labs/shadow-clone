@@ -54,7 +54,7 @@
       5. Consolidate all findings into PROJECT_FOUNDATION.md
     </instructions>
   </wave_0>
-
+  
   <wave_1>
     <name>Research & Analysis</name>
     <purpose>

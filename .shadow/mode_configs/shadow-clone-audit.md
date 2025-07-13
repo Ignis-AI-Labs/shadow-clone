@@ -1,154 +1,287 @@
-<!--
-COPYRIGHT NOTICE: This file is proprietary to Ignis AI Labs LLC.
-Unauthorized access, use, or distribution is strictly prohibited.
-See LICENSE-PROPRIETARY.md for full terms.
--->
-
 # Shadow Clone Audit Mode Configuration
 
-## 🛡️ Comprehensive Security Audit Framework
+<mode>
+  <identity>
+    <name>Audit Mode</name>
+    <purpose>
+      Empower comprehensive security and compliance assessment across all system components.
+      This mode enables teams to systematically identify vulnerabilities, evaluate compliance gaps, 
+      and develop actionable remediation plans that protect both the organization and its users.
+    </purpose>
+    <motivation>
+      Security audits are critical for protecting user data, maintaining trust, and ensuring 
+      regulatory compliance. By conducting thorough assessments, we help organizations build 
+      resilient systems that safeguard against evolving threats.
+    </motivation>
+  </identity>
 
-Self-contained mode requiring NO project plan. Covers all essential security frameworks with optional customization.
+  <wave_structure>
+    <wave index="0">
+      <name>Scope Discovery & Planning</name>
+      <team>
+        <member>Audit Lead</member>
+        <member>Compliance Officer</member>
+        <member>Security Architect</member>
+        <member>Record Keeper</member>
+      </team>
+      
+      <objectives>
+        <objective priority="1">
+          Analyze the application architecture to understand its unique security landscape
+        </objective>
+        <objective priority="2">
+          Select appropriate assessment frameworks based on application characteristics
+        </objective>
+        <objective priority="3">
+          Prioritize security domains by risk and relevance to the specific application
+        </objective>
+        <objective priority="4">
+          Create a comprehensive audit plan that ensures thorough coverage
+        </objective>
+      </objectives>
 
-## Configuration
+      <framework_selection>
+        <framework category="OWASP">
+          <component>Top Ten - Essential web application risks</component>
+          <component>ASVS - Application Security Verification Standard</component>
+          <component>MASVS - Mobile Application Security Verification</component>
+          <component>API Security - RESTful and GraphQL protection</component>
+        </framework>
+        
+        <framework category="Standards">
+          <component>NIST SSDF - Secure Software Development Framework</component>
+          <component>CWE - Common Weakness Enumeration patterns</component>
+        </framework>
+        
+        <framework category="Compliance">
+          <component>GDPR - Data protection and privacy</component>
+          <component>HIPAA - Healthcare information security</component>
+          <component>PCI DSS - Payment card industry standards</component>
+          <component>SOX - Financial reporting controls</component>
+        </framework>
+        
+        <framework category="Tools">
+          <component>SAST - Static Application Security Testing</component>
+          <component>DAST - Dynamic Application Security Testing</component>
+          <component>Dependency scanning - Supply chain analysis</component>
+          <component>IaC security - Infrastructure as Code validation</component>
+        </framework>
+      </framework_selection>
 
-**Deployment**: ~21-24 agents (split into multiple 10-agent batches)
-**Operation**: Comprehensive security assessment across all frameworks
+      <security_domains>
+        <domain priority="1">
+          <name>Authentication & Authorization</name>
+          <focus>IAM, MFA, RBAC, OAuth/OIDC implementations</focus>
+          <relevance>Foundational security controlling system access</relevance>
+        </domain>
+        
+        <domain priority="2">
+          <name>Data Security</name>
+          <focus>Encryption, PII/PHI handling, retention policies</focus>
+          <relevance>Protects sensitive information throughout lifecycle</relevance>
+        </domain>
+        
+        <domain priority="3">
+          <name>Infrastructure</name>
+          <focus>Cloud security, containers, CI/CD, network protection</focus>
+          <relevance>Secures the foundation supporting applications</relevance>
+        </domain>
+        
+        <domain priority="4">
+          <name>Application</name>
+          <focus>Input validation, XSS/CSRF prevention, business logic</focus>
+          <relevance>Guards against code-level vulnerabilities</relevance>
+        </domain>
+        
+        <domain priority="5">
+          <name>Supply Chain</name>
+          <focus>Dependencies, licenses, build security</focus>
+          <relevance>Manages third-party and open source risks</relevance>
+        </domain>
+        
+        <domain priority="6">
+          <name>Compliance</name>
+          <focus>Regulatory requirements, audit trails</focus>
+          <relevance>Ensures legal and industry standard adherence</relevance>
+        </domain>
+        
+        <domain priority="7">
+          <name>Quality & Performance</name>
+          <focus>Code complexity, bottlenecks, technical debt</focus>
+          <relevance>Maintains long-term security posture</relevance>
+        </domain>
+      </security_domains>
 
-### Optional Customization
-```bash
-# Default comprehensive audit
-claude "Load shadow-clone-prompt.md and execute with project_type=audit"
+      <planning_guidelines>
+        <guideline>Analyze application type to determine applicable frameworks</guideline>
+        <guideline>Create comprehensive plans even with minimal user input</guideline>
+        <guideline>Allocate waves based on selected domain coverage:
+          - 2-3 priority domains require 2-3 assessment waves
+          - 4-5 domains require 4-5 assessment waves
+          - 6-7 domains require 6+ waves for comprehensive coverage
+        </guideline>
+      </planning_guidelines>
 
-# Focus on specific areas
-claude "Load shadow-clone-prompt.md and execute with project_type=audit - Focus on OWASP Top Ten and API security only"
+      <deliverables>
+        <deliverable>Audit Assessment Matrix - frameworks mapped to application needs</deliverable>
+        <deliverable>Domain Priority Map - security areas ranked by risk and relevance</deliverable>
+        <deliverable>Compliance Requirements - specific regulations and standards</deliverable>
+        <deliverable>Wave Allocation Plan - structured approach to assessment phases</deliverable>
+        <deliverable>Tool Configuration - scanner setup for applicable technologies</deliverable>
+      </deliverables>
+    </wave>
 
-# Industry-specific
-claude "Load shadow-clone-prompt.md and execute with project_type=audit - Healthcare application requiring HIPAA compliance"
-```
+    <wave index="1-N" type="dynamic">
+      <name>Domain-Specific Assessments</name>
+      <team>
+        <member>Security Auditor</member>
+        <member>Domain Expert</member>
+        <member>Tool Specialist</member>
+        <member>Record Keeper</member>
+      </team>
 
-## Security Frameworks
+      <execution_strategy>
+        <principle>Execute assessments based on Wave-0 priority mapping</principle>
+        <principle>Focus on highest-risk domains first for maximum impact</principle>
+        <principle>Apply relevant frameworks systematically to each domain</principle>
+        <principle>Utilize appropriate tools for thorough technical validation</principle>
+        <principle>Ensure comprehensive coverage while avoiding redundancy</principle>
+      </execution_strategy>
 
-### Core Assessments
-- **OWASP**: Top Ten, ASVS, MASVS, API Security
-- **NIST SSDF**: Secure Software Development Framework
-- **CWE**: Common Weakness Enumeration patterns
-- **Compliance**: GDPR, HIPAA, PCI DSS, SOX
-- **Tools**: SAST/DAST, dependency scanning, IaC security
+      <application_profiles>
+        <profile type="Web Applications">
+          <priority_domains>Authentication, Application Security, Data Security</priority_domains>
+          <rationale>User-facing systems require strong access controls and data protection</rationale>
+        </profile>
+        
+        <profile type="APIs/Microservices">
+          <priority_domains>API Security, Authentication, Supply Chain</priority_domains>
+          <rationale>Distributed systems need secure communication and dependency management</rationale>
+        </profile>
+        
+        <profile type="Infrastructure/DevOps">
+          <priority_domains>Infrastructure, Supply Chain, Compliance</priority_domains>
+          <rationale>Platform security forms the foundation for all applications</rationale>
+        </profile>
+        
+        <profile type="Healthcare/Finance">
+          <priority_domains>Compliance, Data Security, Authentication</priority_domains>
+          <rationale>Regulated industries require strict controls and audit trails</rationale>
+        </profile>
+        
+        <profile type="E-commerce">
+          <priority_domains>Data Security, Application Security, Authentication</priority_domains>
+          <rationale>Transaction systems need payment protection and user trust</rationale>
+        </profile>
+      </application_profiles>
 
-### Security Domains
-1. **Authentication & Authorization**: IAM, MFA, RBAC, OAuth/OIDC
-2. **Data Security**: Encryption, PII/PHI handling, retention
-3. **Infrastructure**: Cloud, containers, CI/CD, network
-4. **Application**: Input validation, XSS/CSRF, business logic
-5. **Supply Chain**: Dependencies, licenses, build security
-6. **Compliance**: Regulatory requirements, audit trails
-7. **Quality & Performance**: Code complexity, bottlenecks, technical debt
+      <wave_deliverables>
+        <deliverable>Domain-specific vulnerability findings with evidence</deliverable>
+        <deliverable>Framework compliance status (OWASP, NIST, etc.)</deliverable>
+        <deliverable>Risk assessments including business impact analysis</deliverable>
+        <deliverable>Validated tool scan results with false positive filtering</deliverable>
+        <deliverable>Prioritized remediation recommendations by severity</deliverable>
+      </wave_deliverables>
+    </wave>
 
-## Agent Template
-```
-SECURITY AUDIT AGENT: [Specialization]
-DOMAIN: [Authentication/Data/Infrastructure/Application/Supply Chain/Compliance/Quality]
-WAVE: [Number]
-FRAMEWORKS: [OWASP/NIST/CWE/Industry]
+    <wave index="final">
+      <name>Consolidation & Reporting</name>
+      <team>
+        <member>Audit Lead</member>
+        <member>Senior Security Analyst</member>
+        <member>Compliance Officer</member>
+        <member>Technical Writer</member>
+        <member>Record Keeper</member>
+      </team>
 
-WORKSPACE: /root/repos/shadow-clone
-WAVES DIRECTORY: $waves_directory
+      <primary_deliverable>
+        <name>SECURITY_AUDIT_REPORT.md</name>
+        <description>Comprehensive security assessment synthesizing all findings</description>
+        <template>templates/SECURITY_AUDIT_REPORT_TEMPLATE.md</template>
+      </primary_deliverable>
 
-REQUIREMENTS:
-1. Framework Integration
-2. Complete File Analysis
-3. Multi-Tool Validation
-4. False Positive Prevention
-5. Cross-Tool Correlation
-6. Business Context Analysis
-7. Expert Consensus
-8. Practical Validation
+      <supporting_deliverables>
+        <deliverable>
+          <name>VULNERABILITY_REGISTER.md</name>
+          <description>Detailed inventory of all identified vulnerabilities</description>
+        </deliverable>
+        <deliverable>
+          <name>COMPLIANCE_MATRIX.md</name>
+          <description>Framework compliance tracking and gap analysis</description>
+        </deliverable>
+      </supporting_deliverables>
+    </wave>
+  </wave_structure>
 
-TOOLS:
-- SAST: [SonarQube/Semgrep/CodeQL]
-- DAST: [OWASP ZAP/Burp Suite]
-- Dependencies: [Snyk/OWASP Dependency-Check]
-- Config: [Checkov/Terrascan]
-```
+  <key_deliverables>
+    <deliverable>Comprehensive security assessment covering all critical domains</deliverable>
+    <deliverable>Prioritized vulnerability list with CVSS severity ratings</deliverable>
+    <deliverable>Compliance gap analysis mapped to regulatory requirements</deliverable>
+    <deliverable>Remediation roadmap with realistic timelines and milestones</deliverable>
+    <deliverable>Executive presentation summarizing key findings and recommendations</deliverable>
+  </key_deliverables>
 
-## Deliverables
+  <execution_guidelines>
+    <guideline priority="critical">
+      <instruction>Let Wave-0 analysis drive the entire audit focus - tailor assessments to each application's unique characteristics</instruction>
+      <rationale>Different applications have vastly different security profiles and risk exposures</rationale>
+    </guideline>
+    
+    <guideline priority="high">
+      <instruction>Select frameworks based on application context - apply only relevant standards and avoid checkbox compliance</instruction>
+      <rationale>Focused assessments provide more value than generic checklists</rationale>
+    </guideline>
+    
+    <guideline priority="high">
+      <instruction>Create comprehensive audit plans proactively, even with minimal user input</instruction>
+      <rationale>Professional auditors anticipate needs based on application characteristics</rationale>
+    </guideline>
+    
+    <guideline priority="critical">
+      <instruction>Apply 5-Layer validation methodology for all findings:
+        1. Tool correlation - Multiple scanners confirm the issue
+        2. Code context - Manual review validates the vulnerability
+        3. Business logic - Impact aligns with application functionality
+        4. Dynamic testing - Issue reproducible in runtime environment
+        5. Expert consensus - Team agrees on severity and remediation
+      </instruction>
+      <rationale>Multi-layer validation ensures accuracy and reduces false positives</rationale>
+    </guideline>
+    
+    <guideline priority="high">
+      <instruction>Cross-reference findings between security domains to identify systemic issues</instruction>
+      <rationale>Vulnerabilities often span multiple domains and require holistic solutions</rationale>
+    </guideline>
+    
+    <guideline priority="critical">
+      <instruction>Document all findings with evidence and reproducible steps</instruction>
+      <rationale>Clear documentation enables effective remediation and validation</rationale>
+    </guideline>
+    
+    <guideline priority="critical">
+      <instruction>Report all major compliance issues without exception</instruction>
+      <rationale>Compliance violations carry legal and financial consequences</rationale>
+    </guideline>
+    
+    <guideline priority="high">
+      <instruction>Maintain false positive rate below 10% through rigorous validation</instruction>
+      <rationale>Accurate findings build trust and enable focused remediation efforts</rationale>
+    </guideline>
+  </execution_guidelines>
 
-**3 Master Documents** (all teams contribute):
+  <success_criteria>
+    <criterion>All applicable core assessment areas receive thorough evaluation</criterion>
+    <criterion>Vulnerabilities documented with clear severity ratings (Critical/High/Medium/Low)</criterion>
+    <criterion>Compliance gaps identified and mapped to specific requirements</criterion>
+    <criterion>Remediation plan developed with stakeholder approval</criterion>
+    <criterion>Executive sign-off received on findings and recommendations</criterion>
+  </success_criteria>
 
-1. **SECURITY_AUDIT_REPORT.md**
-   - Executive Summary
-   - Critical Findings
-   - Domain Analysis
-   - Remediation Roadmap
-
-2. **VULNERABILITY_REGISTER.md**
-   - ID, Severity, Domain
-   - Description, Evidence
-   - Remediation, Status
-
-3. **COMPLIANCE_MATRIX.md**
-   - Framework coverage
-   - Requirement status
-   - Gap analysis
-
-## Document Coordination
-
-**Sequential Updates Only**:
-1. Teams work in `wave-X/[team]_findings.md`
-2. Convergence sessions consolidate
-3. Document Master updates shared reports
-4. Section ownership by domain
-
-## Quality Assurance
-
-**5-Layer Validation**:
-1. Tool correlation
-2. Code context analysis
-3. Business logic validation
-4. Dynamic testing
-5. Expert consensus
-
-**Metrics**:
-- False positive rate <10%
-- Expert consensus >95%
-- Client challenge <5%
-
-**Templates**: Use `.shadow/templates/` for all reports
-
-## Example Wave Directory Structure
-
-**IMPORTANT**: All agents MUST follow file_organization_rules.md for proper file placement.
-
-**Audit Mode Deliverables:**
-```
-$waves_directory/
-├── wave-0/                    # MANDATORY pre-execution planning
-│   ├── issue_analysis.md      # Security issue analysis
-│   ├── vulnerability_scope.md # Vulnerability assessment scope
-│   ├── audit_framework.md     # Selected audit frameworks
-│   ├── tool_selection.md      # Security tool selection
-│   ├── team_formation.md      # Agent assignments
-│   ├── wave_plan.md          # Execution strategy
-│   └── setup_complete.md      # Pre-execution checkpoint
-├── wave-1/
-│   ├── authentication_findings.md
-│   ├── data_security_findings.md
-│   ├── infrastructure_assessment.md
-│   └── WAVE_1_CONVERGENCE.md
-├── wave-2/
-│   ├── api_security_findings.md
-│   ├── application_vulnerabilities.md
-│   ├── supply_chain_analysis.md
-│   └── WAVE_2_CONVERGENCE.md
-├── wave-3/
-│   ├── compliance_assessment.md
-│   ├── false_positive_validation.md
-│   └── WAVE_3_CONVERGENCE.md
-└── FINAL_DELIVERABLES/
-    ├── SECURITY_AUDIT_REPORT.md
-    ├── VULNERABILITY_REGISTER.xlsx
-    ├── RISK_ASSESSMENT_MATRIX.md
-    ├── REMEDIATION_ROADMAP.md
-    └── EXECUTIVE_SUMMARY.pdf
-```
+  <quality_assurance>
+    <measure>Evidence-based findings with clear reproduction steps</measure>
+    <measure>Business context provided for technical vulnerabilities</measure>
+    <measure>Actionable recommendations with implementation guidance</measure>
+    <measure>Risk ratings aligned with organizational impact</measure>
+    <measure>Clear communication suitable for technical and executive audiences</measure>
+  </quality_assurance>
+</mode>
