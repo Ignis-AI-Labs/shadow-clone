@@ -280,26 +280,39 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         <substeps>
           <substep name="pre_wave_rk_deployment">
             <description>Deploy Record Keeper Collective with pre-wave duties</description>
-            <parallel_deployment>
-              Deploy ALL Record Keepers SIMULTANEOUSLY in one operation.
-              This is CRITICAL - they must work as a unified team.
-            </parallel_deployment>
+            <deployment_instructions>
+              <instruction>Count Record Keepers needed (minimum 3)</instruction>
+              <instruction>Create Task() for each Record Keeper</instruction>
+              <instruction>Deploy ALL Record Keepers in ONE message</instruction>
+              <instruction>Confirm all RKs deployed simultaneously</instruction>
+            </deployment_instructions>
+            <verification>All RK tasks submitted in single operation</verification>
             <wait_for>RK Collective to create required pre-wave files</wait_for>
           </substep>
           
           <substep name="main_team_deployment">
             <description>Deploy implementation agents</description>
-            <batch_size>Maximum 10 agents per batch</batch_size>
-            <sub_waves>Create if more than 10 agents</sub_waves>
-            <requirement>ACTUAL deployment and execution - no simulation</requirement>
+            <deployment_instructions>
+              <instruction>Group agents into batches of maximum 10</instruction>
+              <instruction>Deploy each batch in parallel (all 10 simultaneously)</instruction>
+              <instruction>Wait for batch completion before next batch</instruction>
+              <instruction>Create actual Task() calls with real agent prompts</instruction>
+            </deployment_instructions>
+            <batch_example>
+              Batch 1: Deploy agents 1-10 simultaneously
+              Batch 2: Deploy agents 11-20 simultaneously (if needed)
+            </batch_example>
           </substep>
           
           <substep name="post_wave_rk_deployment">
             <description>Deploy Record Keeper Collective with post-wave duties</description>
-            <parallel_deployment>
-              Deploy ALL Record Keepers SIMULTANEOUSLY again.
-              They gather results and update Constitution.
-            </parallel_deployment>
+            <deployment_instructions>
+              <instruction>Use same Record Keeper team from pre-wave</instruction>
+              <instruction>Deploy ALL Record Keepers in ONE message again</instruction>
+              <instruction>Include post-wave duties in their prompts</instruction>
+              <instruction>Confirm simultaneous deployment</instruction>
+            </deployment_instructions>
+            <purpose>Unified team gathers results and updates Constitution</purpose>
             <wait_for>Wave completion confirmation</wait_for>
           </substep>
         </substeps>
@@ -382,28 +395,43 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   </execution_phases>
 
   <agent_deployment_instructions>
-    <critical_parallel_deployment>
-      When deploying Record Keeper Collective or agent teams:
-      1. Create Task() for EACH agent in the group
-      2. Execute ALL Tasks in ONE message for parallel execution
-      3. This enables agents to collaborate in real-time
+    <parallel_deployment_requirement>
+      <context>
+        <purpose>Enable real-time collaboration between agents</purpose>
+        <why>Sequential deployment prevents agents from coordinating and sharing context</why>
+        <critical>Record Keeper Collective MUST work as a unified team</critical>
+      </context>
       
-      CORRECT example:
-      ```
-      Task("Lead Record Keeper", prompt=...),
-      Task("Technical Record Keeper", prompt=...),
-      Task("Progress Record Keeper", prompt=...)
-      // All deployed in ONE operation
-      ```
+      <instructions>
+        <instruction>Create Task() calls for ALL agents in the deployment group</instruction>
+        <instruction>Execute all Task() calls in a SINGLE message</instruction>
+        <instruction>Deploy Record Keeper Collective members SIMULTANEOUSLY</instruction>
+        <instruction>Deploy implementation teams in batches up to 10 agents</instruction>
+        <instruction>Wait for the entire group to complete before proceeding</instruction>
+      </instructions>
       
-      INCORRECT example:
-      ```
-      Task("Lead Record Keeper", prompt=...)
-      // wait for completion
-      Task("Technical Record Keeper", prompt=...)
-      // This sequential approach breaks coordination
-      ```
-    </critical_parallel_deployment>
+      <examples>
+        <example type="correct" reason="Enables real-time collaboration">
+          Deploy in ONE operation:
+          ```
+          Task("Lead Record Keeper", prompt=...),
+          Task("Technical Record Keeper", prompt=...),
+          Task("Progress Record Keeper", prompt=...)
+          ```
+          Result: All 3 RKs can coordinate and share information
+        </example>
+        
+        <example type="incorrect" reason="Breaks team coordination">
+          Sequential deployment:
+          ```
+          Task("Lead Record Keeper", prompt=...)
+          // wait for completion
+          Task("Technical Record Keeper", prompt=...)
+          ```
+          Result: RKs cannot function as collective - SYSTEM FAILURE
+        </example>
+      </examples>
+    </parallel_deployment_requirement>
 
     <agent_prompt_structure>
       Each agent receives:
