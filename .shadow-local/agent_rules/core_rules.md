@@ -95,8 +95,8 @@
   <team_composition>
     <mandatory_members>
       <record_keeper_collective>
-        <minimum>3 Record Keepers per wave</minimum>
-        <scaling>max(3, ceil(total_agents / 5))</scaling>
+        <minimum>2 Record Keepers per wave</minimum>
+        <scaling>max(2, ceil(total_agents / 5))</scaling>
         <reason>Ensures proper orchestration, documentation, and system coherence</reason>
       </record_keeper_collective>
       
@@ -134,9 +134,9 @@
         <naming>Use alphabetic suffixes: 1a, 1b, 1c</naming>
         <example>
           Wave 1 with 25 agents:
-          - Wave 1a: RK Pre-Wave (3 RKs) + First 10 agents
+          - Wave 1a: RK Pre-Wave (2 RKs) + First 10 agents
           - Wave 1b: Next 10 agents (continuous execution)
-          - Wave 1c: Final 5 agents + RK Post-Wave (3 RKs)
+          - Wave 1c: Final 5 agents + RK Post-Wave (2 RKs)
         </example>
       </structure>
       
@@ -197,7 +197,7 @@
     
     <deliverable_quality>
       <requirements>
-        - Meets specifications defined in DELIVERABLES_REQUIRED.md
+        - Meets specifications defined in AGENT_ASSIGNMENTS.md
         - Integrates cleanly with existing system
         - Includes appropriate error handling
         - Follows project conventions and patterns
@@ -238,8 +238,8 @@
       </purpose>
       
       <minimum_requirement>
-        <count>3 Record Keepers per wave (non-negotiable)</count>
-        <scaling>max(3, ceil(total_agents / 5))</scaling>
+        <count>2 Record Keepers per wave (non-negotiable)</count>
+        <scaling>max(2, ceil(total_agents / 5))</scaling>
         <reason>Ensures redundancy, prevents single points of failure, and enables specialized focus areas</reason>
       </minimum_requirement>
     </sacred_role>
@@ -247,24 +247,20 @@
     <composition>
       <base_configuration>
         <lead_record_keeper>
-          <focus>Primary orchestration and decision making</focus>
-          <responsibilities>Wave objectives, conflict resolution, strategic decisions</responsibilities>
+          <focus>Primary orchestration, decision making, and technical oversight</focus>
+          <responsibilities>Wave objectives, conflict resolution, strategic decisions, deliverable specifications</responsibilities>
         </lead_record_keeper>
         
-        <technical_record_keeper>
-          <focus>Technical deliverables and integration</focus>
-          <responsibilities>Deliverable specifications, quality validation, technical decisions</responsibilities>
-        </technical_record_keeper>
-        
-        <progress_record_keeper>
-          <focus>Timeline and status tracking</focus>
-          <responsibilities>Progress monitoring, dependency tracking, metric collection</responsibilities>
-        </progress_record_keeper>
+        <support_record_keeper>
+          <focus>Progress tracking, documentation, and validation support</focus>
+          <responsibilities>Progress monitoring, dependency tracking, metric collection, quality validation</responsibilities>
+        </support_record_keeper>
       </base_configuration>
       
       <additional_members>
-        <when>When scaling formula requires more than 3</when>
+        <when>When scaling formula requires more than 2</when>
         <role>General support across all focus areas</role>
+        <example>3rd RK could focus on technical depth, 4th on timeline management, etc.</example>
       </additional_members>
     </composition>
 
@@ -286,26 +282,20 @@
               <directory name="rk-operations/">
                 <purpose>Centralize all RK-specific files</purpose>
               </directory>
-              <file name="rk-operations/DELIVERABLES_REQUIRED.md">
-                <purpose>Define what each agent must deliver</purpose>
-                <content>Clear specifications and success criteria</content>
-              </file>
               <file name="rk-operations/AGENT_ASSIGNMENTS.md">
-                <purpose>Document who does what</purpose>
-                <content>Clear task ownership with no overlaps</content>
+                <purpose>Document who does what AND what they must deliver</purpose>
+                <content>Agent roster, task assignments, deliverable specifications with success criteria</content>
               </file>
               <file name="rk-operations/RECORD_KEEPER_LOG.md">
                 <purpose>Track RK activities and decisions</purpose>
                 <content>Timestamped log of key events</content>
               </file>
-              <file name="rk-operations/PRE_WAVE_COMPLETE.md">
-                <purpose>Mark pre-wave setup as complete</purpose>
-              </file>
             </files_to_create>
             
             <files_not_to_create>
               DO NOT create: CONSTITUTION.md updates, tracking dashboards, 
-              multiple status files, templates, or any files beyond the three specified above
+              multiple status files, templates, separate DELIVERABLES_REQUIRED.md,
+              AGENT_ROSTER.md, PRE_WAVE_COMPLETE.md, or any redundant tracking files
             </files_not_to_create>
           </documentation>
         </responsibilities>
@@ -339,9 +329,6 @@
               <file name="rk-operations/WAVE_COMPLETE.md">
                 <purpose>Mark wave as officially complete</purpose>
                 <content>Summary of deliverables and outcomes</content>
-              </file>
-              <file name="rk-operations/POST_WAVE_COMPLETE.md">
-                <purpose>Mark post-wave validation as complete</purpose>
               </file>
             </wave_completion>
           </finalization>

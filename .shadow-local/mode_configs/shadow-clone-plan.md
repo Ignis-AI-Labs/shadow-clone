@@ -128,6 +128,12 @@
 </master_plan_contents>
 
 <operating_principles>
+  <principle priority="CRITICAL">
+    NO CODE WRITING - Planning mode agents MUST NOT write any implementation code
+  </principle>
+  <principle priority="CRITICAL">
+    Research and document ONLY - Focus on analysis, best practices, and planning
+  </principle>
   <principle>
     Focus exclusively on planning - implementation begins only after MASTER_PLAN completion
   </principle>
@@ -144,6 +150,39 @@
     Maintain all work within designated wave folders for organization
   </principle>
 </operating_principles>
+
+<planning_mode_restrictions>
+  <critical_rule>
+    Planning mode is for PLANNING ONLY. No agent should write, create, or modify any source code.
+  </critical_rule>
+  
+  <allowed_activities>
+    - Research industry best practices and patterns
+    - Analyze existing codebases to understand structure
+    - Create architectural diagrams and designs
+    - Write detailed implementation plans and strategies
+    - Document technical approaches and trade-offs
+    - Assess project complexity and requirements
+    - Design data models and API specifications
+    - Plan testing strategies and quality measures
+  </allowed_activities>
+  
+  <prohibited_activities>
+    - Writing any source code files
+    - Creating implementation files of any kind
+    - Modifying existing code
+    - Running code or executing tests
+    - Creating pull requests with code changes
+    - Implementing features or fixes
+    - Building prototypes with actual code
+  </prohibited_activities>
+  
+  <enforcement>
+    Any agent that attempts to write code during planning mode should be immediately
+    reminded that planning mode is for research and documentation only. Implementation
+    happens in subsequent feature waves after the MASTER_PLAN is complete.
+  </enforcement>
+</planning_mode_restrictions>
 
 <wave_dependencies>
   <wave_0_requirements>
