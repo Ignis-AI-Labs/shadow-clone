@@ -1,245 +1,238 @@
 # Planning Mode Configuration
 
 <mode_overview>
-  <purpose>
-    Transform your innovative ideas into comprehensive, actionable project blueprints.
-    Planning Mode creates detailed MASTER_PLAN documents that guide successful project execution
-    through systematic discovery, architecture design, and strategic roadmap development.
-  </purpose>
-  
-  <motivation>
-    Great projects start with great plans. This mode ensures your vision is thoroughly analyzed,
-    technically architected, and strategically mapped before any code is written. By investing
-    in proper planning, you reduce risks, optimize resources, and create clear paths to success.
-  </motivation>
+  <context>
+    <purpose>
+      Transform ideas into actionable project blueprints through systematic planning.
+      This mode produces a comprehensive MASTER_PLAN document that guides successful implementation.
+    </purpose>
+    
+    <why_important>
+      Well-planned projects succeed. This mode ensures thorough analysis, technical design,
+      and strategic roadmapping before implementation begins. Your planning investment
+      reduces risks and creates clear paths to success.
+    </why_important>
+    
+    <audience>
+      Planning agents who research, analyze, and document project approaches.
+      These agents create blueprints for future implementation teams.
+    </audience>
+  </context>
 </mode_overview>
 
 <wave_structure>
   <wave_0>
-    <name>Discovery Wave (Foundation)</name>
-    <description>
-      The critical first wave that establishes project vision, analyzes complexity,
-      and determines the optimal planning approach for your specific needs.
-    </description>
+    <name>Foundation & Assessment</name>
+    <purpose>
+      Understand project requirements, identify technical constraints,
+      and create initial scope documentation to guide all planning work.
+    </purpose>
     
     <team_composition>
-      - Vision Architect: Shapes and clarifies the project vision
-      - Requirements Analyst: Identifies and documents core requirements
-      - Scope Assessor: Evaluates project complexity and technical challenges
-      - Planning Strategist: Designs the optimal wave structure
-      - Record Keeper: Documents all decisions and maintains project history
+      - Vision Architect: Clarifies and documents project vision
+      - Requirements Analyst: Gathers and structures core requirements  
+      - Technical Assessor: Evaluates complexity and technical needs
+      - Record Keeper Collective: Maintains project context and decisions
     </team_composition>
     
     <deliverables>
-      <deliverable name="project_vision.md">
-        Clear, inspiring project vision that aligns all stakeholders
-      </deliverable>
-      <deliverable name="scope_assessment.md">
-        Comprehensive complexity analysis with technical considerations
-      </deliverable>
-      <deliverable name="initial_requirements.md">
-        Core functional and non-functional requirements
-      </deliverable>
-      <deliverable name="planning_strategy.md">
-        Recommended wave structure tailored to project needs
-      </deliverable>
-      <deliverable name="wave_plan.md">
-        Detailed execution approach for subsequent waves
+      <deliverable path="deliverables/PROJECT_FOUNDATION.md">
+        Single comprehensive document containing:
+        - Project vision and goals
+        - Core requirements (functional and non-functional)
+        - Technical constraints and considerations
+        - Initial complexity assessment
+        - Recommended planning approach
       </deliverable>
     </deliverables>
     
-    <key_outcome>
-      Determines the optimal number of planning waves (typically 1-5) based on
-      project complexity, ensuring efficient and thorough planning.
-    </key_outcome>
+    <instructions>
+      1. Create a clear project vision statement
+      2. Document all stakeholder requirements
+      3. Assess technical complexity and constraints
+      4. Determine optimal number of research waves needed (1-2)
+      5. Consolidate all findings into PROJECT_FOUNDATION.md
+    </instructions>
   </wave_0>
   
-  <dynamic_planning_waves>
-    <description>
-      Flexible waves (1 to N) that deploy specialized teams based on Wave-0 assessment.
-      Each wave builds upon previous work, creating comprehensive project documentation.
-    </description>
-    
-    <available_teams>
-      <team name="Technical Architecture Team">
-        Designs system architecture, technology stack, and integration patterns
-      </team>
-      <team name="Infrastructure Planning Team">
-        Plans deployment, scaling, monitoring, and operational requirements
-      </team>
-      <team name="Security & Compliance Team">
-        Ensures security best practices and regulatory compliance
-      </team>
-      <team name="Resource Planning Team">
-        Optimizes team structure, timeline, and budget allocation
-      </team>
-      <team name="UX/UI Design Team">
-        Creates user experience flows and interface design systems
-      </team>
-      <team name="Integration Strategy Team">
-        Plans external system integrations and data flow architecture
-      </team>
-    </available_teams>
-    
-    <complexity_guidelines>
-      <guideline complexity="simple">
-        1-2 planning waves for straightforward projects with clear requirements
-      </guideline>
-      <guideline complexity="medium">
-        2-3 planning waves for projects with multiple components or integrations
-      </guideline>
-      <guideline complexity="complex">
-        3-5 planning waves for enterprise solutions with extensive requirements
-      </guideline>
-    </complexity_guidelines>
-  </dynamic_planning_waves>
-  
-  <final_wave>
-    <name>Master Plan Consolidation</name>
-    <description>
-      The culminating wave that synthesizes all planning work into a single,
-      comprehensive MASTER_PLAN document ready for execution.
-    </description>
+  <wave_1>
+    <name>Research & Analysis</name>
+    <purpose>
+      Gather implementation approaches, analyze best practices,
+      and document technical decisions to inform the master plan.
+    </purpose>
     
     <team_composition>
-      - Master Plan Architect: Synthesizes all planning outputs
-      - Technical Consolidator: Ensures technical coherence and completeness
-      - Execution Strategist: Creates actionable implementation roadmap
-      - Quality Validator: Verifies plan completeness and quality
-      - Record Keeper: Finalizes all documentation
+      - Architecture Researcher: Investigates design patterns and systems
+      - Best Practices Analyst: Researches industry standards and approaches
+      - Technology Evaluator: Assesses tools and frameworks
+      - Record Keeper Collective: Synthesizes research findings
     </team_composition>
     
-    <primary_output>
-      MASTER_PLAN.md - Your complete project blueprint following the
-      templates/MASTER_PLAN_TEMPLATE.md structure for consistency
-    </primary_output>
-  </final_wave>
+    <deliverables>
+      <deliverable path="deliverables/TECHNICAL_RESEARCH.md">
+        Consolidated research document containing:
+        - Recommended architecture patterns
+        - Technology stack evaluation
+        - Best practices for implementation
+        - Integration approaches
+        - Security and performance considerations
+      </deliverable>
+    </deliverables>
+    
+    <instructions>
+      1. Research relevant architecture patterns for the project type
+      2. Evaluate technology options against project requirements
+      3. Document best practices for each technical component
+      4. Analyze integration points and data flow patterns
+      5. Consolidate all research into TECHNICAL_RESEARCH.md
+    </instructions>
+  </wave_1>
+  
+  <wave_2>
+    <name>Master Plan Creation</name>
+    <purpose>
+      Synthesize all findings into an actionable MASTER_PLAN,
+      define implementation phases, and create the final planning deliverable.
+    </purpose>
+    
+    <team_composition>
+      - Master Plan Architect: Creates comprehensive project blueprint
+      - Implementation Strategist: Designs execution phases
+      - Quality Planner: Defines success metrics and validation
+      - Record Keeper Collective: Finalizes all documentation
+    </team_composition>
+    
+    <deliverables>
+      <deliverable path="deliverables/MASTER_PLAN.md">
+        Complete project blueprint including:
+        1. Executive Summary
+        2. Project Vision & Goals
+        3. Requirements & Scope
+        4. Technical Architecture
+        5. Implementation Roadmap
+        6. Quality Standards
+        7. Risk Mitigation
+        8. Success Metrics
+      </deliverable>
+    </deliverables>
+    
+    <instructions>
+      1. Read and synthesize PROJECT_FOUNDATION.md
+      2. Incorporate insights from TECHNICAL_RESEARCH.md
+      3. Create detailed implementation phases with clear milestones
+      4. Define quality standards and success criteria
+      5. Produce comprehensive MASTER_PLAN.md following the template
+    </instructions>
+  </wave_2>
 </wave_structure>
 
-<master_plan_contents>
-  <section number="1">Executive Summary & Vision</section>
-  <section number="2">Requirements & Scope</section>
-  <section number="3">Technical Architecture</section>
-  <section number="4">Implementation Roadmap</section>
-  <section number="5">Resource Allocation</section>
-  <section number="6">Risk Management</section>
-  <section number="7">Quality Standards</section>
-  <section number="8">Wave Execution Plan</section>
-</master_plan_contents>
+<planning_guidelines>
+  <principle>
+    Focus on research and documentation to create actionable plans.
+    Planning agents analyze, design, and document approaches for implementation teams.
+  </principle>
+  
+  <principle>
+    Create essential documents that provide real value.
+    Each deliverable should directly contribute to project success.
+  </principle>
+  
+  <principle>
+    Build systematically on previous work.
+    Each wave reads and incorporates insights from earlier waves.
+  </principle>
+  
+  <activities_to_perform>
+    - Research industry best practices and proven patterns
+    - Analyze project requirements and technical constraints
+    - Design system architectures and data models
+    - Create detailed implementation strategies
+    - Document technical approaches with rationale
+    - Plan quality assurance and testing strategies
+    - Design API specifications and integration patterns
+    - Assess risks and create mitigation plans
+  </activities_to_perform>
+  
+  <workspace_organization>
+    <instruction>Maintain clean workspace structure for clarity</instruction>
+    <structure>
+      .waves/wave-0/
+        deliverables/     # Final polished documents only
+        drafts/           # Work-in-progress content
+        rk-operations/    # Record Keeper coordination
+      
+      .waves/wave-1/
+        deliverables/     # Final polished documents only
+        drafts/           # Work-in-progress content
+        rk-operations/    # Record Keeper coordination
+      
+      .waves/wave-2/
+        deliverables/     # Final polished documents only
+        drafts/           # Work-in-progress content
+        rk-operations/    # Record Keeper coordination
+    </structure>
+  </workspace_organization>
+</planning_guidelines>
 
-<operating_principles>
-  <principle priority="CRITICAL">
-    NO CODE WRITING - Planning mode agents MUST NOT write any implementation code
-  </principle>
-  <principle priority="CRITICAL">
-    Research and document ONLY - Focus on analysis, best practices, and planning
-  </principle>
+<file_creation_discipline>
   <principle>
-    Focus exclusively on planning - implementation begins only after MASTER_PLAN completion
+    Create only essential files that advance the planning process.
+    Consolidate related information into comprehensive documents.
   </principle>
-  <principle>
-    Create the MASTER_PLAN document exclusively in the final wave
-  </principle>
-  <principle>
-    Build each wave's work upon insights from previous waves
-  </principle>
-  <principle>
-    Adapt wave count dynamically based on project needs
-  </principle>
-  <principle>
-    Maintain all work within designated wave folders for organization
-  </principle>
-</operating_principles>
+  
+  <instructions>
+    1. Produce exactly one deliverable per wave in deliverables/
+    2. Use drafts/ for work-in-progress content only
+    3. Let Record Keeper Collective manage rk-operations/
+    4. Avoid creating redundant tracking files
+    5. Focus on quality over quantity of documentation
+  </instructions>
+  
+  <examples>
+    <good>Consolidate all foundation work into PROJECT_FOUNDATION.md</good>
+    <good>Combine all research findings into TECHNICAL_RESEARCH.md</good>
+    <good>Create single comprehensive MASTER_PLAN.md</good>
+    <bad>Creating separate files for each small finding</bad>
+    <bad>Duplicating information across multiple documents</bad>
+  </examples>
+</file_creation_discipline>
 
-<planning_mode_restrictions>
-  <critical_rule>
-    Planning mode is for PLANNING ONLY. No agent should write, create, or modify any source code.
-  </critical_rule>
+<wave_progression>
+  <instruction>
+    Execute waves sequentially, completing each fully before proceeding.
+    This ensures systematic building of knowledge and comprehensive planning.
+  </instruction>
   
-  <allowed_activities>
-    - Research industry best practices and patterns
-    - Analyze existing codebases to understand structure
-    - Create architectural diagrams and designs
-    - Write detailed implementation plans and strategies
-    - Document technical approaches and trade-offs
-    - Assess project complexity and requirements
-    - Design data models and API specifications
-    - Plan testing strategies and quality measures
-  </allowed_activities>
+  <flow>
+    Wave 0: Establish foundation with PROJECT_FOUNDATION.md
+      ↓ (Wave 0 must complete before Wave 1 begins)
+    Wave 1: Conduct research producing TECHNICAL_RESEARCH.md  
+      ↓ (Wave 1 must complete before Wave 2 begins)
+    Wave 2: Create final MASTER_PLAN.md synthesizing all work
+      ↓
+    Planning Complete: Ready for implementation mode
+  </flow>
   
-  <prohibited_activities>
-    - Writing any source code files
-    - Creating implementation files of any kind
-    - Modifying existing code
-    - Running code or executing tests
-    - Creating pull requests with code changes
-    - Implementing features or fixes
-    - Building prototypes with actual code
-  </prohibited_activities>
-  
-  <enforcement>
-    Any agent that attempts to write code during planning mode should be immediately
-    reminded that planning mode is for research and documentation only. Implementation
-    happens in subsequent feature waves after the MASTER_PLAN is complete.
-  </enforcement>
-</planning_mode_restrictions>
+  <validation>
+    Each wave completion requires:
+    - Deliverable present in deliverables/ directory
+    - Record Keeper Collective confirms wave complete
+    - All team members have finished their work
+  </validation>
+</wave_progression>
 
-<wave_dependencies>
-  <wave_0_requirements>
-    <description>
-      These deliverables establish the foundation for all subsequent planning.
-      Wave-1 can begin only after these are complete and validated.
-    </description>
-    
-    <required_files>
-      - deliverables/project_vision.md
-      - deliverables/scope_assessment.md
-      - deliverables/initial_requirements.md
-      - deliverables/planning_strategy.md
-      - deliverables/wave_plan.md
-      - WAVE_COMPLETE.md (created by Record Keeper)
-    </required_files>
-  </wave_0_requirements>
-  
-  <planning_wave_requirements>
-    <description>
-      Each planning wave (1 through N-1) builds systematically on previous work,
-      ensuring comprehensive coverage and avoiding gaps.
-    </description>
-    
-    <wave_must>
-      - Read and incorporate insights from all previous wave outputs
-      - Create specialized deliverables in designated wave folder
-      - Have Record Keeper create WAVE_COMPLETE.md upon completion
-      - Enable subsequent waves through completed deliverables
-    </wave_must>
-  </planning_wave_requirements>
-  
-  <final_wave_prerequisites>
-    <description>
-      The final consolidation wave ensures all planning is complete before
-      creating the unified MASTER_PLAN document.
-    </description>
-    
-    <requirements>
-      - All previous waves marked complete with WAVE_COMPLETE.md files
-      - All planning deliverables present and validated
-      - Record Keeper documentation of all major decisions complete
-      - No gaps identified in planning coverage
-    </requirements>
-  </final_wave_prerequisites>
-  
-  <enforcement>
-    The system automatically validates these dependencies, ensuring proper
-    wave progression and preventing premature advancement. This maintains
-    planning quality and completeness throughout the process.
-  </enforcement>
-</wave_dependencies>
+<success_criteria>
+  <criterion>Clear, actionable MASTER_PLAN ready for implementation teams</criterion>
+  <criterion>All requirements captured and addressed in planning</criterion>
+  <criterion>Technical approach validated through research</criterion>
+  <criterion>Implementation phases clearly defined with milestones</criterion>
+  <criterion>Risks identified with mitigation strategies documented</criterion>
+  <criterion>Success metrics defined for project validation</criterion>
+</success_criteria>
 
-<success_metrics>
-  <metric>Clear, actionable MASTER_PLAN ready for implementation</metric>
-  <metric>All stakeholder requirements captured and addressed</metric>
-  <metric>Technical architecture validated and documented</metric>
-  <metric>Risk mitigation strategies identified and planned</metric>
-  <metric>Resource allocation optimized for project success</metric>
-</success_metrics>
+<implementation_note>
+  Planning mode focuses exclusively on creating blueprints.
+  Implementation begins only after MASTER_PLAN completion in subsequent feature waves.
+  This separation ensures thorough planning before any code is written.
+</implementation_note>
