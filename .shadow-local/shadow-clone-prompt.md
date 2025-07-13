@@ -28,8 +28,8 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   <system_constants>
     <deployment_limits>
       <max_agents_per_deployment>10</max_agents_per_deployment>
-      <min_record_keepers>3</min_record_keepers>
-      <record_keeper_scaling>max(3, ceil(total_agents / 5))</record_keeper_scaling>
+      <min_record_keepers>2</min_record_keepers>
+      <record_keeper_scaling>max(2, ceil(total_agents / 5))</record_keeper_scaling>
     </deployment_limits>
     
     <critical_files>
@@ -74,14 +74,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
               WAVE_STATUS.md
             </structure>
             <rk_operations_contents>
-              AGENT_ROSTER.md
-              AGENT_ASSIGNMENTS.md
-              DELIVERABLES_REQUIRED.md
-              RECORD_KEEPER_STATUS.md
-              RECORD_KEEPER_LOG.md
-              PRE_WAVE_COMPLETE.md
-              POST_WAVE_COMPLETE.md
-              WAVE_COMPLETE.md
+              AGENT_ASSIGNMENTS.md (includes roster and deliverables)
+              RECORD_KEEPER_LOG.md (includes all status updates)
+              WAVE_COMPLETE.md (final wave summary)
             </rk_operations_contents>
           </wave>
         </subdirectories>
@@ -127,14 +122,14 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     <record_keeper_requirements>
       <mandatory_presence>
         <rule>Every team MUST include Record Keeper Collective</rule>
-        <minimum>3 Record Keepers per wave</minimum>
+        <minimum>2 Record Keepers per wave</minimum>
         <reason>Ensures context preservation and coordination across all agents</reason>
       </mandatory_presence>
       
       <deployment_model>
         <phase name="pre-wave">
           <purpose>Create deliverables list, assign tasks, initialize tracking</purpose>
-          <files_created>DELIVERABLES_REQUIRED.md, AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md</files_created>
+          <files_created>AGENT_ASSIGNMENTS.md (consolidated), RECORD_KEEPER_LOG.md</files_created>
         </phase>
         <phase name="main-wave">
           <purpose>Agents execute assigned tasks</purpose>
@@ -166,6 +161,23 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         <prohibited>Creating files in project root, modifying other waves, creating .waves inside waves</prohibited>
         <reason>Maintains wave isolation, organization, and prevents interference</reason>
       </placement_rules>
+      
+      <file_creation_discipline>
+        <principle>Only create files that are absolutely necessary</principle>
+        <rules>
+          <rule>Consolidate similar tracking information into single files</rule>
+          <rule>Avoid creating redundant status files</rule>
+          <rule>Reuse existing files when possible rather than creating new ones</rule>
+          <rule>Question the necessity of each file before creation</rule>
+          <rule>Prefer updating existing files over creating new tracking files</rule>
+        </rules>
+        <examples>
+          <good>Update RECORD_KEEPER_LOG.md with new status instead of creating STATUS_UPDATE.md</good>
+          <good>Combine related deliverables into single comprehensive document</good>
+          <bad>Creating separate files for each minor status update</bad>
+          <bad>Duplicating information across multiple tracking files</bad>
+        </examples>
+      </file_creation_discipline>
     </file_operations>
   </core_requirements>
 
@@ -281,7 +293,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
           <substep name="pre_wave_rk_deployment">
             <description>Deploy Record Keeper Collective with pre-wave duties</description>
             <deployment_instructions>
-              <instruction>Count Record Keepers needed (minimum 3)</instruction>
+              <instruction>Count Record Keepers needed (minimum 2)</instruction>
               <instruction>Create Task() for each Record Keeper</instruction>
               <instruction>Deploy ALL Record Keepers in ONE message</instruction>
               <instruction>Confirm all RKs deployed simultaneously</instruction>
@@ -415,10 +427,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
           Deploy in ONE operation:
           ```
           Task("Lead Record Keeper", prompt=...),
-          Task("Technical Record Keeper", prompt=...),
-          Task("Progress Record Keeper", prompt=...)
+          Task("Technical Record Keeper", prompt=...)
           ```
-          Result: All 3 RKs can coordinate and share information
+          Result: Both RKs can coordinate and share information
         </example>
         
         <example type="incorrect" reason="Breaks team coordination">
@@ -504,6 +515,27 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         - wave_plan.md
       </wave_0_outputs>
       <rule>All subsequent waves blocked until wave-0 complete</rule>
+      <planning_mode_restrictions>
+        <rule priority="CRITICAL">Planning mode agents MUST NOT write any code</rule>
+        <rule priority="CRITICAL">Planning mode agents MUST NOT implement features</rule>
+        <rule priority="CRITICAL">Planning mode agents MUST NOT create source files</rule>
+        <purpose>Planning agents research, analyze, and create implementation plans ONLY</purpose>
+        <allowed_activities>
+          - Research best practices and patterns
+          - Analyze existing codebases
+          - Create architectural designs
+          - Write implementation plans
+          - Document technical approaches
+          - Assess project scope and complexity
+        </allowed_activities>
+        <prohibited_activities>
+          - Writing any source code
+          - Creating implementation files
+          - Modifying existing code
+          - Running code or tests
+          - Making pull requests
+        </prohibited_activities>
+      </planning_mode_restrictions>
     </planning_mode_specific>
   </wave_dependencies>
 
