@@ -94,6 +94,8 @@ export async function createProjectCommand(authProvider: AuthProvider, projectPr
         }, async (progress) => {
             progress.report({ increment: 30, message: 'Initializing project...' });
             
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             const response = await authProvider.makeAuthenticatedRequest(
                 `${SHADOW_CLONE_API}/projects`,
                 {

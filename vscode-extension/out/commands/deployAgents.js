@@ -48,6 +48,8 @@ async function deployAgentsCommand(authProvider, agentProvider, projectId) {
     // Get project ID if not provided
     if (!projectId) {
         try {
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             const response = await authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/projects`);
             const projects = response.data;
             if (projects.length === 0) {
@@ -159,6 +161,8 @@ async function deployAgentsCommand(authProvider, agentProvider, projectId) {
             });
             // Send deployment request
             progress.report({ increment: 10, message: 'Initializing deployment...' });
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             const response = await authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/projects/${projectId}/deploy`, {
                 method: 'POST',
                 data: agentConfig

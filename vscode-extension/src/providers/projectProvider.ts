@@ -27,6 +27,8 @@ export class ProjectProvider implements vscode.TreeDataProvider<ProjectItem> {
         if (!element) {
             // Root level - show projects
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(`${SHADOW_CLONE_API}/projects`);
                 const projects = response.data;
 
@@ -83,6 +85,8 @@ export class ProjectProvider implements vscode.TreeDataProvider<ProjectItem> {
         } else if (element.type === 'deployments') {
             // Show deployment history
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(
                     `${SHADOW_CLONE_API}/projects/${element.id}/deployments`
                 );

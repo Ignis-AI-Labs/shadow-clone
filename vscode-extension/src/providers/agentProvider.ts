@@ -27,6 +27,8 @@ export class AgentProvider implements vscode.TreeDataProvider<AgentItem> {
         if (!element) {
             // Root level - show active agents
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(`${SHADOW_CLONE_API}/agents/active`);
                 const agents = response.data;
 

@@ -57,6 +57,8 @@ class ProjectProvider {
         if (!element) {
             // Root level - show projects
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/projects`);
                 const projects = response.data;
                 if (projects.length === 0) {
@@ -82,6 +84,8 @@ class ProjectProvider {
         else if (element.type === 'deployments') {
             // Show deployment history
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/projects/${element.id}/deployments`);
                 const deployments = response.data;
                 if (deployments.length === 0) {

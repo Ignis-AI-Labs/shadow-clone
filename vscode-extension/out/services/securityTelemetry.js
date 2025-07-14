@@ -165,6 +165,8 @@ class SecurityTelemetryService {
             const apiKey = await this.authProvider.getApiKey();
             if (!apiKey)
                 return;
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             await fetch(`${(0, constants_1.getApiEndpoint)()}/api/security/monitoring-alert`, {
                 method: 'POST',
                 headers: {
@@ -292,6 +294,8 @@ class SecurityTelemetryService {
             const apiKey = await this.authProvider.getApiKey();
             if (!apiKey)
                 return;
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             const response = await fetch(`${(0, constants_1.getApiEndpoint)()}/api/telemetry/events`, {
                 method: 'POST',
                 headers: {
