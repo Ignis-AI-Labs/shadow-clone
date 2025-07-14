@@ -4,7 +4,7 @@
 The .shadow directory contains the production-ready Shadow Clone system with optimized file structure.
 All files have been consolidated for maximum efficiency while maintaining system functionality.
 
-## Files to Upload (24 total)
+## Files to Upload (21 total)
 
 ### Core System Files (2 files)
 - `/shadow-clone-prompt.md` - Main orchestrator with API endpoints
@@ -30,13 +30,10 @@ All files have been consolidated for maximum efficiency while maintaining system
 - `/mode_configs/shadow-clone-refactor.md`
 - `/mode_configs/shadow-clone-research.md`
 
-### Templates (7 files)
-- `/templates/README.md`
-- `/templates/automation-scan-template.md`
-- `/templates/compliance-remediation-template.md`
-- `/templates/project-execution-template.md`
-- `/templates/quality-validation-template.md`
-- `/templates/security-assessment-template.md`
+### Templates (4 files)
+- `/templates/MASTER_PLAN_TEMPLATE.md`
+- `/templates/SECURITY_AUDIT_REPORT_TEMPLATE.md`
+- `/templates/mode-completion-template.md`
 - `/templates/team-agent-templates.md`
 
 ### Testing (1 file)
