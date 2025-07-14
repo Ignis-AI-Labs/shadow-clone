@@ -1,13 +1,14 @@
 # Cloudflare Upload Manifest
 
 ## Summary
-The .shadow directory has been cleaned up and updated to match the simplified structure of .shadow-local.
-All API endpoints have been updated to reference the consolidated files.
+The .shadow directory contains the production-ready Shadow Clone system with optimized file structure.
+All files have been consolidated for maximum efficiency while maintaining system functionality.
 
-## Files to Upload (31 total)
+## Files to Upload (24 total)
 
-### Main Orchestrator
-- `/shadow-clone-prompt.md` - API version with updated endpoints
+### Core System Files (2 files)
+- `/shadow-clone-prompt.md` - Main orchestrator with API endpoints
+- `/LICENSE` - System license file
 
 ### Agent Rules (4 files)
 - `/agent_rules/README.md`
@@ -19,16 +20,6 @@ All API endpoints have been updated to reference the consolidated files.
 - `/coordination_rules/README.md`
 - `/coordination_rules/system_core_rules.md`
 - `/coordination_rules/wave_coordination_protocol.md`
-
-### Execution Phases (8 files)
-- `/execution_phases/phase1_analysis.md`
-- `/execution_phases/phase2_team_config.md`
-- `/execution_phases/phase3_wave_planning.md`
-- `/execution_phases/phase4_deployment.md`
-- `/execution_phases/phase5_execution.md`
-- `/execution_phases/phase6_integration.md`
-- `/execution_phases/phase7_quality.md`
-- `/execution_phases/wave_execution_protocol.md`
 
 ### Mode Configurations (7 files)
 - `/mode_configs/shadow-clone-audit.md`
@@ -55,20 +46,47 @@ All API endpoints have been updated to reference the consolidated files.
 All endpoints follow the pattern:
 `https://api.ignislabs.ai/api/prompts/{category}/{filename_without_extension}`
 
-### Updated Consolidated Endpoints:
-- **Agent Rules**: Now uses 3 consolidated files instead of 8+ individual role files
-- **Coordination Rules**: Now uses 2 consolidated files instead of 8 separate files
-- **Templates**: Reduced to 6 essential templates from 20+ 
+### Example Endpoints:
+- **Main Orchestrator**: `https://api.ignislabs.ai/api/prompts/shadow-clone-prompt`
+- **Agent Rules**: `https://api.ignislabs.ai/api/prompts/agent_rules/core_rules`
+- **Mode Configs**: `https://api.ignislabs.ai/api/prompts/mode_configs/shadow-clone-feature`
+- **Templates**: `https://api.ignislabs.ai/api/prompts/templates/project-execution-template`
 
-## Benefits of New Structure
-1. **Simpler**: 31 files instead of 69
-2. **Consolidated**: Related rules are in single files
-3. **Consistent**: Same structure as local testing version
-4. **Efficient**: Fewer API calls needed
-5. **Maintainable**: Easier to update and manage
+### Key Optimizations:
+- **Agent Rules**: Consolidated from 8+ individual files to 4 focused files
+- **Coordination Rules**: Streamlined from 8 files to 3 essential protocols
+- **Templates**: Reduced from 20+ to 7 core templates
+- **Removed Execution Phases**: Integrated into main orchestrator for efficiency
+
+## Benefits of Optimized Structure
+1. **Reduced Complexity**: 24 files instead of 69+ (65% reduction)
+2. **Faster Loading**: Fewer API calls required for system initialization
+3. **Better Performance**: Consolidated rules reduce redundancy
+4. **Easier Maintenance**: Single source of truth for each component
+5. **Parallel Execution**: Optimized for concurrent agent deployment
+6. **Clear Hierarchy**: Logical grouping of related functionality
 
 ## Upload Process
-1. Upload all files to Cloudflare maintaining the directory structure
-2. Ensure API endpoints match the file paths (without .md extension)
-3. Test with a simple API call to verify access
-4. Update any API gateway configurations if needed
+1. **Pre-Upload Checklist**:
+   - Verify all 24 files exist in .shadow directory
+   - Ensure shadow-clone-prompt.md has correct API endpoints
+   - Check that all mode configs are present
+   - Confirm templates match production requirements
+
+2. **Upload Steps**:
+   - Upload entire .shadow directory structure to Cloudflare
+   - Maintain exact directory hierarchy as shown above
+   - Set appropriate caching headers for static content
+   - Configure CORS if needed for cross-origin access
+
+3. **Post-Upload Verification**:
+   - Test main orchestrator endpoint: `GET /api/prompts/shadow-clone-prompt`
+   - Verify random sampling of other endpoints
+   - Check response times are under 100ms
+   - Confirm all files are accessible without authentication
+
+4. **API Gateway Configuration**:
+   - Route pattern: `/api/prompts/{path+}`
+   - Remove .md extension from URLs automatically
+   - Enable gzip compression for responses
+   - Set up monitoring for 404 errors
