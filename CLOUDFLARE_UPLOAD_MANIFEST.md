@@ -4,22 +4,16 @@
 The .shadow directory contains the production-ready Shadow Clone system with optimized file structure.
 All files have been consolidated for maximum efficiency while maintaining system functionality.
 
-## Files to Upload (21 total)
+## Files to Upload (18 total)
 
 ### Core System Files (2 files)
 - `/shadow-clone-prompt.md` - Main orchestrator with API endpoints
 - `/LICENSE` - System license file
 
-### Agent Rules (4 files)
+### Agent Rules (3 files)
 - `/agent_rules/README.md`
 - `/agent_rules/core_rules.md`
-- `/agent_rules/specialized_agent_rules.md` 
 - `/agent_rules/agent_template.md`
-
-### Coordination Rules (3 files)
-- `/coordination_rules/README.md`
-- `/coordination_rules/system_core_rules.md`
-- `/coordination_rules/wave_coordination_protocol.md`
 
 ### Mode Configurations (7 files)
 - `/mode_configs/shadow-clone-audit.md`
