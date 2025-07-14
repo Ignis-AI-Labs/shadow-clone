@@ -10,10 +10,11 @@
   - `src/commands/injectCommand.ts` (all command injections)
 
 ### 2. API Structure Changes
-The new streamlined API structure uses consolidated files:
-- **Agent Rules**: Now 3 files instead of 8+ individual role files
-- **Coordination Rules**: Now 2 files instead of 8 separate files
-- **Templates**: Reduced to 6 essential templates
+The current optimized API structure (v0.4.0):
+- **Agent Rules**: 3 files (core_rules, agent_template, README)
+- **Coordination Rules**: REMOVED - functionality merged into main prompt
+- **Templates**: 4 files (MASTER_PLAN, SECURITY_AUDIT, mode-completion, team-agent)
+- **Total Files**: 18 (down from 69+)
 
 ## Testing Checklist
 
@@ -42,9 +43,9 @@ The new streamlined API structure uses consolidated files:
    project_type=audit → mode=audit
    ```
 
-3. **Agent Rules**: The new system doesn't fetch individual role rules anymore. Instead, it uses:
-   - `/api/prompts/agent-rules/core_rules`
-   - `/api/prompts/agent-rules/specialized_agent_rules`
+3. **Agent Rules**: The system uses consolidated rules:
+   - `/api/prompts/agent_rules/core_rules`
+   - `/api/prompts/agent_rules/agent_template`
 
 ## How the Extension Works
 
