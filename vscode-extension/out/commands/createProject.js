@@ -117,6 +117,8 @@ async function createProjectCommand(authProvider, projectProvider) {
             cancellable: false
         }, async (progress) => {
             progress.report({ increment: 30, message: 'Initializing project...' });
+            // Note: This endpoint doesn't exist in the new API structure
+            // TODO: Remove or replace with actual endpoint
             const response = await authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/projects`, {
                 method: 'POST',
                 data: projectData

@@ -27,10 +27,16 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/shadow-clone-prompt`
+                `${getApiEndpoint()}/api/prompts/shadow-clone`
             );
             
-            const prompt = response.data as ShadowClonePrompt;
+            // API returns plain text/markdown for content endpoints
+            const promptContent = typeof response.data === 'string' ? response.data : response.data.content;
+            const prompt: ShadowClonePrompt = {
+                content: promptContent,
+                version: '0.4.0',
+                lastUpdated: new Date().toISOString()
+            };
             this.setCache(cacheKey, prompt);
             return prompt;
         } catch (error) {
@@ -45,10 +51,11 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/mode_configs`
+                `${getApiEndpoint()}/api/prompts/modes`
             );
             
-            const modes = response.data.modes as string[];
+            // API returns JSON for list endpoints
+            const modes = Array.isArray(response.data) ? response.data : response.data.modes || [];
             this.setCache(cacheKey, modes);
             return modes;
         } catch (error) {
@@ -63,10 +70,16 @@ export class PromptService {
 
         try {
             const response = await this.authProvider.makeAuthenticatedRequest(
-                `${getApiEndpoint()}/api/prompts/mode_configs/shadow-clone-${modeName}`
+                `${getApiEndpoint()}/api/prompts/modes/${modeName}`
             );
             
-            const mode = response.data as ShadowCloneMode;
+            // API returns plain text/markdown for mode endpoints
+            const modeContent = typeof response.data === 'string' ? response.data : response.data.content;
+            const mode: ShadowCloneMode = {
+                name: modeName,
+                description: `${modeName} mode configuration`,
+                content: modeContent
+            };
             this.setCache(cacheKey, mode);
             return mode;
         } catch (error) {
@@ -92,7 +105,7 @@ export class PromptService {
         const parts: string[] = [];
         
         parts.push('Fetch the Shadow Clone orchestration prompt from the API:');
-        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"`);
+        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
         parts.push('');
         parts.push('Then execute it with the following parameters:');
         
@@ -110,7 +123,7 @@ export class PromptService {
         if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
             parts.push(`Also fetch the ${options.mode} mode configuration from:`);
-            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-${options.mode} -H "X-API-Key: ${apiKey}"`);
+            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         
         if (options.additionalParams) {

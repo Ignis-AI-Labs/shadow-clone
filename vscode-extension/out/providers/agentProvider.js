@@ -57,6 +57,8 @@ class AgentProvider {
         if (!element) {
             // Root level - show active agents
             try {
+                // Note: This endpoint doesn't exist in the new API structure
+                // TODO: Remove or replace with actual endpoint
                 const response = await this.authProvider.makeAuthenticatedRequest(`${constants_1.SHADOW_CLONE_API}/agents/active`);
                 const agents = response.data;
                 if (agents.length === 0) {

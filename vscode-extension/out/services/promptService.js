@@ -14,8 +14,14 @@ class PromptService {
         if (cached)
             return cached;
         try {
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/shadow-clone-prompt`);
-            const prompt = response.data;
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/shadow-clone`);
+            // API returns plain text/markdown for content endpoints
+            const promptContent = typeof response.data === 'string' ? response.data : response.data.content;
+            const prompt = {
+                content: promptContent,
+                version: '0.4.0',
+                lastUpdated: new Date().toISOString()
+            };
             this.setCache(cacheKey, prompt);
             return prompt;
         }
@@ -29,8 +35,9 @@ class PromptService {
         if (cached)
             return cached;
         try {
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/mode_configs`);
-            const modes = response.data.modes;
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/modes`);
+            // API returns JSON for list endpoints
+            const modes = Array.isArray(response.data) ? response.data : response.data.modes || [];
             this.setCache(cacheKey, modes);
             return modes;
         }
@@ -44,8 +51,14 @@ class PromptService {
         if (cached)
             return cached;
         try {
-            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/mode_configs/shadow-clone-${modeName}`);
-            const mode = response.data;
+            const response = await this.authProvider.makeAuthenticatedRequest(`${(0, constants_1.getApiEndpoint)()}/api/prompts/modes/${modeName}`);
+            // API returns plain text/markdown for mode endpoints
+            const modeContent = typeof response.data === 'string' ? response.data : response.data.content;
+            const mode = {
+                name: modeName,
+                description: `${modeName} mode configuration`,
+                content: modeContent
+            };
             this.setCache(cacheKey, mode);
             return mode;
         }
@@ -63,7 +76,7 @@ class PromptService {
         // Build a command that tells Claude to fetch the prompt from the API
         const parts = [];
         parts.push('Fetch the Shadow Clone orchestration prompt from the API:');
-        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone-prompt -H "X-API-Key: ${apiKey}"`);
+        parts.push(`curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"`);
         parts.push('');
         parts.push('Then execute it with the following parameters:');
         // Add execution parameters
@@ -77,7 +90,7 @@ class PromptService {
         if (options.mode && options.mode !== 'custom') {
             params.push(`mode=${options.mode}`);
             parts.push(`Also fetch the ${options.mode} mode configuration from:`);
-            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/mode_configs/shadow-clone-${options.mode} -H "X-API-Key: ${apiKey}"`);
+            parts.push(`curl -X GET ${apiEndpoint}/api/prompts/modes/${options.mode} -H "X-API-Key: ${apiKey}"`);
         }
         if (options.additionalParams) {
             for (const [key, value] of Object.entries(options.additionalParams)) {
