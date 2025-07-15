@@ -28,7 +28,7 @@
     
     <critical_files>
       <constitution>CONSTITUTION.md</constitution>
-      <core_rules>https://api.ignislabs.ai/api/prompts/agent_rules/core_rules</core_rules>
+      <core_rules>https://api.ignislabs.ai/api/prompts/agent-rules/core-rules</core_rules>
       <base_path>https://api.ignislabs.ai/api/prompts</base_path>
       <source_mode>api</source_mode>
     </critical_files>
