@@ -2,7 +2,7 @@
   "name": "shadow-clone",
   "displayName": "Shadow Clone AI Agent Orchestrator",
   "description": "Deploy teams of specialized AI agents to complete complex software projects. Currently exclusive to Ignis Elite NFT holders.",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "publisher": "IgnisAILabsLLC",
   "private": false,
   "license": "Proprietary",

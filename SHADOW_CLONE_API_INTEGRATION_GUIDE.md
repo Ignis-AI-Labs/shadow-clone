@@ -2,6 +2,14 @@
 
 This guide explains how to integrate with the Shadow Clone API for VS Code extensions and other applications.
 
+## ⚠️ IMPORTANT: Endpoint Migration Required
+
+**The API endpoints have been updated. All endpoints now use hyphens (-) instead of underscores (_).**
+
+### Migration Examples:
+- ❌ OLD: `/api/prompts/agent_rules/core_rules`
+- ✅ NEW: `/api/prompts/agent-rules/core-rules`
+
 ## API Base Configuration
 
 ### Production Endpoint
@@ -27,16 +35,17 @@ X-API-Key: ***REDACTED-KEY***
 - **Content Endpoints**: Return plain text (markdown) with `Content-Type: text/plain; charset=UTF-8`
 - **List Endpoints**: Return JSON with `Content-Type: application/json`
 
-## Complete Endpoint Reference (21 Total)
+## Complete Endpoint Reference (20 Total)
 
-### Core Endpoints (4)
+### Core Endpoints (3)
 
 | Endpoint | Response Type | Description |
 |----------|---------------|-------------|
 | `GET /api/prompts/shadow-clone` | Text/Markdown | Main Shadow Clone prompt |
-| `GET /api/prompts/manifest` | Text/Markdown | Cloudflare upload manifest |
 | `GET /api/prompts/license` | Text | License information |
 | `GET /api/prompts` | JSON | List all available prompts |
+
+**Note:** The `/api/prompts/manifest` endpoint has been removed as it's no longer needed within the worker.
 
 ### Mode Endpoints (8)
 
@@ -235,18 +244,59 @@ curl -X GET https://api.ignislabs.ai/api/prompts \
   -H "X-API-Key: sc-your-key"
 ```
 
+## VS Code Extension Migration Instructions
+
+### For Extension Developers:
+
+If you're updating the VS Code extension to use these corrected endpoints, here are the key changes:
+
+1. **Update all endpoint paths to use hyphens (-) instead of underscores (_)**
+   ```typescript
+   // ❌ OLD
+   const ENDPOINTS = {
+     agentRules: '/api/prompts/agent_rules/core_rules',
+     // ...
+   };
+   
+   // ✅ NEW
+   const ENDPOINTS = {
+     agentRules: '/api/prompts/agent-rules/core-rules',
+     // ...
+   };
+   ```
+
+2. **Remove references to the manifest endpoint**
+   ```typescript
+   // ❌ Remove this
+   async getManifest(): Promise<string> {
+     return this.fetchEndpoint('/api/prompts/manifest');
+   }
+   ```
+
+3. **Update any hardcoded paths in:**
+   - API client classes
+   - Configuration files
+   - Test files
+   - Documentation
+
+4. **Search and replace patterns:**
+   - Find: `agent_rules` → Replace: `agent-rules`
+   - Find: `core_rules` → Replace: `core-rules`
+   - Find: `/manifest` → Remove endpoint entirely
+
 ## Important Notes
 
-1. **No More Complex Paths**: Endpoints have been simplified. No more:
+1. **Simplified Endpoints**: Only the endpoints listed above are available. These removed endpoints no longer exist:
    - `/api/prompts/coordination-rules/*` (removed)
    - `/api/prompts/execution-phases/*` (removed)
    - `/api/prompts/testing/*` (removed)
+   - `/api/prompts/manifest` (removed)
 
 2. **Text Responses**: Most endpoints return plain text markdown, NOT JSON
 
 3. **License Key Required**: All endpoints require valid shadow clone license
 
-4. **21 Total Endpoints**: See complete list above - that's everything available
+4. **20 Total Endpoints**: See complete list above - that's everything available
 
 ## Testing Your Integration
 
