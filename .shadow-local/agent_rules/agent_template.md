@@ -36,15 +36,18 @@ This template provides the definitive structure for how agents communicate their
   
   <workspace_management>
     <files>
-      <file path=".waves/wave-[N]/deliverables/[filename]" purpose="[Final deliverable]"/>
-      <file path=".waves/wave-[N]/research/[filename]" purpose="[Research/analysis]"/>
-      <file path=".waves/wave-[N]/drafts/[filename]" purpose="[Work in progress]"/>
+      <file path=".waves/wave-[N]/deliverables/[filename]" purpose="[Mode-specific final deliverable]"/>
+      <file path=".waves/wave-[N]/src/[filename]" purpose="[Source code - Feature/Debug/Refactor only]"/>
+      <file path=".waves/wave-[N]/tests/[filename]" purpose="[Test files when applicable]"/>
+      <file path=".waves/wave-[N]/drafts/[filename]" purpose="[Work in progress - if needed]"/>
     </files>
     <rules>
       <rule>Work exclusively within assigned wave folder</rule>
-      <rule>Use deliverables/ for final outputs only</rule>
-      <rule>Place all research and POCs in research/</rule>
-      <rule>Keep drafts and iterations in drafts/</rule>
+      <rule>Use deliverables/ for mode-specific outputs only (see mode config)</rule>
+      <rule>Place source code in src/ (Feature/Debug/Refactor modes)</rule>
+      <rule>Place test files in tests/ when creating tests</rule>
+      <rule>Use drafts/ ONLY if you need workspace (not for research)</rule>
+      <rule>NEVER create research/, planning/, or temp/ directories</rule>
       <rule>NEVER create files in rk-operations/ (RK only)</rule>
     </rules>
   </workspace_management>
