@@ -38,6 +38,13 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       <base_path>{current_dir}/.shadow-local</base_path>
       <source_mode>local</source_mode>
     </critical_files>
+    
+    <security_critical>
+      SECURITY WARNING: NEVER create or copy .shadow/ directory
+      The .shadow/ folder contains API-only content that must NEVER exist locally
+      This is a critical security risk - these files are for Claude's API use only
+      Use ONLY .shadow-local/ for local testing
+    </security_critical>
   </system_constants>
 
   <workspace_structure>
@@ -53,9 +60,16 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     
     <directories>
       <directory path=".shadow-local/">
-        <purpose>System configuration files</purpose>
+        <purpose>LOCAL TESTING configuration files only</purpose>
         <contents>agent_rules/, templates/, mode_configs/, shadow-clone-prompt.md</contents>
+        <security>NEVER confuse with .shadow/ which is API-only and must not exist locally</security>
       </directory>
+      
+      <prohibited_directory path=".shadow/">
+        <warning>NEVER CREATE THIS DIRECTORY</warning>
+        <reason>Contains API keys and sensitive content for Claude's use only</reason>
+        <security>Creating .shadow/ locally is a CRITICAL SECURITY VIOLATION</security>
+      </prohibited_directory>
       
       <directory path=".waves/">
         <purpose>Active wave execution workspace</purpose>
@@ -613,11 +627,21 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   </mode_specific_deliverables>
 
   <error_handling>
+    <security_violations priority="HIGHEST">
+      <if_shadow_directory_found>
+        1. STOP ALL EXECUTION IMMEDIATELY
+        2. DO NOT proceed with any operations
+        3. Alert user about critical security breach
+        4. Exit with error: ".shadow/ directory found - this is API-only content"
+        5. Instruct to remove .shadow/ and use only .shadow-local/
+      </if_shadow_directory_found>
+    </security_violations>
+    
     <system_failures>
       <steps>
         1. Stop all work immediately
         2. Document failure in RECORD_KEEPER_LOG.md
-        3. Alert Record Keeper Collective
+        3. Alert Record Keeper
         4. Create recovery plan
         5. Resume from last stable state
       </steps>
@@ -688,6 +712,12 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       The actual implementation uses the orchestrator's native capabilities.
     </note>
 
+    <function name="verify_security">
+      <purpose>Ensure no .shadow/ directory exists locally</purpose>
+      <critical>Exit immediately if .shadow/ is found - this is a security breach</critical>
+      <action>Only .shadow-local/ should exist for local testing</action>
+    </function>
+    
     <function name="verify_git_clean">
       <purpose>Ensure no uncommitted changes before execution</purpose>
       <on_failure>Exit with guidance on committing, stashing, or discarding changes</on_failure>
@@ -695,6 +725,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 
     <function name="load_rules">
       <purpose>Load all agent rules from .shadow-local/agent_rules/</purpose>
+      <critical>NEVER load from .shadow/ - only from .shadow-local/</critical>
       <returns>Core rules content including all agent specializations</returns>
     </function>
 
