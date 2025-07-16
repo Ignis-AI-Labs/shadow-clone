@@ -28,8 +28,8 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   <system_constants>
     <deployment_limits>
       <max_agents_per_deployment>10</max_agents_per_deployment>
-      <min_record_keepers>2</min_record_keepers>
-      <record_keeper_scaling>max(2, ceil(total_agents / 5))</record_keeper_scaling>
+      <min_record_keepers>1</min_record_keepers>
+      <record_keeper_scaling>1 (always exactly one Record Keeper per wave)</record_keeper_scaling>
     </deployment_limits>
     
     <critical_files>
@@ -78,6 +78,10 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
               RECORD_KEEPER_LOG.md (includes all status updates)
               WAVE_COMPLETE.md (final wave summary)
             </rk_operations_contents>
+            <planning_mode_note>
+              In Planning Mode, Wave 2 deliverables/ MUST contain MASTER_PLAN.md
+              This is the ONLY valid location for the master plan
+            </planning_mode_note>
           </wave>
         </subdirectories>
       </directory>
@@ -510,16 +514,20 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </enforcement>
 
     <planning_mode_specific>
-      <wave_0_outputs>
-        - project_vision.md
-        - scope_assessment.md  
-        - wave_plan.md
-      </wave_0_outputs>
+      <wave_outputs priority="CRITICAL">
+        Wave 0: PROJECT_FOUNDATION.md in .waves/wave-0/deliverables/
+        Wave 1: TECHNICAL_RESEARCH.md in .waves/wave-1/deliverables/
+        Wave 2: MASTER_PLAN.md in .waves/wave-2/deliverables/
+        
+        CRITICAL: These are the ONLY valid locations for planning deliverables
+        Creating them elsewhere violates protocol and causes system failure
+      </wave_outputs>
       <rule>All subsequent waves blocked until wave-0 complete</rule>
       <planning_mode_restrictions>
         <rule priority="CRITICAL">Planning mode agents MUST NOT write any code</rule>
         <rule priority="CRITICAL">Planning mode agents MUST NOT implement features</rule>
         <rule priority="CRITICAL">Planning mode agents MUST NOT create source files</rule>
+        <rule priority="CRITICAL">MASTER_PLAN.md MUST be in .waves/wave-2/deliverables/</rule>
         <purpose>Planning agents research, analyze, and create implementation plans ONLY</purpose>
         <allowed_activities>
           - Research best practices and patterns
@@ -535,6 +543,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
           - Modifying existing code
           - Running code or tests
           - Making pull requests
+          - Creating deliverables outside .waves/ structure
         </prohibited_activities>
       </planning_mode_restrictions>
     </planning_mode_specific>
@@ -626,9 +635,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       <returns>Core rules content including all agent specializations</returns>
     </function>
 
-    <function name="create_record_keeper_collective">
-      <purpose>Create appropriately sized RK Collective with role distribution</purpose>
-      <roles>Lead (orchestration), Technical, Progress, General support</roles>
+    <function name="create_record_keeper">
+      <purpose>Create single Record Keeper to orchestrate the wave</purpose>
+      <roles>Unified orchestration, documentation, and coordination</roles>
     </function>
 
     <function name="deploy_agents_parallel">

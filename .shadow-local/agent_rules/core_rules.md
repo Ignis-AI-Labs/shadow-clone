@@ -60,6 +60,14 @@
         - rk-operations/: ALL Record Keeper files (logs, assignments, status)
         - NEVER create nested .waves directories
       </file_placement>
+      <planning_mode_critical>
+        PLANNING MODE DELIVERABLE LOCATIONS (MANDATORY):
+        - Wave 0: .waves/wave-0/deliverables/PROJECT_FOUNDATION.md
+        - Wave 1: .waves/wave-1/deliverables/TECHNICAL_RESEARCH.md
+        - Wave 2: .waves/wave-2/deliverables/MASTER_PLAN.md
+        
+        VIOLATION ALERT: Creating MASTER_PLAN.md anywhere else is a critical protocol violation
+      </planning_mode_critical>
     </wave_directory_protocol>
     
     <template_compliance>
@@ -88,17 +96,17 @@
       <principle>Update status in real-time as work progresses</principle>
       <principle>Mark complete only when deliverables are fully finished</principle>
       <principle>Maintain honest, accurate status reporting</principle>
-      <exception>Record Keeper Collective marks complete only after all agents finish</exception>
+      <exception>Record Keeper marks complete only after all agents finish</exception>
     </todo_requirements>
   </task_management>
 
   <team_composition>
     <mandatory_members>
-      <record_keeper_collective>
-        <minimum>2 Record Keepers per wave</minimum>
-        <scaling>max(2, ceil(total_agents / 5))</scaling>
-        <reason>Ensures proper orchestration, documentation, and system coherence</reason>
-      </record_keeper_collective>
+      <record_keeper>
+        <count>1 Record Keeper per wave</count>
+        <scaling>Always exactly 1 (no scaling needed)</scaling>
+        <reason>Single point of coordination ensures clarity and prevents conflicting decisions</reason>
+      </record_keeper>
       
       <technical_agents>
         <roles>Developers, Architects, Engineers</roles>
@@ -117,8 +125,8 @@
     </mandatory_members>
     
     <leadership_model>
-      <principle>Record Keeper Collective provides all leadership functions</principle>
-      <reason>Unified authority prevents confusion and ensures clear decision-making</reason>
+      <principle>Single Record Keeper provides all leadership functions</principle>
+      <reason>One leader ensures clear decision-making and prevents coordination conflicts</reason>
     </leadership_model>
   </team_composition>
 
@@ -134,9 +142,9 @@
         <naming>Use alphabetic suffixes: 1a, 1b, 1c</naming>
         <example>
           Wave 1 with 25 agents:
-          - Wave 1a: RK Pre-Wave (2 RKs) + First 10 agents
+          - Wave 1a: RK Pre-Wave (1 RK) + First 10 agents
           - Wave 1b: Next 10 agents (continuous execution)
-          - Wave 1c: Final 5 agents + RK Post-Wave (2 RKs)
+          - Wave 1c: Final 5 agents + RK Post-Wave (1 RK)
         </example>
       </structure>
       

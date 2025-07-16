@@ -18,6 +18,20 @@
       These agents create blueprints for future implementation teams.
     </audience>
   </context>
+  
+  <critical_protocol>
+    <master_plan_location>
+      CRITICAL: The MASTER_PLAN.md MUST be created in .waves/wave-2/deliverables/MASTER_PLAN.md
+      This is the ONLY valid location for the master plan. Creating it elsewhere violates protocol.
+    </master_plan_location>
+    
+    <file_organization>
+      Planning mode uses EXACTLY 3 waves with ONE deliverable per wave:
+      - Wave 0: PROJECT_FOUNDATION.md in .waves/wave-0/deliverables/
+      - Wave 1: TECHNICAL_RESEARCH.md in .waves/wave-1/deliverables/
+      - Wave 2: MASTER_PLAN.md in .waves/wave-2/deliverables/
+    </file_organization>
+  </critical_protocol>
 </mode_overview>
 
 <wave_structure>
@@ -32,7 +46,7 @@
       - Vision Architect: Clarifies and documents project vision
       - Requirements Analyst: Gathers and structures core requirements  
       - Technical Assessor: Evaluates complexity and technical needs
-      - Record Keeper Collective: Maintains project context and decisions
+      - Record Keeper: Maintains project context and decisions
     </team_composition>
     
     <deliverables>
@@ -66,7 +80,7 @@
       - Architecture Researcher: Investigates design patterns and systems
       - Best Practices Analyst: Researches industry standards and approaches
       - Technology Evaluator: Assesses tools and frameworks
-      - Record Keeper Collective: Synthesizes research findings
+      - Record Keeper: Synthesizes research findings
     </team_composition>
     
     <deliverables>
@@ -100,11 +114,12 @@
       - Master Plan Architect: Creates comprehensive project blueprint
       - Implementation Strategist: Designs execution phases
       - Quality Planner: Defines success metrics and validation
-      - Record Keeper Collective: Finalizes all documentation
+      - Record Keeper: Finalizes all documentation
     </team_composition>
     
     <deliverables>
-      <deliverable path="deliverables/MASTER_PLAN.md">
+      <deliverable path=".waves/wave-2/deliverables/MASTER_PLAN.md">
+        CRITICAL: This is the ONLY valid location for MASTER_PLAN.md
         Complete project blueprint including:
         1. Executive Summary
         2. Project Vision & Goals
@@ -114,6 +129,8 @@
         6. Quality Standards
         7. Risk Mitigation
         8. Success Metrics
+        
+        NOTE: Any MASTER_PLAN.md created elsewhere is invalid and violates protocol
       </deliverable>
     </deliverables>
     
@@ -158,19 +175,19 @@
     <instruction>Maintain clean workspace structure for clarity</instruction>
     <structure>
       .waves/wave-0/
-        deliverables/     # Final polished documents only
-        drafts/           # Work-in-progress content
-        rk-operations/    # Record Keeper coordination
+        deliverables/     # Contains ONLY PROJECT_FOUNDATION.md when complete
+        drafts/           # Work-in-progress content (cleared after wave completion)
+        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
       
       .waves/wave-1/
-        deliverables/     # Final polished documents only
-        drafts/           # Work-in-progress content
-        rk-operations/    # Record Keeper coordination
+        deliverables/     # Contains ONLY TECHNICAL_RESEARCH.md when complete
+        drafts/           # Work-in-progress content (cleared after wave completion)
+        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
       
       .waves/wave-2/
-        deliverables/     # Final polished documents only
-        drafts/           # Work-in-progress content
-        rk-operations/    # Record Keeper coordination
+        deliverables/     # Contains ONLY MASTER_PLAN.md when complete - THIS IS THE FINAL DELIVERABLE
+        drafts/           # Work-in-progress content (cleared after wave completion)
+        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
     </structure>
   </workspace_organization>
 </planning_guidelines>
@@ -179,22 +196,28 @@
   <principle>
     Create only essential files that advance the planning process.
     Consolidate related information into comprehensive documents.
+    MAINTAIN STRICT FILE ORGANIZATION AT ALL TIMES.
   </principle>
   
   <instructions>
-    1. Produce exactly one deliverable per wave in deliverables/
+    1. Produce exactly one deliverable per wave in the EXACT location specified:
+       - Wave 0: .waves/wave-0/deliverables/PROJECT_FOUNDATION.md
+       - Wave 1: .waves/wave-1/deliverables/TECHNICAL_RESEARCH.md
+       - Wave 2: .waves/wave-2/deliverables/MASTER_PLAN.md
     2. Use drafts/ for work-in-progress content only
-    3. Let Record Keeper Collective manage rk-operations/
-    4. Avoid creating redundant tracking files
-    5. Focus on quality over quantity of documentation
+    3. Let Record Keeper manage rk-operations/ (maximum 3 files)
+    4. NEVER create files outside the designated wave structure
+    5. NEVER create duplicate deliverables in other locations
+    6. Focus on quality over quantity of documentation
   </instructions>
   
   <examples>
-    <good>Consolidate all foundation work into PROJECT_FOUNDATION.md</good>
-    <good>Combine all research findings into TECHNICAL_RESEARCH.md</good>
-    <good>Create single comprehensive MASTER_PLAN.md</good>
-    <bad>Creating separate files for each small finding</bad>
-    <bad>Duplicating information across multiple documents</bad>
+    <good>Create PROJECT_FOUNDATION.md in .waves/wave-0/deliverables/</good>
+    <good>Create TECHNICAL_RESEARCH.md in .waves/wave-1/deliverables/</good>
+    <good>Create MASTER_PLAN.md in .waves/wave-2/deliverables/</good>
+    <bad>Creating MASTER_PLAN.md in project root</bad>
+    <bad>Creating planning documents outside .waves/ structure</bad>
+    <bad>Creating multiple versions of deliverables</bad>
   </examples>
 </file_creation_discipline>
 
@@ -206,19 +229,23 @@
   
   <flow>
     Wave 0: Establish foundation with PROJECT_FOUNDATION.md
+      Location: .waves/wave-0/deliverables/PROJECT_FOUNDATION.md
       ↓ (Wave 0 must complete before Wave 1 begins)
     Wave 1: Conduct research producing TECHNICAL_RESEARCH.md  
+      Location: .waves/wave-1/deliverables/TECHNICAL_RESEARCH.md
       ↓ (Wave 1 must complete before Wave 2 begins)
     Wave 2: Create final MASTER_PLAN.md synthesizing all work
+      Location: .waves/wave-2/deliverables/MASTER_PLAN.md
       ↓
     Planning Complete: Ready for implementation mode
   </flow>
   
   <validation>
     Each wave completion requires:
-    - Deliverable present in deliverables/ directory
-    - Record Keeper Collective confirms wave complete
+    - Deliverable present in EXACT location specified above
+    - Record Keeper confirms wave complete
     - All team members have finished their work
+    - No files created outside designated directories
   </validation>
 </wave_progression>
 
@@ -235,4 +262,7 @@
   Planning mode focuses exclusively on creating blueprints.
   Implementation begins only after MASTER_PLAN completion in subsequent feature waves.
   This separation ensures thorough planning before any code is written.
+  
+  REMEMBER: The MASTER_PLAN.md location is .waves/wave-2/deliverables/MASTER_PLAN.md
+  This is non-negotiable and must be followed precisely.
 </implementation_note>
