@@ -10,12 +10,19 @@
 
 ### Current Focus
 - Optimized Shadow Clone system with reduced complexity and improved efficiency
-- Reduced Record Keeper Collective from 3 to 2 minimum agents
+- Simplified to single Record Keeper per wave (from previous 2-3 agents)
 - Simplified Planning mode to focused 3-wave structure
 - Enforced parallel agent deployment for real-time collaboration
 - Applied Claude Prompt Engineering best practices throughout
 
-### Recent Changes (2025-07-13)
+### Recent Changes (2025-07-16)
+- **Further Optimization**:
+  - Simplified to exactly 1 Record Keeper per wave (from 2-3 agents)
+  - No scaling formula needed - always exactly 1 RK
+  - Maintained 3 essential RK tracking files per wave
+  - Enforced strict file organization for master plan location
+
+### Previous Changes (2025-07-13)
 - **Major System Optimization**:
   - Reduced Record Keeper minimum from 3 to 2 agents
   - Scaling formula updated to `max(2, ceil(total_agents / 5))`
@@ -72,10 +79,10 @@
   - Maintained full macro command functionality
   - Updated security telemetry to be less intrusive
 
-- **Record Keeper Optimization**: Reduced from 3 to 2 minimum agents
-  - Lead Record Keeper + Support Record Keeper as base configuration
-  - Scales up only when truly needed (teams > 10 agents)
-  - Maintains context preservation with less overhead
+- **Record Keeper Optimization**: Reduced from 3 to 1 single agent
+  - Single Record Keeper handles all coordination
+  - No scaling needed - always exactly 1 RK
+  - Simplified decision-making with single authority
   - Parallel deployment ensures real-time collaboration
 
 ### System Architecture
@@ -88,7 +95,7 @@
   - `.waves/` - Wave execution artifacts (minimal structure)
   - Source code in project directories
 - **Agent Deployment**: Parallel execution in batches up to 10
-- **Record Keeper**: 2-agent minimum collective
+- **Record Keeper**: 1 agent per wave (no collective needed)
 - **Coordination**: Streamlined file tracking (3 files vs 8)
 
 ### Key Component Locations
@@ -102,14 +109,14 @@
 
 ## Technical Decisions
 
-### Efficiency Optimization (2025-07-13)
-**Decision**: Reduce system complexity while maintaining effectiveness
+### Efficiency Optimization (2025-07-16)
+**Decision**: Further reduce system complexity while maintaining effectiveness
 **Implementation**:
-- Record Keepers: 3 → 2 minimum
+- Record Keepers: 3 → 2 → 1 (single RK per wave)
 - RK tracking files: 8 → 3 files
 - Planning waves: Dynamic → Fixed 3 waves
 - Deliverables: Multiple per wave → One per wave
-**Rationale**: Reduced context usage, faster execution, clearer structure
+**Rationale**: Reduced context usage, faster execution, clearer structure, unified decision-making
 
 ### Parallel Deployment Requirement (2025-07-13)
 **Decision**: All agents in a group must deploy simultaneously
@@ -134,15 +141,15 @@
 - Allows contextual judgment for each case
 - Enables continuous improvement based on real data
 
-### Record Keeper Integration (Updated 2025-07-13)
-**Decision**: Optimize Record Keeper Collective for efficiency
-**Previous**: 3 RKs minimum with complex file structure
-**Current**: 2 RKs minimum with streamlined tracking
+### Record Keeper Integration (Updated 2025-07-16)
+**Decision**: Simplify to single Record Keeper model
+**Previous**: 3 RKs minimum → 2 RKs minimum
+**Current**: 1 RK per wave - no collective needed
 **Implementation**: 
-- Lead RK + Support RK base configuration
-- 3 essential files instead of 8
+- Single RK handles all coordination
+- 3 essential files maintained
 - Parallel deployment mandatory
-- Scale formula: `max(2, ceil(total_agents / 5))`
+- No scaling formula - always exactly 1
 
 ### Local Testing Mode
 **Decision**: Maintain separate `.shadow-local/` directory for testing
@@ -175,7 +182,7 @@
 - **Structure**: 3 waves only (Foundation, Research, Master Plan)
 - **Expected Outcome**: One deliverable per wave, no code generation
 - **Key Validations**: 
-  - 2 RKs deploy in parallel
+  - 1 RK deploys with team
   - No code written during planning
   - Minimal file creation
   - All waves execute completely
@@ -186,6 +193,13 @@
 - Validated local file loading mechanism
 
 ## Recent Updates
+
+### 2025-07-16 - Further Optimization v0.4.1
+- **Single Record Keeper Model**:
+  - Simplified from 2 RKs to exactly 1 RK per wave
+  - No scaling needed - always exactly 1
+  - Clearer decision-making authority
+  - Maintained 3 essential tracking files
 
 ### 2025-07-13 - Major Optimization v0.4.0
 - **Efficiency Improvements**:
@@ -228,7 +242,7 @@
 - Established "Context is sacred" principle
 
 ## Production Status
-- **Version**: v0.4.0
+- **Version**: v0.4.1
 - **API**: Optimized structure ready for deployment
 - **Local Mode**: Enhanced with test validation framework
 - **Documentation**: Fully updated with optimization guide
@@ -238,7 +252,7 @@
 - **7 Execution Modes**: Research, Plan, Feature, Debug, Optimize, Refactor, Audit
 - **Optimized Planning**: 3-wave structure with single deliverables
 - **Parallel Agent Deployment**: Mandatory simultaneous deployment
-- **Efficient RK Collective**: 2-agent minimum with smart scaling
+- **Single Record Keeper**: 1 RK per wave for clear coordination
 - **Streamlined Tracking**: 3 essential files vs previous 8
 - **Quality Gates**: Automated validation at wave boundaries
 - **Test Validation**: Phase 8 ensures complete execution
@@ -260,7 +274,7 @@
 - No external API dependencies in local mode
 
 ## Risk Mitigation
-- Efficient 2-RK collective maintains context
+- Single RK maintains context and coordination
 - Parallel deployment enables collaboration
 - Wave isolation prevents interference
 - Git branching protects main codebase
