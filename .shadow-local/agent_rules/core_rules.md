@@ -226,9 +226,13 @@
   </error_recovery>
 
   <constitution_protocol>
+    <location>
+      <path>docs/CONSTITUTION.md</path>
+      <critical>This is the ONLY valid location - creating it elsewhere violates protocol</critical>
+    </location>
     <access_rules>
-      <read>All agents read CONSTITUTION.md at wave start</read>
-      <write>Only Record Keeper Collective updates CONSTITUTION.md</write>
+      <read>All agents read docs/CONSTITUTION.md at wave start</read>
+      <write>Only Record Keeper updates docs/CONSTITUTION.md</write>
       <reason>Single source of truth prevents conflicts and maintains coherence</reason>
     </access_rules>
     
@@ -236,6 +240,7 @@
       - Follow established project patterns
       - Report all changes to Record Keeper for documentation
       - Context is sacred - preserve it through proper channels
+      - NEVER create CONSTITUTION.md in root or other directories
     </usage_guidelines>
   </constitution_protocol>
 
@@ -301,7 +306,7 @@
             </files_to_create>
             
             <files_not_to_create>
-              DO NOT create: CONSTITUTION.md updates, tracking dashboards, 
+              DO NOT create: docs/CONSTITUTION.md updates, tracking dashboards, 
               multiple status files, templates, separate DELIVERABLES_REQUIRED.md,
               AGENT_ROSTER.md, PRE_WAVE_COMPLETE.md, or any redundant tracking files
             </files_not_to_create>

@@ -33,7 +33,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </deployment_limits>
     
     <critical_files>
-      <constitution>CONSTITUTION.md</constitution>
+      <constitution>docs/CONSTITUTION.md</constitution>
       <core_rules>.shadow-local/agent_rules/core_rules.md</core_rules>
       <base_path>{current_dir}/.shadow-local</base_path>
       <source_mode>local</source_mode>
@@ -44,6 +44,12 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     <description>
       The workspace is organized into waves, with each wave representing a phase of development. All agent work happens within designated wave directories to maintain isolation and prevent conflicts.
     </description>
+    
+    <critical_location_note>
+      CONSTITUTION.md MUST be located at docs/CONSTITUTION.md
+      Creating it anywhere else violates protocol and causes duplicate files
+      Only the Record Keeper can create or modify this file
+    </critical_location_note>
     
     <directories>
       <directory path=".shadow-local/">
@@ -95,9 +101,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         <purpose>Source code (managed by agents)</purpose>
       </directory>
       
-      <file path="CONSTITUTION.md">
+      <file path="docs/CONSTITUTION.md">
         <purpose>Project memory and state (Record Keeper managed)</purpose>
-        <access>Only Record Keeper Collective can modify</access>
+        <access>Only Record Keeper can modify</access>
       </file>
     </directories>
   </workspace_structure>
@@ -125,9 +131,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 
     <record_keeper_requirements>
       <mandatory_presence>
-        <rule>Every team MUST include Record Keeper Collective</rule>
-        <minimum>2 Record Keepers per wave</minimum>
-        <reason>Ensures context preservation and coordination across all agents</reason>
+        <rule>Every team MUST include exactly 1 Record Keeper</rule>
+        <count>1 Record Keeper per wave</count>
+        <reason>Single coordinator ensures clarity and prevents conflicting decisions</reason>
       </mandatory_presence>
       
       <deployment_model>
@@ -140,7 +146,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
           <rk_role>Available for coordination but agents work independently</rk_role>
         </phase>
         <phase name="post-wave">
-          <purpose>Gather deliverables, update Constitution, finalize wave</purpose>
+          <purpose>Gather deliverables, update docs/CONSTITUTION.md, finalize wave</purpose>
           <files_created>WAVE_COMPLETE.md</files_created>
         </phase>
       </deployment_model>
@@ -635,6 +641,11 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       <returns>Core rules content including all agent specializations</returns>
     </function>
 
+    <function name="verify_constitution_location">
+      <purpose>Ensure CONSTITUTION.md exists only in docs/ directory</purpose>
+      <critical>If found elsewhere, warn about duplicate and use only docs/CONSTITUTION.md</critical>
+    </function>
+    
     <function name="create_record_keeper">
       <purpose>Create single Record Keeper to orchestrate the wave</purpose>
       <roles>Unified orchestration, documentation, and coordination</roles>
