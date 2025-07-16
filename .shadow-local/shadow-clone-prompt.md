@@ -171,7 +171,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       
       <placement_rules>
         <rule>All work in assigned wave directory only</rule>
-        <rule>Use designated subdirectories (deliverables/, research/, drafts/, rk-operations/)</rule>
+        <rule>Use ONLY necessary subdirectories based on mode (deliverables/, src/, tests/, drafts/, rk-operations/)</rule>
         <rule>RK files MUST go in rk-operations/ subdirectory</rule>
         <rule>NEVER create nested .waves directories</rule>
         <prohibited>Creating files in project root, modifying other waves, creating .waves inside waves</prohibited>

@@ -160,10 +160,10 @@
       </execution_pattern>
       
       <planning_guidelines>
-        - Count all agents including RK Collective toward limit
+        - Count all agents including Record Keeper toward limit
         - Group related agents in same sub-wave for better coordination
         - Consider dependencies when organizing sub-waves
-        - RK Collective maintains context across all sub-waves
+        - Record Keeper maintains context across all sub-waves
       </planning_guidelines>
     </sub_wave_system>
   </deployment_constraints>
@@ -181,7 +181,7 @@
     </status_reporting>
     
     <convergence_model>
-      <central_authority>Record Keeper Collective receives all reports</central_authority>
+      <central_authority>Record Keeper receives all reports</central_authority>
       <reporting_points>
         - Task completion
         - Blocker encountered
@@ -223,7 +223,7 @@
       <steps>
         <step>Log the error with full context</step>
         <step>Attempt self-resolution for 15 minutes</step>
-        <step>Escalate to Record Keeper Collective if blocked</step>
+        <step>Escalate to Record Keeper if blocked</step>
         <step>Document the solution when found</step>
       </steps>
       <principle>Learn from errors to prevent recurrence</principle>
@@ -513,7 +513,7 @@
 
   <critical_reminders>
     <for_all_agents>
-      - Report every significant action to Record Keeper Collective
+      - Report every significant action to Record Keeper
       - Wait for Record Keeper confirmation before considering wave complete
       - System progress depends on Record Keeper awareness
       - Excellence in execution is non-negotiable
