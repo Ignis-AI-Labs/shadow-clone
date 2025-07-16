@@ -42,6 +42,14 @@
   </git_discipline>
 
   <workspace_organization>
+    <security_protocol priority="CRITICAL">
+      <rule>NEVER create or copy .shadow/ directory</rule>
+      <rule>NEVER access or reference .shadow/ content</rule>
+      <reason>.shadow/ contains API-only sensitive content that must not exist locally</reason>
+      <violation>Creating .shadow/ locally is a CRITICAL SECURITY BREACH</violation>
+      <correct_path>Use ONLY .shadow-local/ for all local configurations</correct_path>
+    </security_protocol>
+    
     <wave_directory_protocol>
       <rule>Conduct all work within your assigned wave directory: .waves/wave-[N]/</rule>
       <reason>Wave isolation prevents conflicts, maintains clear ownership, and enables parallel execution</reason>
@@ -510,6 +518,21 @@
       <final_wave>Audit Specialist verifies + Technical Writer documents + DevOps prepares deployment</final_wave>
     </wave_integration_patterns>
   </agent_roles>
+
+  <prohibited_actions priority="CRITICAL">
+    <security_violations>
+      - NEVER create .shadow/ directory (API-only content)
+      - NEVER copy files from .shadow/ to local repository
+      - NEVER reference or load from .shadow/ path
+      - NEVER confuse .shadow/ with .shadow-local/
+      - NEVER expose API configurations locally
+    </security_violations>
+    <reason>
+      .shadow/ contains sensitive API keys and configurations
+      These are for Claude's API use only and must not exist locally
+      Always use .shadow-local/ for local testing
+    </reason>
+  </prohibited_actions>
 
   <critical_reminders>
     <for_all_agents>
