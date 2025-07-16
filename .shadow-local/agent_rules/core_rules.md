@@ -47,18 +47,23 @@
       <reason>Wave isolation prevents conflicts, maintains clear ownership, and enables parallel execution</reason>
       <mandatory_structure>
         .waves/wave-N/
-        ├── deliverables/    # Final polished outputs
-        ├── research/        # Research findings, POCs, analysis
-        ├── drafts/          # Work-in-progress files
-        ├── rk-operations/   # Record Keeper specific files
-        └── WAVE_STATUS.md   # Wave status tracking
+        ├── deliverables/    # ONLY if wave produces final outputs
+        ├── rk-operations/   # ALWAYS created (max 3 files)
+        └── WAVE_STATUS.md   # ALWAYS created
+        
+        Mode-specific (create ONLY when needed):
+        ├── src/            # Feature/Debug/Refactor modes only
+        ├── tests/          # When creating test files
+        └── drafts/         # ONLY if agents need workspace
       </mandatory_structure>
       <file_placement>
-        - deliverables/: Final versions of required outputs only
-        - research/: All research, analysis, POCs, technical investigations
-        - drafts/: Iterations, temporary files, work-in-progress
-        - rk-operations/: ALL Record Keeper files (logs, assignments, status)
-        - NEVER create nested .waves directories
+        - deliverables/: Mode-specific final outputs (see mode config)
+        - src/: Source code files (Feature/Debug/Refactor only)
+        - tests/: Test files when applicable
+        - drafts/: Agent workspace ONLY (not for RK notes)
+        - rk-operations/: Exactly 3 RK files (no more)
+        - NEVER create research/, planning/, temp/ directories
+        - NEVER create directories you won't use
       </file_placement>
       <planning_mode_critical>
         PLANNING MODE DELIVERABLE LOCATIONS (MANDATORY):
@@ -247,40 +252,42 @@
   <record_keeper_collective>
     <sacred_role>
       <purpose>
-        The Record Keeper Collective serves as the central orchestration and convergence point for all agent activities. They combine leadership, coordination, and documentation responsibilities to ensure project success.
+        The single Record Keeper serves as the central orchestration and coordination point for all agent activities. They handle leadership, coordination, and documentation to ensure project success.
       </purpose>
       
-      <minimum_requirement>
-        <count>2 Record Keepers per wave (non-negotiable)</count>
-        <scaling>max(2, ceil(total_agents / 5))</scaling>
-        <reason>Ensures redundancy, prevents single points of failure, and enables specialized focus areas</reason>
-      </minimum_requirement>
+      <single_authority>
+        <count>1 Record Keeper per wave (exactly)</count>
+        <reason>Clear decision-making, efficient coordination, no conflicting directions</reason>
+      </single_authority>
     </sacred_role>
 
-    <composition>
-      <base_configuration>
-        <lead_record_keeper>
-          <focus>Primary orchestration, decision making, and technical oversight</focus>
-          <responsibilities>Wave objectives, conflict resolution, strategic decisions, deliverable specifications</responsibilities>
-        </lead_record_keeper>
-        
-        <support_record_keeper>
-          <focus>Progress tracking, documentation, and validation support</focus>
-          <responsibilities>Progress monitoring, dependency tracking, metric collection, quality validation</responsibilities>
-        </support_record_keeper>
-      </base_configuration>
+    <unified_responsibilities>
+      <orchestration>
+        - Define wave objectives based on mode requirements
+        - Assign agents to tasks with specific deliverables
+        - Resolve conflicts and make decisions
+        - Monitor progress and dependencies
+      </orchestration>
       
-      <additional_members>
-        <when>When scaling formula requires more than 2</when>
-        <role>General support across all focus areas</role>
-        <example>3rd RK could focus on technical depth, 4th on timeline management, etc.</example>
-      </additional_members>
-    </composition>
+      <documentation>
+        - Create exactly 3 files in rk-operations/
+        - Update docs/CONSTITUTION.md at wave completion
+        - Maintain clear task assignments
+        - Track wave progress and decisions
+      </documentation>
+      
+      <efficiency_mandate>
+        - Create ONLY necessary directories based on mode
+        - Guide agents to proper file locations
+        - Prevent creation of unused folders (research/, planning/, etc.)
+        - Ensure deliverables go to correct locations
+      </efficiency_mandate>
+    </unified_responsibilities>
 
     <two_phase_deployment>
       <pre_wave_phase>
         <purpose>Orchestrate wave planning and establish foundations</purpose>
-        <deployment>All RK Collective members deploy IN PARALLEL as unified team</deployment>
+        <deployment>Single RK deploys with the team</deployment>
         
         <responsibilities>
           <orchestration>
@@ -290,14 +297,35 @@
             - Create clear task boundaries
           </orchestration>
           
+          <directory_creation priority="CRITICAL">
+            CREATE ONLY WHAT'S NEEDED FOR THIS MODE:
+            - rk-operations/ (ALWAYS)
+            - deliverables/ (ONLY if wave produces final outputs)
+            - src/ (ONLY for Feature/Debug/Refactor modes)
+            - tests/ (ONLY if creating test files)
+            - drafts/ (ONLY if agents need workspace)
+            
+            NEVER CREATE:
+            - research/ (not needed - use drafts/ if necessary)
+            - planning/ (not needed - use deliverables/)
+            - temp/ or similar unnecessary directories
+          </directory_creation>
+          
           <documentation>
             <files_to_create>
               <directory name="rk-operations/">
-                <purpose>Centralize all RK-specific files</purpose>
+                <purpose>Centralize all RK-specific files (exactly 3)</purpose>
               </directory>
               <file name="rk-operations/AGENT_ASSIGNMENTS.md">
                 <purpose>Document who does what AND what they must deliver</purpose>
-                <content>Agent roster, task assignments, deliverable specifications with success criteria</content>
+                <content>
+                  Agent roster with:
+                  - Clear task assignments
+                  - Expected deliverables WITH file locations
+                  - Example: "Create API_DOCUMENTATION.md in deliverables/"
+                  - Example: "Implement feature code in src/"
+                  - Success criteria for each deliverable
+                </content>
               </file>
               <file name="rk-operations/RECORD_KEEPER_LOG.md">
                 <purpose>Track RK activities and decisions</purpose>
@@ -320,7 +348,7 @@
 
       <post_wave_phase>
         <purpose>Lead wave closure, validate deliverables, and finalize documentation</purpose>
-        <deployment>All RK Collective members deploy IN PARALLEL as unified team</deployment>
+        <deployment>Single RK deploys with the team</deployment>
         
         <responsibilities>
           <validation>

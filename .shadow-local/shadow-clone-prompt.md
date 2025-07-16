@@ -62,22 +62,28 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         <subdirectories>
           <wave number="0">
             <purpose>Mandatory planning phase</purpose>
-            <structure>
-              deliverables/  # Final polished documents
-              research/      # Research findings and analysis
-              drafts/        # Work-in-progress documents
-              rk-operations/ # Record Keeper specific files
-              WAVE_STATUS.md
+            <structure priority="CRITICAL">
+              CREATE ONLY WHAT YOU NEED:
+              deliverables/  # ONLY if wave produces final outputs
+              drafts/        # ONLY if agents need workspace (not for RK use)
+              rk-operations/ # ALWAYS created (max 3 files)
+              WAVE_STATUS.md # ALWAYS created
+              
+              DO NOT CREATE: research/, planning/, temp/, or other unnecessary directories
             </structure>
           </wave>
           <wave number="N">
             <purpose>Implementation phases</purpose>
-            <structure>
-              deliverables/  # Final wave outputs
-              research/      # Technical research and POCs
-              drafts/        # Work-in-progress files
-              rk-operations/ # Record Keeper specific files
-              WAVE_STATUS.md
+            <structure priority="CRITICAL">
+              CREATE ONLY WHAT YOU NEED:
+              deliverables/  # ONLY if wave produces final outputs
+              src/          # ONLY in Feature/Debug/Refactor modes for code
+              tests/        # ONLY if creating test files
+              drafts/       # ONLY if agents need workspace (not for RK use)
+              rk-operations/ # ALWAYS created (max 3 files)
+              WAVE_STATUS.md # ALWAYS created
+              
+              DO NOT CREATE: research/, planning/, or directories not used by the mode
             </structure>
             <rk_operations_contents>
               AGENT_ASSIGNMENTS.md (includes roster and deliverables)
@@ -555,6 +561,57 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </planning_mode_specific>
   </wave_dependencies>
 
+  <mode_specific_deliverables>
+    <purpose>Define EXACTLY what goes in deliverables/ for each mode</purpose>
+    
+    <planning_mode>
+      Wave 0: PROJECT_FOUNDATION.md (requirements, scope, approach)
+      Wave 1: TECHNICAL_RESEARCH.md (architecture, tech stack, patterns)
+      Wave 2: MASTER_PLAN.md (complete implementation blueprint)
+      Location: .waves/wave-N/deliverables/
+      DO NOT: Create code files, tests, or implementation artifacts
+    </planning_mode>
+    
+    <feature_mode>
+      Source code: Place in .waves/wave-N/src/ (NOT deliverables/)
+      Tests: Place in .waves/wave-N/tests/ (NOT deliverables/)
+      Documentation: API_DOCUMENTATION.md in deliverables/
+      Summary: FEATURE_SUMMARY.md in deliverables/
+      DO NOT: Put code files in deliverables/
+    </feature_mode>
+    
+    <debug_mode>
+      Fixed code: Update in .waves/wave-N/src/
+      Root cause: ROOT_CAUSE_ANALYSIS.md in deliverables/
+      Test cases: Place in .waves/wave-N/tests/
+      Summary: DEBUG_SUMMARY.md in deliverables/
+    </debug_mode>
+    
+    <refactor_mode>
+      Refactored code: Place in .waves/wave-N/src/
+      Migration guide: REFACTOR_GUIDE.md in deliverables/
+      Impact analysis: IMPACT_ANALYSIS.md in deliverables/
+    </refactor_mode>
+    
+    <optimize_mode>
+      Performance report: PERFORMANCE_REPORT.md in deliverables/
+      Optimization summary: OPTIMIZATION_SUMMARY.md in deliverables/
+      Benchmarks: BENCHMARKS.md in deliverables/
+    </optimize_mode>
+    
+    <audit_mode>
+      Security report: SECURITY_AUDIT_REPORT.md in deliverables/
+      Vulnerability list: VULNERABILITY_REGISTER.md in deliverables/
+      Compliance matrix: COMPLIANCE_MATRIX.md in deliverables/
+    </audit_mode>
+    
+    <research_mode>
+      Findings: RESEARCH_FINDINGS.md in deliverables/
+      Recommendations: RECOMMENDATIONS.md in deliverables/
+      POC code: Place in .waves/wave-N/src/ (if any)
+    </research_mode>
+  </mode_specific_deliverables>
+
   <error_handling>
     <system_failures>
       <steps>
@@ -654,6 +711,20 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     <function name="deploy_agents_parallel">
       <critical>ALL agents in list must be deployed SIMULTANEOUSLY</critical>
       <purpose>Enable real-time collaboration between agents</purpose>
+      <agent_injection_protocol>
+        Each agent receives:
+        1. Their specific role and expertise
+        2. Clear, actionable tasks with expected deliverables
+        3. Mode-specific context and constraints
+        4. Wave directory location and file placement rules
+        5. Dependencies and collaboration points
+        
+        Follow Claude Prompt Engineering best practices:
+        - Tell agents what TO DO (not what to avoid)
+        - Provide clear success criteria
+        - Include examples of expected outputs
+        - Give context about why their work matters
+      </agent_injection_protocol>
     </function>
 
     <function name="enforce_wave_dependencies">
