@@ -14,18 +14,19 @@
 - Simplified Planning mode to focused 3-wave structure
 - Enforced parallel agent deployment for real-time collaboration
 - Applied Claude Prompt Engineering best practices throughout
+- Emphasize efficiency: Achieve same functionality with minimal complexity
 
 ### Recent Changes (2025-07-16)
 - **Further Optimization**:
-  - Simplified to exactly 1 Record Keeper per wave (from 2-3 agents)
+  - Simplified to exactly 1 Record Keeper per wave (from 2-3 agents) to minimize context usage and improve efficiency
   - No scaling formula needed - always exactly 1 RK
   - Maintained 3 essential RK tracking files per wave
   - Enforced strict file organization for master plan location
 
 ### Previous Changes (2025-07-13)
 - **Major System Optimization**:
-  - Reduced Record Keeper minimum from 3 to 2 agents
-  - Scaling formula updated to `max(2, ceil(total_agents / 5))`
+  - Reduced Record Keeper minimum from 3 to 2 agents (further reduced to 1 in later updates)
+  - Scaling formula updated to `max(2, ceil(total_agents / 5))` (removed in favor of single RK)
   - Consolidated RK tracking files from 8 to just 3 essential files
   - Enforced parallel deployment for all agent teams
 
@@ -122,7 +123,7 @@
 **Decision**: All agents in a group must deploy simultaneously
 **Rationale**: Sequential deployment prevents real-time collaboration
 **Implementation**:
-- Record Keeper Collective deploys as one unit
+- Single Record Keeper deploys with team
 - Implementation teams deploy in batches (max 10)
 - Use single Task() message for parallel execution
 **Benefits**: Enables coordination, shared context, team dynamics
@@ -150,6 +151,7 @@
 - 3 essential files maintained
 - Parallel deployment mandatory
 - No scaling formula - always exactly 1
+**Rationale**: Minimize context waste, focus on efficiency
 
 ### Local Testing Mode
 **Decision**: Maintain separate `.shadow-local/` directory for testing
@@ -203,7 +205,7 @@
 
 ### 2025-07-13 - Major Optimization v0.4.0
 - **Efficiency Improvements**:
-  - Record Keeper Collective reduced to 2 agents minimum
+  - Record Keeper reduced to 2 agents minimum (further to 1)
   - RK tracking consolidated from 8 to 3 files
   - Planning mode simplified to 3 waves
   - One deliverable per wave approach
@@ -288,3 +290,10 @@
 ## AI Context Maintenance
 
 This constitution provides consistent context for AI agents working on the Shadow Clone system. It maintains project memory, state, and key decisions to overcome AI context window limitations. All AI interactions should reference this file for continuity. This approach will be standardized across all projects to ensure reliable AI-assisted development.
+
+## Efficiency Principles
+
+- Achieve maximum functionality with minimal complexity: If the same result can be obtained with 10 lines instead of 100, prioritize the simpler approach.
+- Maintain a workflow focused on refinement and efficiency.
+- Simplify even complex systems: The art of coding lies in making complicated things increasingly simple.
+- Reduce context waste and optimize for focused, efficient operations.
