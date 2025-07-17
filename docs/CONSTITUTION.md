@@ -284,3 +284,7 @@
 
 ---
 *This constitution serves as the living memory of the Shadow Clone project*
+
+## AI Context Maintenance
+
+This constitution provides consistent context for AI agents working on the Shadow Clone system. It maintains project memory, state, and key decisions to overcome AI context window limitations. All AI interactions should reference this file for continuity. This approach will be standardized across all projects to ensure reliable AI-assisted development.
