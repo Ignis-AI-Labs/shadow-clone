@@ -15,7 +15,9 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "start:prod": "node dist-obfuscated/index.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "version": "echo $npm_package_version",
+    "check-updates": "npm outdated -g @shadow-clone/mcp-server"
   },
   "keywords": [
     "mcp",

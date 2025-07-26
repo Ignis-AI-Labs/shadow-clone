@@ -7,17 +7,20 @@ import {
   McpError
 } from '@modelcontextprotocol/sdk/types.js';
 import { AuthService } from './auth/authService.js';
-import { EmbeddedPromptTools } from './tools/embeddedPromptTools.js';
+import { CombinedTools } from './tools/combinedTools.js';
 import { logger } from './utils/logger.js';
 
 // Server metadata
 const SERVER_NAME = 'shadow-clone-mcp';
 const SERVER_VERSION = '0.1.0';
 
+// Version check on startup
+const PACKAGE_VERSION = process.env.npm_package_version || '0.1.0';
+
 class ShadowCloneMCPServer {
   private server: Server;
   private authService: AuthService;
-  private tools: EmbeddedPromptTools;
+  private tools: CombinedTools;
 
   constructor() {
     this.server = new Server(
@@ -33,7 +36,7 @@ class ShadowCloneMCPServer {
     );
 
     this.authService = new AuthService();
-    this.tools = new EmbeddedPromptTools(this.authService);
+    this.tools = new CombinedTools(this.authService);
 
     this.setupHandlers();
   }
@@ -131,7 +134,8 @@ class ShadowCloneMCPServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
     
-    logger.info('Shadow Clone MCP Server started');
+    logger.info(`Shadow Clone MCP Server v${SERVER_VERSION} started`);
+    logger.info('To update: npm update -g @shadow-clone/mcp-server');
     
     // Handle graceful shutdown
     process.on('SIGINT', async () => {
