@@ -1,0 +1,26 @@
+# Source files
+src/
+tsconfig.json
+
+# Development files
+.gitignore
+.env
+example.env
+*.log
+
+# Test files
+test/
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Auth data
+mcp-auth.json
+.shadow-clone/

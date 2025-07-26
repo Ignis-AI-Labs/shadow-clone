@@ -9,7 +9,7 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 - **Node.js**: Latest LTS version ([Download](https://nodejs.org))
 - **Claude Code CLI**: Latest version (`npm install -g @anthropic/claude-code`)
 - **Operating System Requirements**:
-  - **Windows**: Windows 10/11 with WSL2 installed
+  - **Windows**: Windows 10/11 (native support, WSL2 optional)
   - **macOS**: macOS 10.15 or higher
   - **Linux**: Ubuntu 20.04+ or equivalent
 - **Internet**: Stable connection for API access
@@ -30,7 +30,21 @@ Deploy teams of specialized AI agents to complete complex software projects dire
 
 ### Platform-Specific Setup Guides
 
-#### Windows Setup
+#### Windows Setup (Native)
+```bash
+# 1. Install Node.js (Latest LTS)
+# Download from https://nodejs.org/ or use winget:
+winget install OpenJS.NodeJS.LTS
+
+# 2. Install Claude Code (PowerShell or Command Prompt)
+npm install -g @anthropic/claude-code
+
+# 3. Verify installation
+node --version
+claude --version
+```
+
+#### Windows Setup (WSL2 - Optional)
 ```bash
 # 1. Install WSL2 (PowerShell as Admin)
 wsl --install
@@ -137,7 +151,17 @@ echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-**WSL Issues (Windows)**
+**Windows Path Issues**
+```bash
+# If claude command not found, add npm global to PATH
+# Run in PowerShell as Administrator:
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";%APPDATA%\npm", [EnvironmentVariableTarget]::User)
+
+# Restart terminal and verify
+claude --version
+```
+
+**WSL Issues (If using WSL)**
 ```bash
 # Enable WSL features
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
