@@ -3,7 +3,7 @@
 ## Project Overview
 **Project Name**: Shadow Clone - Multi-Agent Orchestration System
 **Current Branch**: dev-testing
-**Last Updated**: 2025-07-13
+**Last Updated**: 2025-07-26
 **Status**: Production Ready - v0.4.0
 
 ## Project State
@@ -15,6 +15,30 @@
 - Enforced parallel agent deployment for real-time collaboration
 - Applied Claude Prompt Engineering best practices throughout
 - Emphasize efficiency: Achieve same functionality with minimal complexity
+- NEW: MCP Server implementation for native Claude integration
+
+### Recent Changes (2025-07-26) - MCP Server Launch
+- **MCP Server Implementation**:
+  - Created Model Context Protocol server for direct Claude integration
+  - Embedded all prompts directly in compiled TypeScript (no API calls for prompts)
+  - Full IP protection - prompts never exposed as plain text
+  - Same authentication endpoint as VSCode extension (single license key)
+  - Immediate tool availability after authentication (no restart needed)
+  
+- **Modular Tools Addition**:
+  - 8 new granular tools for focused assistance
+  - `deploy_agent_team` - Deploy specialized teams
+  - `deploy_specialist_agent` - Single expert agents
+  - `quick_fix` - Rapid bug fixes
+  - `code_review_team` - Targeted reviews
+  - `generate_tests` - Test creation
+  - `create_documentation` - Doc generation
+  - `execute_single_wave` - Single wave execution
+  - `architecture_consultant` - Expert guidance
+  
+- **Native Windows Support**:
+  - VSCode extension now works natively on Windows (no WSL required)
+  - Updated documentation to reflect cross-platform support
 
 ### Recent Changes (2025-07-16)
 - **Further Optimization**:
@@ -100,6 +124,16 @@
 - **Coordination**: Streamlined file tracking (3 files vs 8)
 
 ### Key Component Locations
+
+#### MCP Server (NEW - Recommended):
+- **MCP Server Root**: `/mcp-server/` - Model Context Protocol server implementation
+- **Embedded Prompts**: `/mcp-server/src/prompts/content/` - All prompts compiled as TypeScript
+- **Tool Implementations**: `/mcp-server/src/tools/` - Combined, embedded, and modular tools
+- **Authentication**: `/mcp-server/src/auth/authService.ts` - License validation (same as VSCode)
+- **Main Entry**: `/mcp-server/src/index.ts` - Server initialization and handler setup
+- **User Guide**: `/mcp-server/USER_GUIDE.md` - Comprehensive usage documentation
+
+#### VSCode Extension:
 - **VSCode Extension**: `/vscode-extension/` - All VSCode extension development work
 - **Macro Injections**: `/vscode-extension/src/providers/macroProvider.ts` - Defines all macro commands and their UI
 - **API Endpoints**: `/vscode-extension/src/utils/constants.ts` - Contains API base URLs (api.ignislabs.ai)

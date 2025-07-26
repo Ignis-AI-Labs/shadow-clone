@@ -17,6 +17,30 @@ Shadow Clone prompts are served dynamically through our secure API:
 
 ## 🚀 Quick Start
 
+Shadow Clone offers two powerful integration options:
+
+### Option 1: MCP Server (Recommended)
+```bash
+# Install MCP Server
+npm install -g @shadow-clone/mcp-server
+
+# Configure Claude Desktop
+# Add to claude_desktop_config.json:
+{
+  "mcpServers": {
+    "shadow-clone": {
+      "command": "shadow-clone-mcp"
+    }
+  }
+}
+
+# Use directly in Claude conversations
+- Authenticate once with your API key
+- Access all Shadow Clone tools immediately
+- Deploy agents with simple function calls
+```
+
+### Option 2: VS Code Extension
 ```bash
 # Install VS Code Extension
 code --install-extension shadow-clone-*.vsix
@@ -25,12 +49,13 @@ code --install-extension shadow-clone-*.vsix
 1. Click "Launch Claude" button in status bar
 2. Select mode and parameters
 3. Paste command when Claude is ready
-
-# The VS Code extension handles:
-- Secure prompt retrieval from API
-- License verification
-- Command generation with embedded prompts
 ```
+
+Both options provide:
+- Secure prompt delivery (never stored locally)
+- License verification
+- Full Shadow Clone capabilities
+- IP protection
 
 ## 📋 Key Documentation
 
@@ -47,11 +72,19 @@ Shadow Clone API Server
 ├── Mode Configurations         # Project type templates
 └── Security Layer             # IP protection
 
-VS Code Extension
-├── Authentication             # License key management
-├── Prompt Service            # Secure API client
-├── Claude Integration        # Command generation
-└── Session Management        # Track AI agent deployments
+Integration Options:
+
+1. MCP Server (Recommended)
+├── Embedded Prompts          # All prompts compiled in
+├── Native Claude Tools       # Direct function calls
+├── Modular Tools            # Granular agent deployment
+└── Session Persistence      # 24-hour authentication
+
+2. VS Code Extension
+├── Authentication           # License key management
+├── Prompt Service          # Secure API client
+├── Claude Integration      # Command generation
+└── Session Management      # Track AI agent deployments
 ```
 
 ## 💎 Exclusive Access
@@ -118,7 +151,25 @@ $waves_directory/
 
 ## 🎮 Usage Examples
 
-Through VS Code Extension:
+### Using MCP Server (Recommended):
+```javascript
+// Authenticate once per 24 hours
+authenticate(apiKey: "your-shadow-clone-api-key")
+
+// Deploy full orchestration
+shadow_clone_orchestrate(
+  mode: "feature",
+  projectDescription: "Build a real-time chat system with React and Node.js"
+)
+
+// Or use modular tools for focused tasks
+quick_fix(
+  issueType: "bug",
+  description: "Fix login form validation error"
+)
+```
+
+### Using VS Code Extension:
 1. Click "Launch Claude" button in status bar
 2. Select mode:
    - **Audit**: Comprehensive security assessment
@@ -131,7 +182,7 @@ Through VS Code Extension:
 4. Extension generates secure command with embedded prompts
 5. Paste in Claude when ready
 
-Note: Direct file access to prompts is not available. All prompts are served through authenticated API calls to protect intellectual property.
+Note: Both methods protect intellectual property - prompts are never exposed as plain text files.
 
 ## 📊 Project Modes
 
@@ -144,7 +195,21 @@ Note: Direct file access to prompts is not available. All prompts are served thr
 
 ## 🚀 Advanced Features
 
-- **Resume Previous Session**: Select "Resume Previous" in VS Code extension
+### MCP Server Features:
+- **Modular Tools**: Deploy single agents or teams for focused tasks
+  - `deploy_agent_team` - Specialized team deployment
+  - `deploy_specialist_agent` - Single expert agents
+  - `quick_fix` - Rapid bug fixes
+  - `code_review_team` - Targeted code reviews
+  - `generate_tests` - Automated test creation
+  - `create_documentation` - Documentation generation
+  - `execute_single_wave` - Single wave execution
+  - `architecture_consultant` - Expert guidance
+- **Native Integration**: Direct function calls in Claude
+- **Persistent Auth**: 24-hour authentication sessions
+
+### VS Code Extension Features:
+- **Resume Previous Session**: Select "Resume Previous" in extension
 - **Track Active Sessions**: View real-time progress in Claude Sessions panel
 - **Custom Parameters**: Build complex commands with interactive prompts
 - **Session Management**: Monitor and control multiple AI agent deployments

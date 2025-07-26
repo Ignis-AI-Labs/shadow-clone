@@ -27,6 +27,20 @@ authenticate(apiKey: "sc--your-api-key-here")
 
 Once authenticated, all Shadow Clone tools become available for 24 hours.
 
+### Step 2: Check for Updates
+
+Stay up to date with the latest features:
+
+```
+Tool: check_for_updates
+Parameters: None
+
+Example:
+check_for_updates()
+```
+
+This will tell you if a newer version is available and how to update.
+
 ## Available Tools
 
 ### 1. shadow_clone_orchestrate
@@ -253,6 +267,220 @@ shadow_clone_plan(
   projectVision: "Design a microservices architecture for our e-commerce platform. Need services for user management, product catalog, cart/checkout, payment processing, and order fulfillment. Include API gateway, service discovery, and monitoring strategy."
 )
 ```
+
+## Modular Tools
+
+Shadow Clone also provides granular tools for focused assistance without full orchestration.
+
+### 4. deploy_agent_team
+
+**Purpose**: Deploy a single specialized team for a specific task.
+
+**Parameters**:
+- `teamType` (required): Type of team
+  - `frontend`, `backend`, `database`, `testing`, `documentation`, `devops`, `mobile`, `security`
+- `task` (required): Specific task description
+- `outputDirectory` (optional): Where to place deliverables
+- `teamSize` (optional): Number of agents (1-5)
+
+**Example**:
+```
+deploy_agent_team(
+  teamType: "frontend",
+  task: "Create a responsive dashboard component with charts using React and D3.js",
+  teamSize: 3
+)
+```
+
+### 5. deploy_specialist_agent
+
+**Purpose**: Deploy a single expert agent for a focused task.
+
+**Parameters**:
+- `specialization` (required): Agent expertise
+  - `react_expert`, `api_designer`, `database_architect`, `test_engineer`
+  - `performance_analyst`, `security_auditor`, `code_reviewer`, `documentation_writer`
+- `task` (required): Specific task
+- `context` (optional): Additional context
+- `deliverables` (optional): Expected outputs array
+
+**Example**:
+```
+deploy_specialist_agent(
+  specialization: "performance_analyst",
+  task: "Analyze and optimize the slow database queries in our reporting module",
+  context: "PostgreSQL database with 10M+ records",
+  deliverables: ["query optimization report", "optimized queries", "index recommendations"]
+)
+```
+
+### 6. quick_fix
+
+**Purpose**: Deploy rapid response for urgent fixes.
+
+**Parameters**:
+- `issueType` (required): Type of issue
+  - `bug`, `style`, `logic`, `performance`, `security`
+- `description` (required): Issue description
+- `filePath` (optional): Affected file(s)
+- `urgency` (optional): Priority level (`low`, `medium`, `high`, `critical`)
+
+**Example**:
+```
+quick_fix(
+  issueType: "bug",
+  description: "Users can't submit form when email contains special characters",
+  filePath: "src/components/RegistrationForm.jsx",
+  urgency: "high"
+)
+```
+
+### 7. code_review_team
+
+**Purpose**: Deploy review team for code analysis.
+
+**Parameters**:
+- `reviewType` (required): Focus area
+  - `security`, `performance`, `quality`, `architecture`, `comprehensive`
+- `files` (required): Array of files/directories to review
+- `standards` (optional): Specific standards to check
+
+**Example**:
+```
+code_review_team(
+  reviewType: "security",
+  files: ["src/api/auth/", "src/api/payments/"],
+  standards: "OWASP Top 10"
+)
+```
+
+### 8. generate_tests
+
+**Purpose**: Create tests for existing code.
+
+**Parameters**:
+- `testType` (required): Type of tests
+  - `unit`, `integration`, `e2e`, `performance`, `security`
+- `targetFiles` (required): Array of files to test
+- `framework` (optional): Testing framework
+- `coverage` (optional): Target coverage percentage
+
+**Example**:
+```
+generate_tests(
+  testType: "unit",
+  targetFiles: ["src/services/UserService.js", "src/services/OrderService.js"],
+  framework: "jest",
+  coverage: 85
+)
+```
+
+### 9. execute_single_wave
+
+**Purpose**: Run one focused wave without full orchestration.
+
+**Parameters**:
+- `waveType` (required): Wave type
+  - `research`, `planning`, `implementation`, `testing`, `documentation`, `review`
+- `scope` (required): What to focus on
+- `inputs` (optional): Array of input context
+- `maxAgents` (optional): Number of agents (1-10)
+
+**Example**:
+```
+execute_single_wave(
+  waveType: "research",
+  scope: "Analyze current authentication system and recommend improvements for MFA support",
+  maxAgents: 4
+)
+```
+
+### 10. create_documentation
+
+**Purpose**: Generate documentation for existing code.
+
+**Parameters**:
+- `docType` (required): Documentation type
+  - `api`, `user_guide`, `developer`, `architecture`, `inline`
+- `scope` (required): What to document
+- `format` (optional): Output format (`markdown`, `html`, `openapi`, `jsdoc`)
+- `audience` (optional): Target audience (`developers`, `users`, `architects`, `general`)
+
+**Example**:
+```
+create_documentation(
+  docType: "api",
+  scope: "src/api/v2/",
+  format: "openapi",
+  audience: "developers"
+)
+```
+
+### 11. architecture_consultant
+
+**Purpose**: Get expert architecture guidance.
+
+**Parameters**:
+- `consultationType` (required): Type of consultation
+  - `design_review`, `pattern_recommendation`, `scalability_analysis`, `migration_planning`
+- `context` (required): Current system description
+- `constraints` (optional): Limitations or requirements
+- `goals` (optional): Array of specific goals
+
+**Example**:
+```
+architecture_consultant(
+  consultationType: "scalability_analysis",
+  context: "Monolithic Node.js e-commerce platform with 50k daily users",
+  constraints: "Must maintain 99.9% uptime during migration",
+  goals: ["Handle 10x traffic", "Sub-second response times", "Horizontal scaling"]
+)
+```
+
+## When to Use Modular Tools
+
+### Quick Tasks (< 30 minutes)
+- `quick_fix` - Urgent bug fixes
+- `deploy_specialist_agent` - Single-file optimizations
+- `generate_tests` - Add tests to one component
+
+### Focused Development (2-4 hours)
+- `deploy_agent_team` - Build a feature component
+- `execute_single_wave` - Research or planning tasks
+- `create_documentation` - Document a module
+
+### Analysis & Review (1-2 hours)
+- `code_review_team` - Pre-PR reviews
+- `architecture_consultant` - Design decisions
+- `execute_single_wave` with `research` - Understanding code
+
+### Full Projects (Days/Weeks)
+- `shadow_clone_orchestrate` - Complete features
+- `shadow_clone_plan` - Project planning
+
+---
+
+## Updating Shadow Clone MCP Server
+
+### Quick Update
+```bash
+# Check for updates in Claude
+check_for_updates()
+
+# Update via npm
+npm update -g @shadow-clone/mcp-server
+```
+
+### Refresh in Claude Desktop
+After updating:
+1. Open Settings → Developer
+2. Click the reload icon (↻) next to "shadow-clone"
+3. Or restart Claude Desktop completely
+
+### Troubleshooting Updates
+- Clear npm cache: `npm cache clean --force`
+- Force reinstall: `npm install -g @shadow-clone/mcp-server --force`
+- Check logs: `~/.shadow-clone/logs/`
 
 ---
 
