@@ -1,0 +1,43 @@
+{
+  "name": "@shadow-clone/mcp-server",
+  "version": "0.1.0",
+  "description": "Shadow Clone MCP Server - Deploy AI agent teams via Model Context Protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "shadow-clone-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:prod": "npm run build && npm run convert-prompts && npm run build:obfuscate",
+    "build:obfuscate": "webpack",
+    "convert-prompts": "node scripts/convert-prompts.js",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "start:prod": "node dist-obfuscated/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "ai",
+    "agents",
+    "shadow-clone"
+  ],
+  "author": "Ignis AI Labs LLC",
+  "license": "Proprietary",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-obfuscator": "^3.5.1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "shadow-clone": {
+      "command": "node",
+      "args": ["E:\\Repos\\shadow-clone\\mcp-server\\dist\\index.js"],
+      "env": {
+        "SHADOW_CLONE_API_ENDPOINT": "https://api.ignislabs.ai"
+      }
+    }
+  }
+}
