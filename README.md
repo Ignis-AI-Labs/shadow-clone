@@ -2,7 +2,7 @@
 
 > **AI-powered master craftsmen working in synchronized excellence**
 
-⚠️ **PROPRIETARY SOFTWARE** - This repository contains proprietary code owned by Ignis AI Labs LLC. Unauthorized use, distribution, or access is strictly prohibited. See [LICENSE-PROPRIETARY.md](./LICENSE-PROPRIETARY.md) for terms.
+⚠️ **PROPRIETARY SOFTWARE** - This repository contains proprietary code owned by Ignis AI Labs LLC, a Puerto Rico-based company. Unauthorized use, distribution, or access is strictly prohibited. See [LICENSE](./LICENSE) for terms.
 
 Orchestrates teams of specialized AI agents that work in parallel waves to deliver exceptional results. Every agent operates at master level - no weak links allowed.
 
@@ -247,7 +247,7 @@ This ensures both local development and production API work correctly.
 
 ## ⚖️ Legal Notice
 
-**Copyright © 2024 Ignis AI Labs LLC. All Rights Reserved.**
+**Copyright © 2025 Ignis AI Labs LLC. All Rights Reserved.**
 
 This software is proprietary and contains trade secrets of Ignis AI Labs. Any unauthorized access, use, reproduction, or distribution is strictly prohibited and will be prosecuted to the fullest extent of the law.
 
@@ -256,6 +256,6 @@ This software is proprietary and contains trade secrets of Ignis AI Labs. Any un
 - **Legal Action**: Violations subject to $250,000+ in damages per incident
 - **Report Violations**: abuse@shadowclone.ai
 
-By accessing this repository, you acknowledge that you have read and agree to be bound by the terms in [LICENSE-PROPRIETARY.md](./LICENSE-PROPRIETARY.md).
+By accessing this repository, you acknowledge that you have read and agree to be bound by the terms in [LICENSE](./LICENSE).
 
 For licensing inquiries: legal@shadowclone.ai
