@@ -18,7 +18,7 @@ export class ModularTools {
     return [
       {
         name: 'deploy_agent_team',
-        description: 'Deploy a single specialized team for a specific task',
+        description: 'Returns AI instructions for simulating specialized teams - provides team composition and workflow guidance',
         inputSchema: {
           type: 'object',
           properties: {
@@ -47,7 +47,7 @@ export class ModularTools {
       },
       {
         name: 'deploy_specialist_agent',
-        description: 'Deploy a single expert agent for a focused task',
+        description: 'Returns AI instructions for simulating specialist agents - provides expertise patterns and task approaches',
         inputSchema: {
           type: 'object',
           properties: {
@@ -86,7 +86,7 @@ export class ModularTools {
       },
       {
         name: 'quick_fix',
-        description: 'Deploy a rapid response team for small, urgent fixes',
+        description: 'Returns AI problem-solving methodology - provides structured approach for rapid fixes',
         inputSchema: {
           type: 'object',
           properties: {
@@ -114,7 +114,7 @@ export class ModularTools {
       },
       {
         name: 'code_review_team',
-        description: 'Deploy a review team for existing code',
+        description: 'Returns AI code review methodology - provides review checklists and team simulation patterns',
         inputSchema: {
           type: 'object',
           properties: {
@@ -140,7 +140,7 @@ export class ModularTools {
       },
       {
         name: 'generate_tests',
-        description: 'Deploy testing specialists to create tests for existing code',
+        description: 'Returns AI test generation methodology - provides testing patterns and specialist simulation guidance',
         inputSchema: {
           type: 'object',
           properties: {
@@ -172,7 +172,7 @@ export class ModularTools {
       },
       {
         name: 'execute_single_wave',
-        description: 'Run just one wave of a specific mode without full orchestration',
+        description: 'Returns AI single-wave execution patterns - provides focused workflows for specific project phases',
         inputSchema: {
           type: 'object',
           properties: {
@@ -204,7 +204,7 @@ export class ModularTools {
       },
       {
         name: 'create_documentation',
-        description: 'Deploy documentation specialists for existing code',
+        description: 'Returns AI documentation creation methodology - provides documentation patterns and specialist approaches',
         inputSchema: {
           type: 'object',
           properties: {
@@ -233,7 +233,7 @@ export class ModularTools {
       },
       {
         name: 'architecture_consultant',
-        description: 'Deploy architecture experts for design decisions',
+        description: 'Returns AI architecture consultation patterns - provides design principles and expert analysis methodology',
         inputSchema: {
           type: 'object',
           properties: {
