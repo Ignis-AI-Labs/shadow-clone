@@ -20,7 +20,7 @@ export class UpdateChecker {
   getToolDefinition(): ToolDefinition {
     return {
       name: 'check_for_updates',
-      description: 'Check if a newer version of Shadow Clone MCP Server is available',
+      description: 'Actually checks for updates to the MCP server (runs npm command) - returns version comparison results',
       inputSchema: {
         type: 'object',
         properties: {},

@@ -9,15 +9,21 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:prod": "npm run build && npm run convert-prompts && npm run build:obfuscate",
+    "build:prod": "npm run clean && npm run build && npm run convert-prompts && npm run build:obfuscate",
     "build:obfuscate": "webpack",
+    "clean": "rm -rf dist dist-obfuscated",
     "convert-prompts": "node scripts/convert-prompts.js",
-    "dev": "tsx watch src/index.ts",
+    "dev": "NODE_ENV=development tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "start:prod": "node dist-obfuscated/index.js",
+    "start:prod": "NODE_ENV=production node dist-obfuscated/index.js",
+    "start:prod:debug": "NODE_ENV=production LOG_LEVEL=debug node dist-obfuscated/index.js",
     "prepare": "npm run build",
     "version": "echo $npm_package_version",
-    "check-updates": "npm outdated -g @shadow-clone/mcp-server"
+    "check-updates": "npm outdated -g @shadow-clone/mcp-server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --skipLibCheck",
+    "health": "NODE_ENV=production ENABLE_METRICS=true node dist/index.js"
   },
   "keywords": [
     "mcp",

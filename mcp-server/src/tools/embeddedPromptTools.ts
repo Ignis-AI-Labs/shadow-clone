@@ -1,5 +1,6 @@
 import { AuthService } from '../auth/authService.js';
 import * as prompts from '../prompts/content/index.js';
+import { validateString, validateEnum, validateNumber, validatePath } from '../utils/validation.js';
 
 interface ToolDefinition {
   name: string;
@@ -32,7 +33,7 @@ export class EmbeddedPromptTools {
       },
       {
         name: 'shadow_clone_orchestrate',
-        description: 'Execute Shadow Clone orchestration with specified parameters',
+        description: 'Returns AI orchestration instructions for Shadow Clone teams - provides methodology for structuring and executing projects',
         inputSchema: {
           type: 'object',
           properties: {
@@ -52,6 +53,7 @@ export class EmbeddedPromptTools {
             wavesDirectory: {
               type: 'string',
               description: 'Directory for wave outputs (default: ./.waves/)',
+              default: './.waves/',
             },
             maxAgentsPerWave: {
               type: 'number',
@@ -63,7 +65,7 @@ export class EmbeddedPromptTools {
       },
       {
         name: 'shadow_clone_plan',
-        description: 'Create a comprehensive project plan without writing code',
+        description: 'Returns AI planning instructions for comprehensive project plans - provides templates and planning methodology',
         inputSchema: {
           type: 'object',
           properties: {
@@ -74,6 +76,7 @@ export class EmbeddedPromptTools {
             wavesDirectory: {
               type: 'string',
               description: 'Directory for planning outputs (default: ./.waves/)',
+              default: './.waves/',
             },
           },
           required: ['projectVision'],
@@ -81,7 +84,7 @@ export class EmbeddedPromptTools {
       },
       {
         name: 'get_agent_template',
-        description: 'Get agent behavior templates for specific roles',
+        description: 'Returns AI agent behavior templates and role definitions - provides instructions for simulating specialized agents',
         inputSchema: {
           type: 'object',
           properties: {
@@ -106,7 +109,7 @@ export class EmbeddedPromptTools {
         return this.executePlanning(args);
       
       case 'get_agent_template':
-        return this.getAgentTemplate(args.templateType);
+        return this.getAgentTemplate(args?.templateType);
       
       default:
         throw new Error(`Unknown tool: ${name}`);
@@ -114,7 +117,25 @@ export class EmbeddedPromptTools {
   }
 
   private async executeOrchestration(args: any): Promise<string> {
-    const { mode, projectDescription, projectPlan, wavesDirectory, maxAgentsPerWave } = args;
+    // Validate inputs
+    const mode = validateEnum(args.mode, 'mode', 
+      ['plan', 'feature', 'debug', 'optimize', 'refactor', 'audit', 'research'] as const,
+      { required: true }
+    )!;
+    
+    const projectDescription = validateString(args.projectDescription, 'projectDescription', {
+      required: true,
+      minLength: 10,
+      maxLength: 5000
+    })!;
+    
+    const projectPlan = validatePath(args.projectPlan, 'projectPlan');
+    const wavesDirectory = validatePath(args.wavesDirectory, 'wavesDirectory') || './.waves/';
+    const maxAgentsPerWave = validateNumber(args.maxAgentsPerWave, 'maxAgentsPerWave', {
+      min: 1,
+      max: 20,
+      integer: true
+    }) || 10;
     
     // Get the main orchestration prompt
     const mainPrompt = prompts.content;
@@ -146,7 +167,14 @@ Execute the Shadow Clone orchestration system with the above parameters and proj
   }
 
   private async executePlanning(args: any): Promise<string> {
-    const { projectVision, wavesDirectory } = args;
+    // Validate inputs
+    const projectVision = validateString(args.projectVision, 'projectVision', {
+      required: true,
+      minLength: 20,
+      maxLength: 10000
+    })!;
+    
+    const wavesDirectory = validatePath(args.wavesDirectory, 'wavesDirectory') || './.waves/';
     
     // Get planning mode config
     const planConfig = this.getModeConfig('plan');
@@ -192,18 +220,23 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
     return modeModule.content;
   }
 
-  private getAgentTemplate(templateType: string): string {
+  private getAgentTemplate(templateType: string | undefined): string {
+    // Validate template type
+    const validatedType = validateEnum(templateType, 'templateType',
+      ['core_rules', 'agent_template', 'team_templates'] as const,
+      { required: true }
+    )!;
     const templateMap: Record<string, any> = {
       'core_rules': prompts.agent_core_rules,
       'agent_template': prompts.agent_agent_template,
       'team_templates': prompts.template_team_agent_templates,
     };
     
-    const template = templateMap[templateType];
+    const template = templateMap[validatedType];
     if (!template || !template.content) {
-      throw new Error(`Unknown template: ${templateType}`);
+      throw new Error(`Unknown template: ${validatedType}`);
     }
     
-    return `# Shadow Clone Agent Template: ${templateType}\n\n${template.content}`;
+    return `# Shadow Clone Agent Template: ${validatedType}\n\n${template.content}`;
   }
 }
