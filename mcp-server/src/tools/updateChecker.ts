@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { AuthService } from '../auth/authService.js';
+import { config } from '../config/production.js';
 
 const execAsync = promisify(exec);
 
@@ -31,8 +32,8 @@ export class UpdateChecker {
 
   async checkForUpdates(): Promise<string> {
     try {
-      // Get current version
-      const currentVersion = '0.1.0'; // This should match package.json
+      // Get current version from config
+      const currentVersion = config.server.version;
       
       // Check npm for latest version
       const { stdout } = await execAsync('npm view @shadow-clone/mcp-server version').catch(() => ({ stdout: currentVersion }));

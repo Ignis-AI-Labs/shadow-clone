@@ -1,5 +1,11 @@
 # Shadow Clone MCP Server Changelog
 
+## [0.2.2] - 2024-12-19
+
+### Fixed
+- 🔧 Fixed `check_for_updates` tool to read version from package.json instead of hardcoded value
+- ✅ Version checker now correctly reports the running version
+
 ## [0.2.1] - 2024-12-19
 
 ### Changed
