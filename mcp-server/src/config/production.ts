@@ -53,7 +53,7 @@ export interface Config {
 export const config: Config = {
   server: {
     name: process.env.MCP_SERVER_NAME || 'shadow-clone-mcp',
-    version: process.env.npm_package_version || '0.1.0',
+    version: process.env.npm_package_version || '0.2.2',
     environment: process.env.NODE_ENV || 'production',
     gracefulShutdownTimeout: parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT || '30000'),
   },

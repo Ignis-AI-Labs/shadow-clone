@@ -1,0 +1,4 @@
+# Shadow Clone
+.env
+.shadow-clone/
+.waves/
