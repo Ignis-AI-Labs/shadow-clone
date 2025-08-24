@@ -1,10 +1,26 @@
 # Shadow Clone MCP Server Changelog
 
-## [0.4.1] - 2024-12-19
+## [0.2.1] - 2024-12-19
+
+### Changed
+- 🔧 **Workspace Initializer Redesigned**: Now ACTUALLY creates files instead of returning instructions
+  - Handles existing CLAUDE.md files by appending Shadow Clone section
+  - Includes complete command reference for both local and MCP tools
+  - Creates comprehensive instruction files for all AI assistants
+  - Properly stores API key in .env as backup
+  - Smart handling of existing files (append vs overwrite)
+
+### Fixed
+- 📝 Added missing Shadow Clone commands to instruction templates
+- ✅ Workspace initializer now executes file operations directly (the ONE tool that does)
+- 🔄 Proper handling of existing CLAUDE.md files
+
+## [0.2.0] - 2024-12-19
 
 ### Added
 - 🚀 **Workspace Initialization Tool**: `initialize_workspace` - Creates AI instruction files in projects
   - Automatically generates CLAUDE.md, .ai/instructions.md, .github/copilot-instructions.md
+  - Stores API key in .env as backup when initializing
   - Embeds Shadow Clone documentation directly in workspaces
   - Ensures all AI assistants understand Shadow Clone commands
   - Returns instructions for AI to follow (no direct file operations)
@@ -13,14 +29,6 @@
   - Displays all cache storage locations and their status
   - Indicates if Creator Mode is active
   - Provides helpful setup instructions
-
-### Changed
-- 📝 Both new tools follow the prompt engineering macro pattern
-- 🎯 Clear documentation that tools return instructions, not execute operations
-
-## [0.4.0] - 2024-12-19
-
-### Added
 - 🚀 **Creator Mode**: Privileged local mode for Shadow Clone creator
   - Automatic detection via `.shadow-local/creator-config.json`
   - Complete authentication bypass for creator
@@ -32,56 +40,37 @@
   - Global config (~/.shadow-clone/config.json)
   - Memory cache for session persistence
   - Automatic revalidation every 5 minutes
-- 📊 **New Tool**: `api_key_status` - Check cache status and storage locations
-- ⚡ **Global Command Access**: Shadow Clone commands available system-wide
-  - `shadow` - Main command
-  - `sfix` - Quick fix shortcut
-  - `stest` - Test generator shortcut
-  - `sreview` - Code review shortcut
+- 🔐 **Real-time NFT verification**: Authentication checks NFT ownership in real-time
+  - Removed 24-hour expiration - Access remains active as long as you own the NFT
+  - Immediate access revocation when NFT is transferred or sold
+  - Verification caching to reduce API calls (1 minute cache)
 
 ### Changed
 - 📝 All tool descriptions now explicitly state "NO code execution"
 - 🎯 Prompts include clear disclaimers about being prompt engineering macros
 - 🔄 Authentication checks multiple cache locations before requiring login
 - 🎮 Server automatically detects creator mode on startup
+- 📝 Updated error messages to be more specific about NFT ownership
+- ✨ Clarified that Shadow Clone is a prompt engineering macro system
+- 🔧 Updated all tool descriptions to emphasize instruction delivery
 
 ### Security
 - 🔐 API keys are obfuscated when stored
 - 📁 .env files automatically added to .gitignore
 - 🛡️ Restrictive file permissions on Unix systems
-
-## [0.3.1] - 2024-12-19
-
-### Fixed
-- TypeScript compilation errors in apiKeyManager
-
-## [0.3.0] - 2024-12-19
-
-### Changed
-- Clarified that Shadow Clone is a prompt engineering macro system
-- Updated all tool descriptions to emphasize instruction delivery
-
-## [0.2.0] - 2025-07-30
-
-### Changed
-- 🔐 **Real-time NFT verification** - Authentication now checks NFT ownership in real-time
-- 🚫 Removed 24-hour expiration - Access remains active as long as you own the NFT
-- ⚡ Immediate access revocation when NFT is transferred or sold
-- 🔄 Added verification caching to reduce API calls (1 minute cache)
-- 📝 Updated error messages to be more specific about NFT ownership
-
-### Security
-- NFT ownership is verified before each tool execution
-- Graceful fallback to cached verification during network issues
-- Wallet address tracking for license verification
+- ✅ NFT ownership is verified before each tool execution
+- 🔄 Graceful fallback to cached verification during network issues
+- 📍 Wallet address tracking for license verification
 
 ### Technical
 - Added `verifyNFTOwnership()` method for real-time checks
 - Implemented verification result caching
 - Added `clearVerificationCache()` for forcing fresh checks
 - Added `getWalletAddress()` to track associated wallet
+- Fixed TypeScript compilation errors in apiKeyManager
+- Added comprehensive monitoring and rate limiting
 
-## [0.1.0] - 2025-07-30
+## [0.1.0] - 2024-12-01
 
 ### Initial Release
 
