@@ -1,6 +1,16 @@
 // Auto-generated from shadow-clone-plan.md
 // DO NOT EDIT DIRECTLY
-export const content = `# Planning Mode Configuration
+export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+These are INSTRUCTIONS for YOU (the AI) to follow.
+Shadow Clone does NOT execute code in the background.
+YOU will read these instructions and implement them.
+This is a methodology for YOU to adopt and execute.
+================================================
+-->
+
+# Planning Mode Configuration
 
 <mode_overview>
   <context>

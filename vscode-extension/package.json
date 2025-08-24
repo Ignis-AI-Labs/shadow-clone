@@ -2,7 +2,7 @@
   "name": "shadow-clone",
   "displayName": "Shadow Clone AI Agent Orchestrator",
   "description": "Deploy teams of specialized AI agents to complete complex software projects. Currently exclusive to Ignis Elite NFT holders.",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "publisher": "IgnisAILabsLLC",
   "private": false,
   "license": "Proprietary",
@@ -146,6 +146,54 @@
         "icon": "$(info)"
       },
       {
+        "command": "shadowClone.quickFix",
+        "title": "Shadow Clone: Quick Fix",
+        "icon": "$(zap)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.deploySpecialist",
+        "title": "Shadow Clone: Deploy Specialist",
+        "icon": "$(person)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.codeReview",
+        "title": "Shadow Clone: Code Review",
+        "icon": "$(eye)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.generateTests",
+        "title": "Shadow Clone: Generate Tests",
+        "icon": "$(beaker)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.executeSingleWave",
+        "title": "Shadow Clone: Execute Single Wave",
+        "icon": "$(pulse)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.createDocumentation",
+        "title": "Shadow Clone: Create Documentation",
+        "icon": "$(book)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.architectureConsult",
+        "title": "Shadow Clone: Architecture Consultation",
+        "icon": "$(circuit-board)",
+        "category": "Shadow Clone Modular"
+      },
+      {
+        "command": "shadowClone.showCommands",
+        "title": "Shadow Clone: Show All Commands",
+        "icon": "$(list-flat)",
+        "category": "Shadow Clone Modular"
+      },
+      {
         "command": "shadowClone.buildParameters",
         "title": "Shadow Clone: Build Parameters",
         "icon": "$(settings-gear)"
@@ -208,6 +256,13 @@
         }
       }
     },
+    "submenus": [
+      {
+        "id": "shadowClone.modular",
+        "label": "Shadow Clone Quick Tools",
+        "icon": "$(zap)"
+      }
+    ],
     "menus": {
       "view/title": [
         {
@@ -232,6 +287,47 @@
           "when": "view == shadowClone.claudeSessions && viewItem == session",
           "group": "inline"
         }
+      ],
+      "editor/context": [
+        {
+          "submenu": "shadowClone.modular",
+          "group": "shadowClone",
+          "when": "editorTextFocus"
+        }
+      ],
+      "shadowClone.modular": [
+        {
+          "command": "shadowClone.quickFix",
+          "group": "1_quick@1"
+        },
+        {
+          "command": "shadowClone.deploySpecialist",
+          "group": "1_quick@2"
+        },
+        {
+          "command": "shadowClone.codeReview",
+          "group": "2_review@1"
+        },
+        {
+          "command": "shadowClone.generateTests",
+          "group": "2_review@2"
+        },
+        {
+          "command": "shadowClone.executeSingleWave",
+          "group": "3_advanced@1"
+        },
+        {
+          "command": "shadowClone.createDocumentation",
+          "group": "3_advanced@2"
+        },
+        {
+          "command": "shadowClone.architectureConsult",
+          "group": "3_advanced@3"
+        },
+        {
+          "command": "shadowClone.showCommands",
+          "group": "4_help@1"
+        }
       ]
     },
     "keybindings": [
@@ -251,6 +347,36 @@
         "command": "shadowClone.injectFeature",
         "key": "ctrl+shift+f",
         "mac": "cmd+shift+f",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.quickFix",
+        "key": "ctrl+alt+q",
+        "mac": "cmd+alt+q",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.deploySpecialist",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.codeReview",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.generateTests",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shadowClone.showCommands",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
         "when": "editorTextFocus"
       }
     ]

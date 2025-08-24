@@ -1,7 +1,7 @@
 {
   "name": "@shadow-clone/mcp-server",
-  "version": "0.1.0",
-  "description": "Shadow Clone MCP Server - Deploy AI agent teams via Model Context Protocol",
+  "version": "0.4.1",
+  "description": "Shadow Clone MCP Server - Prompt Engineering Macro System for AI enhancement via Model Context Protocol",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -27,13 +27,38 @@
   },
   "keywords": [
     "mcp",
+    "mcp-server",
+    "model-context-protocol",
     "claude",
     "ai",
     "agents",
+    "orchestration",
     "shadow-clone"
   ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "author": "Ignis AI Labs LLC",
-  "license": "Proprietary",
+  "license": "SEE LICENSE IN LICENSE",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ElijahMoses/shadow-clone.git",
+    "directory": "mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/ElijahMoses/shadow-clone/issues"
+  },
+  "homepage": "https://github.com/ElijahMoses/shadow-clone/tree/main/mcp-server",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "axios": "^1.6.0",

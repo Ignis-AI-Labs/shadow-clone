@@ -1,12 +1,30 @@
 // Auto-generated from shadow-clone-prompt.md
 // DO NOT EDIT DIRECTLY
 export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO SYSTEM
+=========================================================
+What you are reading are INSTRUCTIONS for YOU (the AI) to follow.
+This is NOT a background system that executes code.
+These are professional methodologies and patterns for YOU to implement.
+Think of this as "unlocking new powers" through advanced prompt engineering.
+
+YOU will:
+- Read and understand these instructions
+- Follow the methodologies described
+- Create the actual code and deliverables
+- Simulate the specialized agent behaviors
+- Execute all the actual work
+
+The Shadow Clone MCP Server is ONLY delivering these instructions to you.
+It does NOT execute any code or manage any processes.
+=========================================================
+
 LOCAL VERSION FOR TESTING ONLY
 This version reads from local files instead of API
 INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 -->
 
-# Shadow Clone System - Local Version
+# Shadow Clone System - Prompt Engineering Instructions for AI Execution
 
 <task>
   <context>

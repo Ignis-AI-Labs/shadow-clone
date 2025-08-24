@@ -1,15 +1,37 @@
+#!/usr/bin/env node
+
 /**
- * Shadow Clone MCP Server
+ * Shadow Clone MCP Server - Prompt Engineering Macro System
  * 
- * IMPORTANT: How these tools work:
- * - Most tools DO NOT execute anything in the background
- * - They return instructions/prompts that guide AI assistants on how to orchestrate the Shadow Clone system
- * - The AI uses these instructions to understand project structure and simulate specialized agent behaviors
- * - All deliverables are created in .waves/ folder (never .shadow/)
- * - The .shadow/ folder contains internal prompts that should NEVER be exposed to users
- * - This system is AI-agnostic and works with any AI that can follow structured instructions
+ * THIS IS A PROMPT DELIVERY SYSTEM - NOT AN EXECUTION ENGINE
  * 
- * Exception: check_for_updates actually runs npm commands to check versions
+ * What this server does:
+ * - Delivers structured prompt engineering macros to AI assistants
+ * - Returns instructions that teach AIs how to orchestrate complex tasks
+ * - Provides methodology and patterns for simulating specialized agent behaviors
+ * - Acts like "unlocking new powers" for AI by teaching advanced techniques
+ * 
+ * What this server DOES NOT do:
+ * - Does NOT execute code in the background
+ * - Does NOT run processes or manage tasks
+ * - Does NOT handle any actual implementation
+ * 
+ * Think of it as:
+ * - A macro system for prompt engineering
+ * - A toolkit of professional methodologies
+ * - An instruction manual that AIs follow
+ * - A way to inject expert knowledge into any AI conversation
+ * 
+ * The AI receiving these prompts will:
+ * - Read the instructions and understand the methodology
+ * - Follow the patterns to complete tasks professionally
+ * - Create deliverables in .waves/ folder (never .shadow/)
+ * - Simulate specialized agent behaviors based on the prompts
+ * 
+ * This system is AI-agnostic and enhances any AI CLI or chat interface
+ * by providing battle-tested prompt engineering patterns.
+ * 
+ * Exception: check_for_updates is the ONLY tool that executes code (npm commands)
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -140,9 +162,15 @@ class ShadowCloneMCPServer {
         // Check authentication for all other tools
         const isAuthenticated = await this.authService.isAuthenticated();
         if (!isAuthenticated) {
+          // Check if we have auth data but NFT is missing
+          const hasAuthData = await this.authService.getApiKey() !== null;
+          const message = hasAuthData
+            ? 'NFT license not found in wallet. Please ensure you own an active Shadow Clone NFT.'
+            : 'Please authenticate first using the authenticate tool';
+          
           throw new McpError(
             ErrorCode.InvalidRequest,
-            'Please authenticate first using the authenticate tool'
+            message
           );
         }
 

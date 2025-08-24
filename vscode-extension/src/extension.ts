@@ -10,6 +10,7 @@ import { ShadowCloneMacros } from './utils/shadowCloneCommands';
 import { injectShadowCloneCommand, injectBuildCommand, injectDebugCommand, injectFeatureCommand } from './commands/injectCommand';
 import { showHelpCommand, showQuickReferenceCommand } from './commands/showHelp';
 import { buildParametersCommand, injectParametersCommand, injectParameterSnippet } from './commands/parameterBuilder';
+import { registerModularCommands } from './commands/modularCommands';
 import { SecurityTelemetryService } from './services/securityTelemetry';
 import { CommandInterceptor } from './utils/commandInterceptor';
 import { setTelemetryInstance } from './services/telemetryHandler';
@@ -56,13 +57,20 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     }
 
+    // Initialize API key cache
+    const { ApiKeyCache } = await import('./utils/apiKeyCache');
+    ApiKeyCache.initialize(context);
+    
     // Initialize providers
     authProvider = new AuthProvider(context);
     sessionManager = new ClaudeSessionManager(context);
     
-    // Show startup message
-    const hasAuthOnStartup = await authProvider.checkAuth();
-    if (hasAuthOnStartup) {
+    // Check for cached API key first
+    let hasAuthOnStartup = await authProvider.checkAuth();
+    if (!hasAuthOnStartup) {
+        // Try cached authentication
+        hasAuthOnStartup = await authProvider.checkCachedAuth();
+    } else {
         vscode.window.setStatusBarMessage('$(sync~spin) Shadow Clone: Verifying license...', 3000);
     }
     
@@ -435,6 +443,9 @@ export async function activate(context: vscode.ExtensionContext) {
     // Update status bar items when auth changes
     authProvider.onDidChangeAuth(() => updateAllStatusBarItems());
     licenseStatusManager.onStatusChanged(() => updateAllStatusBarItems());
+    
+    // Register modular commands (quick tools)
+    registerModularCommands(context, authProvider);
     
     // Initial update
     await updateAllStatusBarItems();

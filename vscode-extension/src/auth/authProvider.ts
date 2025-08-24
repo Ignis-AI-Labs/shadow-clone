@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
 import { getApiEndpoint } from '../utils/constants';
+import { ApiKeyCache } from '../utils/apiKeyCache';
 
 export class AuthProvider {
     private static readonly AUTH_KEY = 'shadowClone.auth';
@@ -35,6 +36,10 @@ export class AuthProvider {
                     isActive,
                     timestamp: Date.now()
                 }));
+                
+                // Also save to API key cache for cross-session persistence
+                const cache = ApiKeyCache.getInstance();
+                await cache.saveApiKey(apiKey);
                 
                 this._onDidChangeAuth.fire();
                 
@@ -100,7 +105,33 @@ export class AuthProvider {
 
     async logout(): Promise<void> {
         await this.context.secrets.delete(AuthProvider.AUTH_KEY);
+        
+        // Also clear from cache
+        const cache = ApiKeyCache.getInstance();
+        await cache.clearApiKey();
+        
         this._onDidChangeAuth.fire();
+    }
+    
+    async checkCachedAuth(): Promise<boolean> {
+        // Try to authenticate with cached API key
+        const cache = ApiKeyCache.getInstance();
+        const cachedKey = await cache.getApiKey();
+        
+        if (cachedKey) {
+            vscode.window.setStatusBarMessage('$(sync~spin) Shadow Clone: Validating cached API key...', 3000);
+            const result = await this.authenticate(cachedKey);
+            
+            if (result.success && result.isActive) {
+                vscode.window.showInformationMessage('✅ Shadow Clone: Authenticated with cached API key');
+                return true;
+            } else if (!result.success) {
+                vscode.window.showWarningMessage('⚠️ Cached API key is invalid. Please authenticate again.');
+                await cache.clearApiKey();
+            }
+        }
+        
+        return false;
     }
 
     async updateCredentials(apiKey: string): Promise<{ success: boolean; isActive?: boolean; message?: string }> {

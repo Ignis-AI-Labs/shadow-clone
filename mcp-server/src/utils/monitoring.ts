@@ -137,7 +137,7 @@ export class HealthMonitor {
   /**
    * Log metrics periodically
    */
-  startMetricsLogging(intervalMs: number = 60000): NodeJS.Timer {
+  startMetricsLogging(intervalMs: number = 60000): NodeJS.Timeout {
     return setInterval(() => {
       if (config.performance.enableMetrics) {
         const metrics = this.getMetrics();
