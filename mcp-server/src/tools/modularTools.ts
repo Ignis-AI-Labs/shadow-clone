@@ -18,7 +18,7 @@ export class ModularTools {
     return [
       {
         name: 'deploy_agent_team',
-        description: 'Returns AI instructions for simulating specialized teams - provides team composition and workflow guidance',
+        description: 'Returns PROMPT ENGINEERING MACROS for team simulation - delivers instructions that teach AI how to act as specialized development teams (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -47,7 +47,7 @@ export class ModularTools {
       },
       {
         name: 'deploy_specialist_agent',
-        description: 'Returns AI instructions for simulating specialist agents - provides expertise patterns and task approaches',
+        description: 'Returns PROMPT ENGINEERING MACROS for specialist simulation - delivers instructions that teach AI expert-level patterns and approaches (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -86,7 +86,7 @@ export class ModularTools {
       },
       {
         name: 'quick_fix',
-        description: 'Returns AI problem-solving methodology - provides structured approach for rapid fixes',
+        description: 'Returns PROMPT ENGINEERING MACROS for problem-solving - delivers instructions that teach AI professional debugging methodologies (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -114,7 +114,7 @@ export class ModularTools {
       },
       {
         name: 'code_review_team',
-        description: 'Returns AI code review methodology - provides review checklists and team simulation patterns',
+        description: 'Returns PROMPT ENGINEERING MACROS for code review - delivers instructions that teach AI how to perform professional code reviews (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -140,7 +140,7 @@ export class ModularTools {
       },
       {
         name: 'generate_tests',
-        description: 'Returns AI test generation methodology - provides testing patterns and specialist simulation guidance',
+        description: 'Returns PROMPT ENGINEERING MACROS for test generation - delivers instructions that teach AI professional testing methodologies (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -172,7 +172,7 @@ export class ModularTools {
       },
       {
         name: 'execute_single_wave',
-        description: 'Returns AI single-wave execution patterns - provides focused workflows for specific project phases',
+        description: 'Returns PROMPT ENGINEERING MACROS for wave execution - delivers instructions that teach AI focused workflows for project phases (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -204,7 +204,7 @@ export class ModularTools {
       },
       {
         name: 'create_documentation',
-        description: 'Returns AI documentation creation methodology - provides documentation patterns and specialist approaches',
+        description: 'Returns PROMPT ENGINEERING MACROS for documentation - delivers instructions that teach AI professional documentation methodologies (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -233,7 +233,7 @@ export class ModularTools {
       },
       {
         name: 'architecture_consultant',
-        description: 'Returns AI architecture consultation patterns - provides design principles and expert analysis methodology',
+        description: 'Returns PROMPT ENGINEERING MACROS for architecture consultation - delivers instructions that teach AI expert design analysis (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -259,6 +259,21 @@ export class ModularTools {
             },
           },
           required: ['consultationType', 'context'],
+        },
+      },
+      {
+        name: 'show_commands',
+        description: 'Returns a QUICK REFERENCE of all Shadow Clone commands - provides a cheat sheet of available tools and their usage (NO code execution)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            category: {
+              type: 'string',
+              description: 'Filter by category (optional)',
+              enum: ['orchestration', 'teams', 'rapid', 'documentation', 'all'],
+            },
+          },
+          required: [],
         },
       },
     ];
@@ -289,6 +304,9 @@ export class ModularTools {
       
       case 'architecture_consultant':
         return this.architectureConsultant(args);
+      
+      case 'show_commands':
+        return this.showCommands(args);
       
       default:
         throw new Error(`Unknown modular tool: ${name}`);
@@ -1194,5 +1212,116 @@ Execute the ${consultationType} consultation.
     };
 
     return configs[consultationType] || configs.design_review;
+  }
+
+  private async showCommands(args: any): Promise<string> {
+    const category = args?.category || 'all';
+    
+    const commandReference = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+This is a REFERENCE GUIDE for Shadow Clone commands.
+These commands deliver instructions for YOU to follow.
+Shadow Clone does NOT execute code - YOU do.
+================================================
+-->
+
+# Shadow Clone Command Reference
+
+## Remember: These are PROMPT MACROS, not executable commands
+Each tool delivers professional methodologies for YOU (the AI) to implement.
+
+${category === 'all' || category === 'orchestration' ? `
+## Orchestration Commands
+
+### shadow_clone_orchestrate
+- Modes: plan, feature, debug, optimize, refactor, audit, research
+- Example: Use mode="feature" with projectDescription="Add OAuth login"
+- Returns: Complete methodology for orchestrating virtual agent teams
+
+### shadow_clone_plan  
+- Create comprehensive project plans
+- Example: projectVision="Build scalable SaaS platform"
+- Returns: Planning templates and methodologies
+` : ''}
+
+${category === 'all' || category === 'teams' ? `
+## Team Deployment Commands
+
+### deploy_agent_team
+- Teams: frontend, backend, database, testing, documentation, devops, mobile, security
+- Example: teamType="backend" task="Create REST API"
+- Returns: Team simulation patterns and workflows
+
+### deploy_specialist_agent
+- Specialists: react_expert, api_designer, database_architect, test_engineer, etc.
+- Example: specialization="security_auditor" task="Audit auth flow"
+- Returns: Expert-level methodologies for specific tasks
+` : ''}
+
+${category === 'all' || category === 'rapid' ? `
+## Quick Modular Tools (No Full Orchestration!)
+
+### quick_fix ⚡ - Instant Fix Methodology
+- FAST: Single bug/issue resolution without teams
+- Types: bug, style, logic, performance, security
+- Example: issueType="bug" description="Null pointer in user service"
+- Returns: Direct fix approach, no orchestration
+
+### deploy_specialist_agent 🎯 - Single Expert
+- FOCUSED: One specialist, one task, no coordination
+- Experts: react_expert, api_designer, security_auditor, etc.
+- Example: specialization="react_expert" task="Fix render loop"
+- Returns: Expert methodology for specific problem
+
+### code_review_team 🔍 - Quick Review
+- TARGETED: Review specific files without full audit
+- Types: security, performance, quality, architecture
+- Example: reviewType="security" files=["login.js"]
+- Returns: Focused review checklist
+
+### generate_tests ✅ - Test Creation Only
+- SPECIFIC: Add tests to existing code
+- Types: unit, integration, e2e, performance, security
+- Example: testType="unit" targetFiles=["utils.js"]
+- Returns: Test writing patterns
+
+### execute_single_wave 🌊 - One Phase Only  
+- SINGLE: Just research OR planning OR implementation
+- No multi-wave coordination needed
+- Example: waveType="research" scope="OAuth best practices"
+- Returns: Focused methodology for one phase
+` : ''}
+
+${category === 'all' || category === 'documentation' ? `
+## Documentation & Architecture Commands
+
+### create_documentation
+- Types: api, user_guide, developer, architecture, inline
+- Example: docType="api" scope="REST endpoints"
+- Returns: Documentation creation patterns
+
+### architecture_consultant
+- Types: design_review, pattern_recommendation, scalability_analysis, migration_planning
+- Example: consultationType="design_review" context="Monolithic app"
+- Returns: Architecture analysis methodologies
+` : ''}
+
+## Quick Tips
+1. Always authenticate first with your API key
+2. These tools teach YOU professional methodologies
+3. YOU implement the actual code following these patterns
+4. Each tool is a "power-up" for your capabilities
+5. Combine tools for comprehensive solutions
+
+## Getting Started
+1. authenticate - Set up your Shadow Clone license
+2. show_commands - Display this reference (you're here!)
+3. shadow_clone_plan - Start planning your project
+4. Execute the methodologies provided
+
+Remember: Shadow Clone makes YOU more capable by providing battle-tested methodologies!`;
+
+    return commandReference;
   }
 }

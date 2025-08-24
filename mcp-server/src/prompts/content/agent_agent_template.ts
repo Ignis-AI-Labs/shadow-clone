@@ -1,6 +1,16 @@
 // Auto-generated from agent_template.md
 // DO NOT EDIT DIRECTLY
-export const content = `# Agent Template & Communication Guide
+export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+These are INSTRUCTIONS for YOU (the AI) to follow.
+Shadow Clone does NOT execute code in the background.
+YOU will read these instructions and implement them.
+This is a methodology for YOU to adopt and execute.
+================================================
+-->
+
+# Agent Template & Communication Guide
 
 This template provides the definitive structure for how agents communicate their work, report progress, and hand off deliverables in the Shadow Clone system.
 

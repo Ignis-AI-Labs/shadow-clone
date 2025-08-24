@@ -1,6 +1,16 @@
 // Auto-generated from shadow-clone-research.md
 // DO NOT EDIT DIRECTLY
-export const content = `# Research Mode Configuration
+export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+These are INSTRUCTIONS for YOU (the AI) to follow.
+Shadow Clone does NOT execute code in the background.
+YOU will read these instructions and implement them.
+This is a methodology for YOU to adopt and execute.
+================================================
+-->
+
+# Research Mode Configuration
 
 <context>
 This mode empowers Shadow Clone teams to conduct thorough technology research and provide evidence-based recommendations. Research mode is designed for situations where technical decisions require careful evaluation of multiple options, with hands-on validation and comprehensive analysis.

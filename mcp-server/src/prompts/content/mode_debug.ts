@@ -1,6 +1,16 @@
 // Auto-generated from shadow-clone-debug.md
 // DO NOT EDIT DIRECTLY
-export const content = `# Debug Mode Configuration
+export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+These are INSTRUCTIONS for YOU (the AI) to follow.
+Shadow Clone does NOT execute code in the background.
+YOU will read these instructions and implement them.
+This is a methodology for YOU to adopt and execute.
+================================================
+-->
+
+# Debug Mode Configuration
 
 <mode_overview>
   <purpose>

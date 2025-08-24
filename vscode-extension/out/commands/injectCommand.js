@@ -80,140 +80,189 @@ async function injectShadowCloneCommand(authProvider, commandType) {
     // Build the command text
     switch (commandType) {
         case 'build':
-            command = `# Shadow Clone Build Command
-
-## Project Description
-[Describe what you want to build here - be specific about features, tech stack, and requirements]
-
-## Execution Parameters
-project_plan=./project-plan.md waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompt and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Build Mode - Complete project implementation from specification.
+    AI agent teams will build your entire project following best practices and standards.
+  </context>
+  
+  <project_description>
+    [Describe what you want to build here - be specific about features, tech stack, and requirements]
+  </project_description>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: project_plan=./project-plan.md waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'debug':
-            command = `# Shadow Clone Debug Command
-
-## Issue Description
-[Describe the bug or issue you're experiencing - include error messages, expected vs actual behavior]
-
-## Execution Parameters
-mode=debug waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and debug mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/debug -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Debug Mode - Systematically identify and fix issues in your codebase.
+    AI agents will analyze, diagnose, and resolve bugs with comprehensive testing.
+  </context>
+  
+  <issue_description>
+    [Describe the bug or issue you're experiencing - include error messages, expected vs actual behavior]
+  </issue_description>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=debug waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'feature':
-            command = `# Shadow Clone Feature Build Command
-
-## Feature Description
-[Describe the feature you want to add - include user stories, acceptance criteria, and technical requirements]
-
-## Execution Parameters
-mode=feature project_plan=./feature-spec.md waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and feature mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/feature -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Feature Mode - Build new functionality with AI agent teams.
+    Agents will implement, test, and integrate your feature following best practices.
+  </context>
+  
+  <feature_description>
+    [Describe the feature you want to add - include user stories, acceptance criteria, and technical requirements]
+  </feature_description>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=feature project_plan=./feature-spec.md waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'refactor':
-            command = `# Shadow Clone Refactor Command
-
-## Refactoring Goals
-[Describe what you want to refactor and why - include specific files/components and desired improvements]
-
-## Execution Parameters
-mode=refactor waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and refactor mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/refactor -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Refactor Mode - Improve code quality, structure, and maintainability.
+    AI agents will analyze and refactor your code while preserving functionality.
+  </context>
+  
+  <refactoring_goals>
+    [Describe what you want to refactor and why - include specific files/components and desired improvements]
+  </refactoring_goals>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=refactor waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'optimize':
-            command = `# Shadow Clone Optimize Command
-
-## Performance Issues
-[Describe performance problems - slow queries, rendering issues, memory usage, etc.]
-
-## Execution Parameters
-mode=optimize waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and optimize mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/optimize -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Optimize Mode - Enhance performance and efficiency of your application.
+    AI agents will profile, analyze, and optimize bottlenecks systematically.
+  </context>
+  
+  <performance_issues>
+    [Describe performance problems - slow queries, rendering issues, memory usage, etc.]
+  </performance_issues>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=optimize waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'audit':
-            command = `# Shadow Clone Security Audit Command
-
-## Security Concerns
-[Describe any specific security concerns or compliance requirements (OWASP, PCI, etc.)]
-
-## Execution Parameters
-mode=audit waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and audit mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/audit -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Security Audit Mode - Comprehensive security assessment of your codebase.
+    AI agents will identify vulnerabilities, check compliance, and recommend fixes.
+  </context>
+  
+  <security_concerns>
+    [Describe any specific security concerns or compliance requirements (OWASP, PCI, etc.)]
+  </security_concerns>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=audit waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'research':
-            command = `# Shadow Clone Research Command
-
-## Research Questions
-[What do you want to understand about this codebase? What are you looking for?]
-
-## Execution Parameters
-mode=research waves_directory=./.waves/
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and research mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/research -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute with the parameters above.`;
+            command = `<task>
+  <context>
+    Shadow Clone Research Mode - Deep analysis and understanding of your codebase.
+    AI agents will explore, document, and provide insights without making changes.
+  </context>
+  
+  <research_questions>
+    [What do you want to understand about this codebase? What are you looking for?]
+  </research_questions>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute with parameters: mode=research waves_directory=./.waves/
+  </instructions>
+</task>`;
             break;
         case 'resume':
-            command = `# Shadow Clone Resume Command
-# Resume previous Shadow Clone session
-
-Fetch and execute the Shadow Clone orchestration system from the Cloudflare API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompt and execute the 'resume' command.`;
+            command = `<task>
+  <context>
+    Shadow Clone Resume - Continue from previous execution state.
+    Picks up where the last wave left off, maintaining all context and progress.
+  </context>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute the 'resume' command to continue from the last checkpoint
+  </instructions>
+</task>`;
             break;
         case 'plan':
-            command = `# Shadow Clone Plan Command
-
-## Project Vision
-[Describe your project idea, goals, and high-level requirements for planning]
-
-## Execution Mode
-Use 'plan' command to create detailed project plan without implementation
-
-## Now fetch and execute Shadow Clone
-Fetch the Shadow Clone orchestration system and plan mode from the API:
-curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
-curl -X GET ${apiEndpoint}/api/prompts/modes/plan -H "X-API-Key: ${apiKey}"
-
-Then load the returned prompts and execute the 'plan' command.`;
+            command = `<task>
+  <context>
+    Shadow Clone Planning Mode - Create comprehensive project plan without writing code.
+    This will generate a detailed technical specification and implementation roadmap.
+  </context>
+  
+  <project_vision>
+    [Describe your project idea, goals, and high-level requirements for planning]
+  </project_vision>
+  
+  <instructions>
+    1. First, fetch the Shadow Clone orchestration system:
+       curl -X GET ${apiEndpoint}/api/prompts/shadow-clone -H "X-API-Key: ${apiKey}"
+    
+    2. Load the returned Shadow Clone prompt into your context
+    
+    3. Execute the 'plan' command with your project vision to create a comprehensive plan
+  </instructions>
+</task>`;
             break;
         case 'custom':
             // Redirect to params builder for custom commands

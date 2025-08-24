@@ -2,6 +2,8 @@ import { AuthService } from '../auth/authService.js';
 import { EmbeddedPromptTools } from './embeddedPromptTools.js';
 import { ModularTools } from './modularTools.js';
 import { UpdateChecker } from './updateChecker.js';
+import { WorkspaceInitializer } from './workspaceInitializer.js';
+import { ApiKeyStatus } from './apiKeyStatus.js';
 
 interface ToolDefinition {
   name: string;
@@ -17,11 +19,15 @@ export class CombinedTools {
   private embeddedTools: EmbeddedPromptTools;
   private modularTools: ModularTools;
   private updateChecker: UpdateChecker;
+  private workspaceInitializer: WorkspaceInitializer;
+  private apiKeyStatus: ApiKeyStatus;
 
   constructor(private authService: AuthService) {
     this.embeddedTools = new EmbeddedPromptTools(authService);
     this.modularTools = new ModularTools(authService);
     this.updateChecker = new UpdateChecker(authService);
+    this.workspaceInitializer = new WorkspaceInitializer(authService);
+    this.apiKeyStatus = new ApiKeyStatus(authService);
   }
 
   getToolDefinitions(): ToolDefinition[] {
@@ -29,11 +35,15 @@ export class CombinedTools {
     const embedded = this.embeddedTools.getToolDefinitions();
     const modular = this.modularTools.getToolDefinitions();
     const updateTool = this.updateChecker.getToolDefinition();
+    const workspaceTool = this.workspaceInitializer.getToolDefinition();
+    const statusTool = this.apiKeyStatus.getToolDefinition();
     
-    // Return all tools, with authenticate and check_for_updates first
+    // Return all tools, with utility tools first
     return [
       ...embedded.filter(tool => tool.name === 'authenticate'),
+      statusTool,
       updateTool,
+      workspaceTool,
       ...embedded.filter(tool => tool.name !== 'authenticate'),
       ...modular,
     ];
@@ -43,6 +53,16 @@ export class CombinedTools {
     // Check if it's the update checker
     if (name === 'check_for_updates') {
       return this.updateChecker.checkForUpdates();
+    }
+
+    // Check if it's the workspace initializer
+    if (name === 'initialize_workspace') {
+      return this.workspaceInitializer.initializeWorkspace(args);
+    }
+
+    // Check if it's the API key status
+    if (name === 'api_key_status') {
+      return this.apiKeyStatus.checkStatus(args);
     }
 
     // Check if it's an embedded tool

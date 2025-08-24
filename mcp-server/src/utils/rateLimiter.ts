@@ -13,7 +13,7 @@ interface RateLimitEntry {
  */
 export class RateLimiter {
   private requests: Map<string, RateLimitEntry> = new Map();
-  private cleanupInterval: NodeJS.Timer;
+  private cleanupInterval: NodeJS.Timeout;
 
   constructor(
     private windowMs: number = config.rateLimit.windowMs,

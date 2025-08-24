@@ -1,4 +1,5 @@
 import { AuthService } from '../auth/authService.js';
+import { ApiKeyManager } from '../auth/apiKeyManager.js';
 import * as prompts from '../prompts/content/index.js';
 import { validateString, validateEnum, validateNumber, validatePath } from '../utils/validation.js';
 
@@ -33,7 +34,7 @@ export class EmbeddedPromptTools {
       },
       {
         name: 'shadow_clone_orchestrate',
-        description: 'Returns AI orchestration instructions for Shadow Clone teams - provides methodology for structuring and executing projects',
+        description: 'Returns PROMPT ENGINEERING MACROS for AI orchestration - delivers instructions that teach AI how to simulate expert teams (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -65,7 +66,7 @@ export class EmbeddedPromptTools {
       },
       {
         name: 'shadow_clone_plan',
-        description: 'Returns AI planning instructions for comprehensive project plans - provides templates and planning methodology',
+        description: 'Returns PROMPT ENGINEERING MACROS for project planning - delivers instructions that teach AI professional planning methodologies (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -83,8 +84,17 @@ export class EmbeddedPromptTools {
         },
       },
       {
+        name: 'api_key_status',
+        description: 'Check API key cache status and storage locations - shows where your key is stored (NO code execution)',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+          required: [],
+        },
+      },
+      {
         name: 'get_agent_template',
-        description: 'Returns AI agent behavior templates and role definitions - provides instructions for simulating specialized agents',
+        description: 'Returns PROMPT ENGINEERING TEMPLATES for agent behaviors - delivers instructions that teach AI how to adopt specialized expert roles (NO code execution)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -110,6 +120,9 @@ export class EmbeddedPromptTools {
       
       case 'get_agent_template':
         return this.getAgentTemplate(args?.templateType);
+      
+      case 'api_key_status':
+        return this.getApiKeyStatus();
       
       default:
         throw new Error(`Unknown tool: ${name}`);
@@ -238,5 +251,53 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
     }
     
     return `# Shadow Clone Agent Template: ${validatedType}\n\n${template.content}`;
+  }
+  
+  private async getApiKeyStatus(): Promise<string> {
+    const apiKeyManager = ApiKeyManager.getInstance();
+    const storageInfo = await apiKeyManager.getStorageInfo();
+    const apiKey = await apiKeyManager.getApiKey();
+    const isAuthenticated = await this.authService.isAuthenticated();
+    const licenseType = await this.authService.getLicenseType();
+    
+    return `# Shadow Clone API Key Status
+
+## Current Status
+- **Authenticated**: ${isAuthenticated ? '✅ Yes' : '❌ No'}
+- **License Type**: ${licenseType || 'Not authenticated'}
+- **API Key Found**: ${apiKey ? '✅ Yes (cached)' : '❌ No'}
+
+## Storage Locations Checked
+${storageInfo.locations.map(loc => `- ${loc}`).join('\n')}
+
+## Currently Using
+${storageInfo.current ? `✅ ${storageInfo.current}` : '❌ No API key found'}
+
+## How API Keys Are Cached
+
+Shadow Clone automatically caches your API key in multiple locations for convenience:
+
+1. **Environment Variable** (SHADOW_CLONE_API_KEY) - Highest priority
+2. **Local .env file** - Project-specific, git-ignored
+3. **Global config** (~/.shadow-clone/config.json) - User-wide
+4. **Memory cache** - Session only
+
+When you authenticate, your key is saved to all locations automatically.
+
+## Validation Schedule
+- Keys are revalidated every 5 minutes when used
+- NFT ownership is checked in real-time
+- Invalid keys are automatically cleared
+
+## Need a New API Key?
+Visit https://dashboard.ignislabs.ai to get or regenerate your API key.
+
+${!apiKey ? `
+## Quick Fix
+To authenticate, use:
+\`\`\`
+authenticate apiKey="your-api-key-here"
+\`\`\`
+` : ''}`;
   }
 }

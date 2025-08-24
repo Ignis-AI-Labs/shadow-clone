@@ -1,6 +1,16 @@
 // Auto-generated from core_rules.md
 // DO NOT EDIT DIRECTLY
-export const content = `# Core Agent Rules
+export const content = `<!--
+IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
+================================================
+These are INSTRUCTIONS for YOU (the AI) to follow.
+Shadow Clone does NOT execute code in the background.
+YOU will read these instructions and implement them.
+This is a methodology for YOU to adopt and execute.
+================================================
+-->
+
+# Core Agent Rules
 
 <agent_rules>
   <context>
