@@ -1,5 +1,19 @@
 # Shadow Clone MCP Server Changelog
 
+## [0.2.3] - 2024-12-19
+
+### Added
+- 📖 **USER-GUIDE.md**: Complete human-readable guide for using Shadow Clone
+  - Beginner, intermediate, and advanced usage patterns
+  - Complete command reference with examples
+  - Pro tips and best practices
+  - Learning path for users
+  - Command cheat sheet
+
+### Changed
+- 🔧 Workspace initializer now creates USER-GUIDE.md for humans
+- 📚 Added embedded user guide content as fallback
+
 ## [0.2.2] - 2024-12-19
 
 ### Fixed

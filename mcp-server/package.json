@@ -1,6 +1,6 @@
 {
   "name": "@shadow-clone/mcp-server",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Shadow Clone MCP Server - Prompt Engineering Macro System for AI enhancement via Model Context Protocol",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
