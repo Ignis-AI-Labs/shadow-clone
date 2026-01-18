@@ -37,6 +37,7 @@ Shadow Clone maximizes the potential of AI agents capable of **parallel agent de
 2. **Orchestrates multi-agent workflows** - Coordinates waves of parallel agents
 3. **Protects intellectual property** - Prompts are proprietary and must remain secure
 4. **Enables scalable AI work** - Users can tackle complex projects through coordinated agent teams
+5. **Empowers users to create their own macros** - Users can build, save, and share custom orchestration patterns
 
 ### What We Are NOT
 
@@ -50,6 +51,28 @@ Shadow Clone maximizes the potential of AI agents capable of **parallel agent de
 - **A methodology delivery system** - Teaching AI professional practices
 - **A licensed product** - Access controlled via NFT ownership
 - **A prompt protection system** - IP embedded in compiled code, never exposed
+- **A platform for user-created macros** - Users can build their own orchestration patterns
+
+### User-Created Macros Vision
+
+A key future feature is allowing users to create, save, and share their own macro commands:
+
+```
+Example User Macro:
+├── Name: "my-code-review"
+├── Description: "My team's code review workflow"
+├── Pattern: Based on code_review_team template
+├── Customizations:
+│   ├── Focus areas: security, performance
+│   ├── Output format: JIRA-compatible
+│   └── Team-specific standards
+└── Sharing: Private to my organization
+```
+
+This transforms Shadow Clone from a tool into a **platform** - users don't just consume our macros, they build their own. This creates:
+- Stickiness (users invest in building their workflows)
+- Network effects (shared macros bring more users)
+- Monetization opportunity (marketplace for premium macros)
 
 ---
 
@@ -334,12 +357,31 @@ The following must be validated by our CSO before production deployment:
 - [ ] Enhanced workspace initialization
 - [ ] Improved error messaging and diagnostics
 
-### Phase 3: User-Created Macros
+### Phase 3: User-Created Macros (HIGH PRIORITY FEATURE)
+
+This is a key differentiator - letting users create and save their own orchestration macros.
+
+**Core Features:**
 - [ ] Allow users to save custom prompt macros
-- [ ] Personal macro library storage
+- [ ] Personal macro library storage (cloud-synced)
+- [ ] Local macro storage option (for offline/private use)
+- [ ] Macro templates based on our existing patterns
+
+**Collaboration Features:**
 - [ ] Team/organization macro sharing
 - [ ] Version control for macros
-- [ ] Macro marketplace (future consideration)
+- [ ] Fork/remix existing macros
+
+**Future Monetization:**
+- [ ] Macro marketplace (users can sell/share macros)
+- [ ] Premium macro templates
+- [ ] Enterprise macro management
+
+**Technical Considerations:**
+- Macros must be validated to prevent actual prompt injection
+- User macros should follow our "methodology delivery" pattern
+- Consider sandboxing user macros from system prompts
+- Storage: Local file vs. cloud API (user preference)
 
 ### Phase 4: Scale & Enterprise
 - [ ] Enterprise licensing tiers
