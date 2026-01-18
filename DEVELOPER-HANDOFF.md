@@ -1,8 +1,9 @@
 # Shadow Clone - Developer Onboarding & Project Scope
 
-**Document Version:** 1.0
-**Date:** January 2026
+**Document Version:** 1.1
+**Date:** January 19, 2026
 **Author:** Project Lead
+**Status:** Repository cleaned - MCP-only architecture
 
 ---
 
@@ -167,9 +168,22 @@ Claude ──MCP──> Shadow Clone Server
 
 ---
 
+## What's Already Done
+
+The following cleanup has been completed (commit `bf27517`):
+
+- [x] Removed `admin-api/` - Cloudflare Workers (will rebuild self-hosted later)
+- [x] Removed `admin-portal/` - Next.js on CF Pages (will rebuild self-hosted later)
+- [x] Removed `archive/` - Historical documentation
+- [x] Removed VS Code extension references from all docs
+- [x] Consolidated to MCP-only architecture
+- [x] Updated README, CLAUDE.md, and all documentation
+
+---
+
 ## What Needs to Be Done
 
-### Priority 1: Security Hardening (CRITICAL)
+### Priority 1: Security Hardening (CRITICAL) - YOUR MAIN FOCUS
 
 #### 1.1 API Key Encryption
 **Current:** XOR obfuscation (not cryptographically secure)
@@ -204,19 +218,15 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 - Schema validation for all tool inputs
 - Enhanced sanitization beyond null bytes
 
-### Priority 2: MCP-Only Migration
+### Priority 2: MCP Integration Hardening
 
-#### 2.1 Deprecate NPM/NPX Installation
+#### 2.1 Lock Down to MCP-Only Access
 **Current:** Users can `npx @shadow-clone/mcp-server`
-**Required:**
-- MCP-native installation only
-- Remove standalone execution capability
-- Prompts only accessible through MCP protocol
+**Goal:** Ensure prompts are ONLY accessible through authenticated MCP protocol
+- Review if standalone execution exposes any prompts
+- Ensure all tool responses require valid NFT auth
 
-#### 2.2 VS Code Extension (REMOVED)
-**Status:** Removed from repository - MCP is the only integration path
-
-#### 2.3 MCP Integration Documentation
+#### 2.2 MCP Integration Documentation
 **Required:**
 - Step-by-step MCP setup for Claude Desktop
 - Configuration examples for all supported clients
@@ -319,7 +329,7 @@ The following must be validated by our CSO before production deployment:
 - [ ] CSO security review and sign-off
 
 ### Phase 2: MCP-Native Experience
-- [ ] Complete VS Code extension deprecation
+- [x] Complete VS Code extension deprecation (DONE)
 - [ ] MCP-only installation and access
 - [ ] Enhanced workspace initialization
 - [ ] Improved error messaging and diagnostics
