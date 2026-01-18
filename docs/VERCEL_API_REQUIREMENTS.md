@@ -1,6 +1,6 @@
-# Shadow Clone API Requirements for Vercel/Supabase
+# Shadow Clone API Requirements
 
-This document specifies the API endpoints required by the Shadow Clone VS Code extension and MCP server. These endpoints must be implemented on the Vercel dashboard with Supabase backend.
+This document specifies the API endpoints required by the Shadow Clone MCP server for authentication and license validation.
 
 ## Base Configuration
 
@@ -170,8 +170,8 @@ X-API-Key: {apiKey}
 
 ```
 ┌─────────────────────┐
-│  User enters API    │
-│  key in VS Code     │
+│  User calls         │
+│  authenticate()     │
 └──────────┬──────────┘
            │
            ▼
@@ -182,22 +182,23 @@ X-API-Key: {apiKey}
            │
            ▼
 ┌─────────────────────┐     ┌─────────────────┐
-│  valid: true?       │─No─▶│ Show error msg  │
+│  valid: true?       │─No─▶│ Return error    │
 │  isActive: true?    │     └─────────────────┘
 └──────────┬──────────┘
            │ Yes
            ▼
 ┌─────────────────────┐
-│ Store credentials:  │
-│ - VS Code secrets   │
+│ Cache credentials:  │
+│ - Environment var   │
 │ - ~/.shadow-clone/  │
 │ - Workspace .env    │
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
-│ License status      │
-│ polling every 30min │
+│ NFT ownership       │
+│ verified per call   │
+│ (1-min cache)       │
 └─────────────────────┘
 ```
 
@@ -391,7 +392,6 @@ curl -X GET https://api.ignislabs.ai/api/prompts/modes/feature \
 
 ## Contact
 
-For questions about this specification, refer to the Shadow Clone VS Code extension source code in:
-- `vscode-extension/src/auth/authProvider.ts`
-- `vscode-extension/src/services/licenseStatusManager.ts`
-- `vscode-extension/src/utils/constants.ts`
+For questions about this specification, refer to the MCP server source code in:
+- `mcp-server/src/auth/authService.ts`
+- `mcp-server/src/auth/apiKeyManager.ts`

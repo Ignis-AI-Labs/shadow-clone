@@ -36,8 +36,8 @@
   - `execute_single_wave` - Single wave execution
   - `architecture_consultant` - Expert guidance
   
-- **Native Windows Support**:
-  - VSCode extension now works natively on Windows (no WSL required)
+- **Cross-Platform Support**:
+  - MCP server works natively on Windows, macOS, and Linux
   - Updated documentation to reflect cross-platform support
 
 ### Recent Changes (2025-07-16)
@@ -76,7 +76,6 @@
 - **API Consolidation**:
   - Removed redundant cloudflare-worker directory
   - All API functionality handled by main dashboard at api.ignislabs.ai
-  - Admin portal deployed to admin.ignislabs.ai with integrated security monitoring
   - Eliminated dual API confusion - single source of truth
 
 - **Security System Converted to Monitoring-Only Mode**:
@@ -125,22 +124,13 @@
 
 ### Key Component Locations
 
-#### MCP Server (NEW - Recommended):
+#### MCP Server:
 - **MCP Server Root**: `/mcp-server/` - Model Context Protocol server implementation
 - **Embedded Prompts**: `/mcp-server/src/prompts/content/` - All prompts compiled as TypeScript
 - **Tool Implementations**: `/mcp-server/src/tools/` - Combined, embedded, and modular tools
-- **Authentication**: `/mcp-server/src/auth/authService.ts` - License validation (same as VSCode)
+- **Authentication**: `/mcp-server/src/auth/authService.ts` - NFT license validation
 - **Main Entry**: `/mcp-server/src/index.ts` - Server initialization and handler setup
-- **User Guide**: `/mcp-server/USER_GUIDE.md` - Comprehensive usage documentation
-
-#### VSCode Extension:
-- **VSCode Extension**: `/vscode-extension/` - All VSCode extension development work
-- **Macro Injections**: `/vscode-extension/src/providers/macroProvider.ts` - Defines all macro commands and their UI
-- **API Endpoints**: `/vscode-extension/src/utils/constants.ts` - Contains API base URLs (api.ignislabs.ai)
-- **Prompt Service**: `/vscode-extension/src/services/promptService.ts` - Constructs API endpoint paths
-- **Command Injection**: `/vscode-extension/src/commands/injectCommand.ts` - Builds curl commands with API URLs
-- **Endpoint Manifest**: `/CLOUDFLARE_UPLOAD_MANIFEST.md` - Documents all 31 API endpoints
-- **Extension Entry**: `/vscode-extension/src/extension.ts` - Registers commands and activates extension
+- **User Guide**: `/mcp-server/USER-GUIDE.md` - Comprehensive usage documentation
 
 ## Technical Decisions
 
