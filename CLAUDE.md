@@ -4,17 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Shadow Clone is an AI orchestration system that delivers prompt engineering macros to enhance AI capabilities. It consists of two main components:
+Shadow Clone is an AI orchestration system that delivers prompt engineering macros to enhance AI capabilities.
 
-1. **MCP Server** (`mcp-server/`) - Model Context Protocol server for native Claude integration. Delivers structured prompts that teach AIs how to simulate specialized agent behaviors.
-
-2. **VS Code Extension** (`vscode-extension/`) - GUI interface for deploying AI agents and managing Claude sessions.
+**MCP Server** (`mcp-server/`) - Model Context Protocol server for native Claude integration. Delivers structured prompts that teach AIs how to simulate specialized agent behaviors.
 
 Key concept: This is a **prompt delivery system**, not an execution engine. The MCP server returns instructional prompts that the receiving AI then follows.
 
 ## Build Commands
 
-### MCP Server
 ```bash
 cd mcp-server
 npm install
@@ -22,17 +19,6 @@ npm run build              # TypeScript compilation
 npm run build:prod         # Full production build (clean + build + obfuscate)
 npm run dev                # Development mode with watch
 npm run lint               # Type checking (tsc --noEmit)
-```
-
-### VS Code Extension
-```bash
-cd vscode-extension
-npm install
-npm run compile            # TypeScript compilation
-npm run build:dev          # Webpack development build
-npm run build:prod         # Webpack production build (obfuscated)
-npm run package            # Create .vsix file
-npm run lint               # ESLint
 ```
 
 ## Architecture
@@ -45,13 +31,6 @@ npm run lint               # ESLint
 - `src/auth/authService.ts` - API key validation and NFT license verification
 - `src/prompts/` - Embedded prompt content (compiled into TypeScript)
 
-### VS Code Extension Structure
-- `src/extension.ts` - Extension activation, command registration, provider setup
-- `src/commands/` - Command implementations (authenticate, launchClaude, modularCommands, etc.)
-- `src/providers/` - Tree view providers (macroProvider, claudeSessionProvider)
-- `src/services/` - Business logic (licenseStatusManager, securityTelemetry, dependencyChecker)
-- `src/auth/authProvider.ts` - VS Code-side authentication with API key caching
-
 ### Tool Categories
 The MCP server exposes tools that return prompt engineering macros:
 - **Orchestration**: `shadow_clone_orchestrate`, `shadow_clone_plan` - Full multi-wave project execution
@@ -60,11 +39,10 @@ The MCP server exposes tools that return prompt engineering macros:
 - **Utility**: `initialize_workspace`, `api_key_status`, `check_for_updates`
 
 ### Authentication Flow
-Both components use the same API endpoint (api.ignislabs.ai):
 1. User provides API key
-2. Key validated against backend
+2. Key validated against api.ignislabs.ai
 3. NFT license ownership verified
-4. 24-hour session cached locally
+4. Session cached locally (persists until NFT ownership changes)
 
 ## Key Patterns
 
@@ -92,13 +70,7 @@ Production API: `https://api.ignislabs.ai`
 
 ## Testing
 
-MCP Server has no automated tests currently (`npm test` exits with error).
-
-VS Code Extension:
-```bash
-npm run pretest   # Compile + lint
-npm run test      # Run test suite
-```
+MCP Server has no automated tests currently (`npm test` exits with error). Test infrastructure is a priority for the security hardening phase.
 
 ## Important Conventions
 

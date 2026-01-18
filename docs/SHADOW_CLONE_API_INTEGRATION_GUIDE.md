@@ -1,6 +1,8 @@
 # Shadow Clone API Integration Guide
 
-This guide explains how to integrate with the Shadow Clone API for VS Code extensions and other applications.
+This guide documents the Shadow Clone API endpoints used for authentication and license verification.
+
+> **Note:** The MCP Server embeds all prompts directly - no API calls needed for prompt content. These endpoints are primarily for authentication and future integrations.
 
 ## ⚠️ IMPORTANT: Endpoint Migration Required
 
@@ -79,134 +81,6 @@ X-API-Key: sc--mPHsUrZf4J1y0u_1kRgcf7BQ3tYOsnqpAwC562D6MxB2APifDYs9BERAqKwyISu
 | `GET /api/prompts/templates/mode-completion-template` | Text/Markdown | Mode completion summary |
 | `GET /api/prompts/templates/team-agent-templates` | Text/Markdown | Team agent configurations |
 
-## VS Code Extension Implementation
-
-### 1. Configuration
-```typescript
-interface ShadowCloneConfig {
-  apiEndpoint: string;  // Default: "https://api.ignislabs.ai"
-  apiKey: string;       // User's shadow clone license key
-}
-```
-
-### 2. API Client Implementation
-```typescript
-class ShadowCloneAPI {
-  private baseUrl: string;
-  private apiKey: string;
-
-  constructor(config: ShadowCloneConfig) {
-    this.baseUrl = config.apiEndpoint;
-    this.apiKey = config.apiKey;
-  }
-
-  private async fetchEndpoint(path: string): Promise<string> {
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      headers: {
-        'X-API-Key': this.apiKey
-      }
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid API key');
-      }
-      if (response.status === 404) {
-        throw new Error(`Endpoint not found: ${path}`);
-      }
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    return response.text();
-  }
-
-  // Main prompt
-  async getMainPrompt(): Promise<string> {
-    return this.fetchEndpoint('/api/prompts/shadow-clone');
-  }
-
-  // Get specific mode
-  async getMode(mode: string): Promise<string> {
-    return this.fetchEndpoint(`/api/prompts/modes/${mode}`);
-  }
-
-  // Get agent rule
-  async getAgentRule(rule: string): Promise<string> {
-    return this.fetchEndpoint(`/api/prompts/agent-rules/${rule}`);
-  }
-
-  // Get template
-  async getTemplate(template: string): Promise<string> {
-    return this.fetchEndpoint(`/api/prompts/templates/${template}`);
-  }
-
-  // List all prompts (returns JSON)
-  async listPrompts(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/api/prompts`, {
-      headers: { 'X-API-Key': this.apiKey }
-    });
-    return response.json();
-  }
-
-  // List modes (returns JSON)
-  async listModes(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/api/prompts/modes`, {
-      headers: { 'X-API-Key': this.apiKey }
-    });
-    return response.json();
-  }
-}
-```
-
-### 3. Extension Commands Implementation
-```typescript
-// Example: Execute Shadow Clone with Plan Mode
-async function executeShadowClonePlan(task: string) {
-  const api = new ShadowCloneAPI({
-    apiEndpoint: vscode.workspace.getConfiguration('shadowClone').get('apiEndpoint'),
-    apiKey: vscode.workspace.getConfiguration('shadowClone').get('apiKey')
-  });
-
-  try {
-    // Fetch main prompt and plan mode
-    const mainPrompt = await api.getMainPrompt();
-    const planMode = await api.getMode('plan');
-    
-    // Combine prompts
-    const fullPrompt = `${mainPrompt}\n\n${planMode}`;
-    
-    // Create command for AI
-    const command = `shadow-clone plan "${task}"`;
-    
-    // Send to AI integration (Claude, GPT, etc.)
-    // This part depends on your AI integration
-    await sendToAI(fullPrompt, command);
-    
-  } catch (error) {
-    vscode.window.showErrorMessage(`Shadow Clone Error: ${error.message}`);
-  }
-}
-```
-
-### 4. Caching Strategy
-```typescript
-class CachedShadowCloneAPI extends ShadowCloneAPI {
-  private cache = new Map<string, { content: string; timestamp: number }>();
-  private cacheTTL = 3600000; // 1 hour
-
-  async fetchEndpoint(path: string): Promise<string> {
-    const cached = this.cache.get(path);
-    if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
-      return cached.content;
-    }
-
-    const content = await super.fetchEndpoint(path);
-    this.cache.set(path, { content, timestamp: Date.now() });
-    return content;
-  }
-}
-```
-
 ## Error Handling
 
 ### Authentication Errors (401)
@@ -243,46 +117,6 @@ curl -X GET https://api.ignislabs.ai/api/prompts/modes/plan \
 curl -X GET https://api.ignislabs.ai/api/prompts \
   -H "X-API-Key: sc-your-key"
 ```
-
-## VS Code Extension Migration Instructions
-
-### For Extension Developers:
-
-If you're updating the VS Code extension to use these corrected endpoints, here are the key changes:
-
-1. **Update all endpoint paths to use hyphens (-) instead of underscores (_)**
-   ```typescript
-   // ❌ OLD
-   const ENDPOINTS = {
-     agentRules: '/api/prompts/agent_rules/core_rules',
-     // ...
-   };
-   
-   // ✅ NEW
-   const ENDPOINTS = {
-     agentRules: '/api/prompts/agent-rules/core-rules',
-     // ...
-   };
-   ```
-
-2. **Remove references to the manifest endpoint**
-   ```typescript
-   // ❌ Remove this
-   async getManifest(): Promise<string> {
-     return this.fetchEndpoint('/api/prompts/manifest');
-   }
-   ```
-
-3. **Update any hardcoded paths in:**
-   - API client classes
-   - Configuration files
-   - Test files
-   - Documentation
-
-4. **Search and replace patterns:**
-   - Find: `agent_rules` → Replace: `agent-rules`
-   - Find: `core_rules` → Replace: `core-rules`
-   - Find: `/manifest` → Remove endpoint entirely
 
 ## Important Notes
 

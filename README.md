@@ -17,9 +17,7 @@ Shadow Clone prompts are served dynamically through our secure API:
 
 ## 🚀 Quick Start
 
-Shadow Clone offers two powerful integration options:
-
-### Option 1: MCP Server (Recommended)
+### MCP Server Integration
 ```bash
 # Install MCP Server
 npm install -g @shadow-clone/mcp-server
@@ -40,51 +38,27 @@ npm install -g @shadow-clone/mcp-server
 - Deploy agents with simple function calls
 ```
 
-### Option 2: VS Code Extension
-```bash
-# Install VS Code Extension
-code --install-extension shadow-clone-*.vsix
-
-# Launch through VS Code
-1. Click "Launch Claude" button in status bar
-2. Select mode and parameters
-3. Paste command when Claude is ready
-```
-
-Both options provide:
+**Features:**
 - Secure prompt delivery (never stored locally)
-- License verification
+- NFT-based license verification
 - Full Shadow Clone capabilities
-- IP protection
+- IP protection via compiled prompts
 
 ## 📋 Key Documentation
 
 - **[CLAUDE.md](./CLAUDE.md)** - AI context file for understanding the system
-- **[CRITICAL_RULES.md](./CRITICAL_RULES.md)** - Essential system rules (internal reference)
-- **[STREAMLINING_SUMMARY.md](./STREAMLINING_SUMMARY.md)** - Documentation improvements (75% reduction)
+- **[mcp-server/USER-GUIDE.md](./mcp-server/USER-GUIDE.md)** - MCP server usage guide
+- **[docs/](./docs/)** - Additional documentation
 
 ## 🎯 System Architecture
 
 ```
-Shadow Clone API Server
-├── Prompt Engine               # Dynamic prompt generation
-├── License Verification        # Access control
-├── Mode Configurations         # Project type templates
-└── Security Layer             # IP protection
-
-Integration Options:
-
-1. MCP Server (Recommended)
-├── Embedded Prompts          # All prompts compiled in
-├── Native Claude Tools       # Direct function calls
+Shadow Clone MCP Server
+├── Embedded Prompts          # All prompts compiled in TypeScript
+├── Native Claude Tools       # Direct function calls via MCP
 ├── Modular Tools            # Granular agent deployment
-└── Session Persistence      # 24-hour authentication
-
-2. VS Code Extension
-├── Authentication           # License key management
-├── Prompt Service          # Secure API client
-├── Claude Integration      # Command generation
-└── Session Management      # Track AI agent deployments
+├── NFT License Verification  # Blockchain-based access control
+└── Session Persistence      # Cached authentication
 ```
 
 ## 💎 Exclusive Access
@@ -151,9 +125,8 @@ $waves_directory/
 
 ## 🎮 Usage Examples
 
-### Using MCP Server (Recommended):
 ```javascript
-// Authenticate once per 24 hours
+// Authenticate once per session
 authenticate(apiKey: "your-shadow-clone-api-key")
 
 // Deploy full orchestration
@@ -167,22 +140,15 @@ quick_fix(
   issueType: "bug",
   description: "Fix login form validation error"
 )
+
+// Deploy specialized teams
+deploy_agent_team(
+  teamType: "frontend",
+  task: "Implement responsive dashboard"
+)
 ```
 
-### Using VS Code Extension:
-1. Click "Launch Claude" button in status bar
-2. Select mode:
-   - **Audit**: Comprehensive security assessment
-   - **Feature**: Build new functionality
-   - **Refactor**: Improve existing code
-   - **Optimize**: Performance enhancements
-   - **Debug**: Fix issues
-   - **Research**: Analyze without changes
-3. Configure parameters (project plan, waves directory)
-4. Extension generates secure command with embedded prompts
-5. Paste in Claude when ready
-
-Note: Both methods protect intellectual property - prompts are never exposed as plain text files.
+**Note:** All prompts are compiled into the MCP server - never exposed as plain text files.
 
 ## 📊 Project Modes
 
@@ -195,25 +161,22 @@ Note: Both methods protect intellectual property - prompts are never exposed as 
 
 ## 🚀 Advanced Features
 
-### MCP Server Features:
-- **Modular Tools**: Deploy single agents or teams for focused tasks
-  - `deploy_agent_team` - Specialized team deployment
-  - `deploy_specialist_agent` - Single expert agents
-  - `quick_fix` - Rapid bug fixes
-  - `code_review_team` - Targeted code reviews
-  - `generate_tests` - Automated test creation
-  - `create_documentation` - Documentation generation
-  - `execute_single_wave` - Single wave execution
-  - `architecture_consultant` - Expert guidance
-- **Native Integration**: Direct function calls in Claude
-- **Persistent Auth**: 24-hour authentication sessions
+### Modular Tools
+Deploy single agents or teams for focused tasks:
+- `deploy_agent_team` - Specialized team deployment (frontend, backend, database, etc.)
+- `deploy_specialist_agent` - Single expert agents (react_expert, api_designer, etc.)
+- `quick_fix` - Rapid bug fixes
+- `code_review_team` - Targeted code reviews
+- `generate_tests` - Automated test creation
+- `create_documentation` - Documentation generation
+- `execute_single_wave` - Single wave execution
+- `architecture_consultant` - Expert guidance
 
-### VS Code Extension Features:
-- **Resume Previous Session**: Select "Resume Previous" in extension
-- **Track Active Sessions**: View real-time progress in Claude Sessions panel
-- **Custom Parameters**: Build complex commands with interactive prompts
-- **Session Management**: Monitor and control multiple AI agent deployments
-- **Secure Prompt Caching**: 30-minute cache for optimal performance
+### Core Features
+- **Native Integration**: Direct function calls via MCP protocol
+- **NFT Authentication**: Blockchain-based license verification
+- **Embedded Prompts**: All prompts compiled into server (IP protected)
+- **Parallel Deployment**: Up to 10 agents per batch
 
 ---
 
