@@ -142,6 +142,49 @@ User → API Key → Backend Validation → NFT Ownership Check → Access Grant
 
 ## Architecture Overview
 
+### Deployment Model (IMPORTANT)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     USER'S LOCAL MACHINE                        │
+│  ┌─────────────┐      ┌─────────────────────────────────────┐  │
+│  │   Claude    │ MCP  │     Shadow Clone MCP Server         │  │
+│  │   Desktop   │◄────►│  (installed via npm, runs locally)  │  │
+│  └─────────────┘      └──────────────┬──────────────────────┘  │
+│                                      │                          │
+└──────────────────────────────────────┼──────────────────────────┘
+                                       │ HTTPS (auth only)
+                                       ▼
+                        ┌─────────────────────────────┐
+                        │   api.ignislabs.ai          │
+                        │   (License Validation API)  │
+                        │   - Vercel/Supabase hosted  │
+                        │   - Validates API keys      │
+                        │   - Checks NFT ownership    │
+                        └─────────────────────────────┘
+```
+
+**Key Points:**
+1. **MCP Server = Local** - Users install via `npm install -g @shadow-clone/mcp-server`, runs on their machine
+2. **Backend API = Remote** - Only handles license/NFT validation at `api.ignislabs.ai`
+3. **Prompts = Embedded** - All prompts compiled into the npm package, never fetched from API
+4. **No hosted MCP** - We don't run MCP servers for users; they run their own
+
+**Current Backend Stack:**
+- **Hosting:** Vercel (serverless functions)
+- **Database:** Supabase (PostgreSQL)
+- **Language:** TypeScript (Next.js API routes)
+- **Auth:** API key + NFT ownership verification
+
+**What the Backend Does:**
+- `POST /shadow-clone-licenses/validate` - Validates API key, checks NFT ownership
+- Returns: `{ valid: true, isActive: true, licenseType: "ignisElite", ... }`
+
+**What the Backend Does NOT Do:**
+- Does NOT serve prompts (embedded in MCP server)
+- Does NOT run MCP protocol (local only)
+- Does NOT store user data beyond license info
+
 ### MCP Server Structure
 
 ```
