@@ -5,9 +5,19 @@ import * as os from 'os';
 import { logger } from '../utils/logger.js';
 import { ApiKeyManager } from './apiKeyManager.js';
 import { CreatorMode } from './creatorMode.js';
+import { encrypt, decryptWithMigration } from './encryption.js';
 
 interface AuthData {
-  apiKey: string;
+  apiKey: string; // Stored encrypted in file, decrypted in memory
+  userId: string;
+  licenseType: string;
+  walletAddress?: string;
+  lastVerified: number;
+}
+
+interface StoredAuthData {
+  encryptedApiKey?: string; // v2 format
+  apiKey?: string; // v1 format (plain text) - for migration
   userId: string;
   licenseType: string;
   walletAddress?: string;
@@ -74,8 +84,41 @@ export class AuthService {
   private async loadAuthData() {
     try {
       const data = await fs.readFile(this.authFilePath, 'utf-8');
-      this.authData = JSON.parse(data);
-      
+      const storedData: StoredAuthData = JSON.parse(data);
+
+      // Handle v2 format (encrypted API key)
+      if (storedData.encryptedApiKey) {
+        const { plaintext, needsMigration } = decryptWithMigration(storedData.encryptedApiKey);
+        this.authData = {
+          apiKey: plaintext,
+          userId: storedData.userId,
+          licenseType: storedData.licenseType,
+          walletAddress: storedData.walletAddress,
+          lastVerified: storedData.lastVerified,
+        };
+
+        // Re-save if migration was needed (v1 XOR to v2 AES)
+        if (needsMigration) {
+          logger.info('Migrating mcp-auth.json from v1 to v2 encryption format');
+          await this.saveAuthData();
+        }
+      }
+      // Handle v1 format (plain text API key) - migrate to v2
+      else if (storedData.apiKey) {
+        logger.info('Migrating mcp-auth.json from plain text to encrypted format');
+        this.authData = {
+          apiKey: storedData.apiKey,
+          userId: storedData.userId,
+          licenseType: storedData.licenseType,
+          walletAddress: storedData.walletAddress,
+          lastVerified: storedData.lastVerified,
+        };
+        // Re-save with encryption
+        await this.saveAuthData();
+      } else {
+        this.authData = null;
+      }
+
       // Auth data persists until NFT ownership changes
       // No automatic expiration based on time
     } catch (error) {
@@ -86,14 +129,28 @@ export class AuthService {
 
   private async saveAuthData() {
     if (!this.authData) return;
-    
+
     try {
       await this.ensureConfigDir();
-      await fs.writeFile(this.authFilePath, JSON.stringify(this.authData, null, 2));
+
+      // Encrypt the API key before storing
+      const encrypted = encrypt(this.authData.apiKey);
+
+      const storedData: StoredAuthData = {
+        encryptedApiKey: encrypted.payload,
+        userId: this.authData.userId,
+        licenseType: this.authData.licenseType,
+        walletAddress: this.authData.walletAddress,
+        lastVerified: this.authData.lastVerified,
+      };
+
+      await fs.writeFile(this.authFilePath, JSON.stringify(storedData, null, 2));
       // Set restrictive permissions (owner read/write only)
       await fs.chmod(this.authFilePath, 0o600);
     } catch (error) {
-      logger.error('Failed to save auth data:', error);
+      logger.error('Failed to save auth data', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
   }
 
@@ -163,15 +220,21 @@ export class AuthService {
       }
       
       return { success: false, message: 'Invalid API key' };
-    } catch (error: any) {
-      logger.error('Authentication failed:', error);
-      
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      // Sanitize error logging to avoid leaking sensitive data
+      const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
+      logger.error('Authentication failed', {
+        status: axiosError.response?.status,
+        code: axiosError.code,
+        message: axiosError.message,
+      });
+
+      if (axiosError.response?.status === 401) {
         return { success: false, message: 'Invalid API key. Please check your credentials.' };
-      } else if (error.response?.status === 403) {
+      } else if (axiosError.response?.status === 403) {
         return { success: false, message: 'Access denied. Your license may have expired.' };
       }
-      
+
       return { success: false, message: 'Authentication failed. Please try again.' };
     }
   }
@@ -251,15 +314,21 @@ export class AuthService {
       }
       
       return isActive;
-    } catch (error) {
-      logger.error('NFT verification failed:', error);
-      
+    } catch (error: unknown) {
+      // Sanitize error logging to avoid leaking sensitive data
+      const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
+      logger.error('NFT verification failed', {
+        status: axiosError.response?.status,
+        code: axiosError.code,
+        message: axiosError.message,
+      });
+
       // On network errors, use cached value if available and recent (within 5 minutes)
       if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
         logger.info('Using cached verification due to network error');
         return cached.isActive;
       }
-      
+
       return false;
     }
   }

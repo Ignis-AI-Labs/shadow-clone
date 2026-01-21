@@ -1,5 +1,4 @@
 import { AuthService } from '../auth/authService.js';
-import { ApiKeyManager } from '../auth/apiKeyManager.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -14,16 +13,13 @@ interface ToolDefinition {
 }
 
 export class WorkspaceInitializer {
-  private apiKeyManager: ApiKeyManager;
+  constructor(private authService: AuthService) {}
 
-  constructor(private authService: AuthService) {
-    this.apiKeyManager = ApiKeyManager.getInstance();
-  }
 
   getToolDefinition(): ToolDefinition {
     return {
       name: 'initialize_workspace',
-      description: `Initialize a workspace with Shadow Clone AI instructions - ACTUALLY creates files (unlike other tools). Sets up CLAUDE.md, .ai/instructions.md, .github/copilot-instructions.md with complete command reference. Handles existing files by appending. Stores API key in .env as backup.`,
+      description: `Initialize a workspace with Shadow Clone AI instructions - ACTUALLY creates files (unlike other tools). Sets up CLAUDE.md, .ai/instructions.md, .github/copilot-instructions.md with complete command reference. Handles existing files by appending.`,
       inputSchema: {
         type: 'object',
         properties: {
@@ -62,46 +58,20 @@ Use the authenticate tool with your API key from: https://dashboard.ignislabs.ai
     const overwrite = args.overwrite || false;
     const includeTypes = args.includeTypes || ['claude', 'github', 'vscode', 'general'];
 
-    // Get the current API key to save as backup
-    const currentApiKey = await this.apiKeyManager.getApiKey();
-    
     let results = [];
-    
+
     try {
-      // 1. Handle .env file
-      const envPath = path.join(projectPath, '.env');
+      // 1. Ensure .gitignore has Shadow Clone patterns
       const gitignorePath = path.join(projectPath, '.gitignore');
-      
-      try {
-        await fs.access(envPath);
-        // .env exists, check if it has the key
-        const envContent = await fs.readFile(envPath, 'utf-8');
-        if (!envContent.includes('SHADOW_CLONE_API_KEY') && currentApiKey) {
-          await fs.appendFile(envPath, `\nSHADOW_CLONE_API_KEY=${currentApiKey}\n`);
-          results.push('✅ Added API key to existing .env file');
-        } else {
-          results.push('ℹ️ .env file already configured');
-        }
-      } catch {
-        // .env doesn't exist, create it
-        if (currentApiKey) {
-          await fs.writeFile(envPath, `SHADOW_CLONE_API_KEY=${currentApiKey}\n`);
-          results.push('✅ Created .env file with API key');
-        } else {
-          await fs.writeFile(envPath, `SHADOW_CLONE_API_KEY=your-api-key-here\n`);
-          results.push('✅ Created .env file (add your API key)');
-        }
-      }
-      
-      // Ensure .env is in .gitignore
+
       try {
         const gitignoreContent = await fs.readFile(gitignorePath, 'utf-8');
-        if (!gitignoreContent.includes('.env')) {
-          await fs.appendFile(gitignorePath, '\n# Shadow Clone\n.env\n.shadow-clone/\n.waves/\n');
+        if (!gitignoreContent.includes('.shadow-clone/') || !gitignoreContent.includes('.waves/')) {
+          await fs.appendFile(gitignorePath, '\n# Shadow Clone\n.shadow-clone/\n.waves/\n');
           results.push('✅ Updated .gitignore');
         }
       } catch {
-        await fs.writeFile(gitignorePath, '# Shadow Clone\n.env\n.shadow-clone/\n.waves/\n');
+        await fs.writeFile(gitignorePath, '# Shadow Clone\n.shadow-clone/\n.waves/\n');
         results.push('✅ Created .gitignore');
       }
 
