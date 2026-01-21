@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as os from 'os';
+import { logger } from '../utils/logger.js';
 
 /**
  * AES-256-GCM Encryption Service
@@ -37,8 +38,8 @@ export interface EncryptedData {
 }
 
 /**
- * Derive a 256-bit encryption key from machine-specific identifiers
- * Uses scrypt for key derivation (CPU/memory-hard, resists brute force)
+ * Derive a 256-bit encryption key from machine-specific identifiers.
+ * Uses scrypt for key derivation (CPU/memory-hard, resists brute force).
  *
  * Key derivation inputs:
  * - os.hostname() - Machine's hostname
@@ -47,6 +48,15 @@ export interface EncryptedData {
  *
  * This makes the key unique per machine/user combination.
  * If the config file is moved to another machine, decryption will fail.
+ *
+ * **Security Tradeoff Note:**
+ * The salt includes the same data as the password (machineIdentifier). This is
+ * unconventional - normally salt should be random and stored separately. However,
+ * for this threat model (protecting against casual exposure, not determined attackers
+ * with full machine access), this is an acceptable tradeoff that enables zero-friction
+ * encryption without requiring users to remember or store additional secrets.
+ *
+ * @returns 32-byte (256-bit) derived key for AES-256 encryption
  */
 export function deriveKey(): Buffer {
   const machineIdentifier = `${os.hostname()}:${os.homedir()}`;
@@ -182,8 +192,13 @@ export function decryptV1(encoded: string): string {
     }
 
     return result;
-  } catch {
-    // If decoding fails, return as-is
+  } catch (error) {
+    // If decoding fails, return as-is (likely not v1 format or corrupted)
+    // This is intentional - we fall back gracefully rather than throwing
+    logger.debug('V1 decryption failed, returning input unchanged', {
+      inputLength: encoded.length,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
     return encoded;
   }
 }

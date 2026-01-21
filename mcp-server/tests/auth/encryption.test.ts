@@ -8,22 +8,7 @@ import {
   migrateV1ToV2,
   decryptWithMigration,
 } from '../../src/auth/encryption';
-
-// Constants for testing
-const V1_XOR_KEY = 'shadow-clone-2024';
-
-/**
- * Helper: Create v1 (XOR) encrypted data for testing migration
- */
-function createV1EncryptedData(plaintext: string): string {
-  let encrypted = '';
-  for (let i = 0; i < plaintext.length; i++) {
-    encrypted += String.fromCharCode(
-      plaintext.charCodeAt(i) ^ V1_XOR_KEY.charCodeAt(i % V1_XOR_KEY.length)
-    );
-  }
-  return Buffer.from(encrypted, 'binary').toString('base64');
-}
+import { createV1EncryptedData } from '../testUtils';
 
 describe('encryption module', () => {
   describe('deriveKey', () => {
