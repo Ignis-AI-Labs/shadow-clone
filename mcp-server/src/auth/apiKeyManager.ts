@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { encrypt, decryptWithMigration, EncryptedData } from './encryption.js';
+import { encrypt, decryptWithMigration } from './encryption.js';
 import { logger } from '../utils/logger.js';
 
 /**

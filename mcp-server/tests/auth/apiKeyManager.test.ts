@@ -3,18 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { ApiKeyManager } from '../../src/auth/apiKeyManager';
-
-// Helper to create v1 XOR encrypted data
-function createV1EncryptedData(plaintext: string): string {
-  const xorKey = 'shadow-clone-2024';
-  let encrypted = '';
-  for (let i = 0; i < plaintext.length; i++) {
-    encrypted += String.fromCharCode(
-      plaintext.charCodeAt(i) ^ xorKey.charCodeAt(i % xorKey.length)
-    );
-  }
-  return Buffer.from(encrypted, 'binary').toString('base64');
-}
+import { createV1EncryptedData } from '../testUtils';
 
 describe('ApiKeyManager', () => {
   let manager: ApiKeyManager;
