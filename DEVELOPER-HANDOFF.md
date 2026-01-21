@@ -83,6 +83,7 @@ This transforms Shadow Clone from a tool into a **platform** - users don't just 
 ```
 shadow-clone/
 ├── mcp-server/        # THE core system - MCP server for Claude integration
+├── api/               # Vercel API - License validation backend
 ├── docs/              # Documentation
 ├── .shadow/           # Production prompts reference
 └── .shadow-local/     # Creator mode config
