@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { logger } from '../utils/logger.js';
 
 /**
  * Creator Mode Detection and Management
- * 
+ *
  * Provides privileged access for the Shadow Clone creator
  * when working locally on their own machine.
  */
@@ -48,7 +49,7 @@ export class CreatorMode {
                     if (config.mode === 'CREATOR_PRIVILEGED' && config.creator === true) {
                         this.isCreator = true;
                         this.creatorConfig = config;
-                        console.log(`🎯 Creator Mode detected at: ${configPath}`);
+                        logger.info('Creator Mode detected', { configPath });
                         return;
                     }
                 } catch (error) {
@@ -67,7 +68,7 @@ export class CreatorMode {
                 apiKey: 'LOCAL_CREATOR_MODE',
                 licenseType: 'UNLIMITED'
             };
-            console.log('🎯 Creator Mode enabled via environment variable');
+            logger.info('Creator Mode enabled via environment variable');
         }
     }
     
@@ -137,10 +138,12 @@ Perfect for local development and company projects.`;
                 if (config.mode === 'CREATOR_PRIVILEGED') {
                     this.isCreator = true;
                     this.creatorConfig = config;
-                    console.log('✅ Creator mode manually enabled');
+                    logger.info('Creator mode manually enabled');
                 }
             } catch (error) {
-                console.error('Failed to enable creator mode:', error);
+                logger.error('Failed to enable creator mode', {
+                    message: error instanceof Error ? error.message : 'Unknown error',
+                });
             }
         }
     }
