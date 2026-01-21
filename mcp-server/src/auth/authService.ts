@@ -100,7 +100,10 @@ export class AuthService {
         // Re-save if migration was needed (v1 XOR to v2 AES)
         if (needsMigration) {
           logger.info('Migrating mcp-auth.json from v1 to v2 encryption format');
-          await this.saveAuthData();
+          const encrypted = encrypt(plaintext);
+          await this.saveAuthData(encrypted.payload);
+          // Sync to config.json so both files have the same encrypted value
+          await this.apiKeyManager.saveApiKey(plaintext, encrypted.payload);
         }
       }
       // Handle v1 format (plain text API key) - migrate to v2
@@ -113,8 +116,11 @@ export class AuthService {
           walletAddress: storedData.walletAddress,
           lastVerified: storedData.lastVerified,
         };
-        // Re-save with encryption
-        await this.saveAuthData();
+        // Encrypt once and save to both files
+        const encrypted = encrypt(storedData.apiKey);
+        await this.saveAuthData(encrypted.payload);
+        // Sync to config.json so both files have the same encrypted value
+        await this.apiKeyManager.saveApiKey(storedData.apiKey, encrypted.payload);
       } else {
         this.authData = null;
       }
@@ -127,17 +133,14 @@ export class AuthService {
     }
   }
 
-  private async saveAuthData() {
+  private async saveAuthData(encryptedPayload: string) {
     if (!this.authData) return;
 
     try {
       await this.ensureConfigDir();
 
-      // Encrypt the API key before storing
-      const encrypted = encrypt(this.authData.apiKey);
-
       const storedData: StoredAuthData = {
-        encryptedApiKey: encrypted.payload,
+        encryptedApiKey: encryptedPayload,
         userId: this.authData.userId,
         licenseType: this.authData.licenseType,
         walletAddress: this.authData.walletAddress,
@@ -186,7 +189,7 @@ export class AuthService {
 
       if (response.data.valid) {
         const isActive = response.data.isActive !== false;
-        
+
         this.authData = {
           apiKey,
           userId: response.data.userId,
@@ -194,11 +197,14 @@ export class AuthService {
           walletAddress: response.data.walletAddress,
           lastVerified: Date.now()
         };
-        
-        await this.saveAuthData();
-        
-        // Save API key to all cache locations
-        await this.apiKeyManager.saveApiKey(apiKey);
+
+        // Encrypt once, use for both storage files
+        const encrypted = encrypt(apiKey);
+
+        await this.saveAuthData(encrypted.payload);
+
+        // Save API key to all cache locations (pass same encrypted payload)
+        await this.apiKeyManager.saveApiKey(apiKey, encrypted.payload);
         
         // Cache the verification result
         this.verificationCache.set(apiKey, {

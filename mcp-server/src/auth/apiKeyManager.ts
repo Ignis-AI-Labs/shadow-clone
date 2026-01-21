@@ -57,8 +57,10 @@ export class ApiKeyManager {
 
   /**
    * Save API key to storage locations
+   * @param apiKey - Plain text API key
+   * @param encryptedPayload - Optional pre-encrypted payload to use directly
    */
-  async saveApiKey(apiKey: string): Promise<void> {
+  async saveApiKey(apiKey: string, encryptedPayload?: string): Promise<void> {
     // Always save to memory first
     this.memoryCache = apiKey;
 
@@ -66,7 +68,7 @@ export class ApiKeyManager {
     process.env.SHADOW_CLONE_API_KEY = apiKey;
 
     // Save to global config (encrypted)
-    await this.saveToGlobalConfig(apiKey);
+    await this.saveToGlobalConfig(apiKey, encryptedPayload);
 
     // Reset validation timer
     this.lastValidationTime = Date.now();
@@ -132,8 +134,10 @@ export class ApiKeyManager {
 
   /**
    * Save to global config file (AES-256-GCM encrypted)
+   * @param apiKey - Plain text API key (used if encryptedPayload not provided)
+   * @param encryptedPayload - Optional pre-encrypted payload to use directly
    */
-  private async saveToGlobalConfig(apiKey: string): Promise<void> {
+  private async saveToGlobalConfig(apiKey: string, encryptedPayload?: string): Promise<void> {
     try {
       this.ensureConfigDirectory();
 
@@ -149,9 +153,9 @@ export class ApiKeyManager {
         }
       }
 
-      // Encrypt API key with AES-256-GCM
-      const encrypted: EncryptedData = encrypt(apiKey);
-      config.apiKey = encrypted.payload;
+      // Use provided encrypted payload or encrypt the API key
+      const payload = encryptedPayload ?? encrypt(apiKey).payload;
+      config.apiKey = payload;
       config.lastUpdated = new Date().toISOString();
       config.version = '2.0.0';
 
