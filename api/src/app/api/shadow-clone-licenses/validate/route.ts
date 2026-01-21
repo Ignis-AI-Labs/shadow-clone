@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, ValidationResponse } from '@/lib/supabase';
+import { hashApiKey, isValidKeyFormat } from '@/lib/apiKeys';
 
 // CORS preflight
 export async function OPTIONS() {
@@ -27,37 +28,16 @@ export async function POST(request: NextRequest): Promise<NextResponse<Validatio
       );
     }
 
-    // -----------------------------------------
-    // DEV MODE: For testing without Supabase
-    // -----------------------------------------
-    if (process.env.DEV_MODE === 'true') {
-      // Accept any key starting with 'sc-dev-' for testing
-      if (apiKey.startsWith('sc-dev-')) {
-        return NextResponse.json({
-          valid: true,
-          isActive: true,
-          userId: 'dev-user-123',
-          licenseType: 'ignisElite',
-          walletAddress: '0xDEV000000000000000000000000000000000000',
-          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-        });
-      }
-
-      // Also accept the test key for CI/CD
-      if (apiKey === 'sc-test-key-for-development') {
-        return NextResponse.json({
-          valid: true,
-          isActive: true,
-          userId: 'test-user',
-          licenseType: 'pioneer',
-          walletAddress: '0xTEST00000000000000000000000000000000000',
-          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        });
-      }
+    // Validate key format
+    if (!isValidKeyFormat(apiKey)) {
+      return NextResponse.json(
+        { valid: false, message: 'Invalid API key format' },
+        { status: 401 }
+      );
     }
 
     // -----------------------------------------
-    // PRODUCTION: Query Supabase
+    // Check Supabase configuration
     // -----------------------------------------
     if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
       console.error('Supabase not configured');
@@ -67,14 +47,20 @@ export async function POST(request: NextRequest): Promise<NextResponse<Validatio
       );
     }
 
+    // -----------------------------------------
+    // Hash the key and look up in database
+    // We store hashes, not raw keys
+    // -----------------------------------------
+    const hashedKey = hashApiKey(apiKey);
+
     const { data: license, error } = await supabase
       .from('shadow_clone_licenses')
       .select('*')
-      .eq('api_key', apiKey)
+      .eq('api_key', hashedKey)
       .single();
 
     if (error || !license) {
-      console.log('License lookup failed:', error?.message || 'Not found');
+      // Don't reveal whether key exists or not
       return NextResponse.json(
         { valid: false, message: 'Invalid API key' },
         { status: 401 }
