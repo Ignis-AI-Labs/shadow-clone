@@ -66,7 +66,8 @@
     "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "ethers": "^6.16.0",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
