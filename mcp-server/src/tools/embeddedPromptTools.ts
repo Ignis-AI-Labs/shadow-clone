@@ -20,16 +20,11 @@ export class EmbeddedPromptTools {
     return [
       {
         name: 'authenticate',
-        description: 'Authenticate with your Shadow Clone API key',
+        description: 'Start browser-based authentication. Opens a local webpage where you can securely enter your API key without exposing it to the MCP client.',
         inputSchema: {
           type: 'object',
-          properties: {
-            apiKey: {
-              type: 'string',
-              description: 'Your Shadow Clone API key from dashboard.ignislabs.ai',
-            },
-          },
-          required: ['apiKey'],
+          properties: {},
+          required: [],
         },
       },
       {

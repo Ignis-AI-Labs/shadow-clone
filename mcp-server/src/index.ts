@@ -129,31 +129,68 @@ class ShadowCloneMCPServer {
       try {
         // Handle authentication separately
         if (validatedName === 'authenticate') {
-          const apiKey = validateString(args?.apiKey, 'apiKey', { 
-            required: true, 
-            minLength: 10,
-            maxLength: 200 
-          });
-          
-          if (!apiKey) {
-            throw new McpError(
-              ErrorCode.InvalidParams,
-              'API key is required for authentication'
-            );
+          // Check if already authenticated
+          if (await this.authService.isAuthenticated()) {
+            const licenseType = await this.authService.getLicenseType();
+            logPerformance('authenticate', Date.now() - startTime, {
+              success: true,
+              alreadyAuthenticated: true
+            });
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Already authenticated!\nLicense: ${licenseType}\n\nYou can use all Shadow Clone tools.`,
+                },
+              ],
+            };
           }
-          
-          const result = await this.authService.authenticate(apiKey);
-          
-          logPerformance('authenticate', Date.now() - startTime, { 
-            success: result.success 
+
+          // Check if browser auth is already pending
+          if (this.authService.isBrowserAuthPending()) {
+            const url = this.authService.getBrowserAuthUrl();
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `# Authentication In Progress
+
+A browser authentication session is already active.
+
+Please open the following URL in your browser:
+
+**${url}**
+
+Enter your Shadow Clone API key on the page.
+Get your API key at: https://dashboard.ignislabs.ai
+
+After authenticating in the browser, you can use all Shadow Clone tools.`,
+                },
+              ],
+            };
+          }
+
+          // Start browser-based authentication
+          const { url } = await this.authService.startBrowserAuth();
+
+          logPerformance('authenticate', Date.now() - startTime, {
+            success: true,
+            browserAuthStarted: true
           });
           return {
             content: [
               {
                 type: 'text',
-                text: result.success 
-                  ? `✅ Authenticated successfully! License type: ${result.licenseType}`
-                  : `❌ Authentication failed: ${result.message}`,
+                text: `# Authentication Required
+
+Please open the following URL in your browser:
+
+**${url}**
+
+Enter your Shadow Clone API key on the page.
+Get your API key at: https://dashboard.ignislabs.ai
+
+After authenticating in the browser, you can use all Shadow Clone tools.`,
               },
             ],
           };
