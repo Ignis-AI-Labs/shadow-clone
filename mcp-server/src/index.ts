@@ -42,6 +42,7 @@ import {
   ErrorCode,
   McpError
 } from '@modelcontextprotocol/sdk/types.js';
+import { exec } from 'child_process';
 import { AuthService } from './auth/authService.js';
 import { CombinedTools } from './tools/combinedTools.js';
 import { logger, logInfo, logError, logPerformance } from './utils/logger.js';
@@ -56,6 +57,42 @@ try {
 } catch (error) {
   logError(error as Error);
   process.exit(1);
+}
+
+/**
+ * Check if running inside WSL (Windows Subsystem for Linux)
+ */
+function isWSL(): boolean {
+  try {
+    const release = require('os').release().toLowerCase();
+    return release.includes('microsoft') || release.includes('wsl');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Open URL in the user's default browser (cross-platform, including WSL)
+ */
+function openBrowser(url: string): void {
+  let command: string;
+
+  if (process.platform === 'win32') {
+    command = `start "" "${url}"`;
+  } else if (process.platform === 'darwin') {
+    command = `open "${url}"`;
+  } else if (isWSL()) {
+    // WSL: use Windows cmd.exe to open URL in Windows browser
+    command = `cmd.exe /c start "" "${url}"`;
+  } else {
+    command = `xdg-open "${url}"`;
+  }
+
+  exec(command, (error) => {
+    if (error) {
+      logError(error, { context: 'openBrowser', url, platform: process.platform, isWSL: isWSL() });
+    }
+  });
 }
 
 class ShadowCloneMCPServer {
@@ -261,7 +298,15 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
   async start() {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
+
+    // Proactive authentication: check auth status and auto-open browser if needed
+    const isAuthenticated = await this.authService.isAuthenticated();
+    if (!isAuthenticated) {
+      const { url } = await this.authService.startBrowserAuth();
+      openBrowser(url);
+      logInfo('Authentication required - browser opened automatically', { url });
+    }
+
     // Set up health monitoring
     healthMonitor.setAuthCheck(async () => {
       try {
