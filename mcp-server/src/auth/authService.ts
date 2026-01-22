@@ -6,6 +6,7 @@ import { logger } from '../utils/logger.js';
 import { ApiKeyManager } from './apiKeyManager.js';
 import { CreatorMode } from './creatorMode.js';
 import { encrypt, decryptWithMigration } from './encryption.js';
+import { LocalAuthServer, AuthResult } from './localAuthServer.js';
 
 interface AuthData {
   apiKey: string; // Stored encrypted in file, decrypted in memory
@@ -32,6 +33,7 @@ export class AuthService {
   private readonly CACHE_DURATION = 60000; // 1 minute cache to avoid hammering the API
   private apiKeyManager: ApiKeyManager;
   private creatorMode: CreatorMode;
+  private localAuthServer: LocalAuthServer | null = null;
 
   constructor() {
     // Store auth data in user's home directory
@@ -397,5 +399,101 @@ export class AuthService {
    */
   isCreatorMode(): boolean {
     return this.creatorMode.isCreatorMode();
+  }
+
+  /**
+   * Start browser-based authentication flow
+   * Launches a local HTTP server where the user can enter their API key
+   * @returns URL for the user to open in their browser
+   */
+  async startBrowserAuth(): Promise<{ url: string; port: number }> {
+    // Cancel any existing browser auth
+    if (this.localAuthServer) {
+      await this.cancelBrowserAuth();
+    }
+
+    // Create validation function that wraps authenticate
+    const validateApiKey = async (apiKey: string) => {
+      const result = await this.authenticate(apiKey);
+      return {
+        success: result.success,
+        licenseType: result.licenseType,
+        userId: this.authData?.userId,
+        walletAddress: this.authData?.walletAddress,
+        message: result.message
+      };
+    };
+
+    // Create and start the local auth server
+    this.localAuthServer = new LocalAuthServer(validateApiKey);
+    const { port, url } = await this.localAuthServer.start();
+
+    logger.info('Browser auth started', { url });
+
+    return { url, port };
+  }
+
+  /**
+   * Wait for browser authentication to complete
+   * @param timeoutMs - Maximum time to wait (default: 5 minutes)
+   * @returns Authentication result
+   */
+  async waitForBrowserAuth(timeoutMs?: number): Promise<{
+    success: boolean;
+    licenseType?: string;
+    message?: string;
+  }> {
+    if (!this.localAuthServer) {
+      return {
+        success: false,
+        message: 'No browser authentication in progress'
+      };
+    }
+
+    try {
+      const result = await this.localAuthServer.waitForAuth(timeoutMs);
+
+      if (result.success) {
+        return {
+          success: true,
+          licenseType: result.licenseType
+        };
+      } else {
+        return {
+          success: false,
+          message: result.error || 'Authentication failed'
+        };
+      }
+    } finally {
+      this.localAuthServer = null;
+    }
+  }
+
+  /**
+   * Cancel any pending browser authentication
+   */
+  async cancelBrowserAuth(): Promise<void> {
+    if (this.localAuthServer) {
+      await this.localAuthServer.shutdown();
+      this.localAuthServer = null;
+      logger.info('Browser auth cancelled');
+    }
+  }
+
+  /**
+   * Check if browser authentication is in progress
+   */
+  isBrowserAuthPending(): boolean {
+    return this.localAuthServer !== null && this.localAuthServer.isRunning();
+  }
+
+  /**
+   * Get the current browser auth URL if authentication is pending
+   */
+  getBrowserAuthUrl(): string | null {
+    if (this.localAuthServer && this.localAuthServer.isRunning()) {
+      return this.localAuthServer.getUrl();
+    }
+    return null;
   }
 }

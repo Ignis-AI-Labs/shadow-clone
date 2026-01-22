@@ -40,51 +40,35 @@ export class ApiKeyStatus {
 
   async checkStatus(args: any): Promise<string> {
     const showKey = args.showKey || false;
-    
+
     // Get current authentication status
     const isAuthenticated = await this.authService.isAuthenticated();
     const currentKey = await this.apiKeyManager.getApiKey();
-    
-    // Check storage locations manually
-    const globalConfigDir = path.join(os.homedir(), '.shadow-clone');
-    const globalConfigFile = path.join(globalConfigDir, 'config.json');
-    const localEnvFile = path.join(process.cwd(), '.env');
-    const gitignorePath = path.join(process.cwd(), '.gitignore');
-    
+
+    // Check storage locations
+    const globalConfigFile = path.join(os.homedir(), '.shadow-clone', 'config.json');
+
     // Check environment variable
     const hasEnvVar = !!process.env.SHADOW_CLONE_API_KEY;
-    
-    // Check local .env file
-    const hasLocalEnv = fs.existsSync(localEnvFile);
-    let localEnvHasKey = false;
-    let isGitignored = false;
-    
-    if (hasLocalEnv) {
-      try {
-        const envContent = fs.readFileSync(localEnvFile, 'utf-8');
-        localEnvHasKey = envContent.includes('SHADOW_CLONE_API_KEY');
-        
-        if (fs.existsSync(gitignorePath)) {
-          const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
-          isGitignored = gitignoreContent.includes('.env');
-        }
-      } catch (e) {}
-    }
-    
+
     // Check global config
     const hasGlobalConfig = fs.existsSync(globalConfigFile);
     let globalConfigHasKey = false;
-    
+
     if (hasGlobalConfig) {
       try {
         const configContent = JSON.parse(fs.readFileSync(globalConfigFile, 'utf-8'));
         globalConfigHasKey = !!configContent.apiKey;
       } catch (e) {}
     }
-    
+
     // Check if creator mode is active
     const isCreatorMode = this.authService.isCreatorMode();
-    
+
+    // Check if browser auth is pending
+    const isBrowserAuthPending = this.authService.isBrowserAuthPending();
+    const browserAuthUrl = this.authService.getBrowserAuthUrl();
+
     // Get basic storage info from manager
     const storageInfo = await this.apiKeyManager.getStorageInfo();
     
@@ -93,6 +77,7 @@ export class ApiKeyStatus {
 ## Authentication State
 - **Authenticated**: ${isAuthenticated ? '✅ Yes' : '❌ No'}
 - **Creator Mode**: ${isCreatorMode ? '✅ ACTIVE (Privileged Access)' : '❌ Inactive'}
+- **Browser Auth Pending**: ${isBrowserAuthPending ? `✅ Yes - Open: ${browserAuthUrl}` : '❌ No'}
 ${currentKey ? `- **Current Key**: ${showKey ? currentKey : maskApiKey(currentKey)}` : '- **Current Key**: Not set'}
 - **Key Source**: ${storageInfo.current || 'None'}
 
@@ -103,30 +88,24 @@ ${currentKey ? `- **Current Key**: ${showKey ? currentKey : maskApiKey(currentKe
 - **Status**: ${hasEnvVar ? '✅ Set' : '❌ Not set'}
 ${hasEnvVar && process.env.SHADOW_CLONE_API_KEY ? `- **Value**: ${showKey ? process.env.SHADOW_CLONE_API_KEY : maskApiKey(process.env.SHADOW_CLONE_API_KEY)}` : ''}
 
-### 2. Local .env File
-- **Path**: ${localEnvFile}
-- **Status**: ${hasLocalEnv ? '✅ Found' : '❌ Not found'}
-${hasLocalEnv ? `- **Has Key**: ${localEnvHasKey ? '✅ Yes' : '❌ No'}` : ''}
-${hasLocalEnv ? `- **Git Ignored**: ${isGitignored ? '✅ Yes' : '⚠️ No (add to .gitignore!)'}` : ''}
-
-### 3. Global Config
+### 2. Global Config (Encrypted)
 - **Path**: ${globalConfigFile}
 - **Status**: ${hasGlobalConfig ? '✅ Found' : '❌ Not found'}
-${hasGlobalConfig ? `- **Has Key**: ${globalConfigHasKey ? '✅ Yes' : '❌ No'}` : ''}
+${hasGlobalConfig ? `- **Has Key**: ${globalConfigHasKey ? '✅ Yes (AES-256-GCM encrypted)' : '❌ No'}` : ''}
 
-### 4. Memory Cache
+### 3. Memory Cache
 - **Status**: ${storageInfo.current === 'Memory cache' ? '✅ Cached' : '❌ Not cached'}
 - **Session Only**: This cache is cleared when the server restarts
 
 ## Setting Your API Key
 
-If you need to set or update your API key, use one of these methods:
-
 ### Option 1: Use the authenticate tool (Recommended)
 \`\`\`bash
-# In your AI assistant
-authenticate("your-api-key-here")
+# In your AI assistant - this opens a secure browser page
+authenticate()
 \`\`\`
+This opens a local webpage where you can securely enter your API key.
+Your key is never exposed to the MCP client and is stored encrypted.
 
 ### Option 2: Set environment variable
 \`\`\`bash
@@ -137,15 +116,6 @@ $env:SHADOW_CLONE_API_KEY = "your-api-key-here"
 export SHADOW_CLONE_API_KEY="your-api-key-here"
 \`\`\`
 
-### Option 3: Create .env file
-Create a \`.env\` file in your project root:
-\`\`\`
-SHADOW_CLONE_API_KEY=your-api-key-here
-\`\`\`
-
-### Option 4: Global config
-The authenticate tool will automatically save to global config for persistence across projects.
-
 ## Notes
 ${isCreatorMode ? `
 ### 🎉 Creator Mode Active!
@@ -155,10 +125,9 @@ You have creator privileges! Authentication is bypassed and all features are unl
 Visit https://dashboard.ignislabs.ai to get your Shadow Clone API key.
 `}
 
-- API keys are cached for 5 minutes after validation
-- The authenticate tool saves keys to global config for persistence
+- API keys are revalidated every 5 minutes when used
+- The authenticate tool saves keys to global config (encrypted) for persistence
 - Environment variables take highest priority
-- Local .env files are project-specific
 - Global config works across all projects`;
 
     return response;
