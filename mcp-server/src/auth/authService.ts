@@ -217,11 +217,11 @@ export class AuthService {
         if (!isActive) {
           logAudit('AUTH_LOGIN_FAILURE', 'failure', {
             userId: response.data.userId,
-            reason: 'nft_not_found',
+            reason: response.data.message ? response.data.message : 'API key is not active',
           });
           return {
             success: false,
-            message: 'Your NFT license is not found in the connected wallet. Please ensure you own an active Shadow Clone NFT.'
+            message: response.data.message ? response.data.message : 'API key is not active'
           };
         }
         
@@ -309,7 +309,7 @@ export class AuthService {
     }
     
     try {
-      const response = await axios.post(
+      const response = await axios.post<{ valid: boolean; isActive: boolean,  }>(
         `${this.apiEndpoint}/shadow-clone-licenses/validate`,
         { apiKey },
         {
@@ -322,8 +322,8 @@ export class AuthService {
       );
       
       // Handle backend-requested session invalidation
-      if (response.data.sessionInvalid || response.data.forceLogout) {
-        logger.info('Backend requested session invalidation');
+      if (response.data.valid === false) {
+        logger.info('Backend requested session  invalidation');
         logAudit('AUTH_SESSION_REVOKED', 'success', {
           userId: this.authData?.userId,
           reason: 'backend_requested',
