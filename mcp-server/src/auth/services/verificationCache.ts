@@ -59,13 +59,15 @@ export function createVerificationCache(): VerificationCache {
     isValid(apiKey: string): boolean {
       const entry = cache.get(apiKey);
       if (!entry) return false;
-      return Date.now() - entry.timestamp < CACHE_DURATION_MS;
+      // Clamp to non-negative to prevent clock skew exploits
+      return Math.max(0, Date.now() - entry.timestamp) < CACHE_DURATION_MS;
     },
 
     isValidExtended(apiKey: string): boolean {
       const entry = cache.get(apiKey);
       if (!entry) return false;
-      return Date.now() - entry.timestamp < EXTENDED_CACHE_DURATION_MS;
+      // Clamp to non-negative to prevent clock skew exploits
+      return Math.max(0, Date.now() - entry.timestamp) < EXTENDED_CACHE_DURATION_MS;
     }
   };
 }
