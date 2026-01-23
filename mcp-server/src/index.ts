@@ -301,12 +301,10 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
   }
 
   async start() {
-    console.error('[DEBUG] Server start() called');
     logInfo('Shadow Clone MCP Server initializing...', {
       version: config.server.version,
       environment: config.server.environment
     });
-    console.error('[DEBUG] After logInfo');
 
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
