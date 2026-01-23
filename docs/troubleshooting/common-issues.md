@@ -155,13 +155,190 @@ Frequently encountered problems and their solutions.
 **Solutions**:
 
 1. **Re-authenticate**
+   - Use any Shadow Clone tool - browser auth will trigger automatically
+
+2. **Sessions persist until NFT transfer**
+   - Normal behavior after ownership changes
+   - Just authenticate again
+
+---
+
+## Browser Authentication Issues
+
+### Browser Doesn't Open
+
+**Problem**: Auth triggered but browser doesn't open.
+
+**Solutions**:
+
+1. **Platform-specific openers**
+
+   The auth system uses platform-specific commands:
+   - **Windows**: `start` command
+   - **macOS**: `open` command
+   - **Linux**: `xdg-open` command
+   - **WSL**: Requires special handling
+
+2. **Manual browser open**
+
+   Copy the URL from Claude's output and paste into browser:
    ```
-   authenticate(apiKey: "ignis_YOUR_KEY")
+   http://localhost:PORT/auth?token=TOKEN
    ```
 
-2. **Sessions last 24 hours**
-   - Normal behavior
-   - Just authenticate again
+3. **WSL users**
+
+   Set your Windows browser as default:
+   ```bash
+   export BROWSER='/mnt/c/Program Files/Google/Chrome/Application/chrome.exe'
+   ```
+
+---
+
+### CSRF Token Errors
+
+**Problem**: "Invalid request" or "CSRF validation failed" on auth form.
+
+**Solutions**:
+
+1. **Don't bookmark the auth page**
+   - Each auth session generates a unique CSRF token
+   - Bookmarked URLs have expired tokens
+
+2. **Start fresh each time**
+   - Close any existing auth browser tabs
+   - Trigger auth again from Claude
+   - Use the new URL provided
+
+3. **One session at a time**
+   - Only one auth server runs at a time
+   - If multiple Claude instances try to auth, only one will work
+
+---
+
+### Authentication Timeout
+
+**Problem**: "Authentication timed out" error.
+
+**Solutions**:
+
+1. **5-minute security limit**
+   - The auth server automatically shuts down after 5 minutes
+   - This prevents abandoned servers from running
+
+2. **Complete auth promptly**
+   - After browser opens, enter your API key within 5 minutes
+   - If you miss the window, trigger auth again
+
+3. **Check for blocking issues**
+   - Firewall blocking localhost connections
+   - Browser extensions blocking the page
+
+---
+
+## Session and Cache Issues
+
+### Network Error During Tool Use
+
+**Problem**: Tool fails with network error even though internet is working.
+
+**Solutions**:
+
+1. **Understand two-tier caching**
+
+   Shadow Clone uses a two-tier cache:
+   - **Normal cache**: 60-second validity for active sessions
+   - **Fallback cache**: 5-minute extended validity during network issues
+
+2. **Wait and retry**
+   - Transient network issues resolve automatically
+   - The fallback cache keeps you working during brief outages
+
+3. **Check API status**
+   - Verify [api.ignislabs.ai](https://api.ignislabs.ai) is reachable
+   - Check your internet connection
+
+---
+
+### Session Not Persisting
+
+**Problem**: Having to re-authenticate frequently.
+
+**Solutions**:
+
+1. **Check file permissions**
+   ```bash
+   ls -la ~/.shadow-clone/
+   ```
+   - Config files need read/write permissions
+   - Should be owned by your user
+
+2. **Check disk space**
+   ```bash
+   df -h ~
+   ```
+   - Ensure space available for config files
+
+3. **Config file migration (v1 to v2)**
+   - If upgrading from older version, old config format may not work
+   - Delete old config and re-authenticate:
+     ```bash
+     rm -rf ~/.shadow-clone/auth/
+     ```
+   - Then trigger authentication again
+
+---
+
+## Encryption Issues
+
+### "Decryption Failed" Error
+
+**Problem**: Error decrypting stored credentials.
+
+**Solutions**:
+
+1. **Machine-specific encryption keys**
+   - API keys are encrypted using machine-specific keys
+   - Config files cannot be copied between machines
+   - Each machine needs separate authentication
+
+2. **Clear and re-authenticate**
+   ```bash
+   rm ~/.shadow-clone/auth/credentials.json
+   ```
+   - Then use any Shadow Clone tool to trigger fresh auth
+
+3. **Don't copy config between machines**
+   - The encryption uses hardware-derived keys
+   - Copying files to another machine will always fail decryption
+
+---
+
+### Migration from v1 to v2 Format
+
+**Problem**: Old configuration not working after update.
+
+**Solutions**:
+
+1. **Automatic migration**
+   - The system attempts to migrate v1 (XOR) to v2 (AES-256-GCM)
+   - If migration fails, you'll need to re-authenticate
+
+2. **Manual cleanup**
+   ```bash
+   # Backup old config (optional)
+   cp -r ~/.shadow-clone ~/.shadow-clone-backup
+
+   # Clear auth data
+   rm -rf ~/.shadow-clone/auth/
+
+   # Re-authenticate via browser
+   # Use any Shadow Clone tool in Claude
+   ```
+
+3. **Verify new format**
+   - v2 credentials include `version: 2` field
+   - v2 uses AES-256-GCM (much more secure than v1 XOR)
 
 ---
 

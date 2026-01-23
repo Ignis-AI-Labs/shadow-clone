@@ -15,6 +15,21 @@ Shadow Clone prompts are served dynamically through our secure API:
 - **Session-Based**: Prompts are ephemeral and session-specific
 - **Copy Protection**: Prompts cannot be exported or saved locally
 
+## 🔒 Security Features
+
+Shadow Clone implements defense-in-depth security. See [SECURITY_AUDIT.md](./mcp-server/docs/SECURITY_AUDIT.md) for the full audit.
+
+| Feature | Description |
+|---------|-------------|
+| **Browser-Based Auth** | Local server for secure API key entry (no key in chat) |
+| **AES-256-GCM Encryption** | API keys encrypted at rest with machine-specific keys |
+| **CSRF Protection** | Random token per auth session prevents cross-site attacks |
+| **Localhost-Only Auth** | Auth server binds to 127.0.0.1 only (not network accessible) |
+| **Symlink Protection** | Path traversal prevention via symlink resolution |
+| **Input Validation** | Zod schema validation on all tool inputs |
+| **Secure Process Execution** | Uses `execFile` with array args (no shell injection) |
+| **Two-Tier Caching** | 60s normal / 5min fallback for resilient sessions |
+
 ## 🚀 Quick Start
 
 ### MCP Server Integration
@@ -90,12 +105,30 @@ Shadow Clone is a premium SaaS platform with strictly limited NFT-based licenses
 
 ## 🔧 Configuration
 
+### Tool Parameters
+
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `project_type` | `auto` | `audit`, `feature`, `refactor`, `optimize`, `debug`, `research` |
 | `waves_directory` | `./.waves/` | Configurable output location |
 | `num_teams` | `dynamic` | Team count |
 | `wave_strategy` | `auto` | Wave execution strategy |
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `SHADOW_CLONE_API_KEY` | API key for authentication (alternative to browser auth) |
+| `SHADOW_CLONE_CREATOR_MODE` | Enable creator mode for local development |
+| `SHADOW_CLONE_API_ENDPOINT` | Override API endpoint (default: api.ignislabs.ai) |
+
+### Secure Storage Locations
+
+API keys and session data are encrypted and stored in:
+- **Linux/macOS**: `~/.shadow-clone/`
+- **Windows**: `%USERPROFILE%\.shadow-clone\`
+
+These files use AES-256-GCM encryption with machine-specific keys. Do not copy these files between machines.
 
 ## 🌊 Execution Flow
 
