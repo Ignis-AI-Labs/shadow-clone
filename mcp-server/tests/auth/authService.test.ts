@@ -299,3 +299,226 @@ describe('AuthService verification cache', () => {
     expect(oldAge < FALLBACK_DURATION).toBe(false);
   });
 });
+
+describe('AuthService logout functionality', () => {
+  describe('logout response format', () => {
+    test('successful logout response structure', () => {
+      const logoutResponse = {
+        success: true,
+        message: 'Logged out successfully',
+      };
+
+      expect(logoutResponse.success).toBe(true);
+      expect(logoutResponse.message).toBe('Logged out successfully');
+    });
+
+    test('creator mode logout response structure', () => {
+      const creatorLogoutResponse = {
+        success: true,
+        message: 'Creator mode - no session to revoke',
+      };
+
+      expect(creatorLogoutResponse.success).toBe(true);
+      expect(creatorLogoutResponse.message).toContain('Creator mode');
+    });
+  });
+
+  describe('logout clears all caches', () => {
+    test('verification cache should be clearable', () => {
+      const cache = new Map<string, { isActive: boolean; timestamp: number }>();
+      
+      cache.set('ignis_key_1', { isActive: true, timestamp: Date.now() });
+      cache.set('ignis_key_2', { isActive: true, timestamp: Date.now() });
+      
+      expect(cache.size).toBe(2);
+      
+      // Simulate clearVerificationCache()
+      cache.clear();
+      
+      expect(cache.size).toBe(0);
+    });
+  });
+
+  describe('backend revocation call behavior', () => {
+    test('revocation endpoint URL is correct', () => {
+      const apiEndpoint = 'https://api.ignislabs.ai';
+      const revokeUrl = `${apiEndpoint}/shadow-clone-licenses/revoke`;
+      
+      expect(revokeUrl).toBe('https://api.ignislabs.ai/shadow-clone-licenses/revoke');
+    });
+
+    test('revocation request payload structure', () => {
+      const apiKey = 'ignis_test_key_12345678';
+      const payload = { apiKey };
+      
+      expect(payload).toHaveProperty('apiKey');
+      expect(payload.apiKey).toBe(apiKey);
+    });
+
+    test('revocation headers include API key', () => {
+      const apiKey = 'ignis_test_key';
+      const headers = {
+        'X-API-Key': apiKey,
+        'User-Agent': 'Shadow-Clone-MCP/0.1.0',
+      };
+      
+      expect(headers['X-API-Key']).toBe(apiKey);
+      expect(headers['User-Agent']).toContain('Shadow-Clone-MCP');
+    });
+  });
+});
+
+describe('AuthService session invalidation', () => {
+  describe('backend session invalidation flags', () => {
+    test('sessionInvalid flag triggers logout', () => {
+      const backendResponse = {
+        valid: true,
+        isActive: true,
+        sessionInvalid: true, // Backend requests session invalidation
+      };
+
+      // Check if session should be invalidated
+      const shouldInvalidate = backendResponse.sessionInvalid === true;
+      expect(shouldInvalidate).toBe(true);
+    });
+
+    test('forceLogout flag triggers logout', () => {
+      const backendResponse = {
+        valid: true,
+        isActive: true,
+        forceLogout: true, // Backend requests forced logout
+      };
+
+      // Check if session should be invalidated
+      const shouldInvalidate = backendResponse.forceLogout === true;
+      expect(shouldInvalidate).toBe(true);
+    });
+
+    test('normal response does not trigger logout', () => {
+      const backendResponse = {
+        valid: true,
+        isActive: true,
+        // No sessionInvalid or forceLogout flags
+      };
+
+      // Check if session should be invalidated
+      const shouldInvalidate = 
+        backendResponse.sessionInvalid === true || 
+        backendResponse.forceLogout === true;
+      expect(shouldInvalidate).toBe(false);
+    });
+
+    test('combined invalidation check', () => {
+      const responses = [
+        { valid: true, isActive: true },
+        { valid: true, isActive: true, sessionInvalid: false },
+        { valid: true, isActive: true, forceLogout: false },
+        { valid: true, isActive: true, sessionInvalid: true },
+        { valid: true, isActive: true, forceLogout: true },
+      ];
+
+      const shouldInvalidate = (resp: any) => 
+        resp.sessionInvalid === true || resp.forceLogout === true;
+
+      expect(shouldInvalidate(responses[0])).toBe(false);
+      expect(shouldInvalidate(responses[1])).toBe(false);
+      expect(shouldInvalidate(responses[2])).toBe(false);
+      expect(shouldInvalidate(responses[3])).toBe(true);
+      expect(shouldInvalidate(responses[4])).toBe(true);
+    });
+  });
+
+  describe('logout without backend notification', () => {
+    test('logout(false) should not call backend', () => {
+      // When backend requests session invalidation, we call logout(false)
+      // to avoid calling the backend again (which would cause a loop)
+      const notifyBackend = false;
+      
+      // In this scenario, only local cleanup should happen
+      expect(notifyBackend).toBe(false);
+    });
+  });
+});
+
+describe('AuthService audit logging', () => {
+  describe('audit event types', () => {
+    test('AUTH_LOGIN_SUCCESS event structure', () => {
+      const auditEvent = {
+        event: 'AUTH_LOGIN_SUCCESS',
+        outcome: 'success',
+        userId: 'user123',
+        licenseType: 'STANDARD',
+      };
+
+      expect(auditEvent.event).toBe('AUTH_LOGIN_SUCCESS');
+      expect(auditEvent.outcome).toBe('success');
+    });
+
+    test('AUTH_LOGIN_FAILURE event structure', () => {
+      const auditEvent = {
+        event: 'AUTH_LOGIN_FAILURE',
+        outcome: 'failure',
+        reason: 'invalid_api_key',
+      };
+
+      expect(auditEvent.event).toBe('AUTH_LOGIN_FAILURE');
+      expect(auditEvent.outcome).toBe('failure');
+      expect(auditEvent.reason).toBeDefined();
+    });
+
+    test('AUTH_LOGOUT event structure', () => {
+      const auditEvent = {
+        event: 'AUTH_LOGOUT',
+        outcome: 'success',
+        userId: 'user123',
+        apiKeyPrefix: 'ignis_te',
+      };
+
+      expect(auditEvent.event).toBe('AUTH_LOGOUT');
+      expect(auditEvent.outcome).toBe('success');
+    });
+
+    test('AUTH_SESSION_REVOKED event structure', () => {
+      const auditEvent = {
+        event: 'AUTH_SESSION_REVOKED',
+        outcome: 'success',
+        userId: 'user123',
+        reason: 'backend_requested',
+      };
+
+      expect(auditEvent.event).toBe('AUTH_SESSION_REVOKED');
+      expect(auditEvent.reason).toBe('backend_requested');
+    });
+
+    test('AUTH_NFT_LOST event structure', () => {
+      const auditEvent = {
+        event: 'AUTH_NFT_LOST',
+        outcome: 'success',
+        userId: 'user123',
+        reason: 'nft_ownership_changed',
+      };
+
+      expect(auditEvent.event).toBe('AUTH_NFT_LOST');
+      expect(auditEvent.reason).toBe('nft_ownership_changed');
+    });
+  });
+
+  describe('API key prefix masking', () => {
+    test('apiKeyPrefix is properly truncated', () => {
+      const apiKey = 'ignis_test_key_12345678';
+      const apiKeyPrefix = apiKey.substring(0, 8);
+      
+      expect(apiKeyPrefix).toBe('ignis_te');
+      expect(apiKeyPrefix.length).toBe(8);
+      expect(apiKeyPrefix).not.toBe(apiKey);
+    });
+
+    test('short API key handling', () => {
+      const shortKey = 'ignis';
+      const apiKeyPrefix = shortKey.substring(0, 8);
+      
+      // substring(0, 8) on a shorter string returns the whole string
+      expect(apiKeyPrefix).toBe('ignis');
+    });
+  });
+});

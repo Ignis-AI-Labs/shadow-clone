@@ -113,3 +113,28 @@ export const logPerformance = (operation: string, duration: number, metadata?: R
     ...metadata,
   });
 };
+
+// Audit event types for security logging
+export type AuditEventType =
+  | 'AUTH_LOGIN_SUCCESS'
+  | 'AUTH_LOGIN_FAILURE'
+  | 'AUTH_LOGOUT'
+  | 'AUTH_SESSION_REVOKED'
+  | 'AUTH_NFT_LOST';
+
+/**
+ * Log security audit events
+ * Uses existing Winston logger with audit-specific metadata
+ */
+export const logAudit = (
+  event: AuditEventType,
+  outcome: 'success' | 'failure',
+  details?: Record<string, unknown>
+) => {
+  logger.info(`AUDIT: ${event}`, {
+    audit: true,
+    event,
+    outcome,
+    ...details,
+  });
+};
