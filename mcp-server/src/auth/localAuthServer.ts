@@ -11,6 +11,7 @@
 import * as http from 'http';
 import * as https from 'https';
 import * as crypto from 'crypto';
+import { ethers } from 'ethers';
 import { getAuthFormPage, getSuccessPage, getErrorPage } from './authPages.js';
 import { logger } from '../utils/logger.js';
 
@@ -257,8 +258,8 @@ export class LocalAuthServer {
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
     const url = new URL(req.url || '/', `http://localhost:${this.port}`);
 
-    // Add CORS headers for wallet auth requests
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Add CORS headers for wallet auth requests (restricted to localhost for security)
+    res.setHeader('Access-Control-Allow-Origin', `http://localhost:${this.port}`);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -441,13 +442,67 @@ export class LocalAuthServer {
         return;
       }
 
-      logger.info('Processing ERC-712 wallet authentication request', { 
-        address: address.slice(0, 10) + '...' 
+      logger.info('Processing ERC-712 wallet authentication request', {
+        address: address.slice(0, 10) + '...'
+      });
+
+      // Use client-provided domain or default
+      const verificationDomain = domain || {
+        name: 'Shadow Clone',
+        version: '1',
+        chainId: 1
+      };
+
+      // ERC-712 types for verification
+      const verificationTypes = {
+        Auth: [
+          { name: 'wallet', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'deadline', type: 'uint256' }
+        ]
+      };
+
+      // Verify ERC-712 signature locally before forwarding to backend
+      const recoveredAddress = this.verifyERC712Signature(
+        verificationDomain,
+        verificationTypes,
+        message,
+        signature
+      );
+
+      if (!recoveredAddress) {
+        logger.warn('Local ERC-712 signature verification failed', {
+          address: address.slice(0, 10) + '...'
+        });
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Invalid signature. Please try again.'
+        }));
+        return;
+      }
+
+      // Verify recovered address matches claimed address
+      if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
+        logger.warn('ERC-712 signature address mismatch', {
+          claimed: address.slice(0, 10) + '...',
+          recovered: recoveredAddress.slice(0, 10) + '...'
+        });
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Signature does not match claimed wallet address.'
+        }));
+        return;
+      }
+
+      logger.info('Local ERC-712 signature verification passed', {
+        address: address.slice(0, 10) + '...'
       });
 
       // Forward to backend API (with full ERC-712 payload)
       try {
-        const backendResponse = await this.forwardWalletAuthToBackend(address, message, signature, domain);
+        const backendResponse = await this.forwardWalletAuthToBackend(address, message, signature, verificationDomain);
         
         if (backendResponse.success && backendResponse.apiKey) {
           // Validate the API key to ensure it's legitimate
@@ -508,6 +563,24 @@ export class LocalAuthServer {
         success: false, 
         message: 'An unexpected error occurred. Please try again.' 
       }));
+    }
+  }
+
+  /**
+   * Verify ERC-712 signature locally before forwarding to backend
+   * Fails fast on invalid signatures to reduce unnecessary backend calls
+   */
+  private verifyERC712Signature(
+    domain: ERC712Domain,
+    types: Record<string, Array<{ name: string; type: string }>>,
+    message: ERC712AuthMessage,
+    signature: string
+  ): string | null {
+    try {
+      const recoveredAddress = ethers.verifyTypedData(domain, types, message, signature);
+      return recoveredAddress;
+    } catch {
+      return null;
     }
   }
 
