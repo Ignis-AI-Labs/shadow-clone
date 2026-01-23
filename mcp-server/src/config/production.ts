@@ -83,7 +83,7 @@ export const config: Config = {
     format: (process.env.LOG_FORMAT as 'json' | 'simple') || 'json',
     includeTimestamp: process.env.LOG_TIMESTAMP !== 'false',
     maskSensitiveData: process.env.LOG_MASK_SENSITIVE !== 'false',
-    enableFileLogging: process.env.LOG_FILE_ENABLED !== 'false',
+    enableFileLogging: process.env.LOG_FILE_DISABLED !== 'true',
     logFilePath: process.env.LOG_FILE_PATH || path.join(os.homedir(), '.shadow-clone', 'shadow-clone.log'),
     filename: 'shadow-clone.log',
   },
