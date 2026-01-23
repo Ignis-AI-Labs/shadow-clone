@@ -247,6 +247,11 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
             message
           );
         }
+        
+        // Start validation polling if not already running (user may have just authenticated)
+        if (!this.authService.isValidationPollingActive()) {
+          this.authService.startValidationPolling();
+        }
 
         // Sanitize arguments before execution
         const sanitizedArgs = args ? sanitizeObject(args) : {};
@@ -296,6 +301,13 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
   }
 
   async start() {
+    console.error('[DEBUG] Server start() called');
+    logInfo('Shadow Clone MCP Server initializing...', {
+      version: config.server.version,
+      environment: config.server.environment
+    });
+    console.error('[DEBUG] After logInfo');
+
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
 
@@ -305,6 +317,10 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
       const { url } = await this.authService.startBrowserAuth();
       openBrowser(url);
       logInfo('Authentication required - browser opened automatically', { url });
+    } else {
+      // Start validation polling if already authenticated
+      this.authService.startValidationPolling();
+      logInfo('Validation polling started - session will be checked every minute');
     }
 
     // Set up health monitoring
@@ -344,6 +360,9 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
       }, config.server.gracefulShutdownTimeout);
       
       try {
+        // Stop validation polling first
+        this.authService.stopValidationPolling();
+        
         await this.server.close();
         globalRateLimiter.destroy();
         clearTimeout(shutdownTimeout);

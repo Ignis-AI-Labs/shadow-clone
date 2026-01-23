@@ -1,6 +1,8 @@
 /**
  * Production configuration for Shadow Clone MCP Server
  */
+import * as os from 'os';
+import * as path from 'path';
 
 export interface Config {
   // Server configuration
@@ -32,6 +34,9 @@ export interface Config {
     format: 'json' | 'simple';
     includeTimestamp: boolean;
     maskSensitiveData: boolean;
+    enableFileLogging: boolean;
+    logFilePath: string;
+    filename: string;
   };
 
   // Paths configuration
@@ -78,6 +83,9 @@ export const config: Config = {
     format: (process.env.LOG_FORMAT as 'json' | 'simple') || 'json',
     includeTimestamp: process.env.LOG_TIMESTAMP !== 'false',
     maskSensitiveData: process.env.LOG_MASK_SENSITIVE !== 'false',
+    enableFileLogging: process.env.LOG_FILE_ENABLED !== 'false',
+    logFilePath: process.env.LOG_FILE_PATH || path.join(os.homedir(), '.shadow-clone', 'shadow-clone.log'),
+    filename: 'shadow-clone.log',
   },
 
   paths: {
