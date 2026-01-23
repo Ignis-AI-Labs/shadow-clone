@@ -78,12 +78,13 @@ const developmentFormat = winston.format.combine(
 // IMPORTANT: MCP servers use stdout for JSON-RPC communication
 // All console logs MUST go to stderr to avoid corrupting the protocol
 const transports: winston.transport[] = [
-  new winston.transports.Console({
+  // Use Stream transport writing to stderr instead of Console transport
+  // This guarantees stderr output regardless of environment quirks
+  new winston.transports.Stream({
+    stream: process.stderr,
     format: config.server.environment === 'production' ? productionFormat : developmentFormat,
     handleExceptions: true,
     handleRejections: true,
-    // MCP servers use stdout for JSON-RPC - all logs must go to stderr
-    stderrLevels: ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'],
   }),
 ];
 
