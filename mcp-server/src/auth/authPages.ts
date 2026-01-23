@@ -557,7 +557,7 @@ export function getAuthFormPage(csrfToken: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shadow Clone - Authentication</title>
   <style>${getStyles()}</style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" integrity="sha384-ro/pNP1sfmhdbpq60NKzKAYve9JahlgCklXcKvudVEd/osRAYz2RlPG5TvB7Q04t" crossorigin="anonymous">
 </head>
 <body>
   <div class="container">

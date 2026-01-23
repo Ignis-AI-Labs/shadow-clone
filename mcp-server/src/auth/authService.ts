@@ -25,6 +25,21 @@ interface StoredAuthData {
   lastVerified: number;
 }
 
+interface AuthenticatedRequestOptions {
+  method?: string;
+  headers?: Record<string, string>;
+  data?: unknown;
+  timeout?: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface AuthenticatedRequestResponse {
+  data: any;
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+}
+
 export class AuthService {
   private authData: AuthData | null = null;
   private authFilePath: string;
@@ -34,12 +49,17 @@ export class AuthService {
   private apiKeyManager: ApiKeyManager;
   private creatorMode: CreatorMode;
   private localAuthServer: LocalAuthServer | null = null;
-  
+
   // Validation polling properties
   private validationPollingInterval: NodeJS.Timeout | null = null;
   private readonly VALIDATION_POLL_INTERVAL = 60000; // 1 minute polling interval
   private consecutiveValidationFailures: number = 0;
   private readonly MAX_CONSECUTIVE_FAILURES = 3; // Logout after 3 consecutive failures (3 minutes)
+
+  // Configuration constants
+  private readonly API_KEY_PREFIX_LENGTH = 8;
+  private readonly API_TIMEOUT_MS = 5000;
+  private readonly EXTENDED_CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     // Store auth data in user's home directory
@@ -73,7 +93,7 @@ export class AuthService {
     if (!this.authData) {
       const cachedKey = await this.apiKeyManager.getApiKey();
       if (cachedKey) {
-        const apiKeyPrefix = cachedKey.substring(0, 8);
+        const apiKeyPrefix = cachedKey.substring(0, this.API_KEY_PREFIX_LENGTH);
         logger.info('Found cached API key, attempting authentication...');
         logAudit('AUTH_CACHED_KEY_FOUND', 'success', { apiKeyPrefix });
         
@@ -290,7 +310,7 @@ export class AuthService {
     if (!this.authData) {
       const cachedKey = await this.apiKeyManager.getApiKey();
       if (cachedKey) {
-        const apiKeyPrefix = cachedKey.substring(0, 8);
+        const apiKeyPrefix = cachedKey.substring(0, this.API_KEY_PREFIX_LENGTH);
         // Check if we need to revalidate
         if (this.apiKeyManager.needsValidation()) {
           logger.info('Revalidating cached API key...');
@@ -332,7 +352,7 @@ export class AuthService {
     }
     
     try {
-      const response = await axios.post<{ valid: boolean; isActive: boolean,  }>(
+      const response = await axios.post<{ valid: boolean; isActive: boolean }>(
         `${this.apiEndpoint}/shadow-clone-licenses/validate`,
         { apiKey },
         {
@@ -340,13 +360,13 @@ export class AuthService {
             'X-API-Key': apiKey,
             'User-Agent': 'Shadow-Clone-MCP/0.1.0'
           },
-          timeout: 5000 // 5 second timeout for verification
+          timeout: this.API_TIMEOUT_MS // 5 second timeout for verification
         }
       );
       
       // Handle backend-requested session invalidation
       if (response.data.valid === false) {
-        logger.info('Backend requested session  invalidation');
+        logger.info('Backend requested session invalidation');
         logAudit('AUTH_SESSION_REVOKED', 'success', {
           userId: this.authData?.userId,
           reason: 'backend_requested',
@@ -357,7 +377,7 @@ export class AuthService {
       }
       
       const isActive = response.data.valid && response.data.isActive !== false;
-      const apiKeyPrefix = apiKey.substring(0, 8);
+      const apiKeyPrefix = apiKey.substring(0, this.API_KEY_PREFIX_LENGTH);
       
       // Update cache
       this.verificationCache.set(apiKey, {
@@ -385,7 +405,7 @@ export class AuthService {
     } catch (error: unknown) {
       // Sanitize error logging to avoid leaking sensitive data
       const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
-      const apiKeyPrefix = apiKey.substring(0, 8);
+      const apiKeyPrefix = apiKey.substring(0, this.API_KEY_PREFIX_LENGTH);
       
       logger.error('NFT verification failed', {
         status: axiosError.response?.status,
@@ -401,7 +421,7 @@ export class AuthService {
       });
 
       // On network errors, use cached value if available and recent (within 5 minutes)
-      if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
+      if (cached && Date.now() - cached.timestamp < this.EXTENDED_CACHE_DURATION_MS) {
         logger.info('Using cached verification due to network error');
         return cached.isActive;
       }
@@ -427,7 +447,7 @@ export class AuthService {
     return this.authData?.licenseType || null;
   }
 
-  async makeAuthenticatedRequest(url: string, options: any = {}): Promise<any> {
+  async makeAuthenticatedRequest(url: string, options: AuthenticatedRequestOptions = {}): Promise<AuthenticatedRequestResponse> {
     const apiKey = await this.getApiKey();
     if (!apiKey) {
       throw new Error('Not authenticated');
@@ -626,7 +646,7 @@ export class AuthService {
             'X-API-Key': apiKey,
             'User-Agent': 'Shadow-Clone-MCP/0.1.0'
           },
-          timeout: 5000 // 5 second timeout
+          timeout: this.API_TIMEOUT_MS // 5 second timeout
         }
       );
       logger.info('Backend session revoked', { apiKeyPrefix });
@@ -727,7 +747,7 @@ export class AuthService {
     }
 
     const apiKey = this.authData.apiKey;
-    const apiKeyPrefix = apiKey.substring(0, 8);
+    const apiKeyPrefix = apiKey.substring(0, this.API_KEY_PREFIX_LENGTH);
 
     try {
       const response = await axios.post<{ valid: boolean; isActive: boolean }>(

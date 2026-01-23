@@ -11,7 +11,7 @@ interface ToolDefinition {
 }
 
 /**
- * Logn
+ * Logout Tool
  * This tool clears local credentials and notifies the backend
  * to revoke the session.
  */
