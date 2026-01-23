@@ -42,7 +42,7 @@ import {
   ErrorCode,
   McpError
 } from '@modelcontextprotocol/sdk/types.js';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { AuthService } from './auth/authService.js';
 import { CombinedTools } from './tools/combinedTools.js';
 import { logger, logInfo, logError, logPerformance } from './utils/logger.js';
@@ -73,22 +73,28 @@ function isWSL(): boolean {
 
 /**
  * Open URL in the user's default browser (cross-platform, including WSL)
+ * Uses execFile to prevent command injection - URL is passed as argument, not shell-interpolated
  */
 function openBrowser(url: string): void {
   let command: string;
+  let args: string[];
 
   if (process.platform === 'win32') {
-    command = `start "" "${url}"`;
+    command = 'cmd.exe';
+    args = ['/c', 'start', '', url];
   } else if (process.platform === 'darwin') {
-    command = `open "${url}"`;
+    command = 'open';
+    args = [url];
   } else if (isWSL()) {
     // WSL: use Windows cmd.exe to open URL in Windows browser
-    command = `cmd.exe /c start "" "${url}"`;
+    command = 'cmd.exe';
+    args = ['/c', 'start', '', url];
   } else {
-    command = `xdg-open "${url}"`;
+    command = 'xdg-open';
+    args = [url];
   }
 
-  exec(command, (error) => {
+  execFile(command, args, (error) => {
     if (error) {
       logError(error, { context: 'openBrowser', url, platform: process.platform, isWSL: isWSL() });
     }

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { z } from 'zod';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -10,19 +11,32 @@ import { logger } from '../utils/logger.js';
  * when working locally on their own machine.
  */
 
+/**
+ * Zod schema for creator config validation
+ * Uses strict() to reject unknown fields and prevent injection attacks
+ */
+const CreatorConfigSchema = z.object({
+    mode: z.literal('CREATOR_PRIVILEGED'),
+    creator: z.boolean(),
+    bypassAuth: z.boolean().optional().default(false),
+    apiKey: z.string().max(255).optional(),
+    userId: z.string().max(255).optional(),
+    licenseType: z.enum(['UNLIMITED', 'BASIC', 'PRO']).optional(),
+    description: z.string().max(1000).optional(),
+    features: z.record(z.string(), z.boolean()).optional(),
+}).strict(); // Reject unknown fields
+
+type CreatorConfig = z.infer<typeof CreatorConfigSchema>;
+
 export class CreatorMode {
     private static instance: CreatorMode;
     private isCreator: boolean = false;
-    private creatorConfig: any = null;
-    
-    // Possible locations for creator config
+    private creatorConfig: CreatorConfig | null = null;
+
+    // Possible locations for creator config (no hardcoded paths)
     private configPaths = [
         // Local .shadow-local in current repo
         path.join(process.cwd(), '.shadow-local', 'creator-config.json'),
-        // Shadow Clone repo location
-        path.join('E:', 'Repos', 'shadow-clone', '.shadow-local', 'creator-config.json'),
-        // Alternative Windows path
-        path.join('E:', 'Repos', 'shadow-clone', '.shadow-local', 'creator-config.json'),
         // Home directory fallback
         path.join(os.homedir(), '.shadow-clone', 'creator-config.json')
     ];
@@ -43,8 +57,11 @@ export class CreatorMode {
         for (const configPath of this.configPaths) {
             if (fs.existsSync(configPath)) {
                 try {
-                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                    
+                    const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+                    // Validate with Zod schema (strict mode rejects unknown fields)
+                    const config = CreatorConfigSchema.parse(rawConfig);
+
                     // Verify it's a valid creator config
                     if (config.mode === 'CREATOR_PRIVILEGED' && config.creator === true) {
                         this.isCreator = true;
@@ -53,6 +70,13 @@ export class CreatorMode {
                         return;
                     }
                 } catch (error) {
+                    // Log validation errors for debugging
+                    if (error instanceof z.ZodError) {
+                        logger.warn('Invalid creator config', {
+                            configPath,
+                            errors: error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`)
+                        });
+                    }
                     // Invalid config, continue checking
                 }
             }
@@ -82,7 +106,7 @@ export class CreatorMode {
     /**
      * Get creator configuration
      */
-    getConfig(): any {
+    getConfig(): CreatorConfig | null {
         return this.creatorConfig;
     }
     
@@ -134,16 +158,24 @@ Perfect for local development and company projects.`;
     enableCreatorMode(configPath?: string): void {
         if (configPath && fs.existsSync(configPath)) {
             try {
-                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                // Validate with Zod schema
+                const config = CreatorConfigSchema.parse(rawConfig);
                 if (config.mode === 'CREATOR_PRIVILEGED') {
                     this.isCreator = true;
                     this.creatorConfig = config;
                     logger.info('Creator mode manually enabled');
                 }
             } catch (error) {
-                logger.error('Failed to enable creator mode', {
-                    message: error instanceof Error ? error.message : 'Unknown error',
-                });
+                if (error instanceof z.ZodError) {
+                    logger.error('Failed to enable creator mode - invalid config', {
+                        errors: error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`),
+                    });
+                } else {
+                    logger.error('Failed to enable creator mode', {
+                        message: error instanceof Error ? error.message : 'Unknown error',
+                    });
+                }
             }
         }
     }

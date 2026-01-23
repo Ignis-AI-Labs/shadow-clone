@@ -1,5 +1,7 @@
 import { config } from '../config/production.js';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { existsSync, realpathSync } from 'fs';
+import * as path from 'path';
 
 /**
  * Validates and sanitizes tool names
@@ -89,13 +91,14 @@ export function validateString(
 
 /**
  * Validates and sanitizes file paths
+ * Resolves symlinks to prevent directory escape attacks
  */
 export function validatePath(
-  path: unknown,
+  inputPath: unknown,
   fieldName: string,
-  options: { required?: boolean } = {}
+  options: { required?: boolean; basePath?: string } = {}
 ): string | undefined {
-  const sanitized = validateString(path, fieldName, {
+  const sanitized = validateString(inputPath, fieldName, {
     required: options.required,
     maxLength: config.paths.maxPathLength,
   });
@@ -121,6 +124,33 @@ export function validatePath(
       ErrorCode.InvalidParams,
       `${fieldName} cannot contain directory traversal`
     );
+  }
+
+  // Resolve symlinks and verify path stays within allowed directory
+  const basePath = options.basePath || process.cwd();
+  const absolutePath = path.resolve(basePath, sanitized);
+
+  // If the path exists, resolve symlinks and verify containment
+  if (existsSync(absolutePath)) {
+    try {
+      const resolvedPath = realpathSync(absolutePath);
+      const resolvedBasePath = realpathSync(basePath);
+
+      // Verify resolved path is within the allowed directory
+      if (!resolvedPath.startsWith(resolvedBasePath + path.sep) && resolvedPath !== resolvedBasePath) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          `${fieldName} escapes allowed directory via symlink`
+        );
+      }
+    } catch (error) {
+      // If error is McpError, re-throw it
+      if (error instanceof McpError) {
+        throw error;
+      }
+      // For other errors (e.g., permission denied), let the path through
+      // The actual file operation will fail with appropriate error
+    }
   }
 
   return sanitized;

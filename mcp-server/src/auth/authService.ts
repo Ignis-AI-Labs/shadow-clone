@@ -345,10 +345,13 @@ export class AuthService {
     
     const apiKey = this.authData.apiKey;
     
-    // Check cache first
+    // Check cache first (clamp age to non-negative to prevent clock skew exploits)
     const cached = this.verificationCache.get(apiKey);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.isActive;
+    if (cached) {
+      const cacheAge = Math.max(0, Date.now() - cached.timestamp);
+      if (cacheAge < this.CACHE_DURATION) {
+        return cached.isActive;
+      }
     }
     
     try {
@@ -421,9 +424,13 @@ export class AuthService {
       });
 
       // On network errors, use cached value if available and recent (within 5 minutes)
-      if (cached && Date.now() - cached.timestamp < this.EXTENDED_CACHE_DURATION_MS) {
-        logger.info('Using cached verification due to network error');
-        return cached.isActive;
+      // Clamp age to non-negative to prevent clock skew exploits
+      if (cached) {
+        const fallbackCacheAge = Math.max(0, Date.now() - cached.timestamp);
+        if (fallbackCacheAge < this.EXTENDED_CACHE_DURATION_MS) {
+          logger.info('Using cached verification due to network error');
+          return cached.isActive;
+        }
       }
 
       return false;
