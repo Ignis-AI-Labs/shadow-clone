@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
-import { logger } from '../utils/logger.js';
+import { logger, logAudit } from '../utils/logger.js';
 import { ApiKeyManager } from './apiKeyManager.js';
 import { CreatorMode } from './creatorMode.js';
 import { encrypt, decryptWithMigration } from './encryption.js';
@@ -215,11 +215,20 @@ export class AuthService {
         });
         
         if (!isActive) {
+          logAudit('AUTH_LOGIN_FAILURE', 'failure', {
+            userId: response.data.userId,
+            reason: 'nft_not_found',
+          });
           return {
             success: false,
             message: 'Your NFT license is not found in the connected wallet. Please ensure you own an active Shadow Clone NFT.'
           };
         }
+        
+        logAudit('AUTH_LOGIN_SUCCESS', 'success', {
+          userId: response.data.userId,
+          licenseType: response.data.licenseType,
+        });
         
         return { 
           success: true, 
@@ -227,6 +236,7 @@ export class AuthService {
         };
       }
       
+      logAudit('AUTH_LOGIN_FAILURE', 'failure', { reason: 'invalid_api_key' });
       return { success: false, message: 'Invalid API key' };
     } catch (error: unknown) {
       // Sanitize error logging to avoid leaking sensitive data
@@ -235,6 +245,11 @@ export class AuthService {
         status: axiosError.response?.status,
         code: axiosError.code,
         message: axiosError.message,
+      });
+
+      logAudit('AUTH_LOGIN_FAILURE', 'failure', {
+        reason: axiosError.response?.status === 401 ? 'invalid_credentials' : 
+                axiosError.response?.status === 403 ? 'access_denied' : 'auth_error',
       });
 
       if (axiosError.response?.status === 401) {
@@ -306,6 +321,18 @@ export class AuthService {
         }
       );
       
+      // Handle backend-requested session invalidation
+      if (response.data.sessionInvalid || response.data.forceLogout) {
+        logger.info('Backend requested session invalidation');
+        logAudit('AUTH_SESSION_REVOKED', 'success', {
+          userId: this.authData?.userId,
+          reason: 'backend_requested',
+        });
+        // Logout without calling backend again (to avoid loop)
+        await this.logout(false);
+        return false;
+      }
+      
       const isActive = response.data.valid && response.data.isActive !== false;
       
       // Update cache
@@ -317,6 +344,10 @@ export class AuthService {
       // If NFT ownership changed, clear auth data
       if (!isActive && this.authData) {
         logger.info('NFT ownership lost, clearing authentication');
+        logAudit('AUTH_NFT_LOST', 'success', {
+          userId: this.authData.userId,
+          reason: 'nft_ownership_changed',
+        });
         this.authData = null;
         await this.clearAuth();
       }
@@ -495,5 +526,75 @@ export class AuthService {
       return this.localAuthServer.getUrl();
     }
     return null;
+  }
+
+  /**
+   * Logout and revoke current session
+   * Clears all local caches and optionally notifies backend
+   * @param notifyBackend - Call backend /revoke endpoint (default: true)
+   */
+  async logout(notifyBackend: boolean = true): Promise<{ success: boolean; message: string }> {
+    // Creator mode doesn't have real sessions
+    if (this.creatorMode.isCreatorMode()) {
+      return {
+        success: true,
+        message: 'Creator mode - no session to revoke'
+      };
+    }
+
+    const userId = this.authData?.userId;
+    const apiKey = this.authData?.apiKey;
+    const apiKeyPrefix = apiKey?.substring(0, 8);
+
+    // 1. Clear verification cache
+    this.clearVerificationCache();
+
+    // 2. Clear API key from ApiKeyManager
+    await this.apiKeyManager.clearApiKey();
+
+    // 3. Call backend /revoke endpoint (graceful - don't fail if unavailable)
+    if (notifyBackend && apiKey) {
+      await this.callBackendRevoke(apiKey, apiKeyPrefix);
+    }
+
+    // 4. Clear local auth data (mcp-auth.json)
+    await this.clearAuth();
+    this.authData = null;
+
+    // 5. Log audit event locally
+    logAudit('AUTH_LOGOUT', 'success', { userId, apiKeyPrefix });
+
+    logger.info('User logged out successfully', { userId, apiKeyPrefix });
+
+    return { success: true, message: 'Logged out successfully' };
+  }
+
+  /**
+   * Call backend to revoke the session
+   * This is a graceful operation - failures are logged but don't block logout
+   */
+  private async callBackendRevoke(apiKey: string, apiKeyPrefix?: string): Promise<void> {
+    try {
+      await axios.post(
+        `${this.apiEndpoint}/shadow-clone-licenses/revoke`,
+        { apiKey },
+        {
+          headers: {
+            'X-API-Key': apiKey,
+            'User-Agent': 'Shadow-Clone-MCP/0.1.0'
+          },
+          timeout: 5000 // 5 second timeout
+        }
+      );
+      logger.info('Backend session revoked', { apiKeyPrefix });
+    } catch (error) {
+      // Graceful failure - backend may not have endpoint yet
+      const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
+      logger.warn('Backend revocation failed (non-blocking)', {
+        apiKeyPrefix,
+        status: axiosError.response?.status,
+        message: axiosError.message,
+      });
+    }
   }
 }
