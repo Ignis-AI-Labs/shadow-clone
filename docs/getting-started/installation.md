@@ -88,23 +88,35 @@ If tools aren't showing up, see [Troubleshooting](#troubleshooting).
 
 ## Step 4: Authenticate
 
-Before using Shadow Clone tools, you need to authenticate with your API key.
+Shadow Clone uses browser-based authentication for security. When you first use a Shadow Clone tool, your browser will open automatically.
 
-In Claude, type:
+### How It Works
 
-```
-Please authenticate me with Shadow Clone using this API key: YOUR_API_KEY_HERE
-```
+1. **Trigger Authentication**: In Claude, use any Shadow Clone tool (e.g., `quick_fix`). If not authenticated, the server starts the auth flow.
 
-Replace `YOUR_API_KEY_HERE` with your actual API key from [dashboard.ignislabs.ai](https://dashboard.ignislabs.ai).
+2. **Browser Opens**: Your default browser opens to `http://localhost:PORT/auth` (a random port on your machine).
 
-You should see:
+3. **Enter Your API Key**: Paste your API key from [dashboard.ignislabs.ai](https://dashboard.ignislabs.ai) into the form.
+
+4. **Server Shuts Down**: After successful authentication, the local auth server automatically shuts down.
+
+You should see in Claude:
 
 ```
 ✅ Authenticated successfully! License type: ignisElite
 ```
 
-Authentication persists for 24 hours or until your NFT ownership changes.
+### Security Features
+
+| Feature | Description |
+|---------|-------------|
+| **Localhost Only** | Auth server binds only to 127.0.0.1 (not accessible from network) |
+| **CSRF Protection** | Random token per session prevents cross-site request forgery |
+| **5-Minute Timeout** | Auth server auto-shuts down if no response within 5 minutes |
+| **AES-256-GCM Encryption** | Your API key is encrypted at rest on your machine |
+| **Auto-Shutdown** | Server closes immediately after successful auth |
+
+Authentication persists until your NFT ownership changes.
 
 ## You're Ready!
 
@@ -180,6 +192,56 @@ Common fixes:
 - Update Node.js to v18+
 - Reinstall: `npm install -g @shadow-clone/mcp-server --force`
 - Clear npm cache: `npm cache clean --force`
+
+### Browser doesn't open automatically
+
+The auth system tries to open your default browser. If it fails:
+
+**Windows:**
+```bash
+# Manually open the URL shown in Claude's output
+start http://localhost:PORT/auth
+```
+
+**macOS:**
+```bash
+open http://localhost:PORT/auth
+```
+
+**Linux:**
+```bash
+xdg-open http://localhost:PORT/auth
+```
+
+**WSL (Windows Subsystem for Linux):**
+```bash
+# Use Windows browser from WSL
+cmd.exe /c start http://localhost:PORT/auth
+# Or set BROWSER environment variable
+export BROWSER='/mnt/c/Program Files/Google/Chrome/Application/chrome.exe'
+```
+
+Replace `PORT` with the actual port number shown in Claude's output.
+
+### Authentication timed out
+
+The auth server has a 5-minute security timeout. If you see this error:
+
+1. The auth server shut down automatically for security
+2. Try again - a new auth session will start
+3. Complete the browser authentication within 5 minutes
+
+This timeout prevents abandoned auth servers from running indefinitely.
+
+### Invalid request on auth form
+
+This error indicates CSRF protection triggered. Common causes:
+
+1. **Bookmarked auth URL** - Don't bookmark the auth page. Each session generates a unique token.
+2. **Stale browser tab** - Close old auth tabs and trigger a fresh authentication.
+3. **Multiple auth attempts** - Only one auth session can be active at a time.
+
+Solution: Close all auth-related browser tabs and start fresh by using any Shadow Clone tool in Claude.
 
 ---
 

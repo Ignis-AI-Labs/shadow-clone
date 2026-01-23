@@ -126,18 +126,46 @@ shadow-clone/
 - `initialize_workspace` - Create AI instruction files
 - `show_commands` - Quick reference
 
-### Authentication Flow (Current)
+### Authentication Flow (Current - Browser-Based)
 
 ```
-User → API Key → Backend Validation → NFT Ownership Check → Access Granted
-                         ↓
-              https://api.ignislabs.ai/shadow-clone-licenses/validate
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. User triggers Shadow Clone tool in Claude                        │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 2. MCP Server starts local auth server (localhost:random-port)      │
+│    - Binds to 127.0.0.1 only (not network accessible)               │
+│    - Generates CSRF token for session                               │
+│    - Sets 5-minute timeout                                          │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 3. Browser opens to auth page with CSRF token in URL                │
+│    - User enters API key from dashboard.ignislabs.ai                │
+│    - Form validates CSRF token on submit                            │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 4. Backend validation                                               │
+│    - POST to https://api.ignislabs.ai/shadow-clone-licenses/validate│
+│    - Verifies API key + NFT ownership                               │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 5. On success:                                                      │
+│    - API key encrypted with AES-256-GCM (machine-specific key)      │
+│    - Stored in ~/.shadow-clone/auth/credentials.json                │
+│    - Auth server shuts down immediately                             │
+│    - Claude receives success response                               │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 - **NFT Collections:** Ignis Elite (777), Pioneer (500), Builder (500), Reserve (223)
 - **Total Capacity:** 2,000 licenses
-- **Cache:** 1-minute NFT ownership cache, multi-location API key storage
+- **Cache:** Two-tier (60s normal, 5min fallback during network issues)
 - **Revocation:** Immediate on NFT transfer
+- **Encryption:** AES-256-GCM with machine-specific key derivation
 
 ---
 
@@ -246,44 +274,61 @@ The following cleanup has been completed (commit `bf27517`):
 - [x] Consolidated to MCP-only architecture
 - [x] Updated README, CLAUDE.md, and all documentation
 
+### January 2026 Security Sprint
+
+The following security hardening was completed in the January 2026 sprint:
+
+- [x] **Browser-based authentication** - Local server with CSRF protection replaces insecure chat-based key entry
+- [x] **AES-256-GCM encryption** - API keys encrypted at rest with machine-specific keys (replaces XOR obfuscation)
+- [x] **Command injection fix** - Uses `execFile` with array args instead of shell execution
+- [x] **Symlink path traversal prevention** - `realpathSync` resolves symlinks before file operations
+- [x] **Typed creator config with Zod** - Strict schema validation prevents config injection
+- [x] **Two-tier caching** - 60s normal / 5min fallback for resilient sessions
+- [x] **Security test suite** - Comprehensive tests for auth, encryption, and input validation
+- [x] **Security audit document** - Full audit at [mcp-server/docs/SECURITY_AUDIT.md](./mcp-server/docs/SECURITY_AUDIT.md)
+
 ---
 
 ## What Needs to Be Done
 
-### Priority 1: Security Hardening (CRITICAL) - YOUR MAIN FOCUS
+### Priority 1: Security Hardening (CRITICAL)
 
-#### 1.1 API Key Encryption
-**Current:** XOR obfuscation (not cryptographically secure)
-**Location:** `mcp-server/src/auth/apiKeyManager.ts:327-363`
-**Required:** AES-256-GCM encryption via Node.js crypto module
+#### 1.1 API Key Encryption ✅ COMPLETED
+**Status:** Implemented in January 2026 sprint
+**Implementation:** AES-256-GCM encryption via Node.js crypto module
+**Location:** `mcp-server/src/auth/apiKeyManager.ts`
 
-```typescript
-// Current (WEAK)
-function xorCipher(text: string, key: string): string { ... }
+Features:
+- Machine-specific encryption keys derived from hardware identifiers
+- Automatic migration from v1 (XOR) to v2 (AES-256-GCM) format
+- Secure key derivation using PBKDF2
 
-// Needed (STRONG)
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-// Proper AES-256-GCM implementation
-```
+#### 1.2 Session Management ⚠️ PARTIAL
+**Completed:**
+- Browser-based authentication with CSRF protection
+- Session caching with two-tier fallback (60s normal, 5min fallback)
+- Auto-shutdown of auth server after success or timeout
 
-#### 1.2 Session Management
-**Current:** No session invalidation mechanism
-**Required:**
+**Still Needed:**
 - Manual logout/session revocation API
 - Session invalidation on security events
 - Audit logging for all auth events
 
-#### 1.3 Distributed Rate Limiting
+#### 1.3 Distributed Rate Limiting ❌ TODO
 **Current:** In-memory only (won't scale)
 **Location:** `mcp-server/src/utils/rateLimiter.ts`
 **Required:** Redis-backed rate limiting for production scale
 
-#### 1.4 Input Validation Enhancement
-**Current:** Basic validation
-**Required:**
-- Comprehensive allowlist validation
-- Schema validation for all tool inputs
-- Enhanced sanitization beyond null bytes
+#### 1.4 Input Validation Enhancement ✅ COMPLETED
+**Status:** Implemented in January 2026 sprint
+**Implementation:** Zod schema validation on all tool inputs
+**Location:** `mcp-server/src/utils/validation.ts`
+
+Features:
+- Strict schema validation for all user inputs
+- Type-safe creator config with Zod schemas
+- Symlink resolution prevents path traversal
+- Secure process execution with `execFile` (no shell injection)
 
 ### Priority 2: MCP Integration Hardening
 
@@ -349,40 +394,44 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 The following must be validated by our CSO before production deployment:
 
 #### Authentication & Authorization
-- [ ] API key encryption uses AES-256-GCM (not XOR)
-- [ ] NFT ownership verification is cryptographically sound
+- [x] API key encryption uses AES-256-GCM (not XOR)
+- [x] NFT ownership verification is cryptographically sound
 - [ ] Session tokens are properly signed and validated
-- [ ] Rate limiting prevents brute force attacks
+- [x] Rate limiting prevents brute force attacks
 - [ ] Failed auth attempts are logged and monitored
 
 #### Data Protection
-- [ ] Prompts never exposed as plain text files
-- [ ] API keys never logged or transmitted in clear text
-- [ ] Sensitive data masked in all log outputs
-- [ ] File permissions enforced (0o600 for auth files)
+- [x] Prompts never exposed as plain text files
+- [x] API keys never logged or transmitted in clear text
+- [x] Sensitive data masked in all log outputs
+- [x] File permissions enforced (0o600 for auth files)
 
 #### Network Security
-- [ ] All API communication over HTTPS
+- [x] All API communication over HTTPS
 - [ ] CORS headers properly configured
 - [ ] No exposed debug endpoints in production
 - [ ] Admin endpoints require wallet signature
 
 #### Code Security
-- [ ] Production builds use webpack obfuscation
-- [ ] No hard-coded secrets in source code
+- [x] Production builds use webpack obfuscation
+- [x] No hard-coded secrets in source code
 - [ ] Dependencies audited for vulnerabilities
-- [ ] Input validation on all user-provided data
+- [x] Input validation on all user-provided data
 
 ### Threat Model
 
 | Threat | Mitigation | Status |
 |--------|------------|--------|
-| Prompt extraction | Compiled TypeScript + obfuscation | Implemented |
-| API key theft | Encryption at rest | Needs upgrade |
-| Unauthorized access | NFT ownership verification | Implemented |
-| Rate limit bypass | Distributed rate limiting | Needs implementation |
-| Session hijacking | Signed tokens + expiration | Partial |
-| Admin impersonation | Wallet signature verification | Implemented |
+| Prompt extraction | Compiled TypeScript + obfuscation | ✅ Implemented |
+| API key theft | AES-256-GCM encryption at rest | ✅ Implemented |
+| Command injection | `execFile` with array args (no shell) | ✅ Fixed |
+| Path traversal | `realpathSync` symlink resolution | ✅ Fixed |
+| Config injection | Zod strict schema validation | ✅ Fixed |
+| CSRF attacks | Random token per auth session | ✅ Implemented |
+| Unauthorized access | NFT ownership verification | ✅ Implemented |
+| Rate limit bypass | Distributed rate limiting | ❌ Needs implementation |
+| Session hijacking | Signed tokens + expiration | ⚠️ Partial |
+| Admin impersonation | Wallet signature verification | ✅ Implemented |
 
 ---
 
