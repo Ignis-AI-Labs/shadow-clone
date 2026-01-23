@@ -4,9 +4,12 @@
  * This module provides a secure browser-based authentication flow
  * where users can enter their API key on a locally-served webpage,
  * keeping the key hidden from the MCP client.
+ * 
+ * Supports both traditional API key entry and wallet-based authentication.
  */
 
 import * as http from 'http';
+import * as https from 'https';
 import * as crypto from 'crypto';
 import { getAuthFormPage, getSuccessPage, getErrorPage } from './authPages.js';
 import { logger } from '../utils/logger.js';
@@ -35,6 +38,48 @@ export type ValidateApiKeyFn = (apiKey: string) => Promise<{
 }>;
 
 /**
+ * ERC-712 Domain type
+ */
+export interface ERC712Domain {
+  name: string;
+  version: string;
+  chainId: number;
+}
+
+/**
+ * ERC-712 Auth message type
+ */
+export interface ERC712AuthMessage {
+  wallet: string;
+  nonce: string;
+  deadline: number;
+}
+
+/**
+ * Wallet authentication request data (ERC-712 format)
+ */
+export interface WalletAuthRequest {
+  domain?: ERC712Domain;
+  types?: Record<string, Array<{ name: string; type: string }>>;
+  message: ERC712AuthMessage;
+  signature: string;
+  csrf_token: string;
+}
+
+/**
+ * Wallet authentication response from backend
+ */
+export interface WalletAuthResponse {
+  success: boolean;
+  apiKey?: string;
+  licenseType?: string;
+  walletAddress?: string;
+  userId?: string;
+  message?: string;
+  notImplemented?: boolean;
+}
+
+/**
  * Local HTTP server for browser-based authentication
  */
 export class LocalAuthServer {
@@ -46,6 +91,7 @@ export class LocalAuthServer {
   private timeoutHandle: NodeJS.Timeout | null = null;
   private shutdownHandle: NodeJS.Timeout | null = null;
   private validateApiKey: ValidateApiKeyFn;
+  private apiEndpoint: string;
 
   private static readonly PORT_RANGE_START = 49152;
   private static readonly PORT_RANGE_END = 65535;
@@ -53,8 +99,9 @@ export class LocalAuthServer {
   private static readonly DEFAULT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
   private static readonly SHUTDOWN_DELAY_MS = 2000; // 2 seconds for page to load
 
-  constructor(validateApiKey: ValidateApiKeyFn) {
+  constructor(validateApiKey: ValidateApiKeyFn, apiEndpoint?: string) {
     this.validateApiKey = validateApiKey;
+    this.apiEndpoint = apiEndpoint || process.env.SHADOW_CLONE_API_ENDPOINT || 'https://api.ignislabs.ai';
   }
 
   /**
@@ -210,11 +257,25 @@ export class LocalAuthServer {
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
     const url = new URL(req.url || '/', `http://localhost:${this.port}`);
 
+    // Add CORS headers for wallet auth requests
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+
     // Route requests
     if (req.method === 'GET' && url.pathname === '/') {
       this.handleGetForm(res);
     } else if (req.method === 'POST' && url.pathname === '/auth') {
       this.handlePostAuth(req, res);
+    } else if (req.method === 'POST' && url.pathname === '/wallet-auth') {
+      this.handleWalletAuth(req, res);
     } else if (req.method === 'GET' && url.pathname === '/status') {
       this.handleGetStatus(res);
     } else {
@@ -315,6 +376,234 @@ export class LocalAuthServer {
   }
 
   /**
+   * Handle wallet-based authentication
+   * Verifies ERC-712 signature and forwards to backend for API key retrieval
+   */
+  private async handleWalletAuth(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    try {
+      // Parse JSON body
+      const body = await this.parseJsonBody(req);
+      const domain = body.domain as ERC712Domain | undefined;
+      const message = body.message as ERC712AuthMessage | undefined;
+      const signature = body.signature as string | undefined;
+      const csrf_token = body.csrf_token as string | undefined;
+
+      // Validate CSRF token
+      if (!csrf_token || csrf_token !== this.csrfToken) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: false, 
+          message: 'Invalid request. Please refresh and try again.' 
+        }));
+        return;
+      }
+
+      // Validate required fields (ERC-712 format)
+      if (!message || !signature) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: false, 
+          message: 'Missing required fields: message or signature' 
+        }));
+        return;
+      }
+
+      // Validate ERC-712 message fields
+      if (!message.wallet || !message.nonce || !message.deadline) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: false, 
+          message: 'Invalid message format: missing wallet, nonce, or deadline' 
+        }));
+        return;
+      }
+
+      const address = message.wallet;
+
+      // Validate Ethereum address format
+      if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: false, 
+          message: 'Invalid Ethereum address format' 
+        }));
+        return;
+      }
+
+      // Check deadline expiry
+      const now = Math.floor(Date.now() / 1000);
+      if (message.deadline < now) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: false, 
+          message: 'Signature expired. Please sign again.' 
+        }));
+        return;
+      }
+
+      logger.info('Processing ERC-712 wallet authentication request', { 
+        address: address.slice(0, 10) + '...' 
+      });
+
+      // Forward to backend API (with full ERC-712 payload)
+      try {
+        const backendResponse = await this.forwardWalletAuthToBackend(address, message, signature, domain);
+        
+        if (backendResponse.success && backendResponse.apiKey) {
+          // Validate the API key to ensure it's legitimate
+          const validationResult = await this.validateApiKey(backendResponse.apiKey);
+          
+          if (validationResult.success) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              success: true,
+              apiKey: backendResponse.apiKey,
+              licenseType: validationResult.licenseType,
+              walletAddress: address
+            }));
+
+            // Resolve auth promise with the validated key
+            if (this.authResolve) {
+              this.authResolve({
+                success: true,
+                apiKey: backendResponse.apiKey,
+                licenseType: validationResult.licenseType,
+                userId: validationResult.userId,
+                walletAddress: address
+              });
+            }
+
+            // Schedule shutdown
+            this.shutdownHandle = setTimeout(() => {
+              this.shutdown();
+            }, LocalAuthServer.SHUTDOWN_DELAY_MS);
+          } else {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              success: false,
+              message: validationResult.message || 'API key validation failed'
+            }));
+          }
+        } else {
+          res.writeHead(backendResponse.notImplemented ? 200 : 401, { 
+            'Content-Type': 'application/json' 
+          });
+          res.end(JSON.stringify(backendResponse));
+        }
+      } catch (backendError) {
+        // Backend endpoint not available - return graceful fallback
+        logger.info('Wallet auth backend not available, returning fallback response');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          notImplemented: true,
+          message: 'Wallet authentication backend coming soon. Please use your API key for now.',
+          walletAddress: address
+        }));
+      }
+    } catch (error) {
+      logger.error('Error handling wallet auth request:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        success: false, 
+        message: 'An unexpected error occurred. Please try again.' 
+      }));
+    }
+  }
+
+  /**
+   * Forward wallet authentication to backend API (ERC-712 format)
+   */
+  private forwardWalletAuthToBackend(
+    address: string, 
+    message: ERC712AuthMessage, 
+    signature: string,
+    clientDomain?: ERC712Domain
+  ): Promise<WalletAuthResponse> {
+    return new Promise((resolve, reject) => {
+      const url = new URL(`${this.apiEndpoint}/shadow-clone-licenses/wallet-auth`);
+      
+      // Use client-provided domain or default (allows any chain)
+      const domain = clientDomain || {
+        name: 'Shadow Clone',
+        version: '1',
+        chainId: 1
+      };
+
+      // ERC-712 types (must match client)
+      const types = {
+        Auth: [
+          { name: 'wallet', type: 'address' },
+          { name: 'nonce', type: 'string' },
+          { name: 'deadline', type: 'uint256' }
+        ]
+      };
+
+      const postData = JSON.stringify({
+        domain,
+        types,
+        message,
+        signature
+      });
+
+      const options: https.RequestOptions = {
+        hostname: url.hostname,
+        port: url.port || 443,
+        path: url.pathname,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData),
+          'User-Agent': 'Shadow-Clone-MCP/0.1.0'
+        },
+        timeout: 10000 // 10 second timeout
+      };
+
+      const protocol = url.protocol === 'https:' ? https : http;
+      
+      const request = protocol.request(options, (response) => {
+        let data = '';
+        
+        response.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        response.on('end', () => {
+          try {
+            if (response.statusCode === 404) {
+              // Endpoint not implemented yet
+              resolve({
+                success: false,
+                notImplemented: true,
+                message: 'Wallet authentication endpoint not available yet'
+              });
+              return;
+            }
+            
+            const jsonResponse = JSON.parse(data);
+            resolve(jsonResponse as WalletAuthResponse);
+          } catch (parseError) {
+            reject(new Error('Failed to parse backend response'));
+          }
+        });
+      });
+
+      request.on('error', (error) => {
+        logger.error('Backend wallet auth request failed:', error);
+        reject(error);
+      });
+
+      request.on('timeout', () => {
+        request.destroy();
+        reject(new Error('Backend request timeout'));
+      });
+
+      request.write(postData);
+      request.end();
+    });
+  }
+
+  /**
    * Send 404 response
    */
   private sendNotFound(res: http.ServerResponse): void {
@@ -345,6 +634,35 @@ export class LocalAuthServer {
           formData.set(key, value);
         }
         resolve(formData);
+      });
+
+      req.on('error', reject);
+    });
+  }
+
+  /**
+   * Parse JSON body from request
+   */
+  private parseJsonBody(req: http.IncomingMessage): Promise<Record<string, unknown>> {
+    return new Promise((resolve, reject) => {
+      let body = '';
+      const maxSize = 1024 * 50; // 50KB max for SIWE messages
+
+      req.on('data', (chunk: Buffer) => {
+        body += chunk.toString();
+        if (body.length > maxSize) {
+          req.destroy();
+          reject(new Error('Request body too large'));
+        }
+      });
+
+      req.on('end', () => {
+        try {
+          const jsonData = JSON.parse(body);
+          resolve(jsonData);
+        } catch (error) {
+          reject(new Error('Invalid JSON body'));
+        }
       });
 
       req.on('error', reject);

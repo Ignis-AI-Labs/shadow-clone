@@ -34,6 +34,12 @@ export class AuthService {
   private apiKeyManager: ApiKeyManager;
   private creatorMode: CreatorMode;
   private localAuthServer: LocalAuthServer | null = null;
+  
+  // Validation polling properties
+  private validationPollingInterval: NodeJS.Timeout | null = null;
+  private readonly VALIDATION_POLL_INTERVAL = 60000; // 1 minute polling interval
+  private consecutiveValidationFailures: number = 0;
+  private readonly MAX_CONSECUTIVE_FAILURES = 3; // Logout after 3 consecutive failures (3 minutes)
 
   constructor() {
     // Store auth data in user's home directory
@@ -46,6 +52,9 @@ export class AuthService {
     // Check for creator mode first
     if (this.creatorMode.isCreatorMode()) {
       logger.info('🚀 Creator Mode Active - Authentication bypassed');
+      logAudit('AUTH_CREATOR_MODE', 'success', {
+        licenseType: this.creatorMode.getCreatorLicenseType(),
+      });
       this.authData = {
         apiKey: this.creatorMode.getCreatorApiKey(),
         userId: 'creator',
@@ -64,10 +73,17 @@ export class AuthService {
     if (!this.authData) {
       const cachedKey = await this.apiKeyManager.getApiKey();
       if (cachedKey) {
+        const apiKeyPrefix = cachedKey.substring(0, 8);
         logger.info('Found cached API key, attempting authentication...');
+        logAudit('AUTH_CACHED_KEY_FOUND', 'success', { apiKeyPrefix });
+        
         const result = await this.authenticate(cachedKey);
         if (!result.success) {
           logger.warn('Cached API key is invalid or expired');
+          logAudit('AUTH_CACHED_KEY_INVALID', 'failure', {
+            apiKeyPrefix,
+            reason: result.message || 'invalid_or_expired',
+          });
           await this.apiKeyManager.clearApiKey();
         }
       }
@@ -274,12 +290,19 @@ export class AuthService {
     if (!this.authData) {
       const cachedKey = await this.apiKeyManager.getApiKey();
       if (cachedKey) {
+        const apiKeyPrefix = cachedKey.substring(0, 8);
         // Check if we need to revalidate
         if (this.apiKeyManager.needsValidation()) {
           logger.info('Revalidating cached API key...');
+          logAudit('AUTH_REVALIDATION_START', 'success', { apiKeyPrefix });
+          
           const result = await this.authenticate(cachedKey);
           if (!result.success) {
             logger.warn('Cached API key is no longer valid. Please visit dashboard.ignislabs.ai to get a new API key.');
+            logAudit('AUTH_CACHED_KEY_INVALID', 'failure', {
+              apiKeyPrefix,
+              reason: 'revalidation_failed',
+            });
             await this.apiKeyManager.clearApiKey();
             return false;
           }
@@ -334,6 +357,7 @@ export class AuthService {
       }
       
       const isActive = response.data.valid && response.data.isActive !== false;
+      const apiKeyPrefix = apiKey.substring(0, 8);
       
       // Update cache
       this.verificationCache.set(apiKey, {
@@ -350,16 +374,30 @@ export class AuthService {
         });
         this.authData = null;
         await this.clearAuth();
+      } else if (isActive) {
+        logAudit('AUTH_NFT_VERIFY_SUCCESS', 'success', {
+          userId: this.authData?.userId,
+          apiKeyPrefix,
+        });
       }
       
       return isActive;
     } catch (error: unknown) {
       // Sanitize error logging to avoid leaking sensitive data
       const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
+      const apiKeyPrefix = apiKey.substring(0, 8);
+      
       logger.error('NFT verification failed', {
         status: axiosError.response?.status,
         code: axiosError.code,
         message: axiosError.message,
+      });
+      
+      logAudit('AUTH_NFT_VERIFY_FAILURE', 'failure', {
+        userId: this.authData?.userId,
+        apiKeyPrefix,
+        reason: axiosError.code || 'network_error',
+        status: axiosError.response?.status,
       });
 
       // On network errors, use cached value if available and recent (within 5 minutes)
@@ -456,10 +494,11 @@ export class AuthService {
     };
 
     // Create and start the local auth server
-    this.localAuthServer = new LocalAuthServer(validateApiKey);
+    this.localAuthServer = new LocalAuthServer(validateApiKey, this.apiEndpoint);
     const { port, url } = await this.localAuthServer.start();
 
     logger.info('Browser auth started', { url });
+    logAudit('AUTH_BROWSER_AUTH_START', 'success', { url, port });
 
     return { url, port };
   }
@@ -508,6 +547,7 @@ export class AuthService {
       await this.localAuthServer.shutdown();
       this.localAuthServer = null;
       logger.info('Browser auth cancelled');
+      logAudit('AUTH_BROWSER_AUTH_CANCEL', 'success', {});
     }
   }
 
@@ -545,6 +585,9 @@ export class AuthService {
     const userId = this.authData?.userId;
     const apiKey = this.authData?.apiKey;
     const apiKeyPrefix = apiKey?.substring(0, 8);
+
+    // 0. Stop validation polling first to prevent race conditions
+    this.stopValidationPolling();
 
     // 1. Clear verification cache
     this.clearVerificationCache();
@@ -595,6 +638,191 @@ export class AuthService {
         status: axiosError.response?.status,
         message: axiosError.message,
       });
+    }
+  }
+
+  /**
+   * Start validation polling - checks API key validity every minute
+   * If validation fails, automatically logs out the user
+   */
+  startValidationPolling(): void {
+    // Don't start polling in creator mode
+    if (this.creatorMode.isCreatorMode()) {
+      logger.info('Validation polling skipped - creator mode active');
+      return;
+    }
+
+    // Don't start if already polling
+    if (this.validationPollingInterval) {
+      logger.info('Validation polling already active');
+      return;
+    }
+
+    // Reset failure counter when starting
+    this.consecutiveValidationFailures = 0;
+
+    logger.info('Starting validation polling', { 
+      intervalMs: this.VALIDATION_POLL_INTERVAL,
+      maxFailures: this.MAX_CONSECUTIVE_FAILURES
+    });
+    
+    logAudit('AUTH_VALIDATION_POLL_START', 'success', {
+      intervalMs: this.VALIDATION_POLL_INTERVAL,
+      maxFailures: this.MAX_CONSECUTIVE_FAILURES,
+    });
+
+    // Start the polling interval
+    this.validationPollingInterval = setInterval(() => {
+      this.performValidationCheck().catch((error) => {
+        logger.error('Validation polling check failed', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+        });
+      });
+    }, this.VALIDATION_POLL_INTERVAL);
+
+    // Perform an immediate check as well
+    this.performValidationCheck().catch((error) => {
+      logger.error('Initial validation check failed', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    });
+  }
+
+  /**
+   * Stop validation polling
+   */
+  stopValidationPolling(): void {
+    if (this.validationPollingInterval) {
+      clearInterval(this.validationPollingInterval);
+      this.validationPollingInterval = null;
+      this.consecutiveValidationFailures = 0;
+      logger.info('Validation polling stopped');
+      logAudit('AUTH_VALIDATION_POLL_STOP', 'success', {});
+    }
+  }
+
+  /**
+   * Check if validation polling is currently active
+   */
+  isValidationPollingActive(): boolean {
+    return this.validationPollingInterval !== null;
+  }
+
+  /**
+   * Perform a validation check - called by the polling interval
+   * Bypasses cache and directly calls the backend API
+   * If validation fails, triggers logout
+   */
+  private async performValidationCheck(): Promise<void> {
+    // Skip if creator mode
+    if (this.creatorMode.isCreatorMode()) {
+      return;
+    }
+
+    // Skip if no auth data or API key
+    if (!this.authData?.apiKey) {
+      logger.info('Validation check skipped - no API key present');
+      this.stopValidationPolling();
+      return;
+    }
+
+    const apiKey = this.authData.apiKey;
+    const apiKeyPrefix = apiKey.substring(0, 8);
+
+    try {
+      const response = await axios.post<{ valid: boolean; isActive: boolean }>(
+        `${this.apiEndpoint}/shadow-clone-licenses/validate`,
+        { apiKey },
+        {
+          headers: {
+            'X-API-Key': apiKey,
+            'User-Agent': 'Shadow-Clone-MCP/0.1.0'
+          },
+          timeout: 10000 // 10 second timeout for polling check
+        }
+      );
+
+      // Reset failure counter on successful API call
+      this.consecutiveValidationFailures = 0;
+
+      const isValid = response.data.valid === true;
+      const isActive = response.data.isActive !== false;
+
+      // Update the verification cache with fresh data
+      this.verificationCache.set(apiKey, {
+        isActive: isValid && isActive,
+        timestamp: Date.now()
+      });
+
+      if (!isValid || !isActive) {
+        logger.warn('Validation polling detected invalid/inactive session', {
+          apiKeyPrefix,
+          valid: isValid,
+          active: isActive,
+        });
+
+        logAudit('AUTH_SESSION_REVOKED', 'success', {
+          userId: this.authData?.userId,
+          reason: !isValid ? 'api_key_invalid' : 'api_key_inactive',
+        });
+
+        // Stop polling before logout to prevent race conditions
+        this.stopValidationPolling();
+
+        // Logout without notifying backend (since we just validated against it)
+        await this.logout(false);
+        
+        logger.info('Auto-logout completed due to failed validation check');
+      } else {
+        logger.debug?.('Validation polling check passed', { apiKeyPrefix });
+        logAudit('AUTH_VALIDATION_POLL_SUCCESS', 'success', {
+          userId: this.authData?.userId,
+          apiKeyPrefix,
+        });
+      }
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { status?: number }; message?: string; code?: string };
+      
+      // Increment failure counter
+      this.consecutiveValidationFailures++;
+
+      logger.warn('Validation polling API call failed', {
+        apiKeyPrefix,
+        consecutiveFailures: this.consecutiveValidationFailures,
+        maxFailures: this.MAX_CONSECUTIVE_FAILURES,
+        status: axiosError.response?.status,
+        code: axiosError.code,
+        message: axiosError.message,
+      });
+      
+      logAudit('AUTH_VALIDATION_POLL_FAILURE', 'failure', {
+        userId: this.authData?.userId,
+        apiKeyPrefix,
+        consecutiveFailures: this.consecutiveValidationFailures,
+        reason: axiosError.code || 'network_error',
+        status: axiosError.response?.status,
+      });
+
+      // If we've hit max consecutive failures, logout
+      if (this.consecutiveValidationFailures >= this.MAX_CONSECUTIVE_FAILURES) {
+        logger.error('Max consecutive validation failures reached - logging out', {
+          apiKeyPrefix,
+          consecutiveFailures: this.consecutiveValidationFailures,
+        });
+
+        logAudit('AUTH_SESSION_REVOKED', 'success', {
+          userId: this.authData?.userId,
+          reason: 'validation_failures_exceeded',
+        });
+
+        // Stop polling before logout
+        this.stopValidationPolling();
+
+        // Logout - don't notify backend since we can't reach it anyway
+        await this.logout(false);
+        
+        logger.info('Auto-logout completed due to consecutive validation failures');
+      }
     }
   }
 }
