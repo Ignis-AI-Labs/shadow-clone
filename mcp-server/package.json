@@ -20,7 +20,9 @@
     "prepare": "npm run build",
     "version": "echo $npm_package_version",
     "check-updates": "npm outdated -g @shadow-clone/mcp-server",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit --skipLibCheck",
     "health": "NODE_ENV=production ENABLE_METRICS=true node dist/index.js"

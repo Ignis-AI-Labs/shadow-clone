@@ -5,9 +5,17 @@ import { config } from '../config/production.js';
 const maskSensitive = winston.format((info) => {
   if (config.logging.maskSensitiveData) {
     const sensitivePatterns = [
+      // JSON API key patterns
       { pattern: /apiKey":\s*"[^"]+"/g, replacement: 'apiKey":"***"' },
+      { pattern: /encryptedApiKey":\s*"[^"]+"/g, replacement: 'encryptedApiKey":"***"' },
+      // Query string/env patterns
       { pattern: /api_key=\S+/g, replacement: 'api_key=***' },
+      { pattern: /SHADOW_CLONE_API_KEY=\S+/g, replacement: 'SHADOW_CLONE_API_KEY=***' },
+      // Header patterns
       { pattern: /authorization:\s*[^\s,}]+/gi, replacement: 'authorization: ***' },
+      { pattern: /X-API-Key:\s*[^\s,}]+/gi, replacement: 'X-API-Key: ***' },
+      // API key prefix patterns (ignis_ and sk-)
+      { pattern: /ignis_[a-zA-Z0-9_-]+/g, replacement: 'ignis_***' },
       { pattern: /sk-[a-zA-Z0-9]+/g, replacement: 'sk-***' },
     ];
 
