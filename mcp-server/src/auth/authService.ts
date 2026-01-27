@@ -6,7 +6,7 @@ import { logger, logAudit } from '../utils/logger.js';
 import { ApiKeyManager } from './apiKeyManager.js';
 import { CreatorMode } from './creatorMode.js';
 import { encrypt, decryptWithMigration } from './encryption.js';
-import { LocalAuthServer, AuthResult } from './localAuthServer.js';
+import { LocalAuthServer, AuthResult, LogoutResult, LogoutType, LogoutCallbackFn } from './localAuthServer.js';
 
 interface AuthData {
   apiKey: string; // Stored encrypted in file, decrypted in memory
@@ -58,7 +58,7 @@ export class AuthService {
 
   // Configuration constants
   private readonly API_KEY_PREFIX_LENGTH = 8;
-  private readonly API_TIMEOUT_MS = 5000;
+  private readonly API_TIMEOUT_MS = 30000; // 30 second timeout for API calls
   private readonly EXTENDED_CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
@@ -447,6 +447,29 @@ export class AuthService {
     return this.authData?.licenseType || null;
   }
 
+  /**
+   * Check if there's a local session (auth data or cached API key)
+   * This does NOT verify NFT ownership - use for logout flow
+   * where we just need to know if there's something to logout from
+   */
+  async hasLocalSession(): Promise<boolean> {
+    // Creator mode is always considered to have a session
+    if (this.creatorMode.isCreatorMode()) {
+      return true;
+    }
+
+    await this.loadAuthData();
+
+    // Check if we have auth data
+    if (this.authData?.apiKey) {
+      return true;
+    }
+
+    // Check if there's a cached API key
+    const cachedKey = await this.apiKeyManager.getApiKey();
+    return cachedKey !== null;
+  }
+
   async makeAuthenticatedRequest(url: string, options: AuthenticatedRequestOptions = {}): Promise<AuthenticatedRequestResponse> {
     const apiKey = await this.getApiKey();
     if (!apiKey) {
@@ -589,11 +612,118 @@ export class AuthService {
   }
 
   /**
-   * Logout and revoke current session
-   * Clears all local caches and optionally notifies backend
-   * @param notifyBackend - Call backend /revoke endpoint (default: true)
+   * Start browser-based logout flow
+   * Launches a local HTTP server where the user can choose logout options
+   * @returns URL for the user to open in their browser
    */
-  async logout(notifyBackend: boolean = true): Promise<{ success: boolean; message: string }> {
+  async startBrowserLogout(): Promise<{ url: string; port: number }> {
+    // Cancel any existing browser auth/logout
+    if (this.localAuthServer) {
+      await this.cancelBrowserAuth();
+    }
+
+    // Get current API key and wallet address
+    const apiKey = await this.getApiKey();
+    if (!apiKey) {
+      throw new Error('No active session to logout from');
+    }
+
+    const walletAddress = await this.getWalletAddress();
+
+    // Create validation function that wraps authenticate
+    const validateApiKey = async (key: string) => {
+      const result = await this.authenticate(key);
+      return {
+        success: result.success,
+        licenseType: result.licenseType,
+        userId: this.authData?.userId,
+        walletAddress: this.authData?.walletAddress,
+        message: result.message
+      };
+    };
+
+    // Create logout callback that clears auth data immediately when user confirms logout in browser
+    const logoutCallback: LogoutCallbackFn = async (type: LogoutType) => {
+      // Stop validation polling
+      this.stopValidationPolling();
+
+      // Clear verification cache
+      this.clearVerificationCache();
+
+      // Clear API key from ApiKeyManager
+      await this.apiKeyManager.clearApiKey();
+
+      // Clear local auth data (mcp-auth.json)
+      await this.clearAuth();
+      this.authData = null;
+
+      logAudit('AUTH_BROWSER_LOGOUT_SUCCESS', 'success', { type });
+      logger.info(`Browser logout completed: ${type}`);
+    };
+
+    // Create and start the local auth server in logout mode with callback
+    this.localAuthServer = new LocalAuthServer(validateApiKey, this.apiEndpoint);
+    const { port, url } = await this.localAuthServer.startLogout(
+      apiKey,
+      walletAddress || undefined,
+      logoutCallback
+    );
+
+    logger.info('Browser logout started', { url });
+    logAudit('AUTH_BROWSER_LOGOUT_START', 'success', { url, port });
+
+    return { url, port };
+  }
+
+  /**
+   * Wait for browser logout to complete
+   * @param timeoutMs - Maximum time to wait (default: 5 minutes)
+   * @returns Logout result
+   */
+  async waitForBrowserLogout(timeoutMs?: number): Promise<LogoutResult> {
+    if (!this.localAuthServer) {
+      return {
+        success: false,
+        type: 'cancelled',
+        error: 'No browser logout in progress'
+      };
+    }
+
+    try {
+      const result = await this.localAuthServer.waitForLogout(timeoutMs);
+      // Auth data is already cleared by the logout callback - just return result
+      return result;
+    } finally {
+      this.localAuthServer = null;
+    }
+  }
+
+  /**
+   * Cancel any pending browser logout
+   */
+  async cancelBrowserLogout(): Promise<void> {
+    if (this.localAuthServer) {
+      await this.localAuthServer.shutdown();
+      this.localAuthServer = null;
+      logger.info('Browser logout cancelled');
+      logAudit('AUTH_BROWSER_LOGOUT_CANCEL', 'success', {});
+    }
+  }
+
+  /**
+   * Check if browser logout is in progress
+   */
+  isBrowserLogoutPending(): boolean {
+    return this.localAuthServer !== null && this.localAuthServer.isRunning();
+  }
+
+  /**
+   * Logout and clear local session
+   * Clears all local caches. Backend revocation now requires wallet signature,
+   * so use browser-based logout (startBrowserLogout) for permanent revocation.
+   * @param notifyBackend - Deprecated: backend revoke requires wallet signature (default: false)
+   */
+  async logout(notifyBackend: boolean = false): Promise<{ success: boolean; message: string }> {
     // Creator mode doesn't have real sessions
     if (this.creatorMode.isCreatorMode()) {
       return {

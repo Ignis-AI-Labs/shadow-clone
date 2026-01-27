@@ -181,6 +181,10 @@ export type AuditEventType =
   // Browser auth events
   | 'AUTH_BROWSER_AUTH_START'
   | 'AUTH_BROWSER_AUTH_CANCEL'
+  // Browser logout events
+  | 'AUTH_BROWSER_LOGOUT_START'
+  | 'AUTH_BROWSER_LOGOUT_SUCCESS'
+  | 'AUTH_BROWSER_LOGOUT_CANCEL'
   // Cached key events
   | 'AUTH_CACHED_KEY_FOUND'
   | 'AUTH_CACHED_KEY_INVALID'

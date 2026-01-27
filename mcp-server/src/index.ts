@@ -233,6 +233,77 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
           };
         }
 
+        // Handle logout separately with browser-based flow
+        if (validatedName === 'logout') {
+          // Check if already logged out (use hasLocalSession to avoid NFT verification)
+          if (!await this.authService.hasLocalSession()) {
+            logPerformance('logout', Date.now() - startTime, {
+              success: true,
+              alreadyLoggedOut: true
+            });
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `# Already Logged Out
+
+You don't have an active session.
+
+Use the \`authenticate\` tool to log in.`,
+                },
+              ],
+            };
+          }
+
+          // Check if browser logout is already pending
+          if (this.authService.isBrowserLogoutPending()) {
+            const url = this.authService.getBrowserAuthUrl();
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `# Logout In Progress
+
+A browser logout session is already active.
+
+Please open the following URL in your browser:
+
+**${url}**
+
+Complete the logout process in your browser.`,
+                },
+              ],
+            };
+          }
+
+          // Start browser-based logout
+          const { url } = await this.authService.startBrowserLogout();
+          openBrowser(url);
+
+          logPerformance('logout', Date.now() - startTime, {
+            success: true,
+            browserLogoutStarted: true
+          });
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `# Logout Options
+
+A browser window has been opened for you to complete the logout process.
+
+**URL:** ${url}
+
+## Options Available:
+1. **Copy API Key & Logout Locally** - Keep your key valid for later use
+2. **Revoke API Key Permanently** - Requires wallet signature, key cannot be recovered
+
+Complete the logout process in your browser.`,
+              },
+            ],
+          };
+        }
+
         // Check authentication for all other tools
         const isAuthenticated = await this.authService.isAuthenticated();
         if (!isAuthenticated) {
