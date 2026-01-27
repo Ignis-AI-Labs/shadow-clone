@@ -29,3 +29,4 @@ export const toolSchemaRegistry: Record<string, z.ZodSchema> = {
 };
 
 export * from './toolSchemas.js';
+export * from './httpSchemas.js';

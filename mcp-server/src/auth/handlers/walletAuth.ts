@@ -19,13 +19,16 @@ import type {
 import type { NonceTracker } from '../security.js';
 import type { KeyDeliveryStore } from '../keyDelivery.js';
 import { parseJsonBody } from '../../utils/httpParser.js';
+import { validateHttpRequest, validateDeadline } from '../../utils/httpValidation.js';
+import {
+  walletAuthRequestSchema,
+  regenerateRequestSchema
+} from '../../schemas/httpSchemas.js';
 import {
   ERC712_DOMAIN,
   AUTH_TYPES,
   REGENERATE_TYPES,
-  validateCsrfToken,
   validateEthereumAddress,
-  isDeadlineExpired,
   verifyERC712Signature
 } from '../security.js';
 import { logger } from '../../utils/logger.js';
@@ -53,38 +56,25 @@ export async function handleWalletAuth(
 ): Promise<void> {
   try {
     const body = await parseJsonBody(req);
-    const message = body.message as ERC712AuthMessage | undefined;
-    const signature = body.signature as string | undefined;
-    const csrf_token = body.csrf_token as string | undefined;
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrf_token, deps.csrfToken)) {
-      sendJsonError(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(walletAuthRequestSchema, body, deps.csrfToken);
+    if (!validation.success) {
+      sendJsonError(res, 400, validation.error || 'Invalid request');
       return;
     }
 
-    // Validate required fields (ERC-712 format)
-    if (!message || !signature) {
-      sendJsonError(res, 400, 'Missing required fields: message or signature');
-      return;
-    }
-
-    // Validate ERC-712 message fields
-    if (!message.wallet || !message.nonce || !message.deadline) {
-      sendJsonError(res, 400, 'Invalid message format: missing wallet, nonce, or deadline');
-      return;
-    }
-
+    const { message, signature } = validation.data!;
     const address = message.wallet;
 
-    // Validate Ethereum address format
+    // Validate Ethereum address format (additional check beyond schema)
     if (!validateEthereumAddress(address)) {
       sendJsonError(res, 400, 'Invalid Ethereum address format');
       return;
     }
 
-    // Check deadline expiry
-    if (isDeadlineExpired(message.deadline)) {
+    // Check deadline expiry (business logic, not schema validation)
+    if (!validateDeadline(message.deadline)) {
       sendJsonError(res, 401, 'Signature expired. Please sign again.');
       return;
     }
@@ -212,38 +202,25 @@ export async function handleRegenerate(
 ): Promise<void> {
   try {
     const body = await parseJsonBody(req);
-    const message = body.message as ERC712RegenerateMessage | undefined;
-    const signature = body.signature as string | undefined;
-    const csrf_token = body.csrf_token as string | undefined;
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrf_token, deps.csrfToken)) {
-      sendJsonError(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(regenerateRequestSchema, body, deps.csrfToken);
+    if (!validation.success) {
+      sendJsonError(res, 400, validation.error || 'Invalid request');
       return;
     }
 
-    // Validate required fields
-    if (!message || !signature) {
-      sendJsonError(res, 400, 'Missing required fields: message or signature');
-      return;
-    }
-
-    // Validate message fields
-    if (!message.wallet || !message.nonce || !message.deadline || message.action !== 'regenerate') {
-      sendJsonError(res, 400, 'Invalid message format');
-      return;
-    }
-
+    const { message, signature } = validation.data!;
     const address = message.wallet;
 
-    // Validate Ethereum address format
+    // Validate Ethereum address format (additional check beyond schema)
     if (!validateEthereumAddress(address)) {
       sendJsonError(res, 400, 'Invalid Ethereum address format');
       return;
     }
 
-    // Check deadline expiry
-    if (isDeadlineExpired(message.deadline)) {
+    // Check deadline expiry (business logic, not schema validation)
+    if (!validateDeadline(message.deadline)) {
       sendJsonError(res, 401, 'Signature expired. Please sign again.');
       return;
     }

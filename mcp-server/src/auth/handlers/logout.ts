@@ -11,12 +11,16 @@ import * as https from 'https';
 import type { LogoutType, LogoutResult, ERC712RevokeMessage, RevokeResponse } from '../types.js';
 import type { NonceTracker } from '../security.js';
 import { parseJsonBody } from '../../utils/httpParser.js';
+import { validateHttpRequest, validateDeadline } from '../../utils/httpValidation.js';
+import {
+  logoutGetKeyRequestSchema,
+  logoutLocalRequestSchema,
+  logoutRevokeRequestSchema
+} from '../../schemas/httpSchemas.js';
 import {
   REVOKE_TYPES,
   ERC712_DOMAIN,
-  validateCsrfToken,
   validateEthereumAddress,
-  isDeadlineExpired,
   verifyERC712Signature,
   maskApiKey,
   CSP_HEADER
@@ -99,11 +103,11 @@ export async function handleLogoutGetKey(
 ): Promise<void> {
   try {
     const body = await parseJsonBody(req);
-    const csrf_token = body.csrf_token as string | undefined;
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrf_token, deps.csrfToken)) {
-      sendJsonError(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(logoutGetKeyRequestSchema, body, deps.csrfToken);
+    if (!validation.success) {
+      sendJsonError(res, 403, validation.error || 'Invalid request. Please refresh and try again.');
       return;
     }
 
@@ -132,11 +136,11 @@ export async function handleLogoutLocal(
 ): Promise<void> {
   try {
     const body = await parseJsonBody(req);
-    const csrf_token = body.csrf_token as string | undefined;
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrf_token, deps.csrfToken)) {
-      sendJsonError(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(logoutLocalRequestSchema, body, deps.csrfToken);
+    if (!validation.success) {
+      sendJsonError(res, 403, validation.error || 'Invalid request. Please refresh and try again.');
       return;
     }
 
@@ -171,13 +175,11 @@ export async function handleLogoutRevoke(
 ): Promise<void> {
   try {
     const body = await parseJsonBody(req);
-    const message = body.message as ERC712RevokeMessage | undefined;
-    const signature = body.signature as string | undefined;
-    const csrf_token = body.csrf_token as string | undefined;
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrf_token, deps.csrfToken)) {
-      sendJsonError(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(logoutRevokeRequestSchema, body, deps.csrfToken);
+    if (!validation.success) {
+      sendJsonError(res, 400, validation.error || 'Invalid request');
       return;
     }
 
@@ -186,28 +188,17 @@ export async function handleLogoutRevoke(
       return;
     }
 
-    // Validate required fields
-    if (!message || !signature) {
-      sendJsonError(res, 400, 'Missing required fields: message or signature');
-      return;
-    }
-
-    // Validate message fields
-    if (!message.wallet || !message.nonce || !message.deadline || message.action !== 'revoke') {
-      sendJsonError(res, 400, 'Invalid message format');
-      return;
-    }
-
+    const { message, signature } = validation.data!;
     const address = message.wallet;
 
-    // Validate Ethereum address format
+    // Validate Ethereum address format (additional check beyond schema)
     if (!validateEthereumAddress(address)) {
       sendJsonError(res, 400, 'Invalid Ethereum address format');
       return;
     }
 
-    // Check deadline expiry
-    if (isDeadlineExpired(message.deadline)) {
+    // Check deadline expiry (business logic, not schema validation)
+    if (!validateDeadline(message.deadline)) {
       sendJsonError(res, 401, 'Signature expired. Please sign again.');
       return;
     }

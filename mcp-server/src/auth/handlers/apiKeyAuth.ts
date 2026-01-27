@@ -8,7 +8,9 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { ValidateApiKeyFn, AuthResult } from '../types.js';
 import { parseFormData } from '../../utils/httpParser.js';
-import { validateCsrfToken, validateEthereumAddress, CSP_HEADER } from '../security.js';
+import { validateHttpRequest } from '../../utils/httpValidation.js';
+import { authRequestSchema, pasteKeyRequestSchema } from '../../schemas/httpSchemas.js';
+import { validateEthereumAddress, CSP_HEADER } from '../security.js';
 import { getSuccessPage, getErrorPage } from '../authPages.js';
 import { logger } from '../../utils/logger.js';
 
@@ -32,20 +34,19 @@ export async function handlePostAuth(
 ): Promise<void> {
   try {
     const formData = await parseFormData(req);
-    const apiKey = formData.get('apiKey');
-    const csrfToken = formData.get('csrf_token');
+    const formObject = {
+      apiKey: formData.get('apiKey') || '',
+      csrf_token: formData.get('csrf_token') || ''
+    };
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrfToken, deps.csrfToken)) {
-      sendErrorResponse(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(authRequestSchema, formObject, deps.csrfToken);
+    if (!validation.success) {
+      sendErrorResponse(res, 400, validation.error || 'Invalid request. Please refresh and try again.');
       return;
     }
 
-    // Validate API key presence
-    if (!apiKey || typeof apiKey !== 'string' || apiKey.length < 10) {
-      sendErrorResponse(res, 400, 'Please enter a valid API key.');
-      return;
-    }
+    const { apiKey } = validation.data!;
 
     // Validate API key with backend
     const result = await deps.validateApiKey(apiKey);
@@ -84,25 +85,24 @@ export async function handlePasteKey(
 ): Promise<void> {
   try {
     const formData = await parseFormData(req);
-    const apiKey = formData.get('apiKey');
-    const csrfToken = formData.get('csrf_token');
-    const walletAddress = formData.get('walletAddress');
+    const formObject = {
+      apiKey: formData.get('apiKey') || '',
+      csrf_token: formData.get('csrf_token') || '',
+      walletAddress: formData.get('walletAddress') || undefined
+    };
 
-    // Validate CSRF token
-    if (!validateCsrfToken(csrfToken, deps.csrfToken)) {
-      sendErrorResponse(res, 403, 'Invalid request. Please refresh and try again.');
+    // Validate with Zod schema
+    const validation = validateHttpRequest(pasteKeyRequestSchema, formObject, deps.csrfToken);
+    if (!validation.success) {
+      sendErrorResponse(res, 400, validation.error || 'Invalid request. Please refresh and try again.');
       return;
     }
 
-    // Validate Ethereum address format if provided
+    const { apiKey, walletAddress } = validation.data!;
+
+    // Validate Ethereum address format if provided (additional check beyond schema)
     if (walletAddress && !validateEthereumAddress(walletAddress)) {
       sendErrorResponse(res, 400, 'Invalid wallet address format.');
-      return;
-    }
-
-    // Validate API key presence
-    if (!apiKey || typeof apiKey !== 'string' || apiKey.length < 10) {
-      sendErrorResponse(res, 400, 'Please enter a valid API key.');
       return;
     }
 
