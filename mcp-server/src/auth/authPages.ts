@@ -815,10 +815,25 @@ export function getAuthFormPage(csrfToken: string): string {
 
           const data = await response.json();
 
-          if (data.success && data.apiKey) {
-            apiKeyInput.value = data.apiKey;
-            showWalletStatus('Success! Redirecting...', 'success');
-            setTimeout(() => form.submit(), 500);
+          if (data.success) {
+            // Check if we need to redirect (existing key or new key scenarios)
+            if (data.redirectUrl) {
+              showWalletStatus('Success! Redirecting...', 'success');
+              setTimeout(() => {
+                window.location.href = data.redirectUrl;
+              }, 500);
+            } else if (data.apiKey) {
+              // Direct auth flow (legacy or simple case)
+              apiKeyInput.value = data.apiKey;
+              showWalletStatus('Success! Redirecting...', 'success');
+              setTimeout(() => form.submit(), 500);
+            } else if (data.existingKey) {
+              // Existing key scenario - redirect to existing key page
+              showWalletStatus('Existing key found. Redirecting...', 'info');
+              setTimeout(() => {
+                window.location.href = '/existing-key?masked=' + encodeURIComponent(data.maskedKey) + '&wallet=' + encodeURIComponent(data.walletAddress);
+              }, 500);
+            }
           } else if (data.notImplemented) {
             showWalletStatus('Wallet connected. Backend integration coming soon. Please enter your API key.', 'warning');
           } else {
@@ -977,6 +992,1059 @@ export function getErrorPage(errorMessage: string): string {
       </div>
     </div>
   </div>
+</body>
+</html>`;
+}
+
+/**
+ * Get the existing key page when user has a masked key
+ * Shows options to paste their full key or regenerate a new one
+ * @param csrfToken - CSRF token for forms
+ * @param maskedKey - The masked API key from backend (e.g., "ignis_abc1...xyz9")
+ * @param walletAddress - The connected wallet address
+ */
+export function getExistingKeyPage(csrfToken: string, maskedKey: string, walletAddress: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Clone - Existing API Key</title>
+  <style>${getStyles()}</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" integrity="sha384-ro/pNP1sfmhdbpq60NKzKAYve9JahlgCklXcKvudVEd/osRAYz2RlPG5TvB7Q04t" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">${getLogoSvg()}</div>
+        <div class="brand-title">Ignis Labs</div>
+        <div class="brand-product">Shadow Clone</div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Existing API Key Found</div>
+        <div class="section-subtitle">You already have an API key associated with this wallet</div>
+      </div>
+
+      <!-- Wallet Connected State -->
+      <div class="wallet-connected">
+        <div class="wallet-header">
+          <div class="wallet-label">
+            <span class="wallet-indicator"></span>
+            Connected
+          </div>
+        </div>
+        <div class="wallet-address">${escapeHtml(walletAddress)}</div>
+      </div>
+
+      <!-- Masked Key Display -->
+      <div class="status warning" style="margin-top: 16px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <span>Your existing key: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${escapeHtml(maskedKey)}</code><br/>We cannot show the full key for security. Choose an option below.</span>
+      </div>
+
+      <!-- Status Messages -->
+      <div id="statusMessage" class="status hidden">
+        <span class="status-icon"></span>
+        <span id="statusText"></span>
+      </div>
+
+      <!-- Option 1: Paste API Key -->
+      <div style="margin-top: 24px;">
+        <div class="section-title" style="text-align: left; font-size: 13px; margin-bottom: 12px;">Option 1: Enter Your Saved API Key</div>
+        <form id="pasteKeyForm" method="POST" action="/paste-key">
+          <input type="hidden" name="csrf_token" value="${csrfToken}">
+          <input type="hidden" name="walletAddress" value="${escapeHtml(walletAddress)}">
+          <div class="form-group">
+            <input
+              type="password"
+              id="apiKey"
+              name="apiKey"
+              class="form-input"
+              placeholder="Paste your full API key..."
+              autocomplete="off"
+              minlength="10"
+            >
+          </div>
+          <button type="submit" id="pasteKeyBtn" class="btn-secondary">
+            <span id="pasteKeyBtnText">Authenticate with Saved Key</span>
+            <span id="pasteKeyBtnLoading" class="hidden"><span class="spinner"></span></span>
+          </button>
+        </form>
+      </div>
+
+      <div class="divider">
+        <span class="divider-text">or</span>
+      </div>
+
+      <!-- Option 2: Regenerate Key -->
+      <div>
+        <div class="section-title" style="text-align: left; font-size: 13px; margin-bottom: 12px;">Option 2: Regenerate New API Key</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          This will revoke your existing key and create a new one. Requires a new wallet signature.
+        </p>
+        <button type="button" id="regenerateBtn" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M21 2v6h-6"/>
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+            <path d="M3 22v-6h6"/>
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+          </svg>
+          <span id="regenerateBtnText">Regenerate API Key</span>
+          <span id="regenerateBtnLoading" class="hidden"><span class="spinner"></span></span>
+        </button>
+      </div>
+
+      <div class="footer">
+        <a href="/" class="footer-link">← Back to login</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pasteKeyForm = document.getElementById('pasteKeyForm');
+    const pasteKeyBtn = document.getElementById('pasteKeyBtn');
+    const pasteKeyBtnText = document.getElementById('pasteKeyBtnText');
+    const pasteKeyBtnLoading = document.getElementById('pasteKeyBtnLoading');
+    const apiKeyInput = document.getElementById('apiKey');
+    const regenerateBtn = document.getElementById('regenerateBtn');
+    const regenerateBtnText = document.getElementById('regenerateBtnText');
+    const regenerateBtnLoading = document.getElementById('regenerateBtnLoading');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusText = document.getElementById('statusText');
+
+    function showStatus(message, type) {
+      statusText.textContent = message;
+      statusMessage.className = 'status ' + type;
+      statusMessage.classList.remove('hidden');
+    }
+
+    function hideStatus() {
+      statusMessage.classList.add('hidden');
+    }
+
+    // Paste key form handler
+    pasteKeyForm.addEventListener('submit', function(e) {
+      if (!apiKeyInput.value || apiKeyInput.value.length < 10) {
+        e.preventDefault();
+        showStatus('Please enter a valid API key', 'error');
+        return;
+      }
+      hideStatus();
+      pasteKeyBtn.disabled = true;
+      pasteKeyBtnText.classList.add('hidden');
+      pasteKeyBtnLoading.classList.remove('hidden');
+    });
+
+    // ERC-712 Types for Regenerate
+    const ERC712_REGENERATE_TYPES = {
+      Regenerate: [
+        { name: 'wallet', type: 'address' },
+        { name: 'nonce', type: 'string' },
+        { name: 'deadline', type: 'uint256' },
+        { name: 'action', type: 'string' }
+      ]
+    };
+
+    // Regenerate button handler
+    regenerateBtn.addEventListener('click', async function() {
+      if (typeof window.ethereum === 'undefined') {
+        showStatus('No wallet detected. Please install MetaMask.', 'error');
+        return;
+      }
+
+      try {
+        regenerateBtn.disabled = true;
+        regenerateBtnText.textContent = 'Signing...';
+        regenerateBtnLoading.classList.remove('hidden');
+        hideStatus();
+
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+
+        // Verify it's the same wallet
+        if (address.toLowerCase() !== '${walletAddress.toLowerCase()}') {
+          showStatus('Please connect the same wallet: ${walletAddress.slice(0, 10)}...', 'error');
+          regenerateBtn.disabled = false;
+          regenerateBtnText.textContent = 'Regenerate API Key';
+          regenerateBtnLoading.classList.add('hidden');
+          return;
+        }
+
+        const network = await provider.getNetwork();
+        const chainId = Number(network.chainId);
+
+        const ERC712_DOMAIN = {
+          name: 'Shadow Clone',
+          version: '1',
+          chainId: chainId
+        };
+
+        const message = {
+          wallet: address,
+          nonce: crypto.randomUUID(),
+          deadline: BigInt(Math.floor(Date.now() / 1000) + 300),
+          action: 'regenerate'
+        };
+
+        showStatus('Please sign the regenerate request in your wallet...', 'info');
+
+        const signature = await signer.signTypedData(ERC712_DOMAIN, ERC712_REGENERATE_TYPES, message);
+
+        showStatus('Regenerating API key...', 'info');
+
+        const response = await fetch('/regenerate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: {
+              wallet: message.wallet,
+              nonce: message.nonce,
+              deadline: Number(message.deadline),
+              action: message.action
+            },
+            signature: signature,
+            csrf_token: '${csrfToken}'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.apiKey) {
+          showStatus('Success! Redirecting...', 'success');
+          // Redirect to success page with new key
+          window.location.href = '/regenerate-success?key=' + encodeURIComponent(data.apiKey) + '&license=' + encodeURIComponent(data.licenseType || 'Active');
+        } else {
+          showStatus(data.message || 'Regeneration failed', 'error');
+          regenerateBtn.disabled = false;
+          regenerateBtnText.textContent = 'Regenerate API Key';
+          regenerateBtnLoading.classList.add('hidden');
+        }
+      } catch (error) {
+        console.error('Regenerate error:', error);
+        if (error.code === 4001 || error.code === 'ACTION_REJECTED') {
+          showStatus('Signature cancelled', 'warning');
+        } else {
+          showStatus('Error: ' + (error.message || 'Unknown error'), 'error');
+        }
+        regenerateBtn.disabled = false;
+        regenerateBtnText.textContent = 'Regenerate API Key';
+        regenerateBtnLoading.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Get the regenerate success page showing the new API key
+ * @param apiKey - The new full API key
+ * @param licenseType - The license type
+ * @param csrfToken - CSRF token for auth submission
+ */
+export function getRegenerateSuccessPage(apiKey: string, licenseType: string, csrfToken: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Clone - New API Key Generated</title>
+  <style>${getStyles()}</style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">${getLogoSvg()}</div>
+        <div class="brand-title">Ignis Labs</div>
+        <div class="brand-product">Shadow Clone</div>
+      </div>
+
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <div class="success-message">
+        <div class="success-title">New API Key Generated</div>
+        <div class="success-text">
+          Your old key has been revoked and a new one has been created.
+        </div>
+        <div class="license-badge">${escapeHtml(licenseType)} License</div>
+      </div>
+
+      <!-- API Key Display -->
+      <div class="status warning" style="margin-top: 24px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
+      </div>
+
+      <div class="form-group" style="margin-top: 16px;">
+        <label class="form-label">Your New API Key</label>
+        <div style="position: relative;">
+          <input
+            type="text"
+            id="apiKeyDisplay"
+            class="form-input"
+            value="${escapeHtml(apiKey)}"
+            readonly
+            style="padding-right: 90px; font-family: monospace;"
+          >
+          <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+        <span>Copied to clipboard!</span>
+      </div>
+
+      <div id="errorStatus" class="status error hidden" style="margin-top: 12px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </span>
+        <span id="errorStatusText"></span>
+      </div>
+
+      <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
+        <span id="continueBtnText">Copy key first to continue</span>
+        <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
+      </button>
+
+      <div class="footer-note" style="margin-top: 16px;">
+        Store this key securely. You will need it if you log out or authenticate from another device.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let keyCopied = false;
+
+    function copyKey() {
+      const keyInput = document.getElementById('apiKeyDisplay');
+      keyInput.select();
+      document.execCommand('copy');
+
+      const copyStatus = document.getElementById('copyStatus');
+      copyStatus.classList.remove('hidden');
+
+      // Hide any previous error
+      document.getElementById('errorStatus').classList.add('hidden');
+
+      keyCopied = true;
+      const continueBtn = document.getElementById('continueBtn');
+      const continueBtnText = document.getElementById('continueBtnText');
+      continueBtn.disabled = false;
+      continueBtnText.textContent = 'Continue to Shadow Clone';
+    }
+
+    function showError(message) {
+      const errorStatus = document.getElementById('errorStatus');
+      document.getElementById('errorStatusText').textContent = message;
+      errorStatus.classList.remove('hidden');
+    }
+
+    function completeAuth() {
+      if (!keyCopied) return;
+
+      const continueBtn = document.getElementById('continueBtn');
+      const continueBtnText = document.getElementById('continueBtnText');
+      const continueBtnLoading = document.getElementById('continueBtnLoading');
+
+      // Show loading state immediately
+      continueBtn.disabled = true;
+      continueBtnText.classList.add('hidden');
+      continueBtnLoading.classList.remove('hidden');
+
+      // Hide any previous error
+      document.getElementById('errorStatus').classList.add('hidden');
+
+      // Submit to complete authentication
+      fetch('/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'apiKey=${encodeURIComponent(apiKey)}&csrf_token=${encodeURIComponent(csrfToken)}'
+      }).then(response => {
+        if (response.ok) {
+          window.location.href = '/success';
+        } else {
+          throw new Error('Authentication failed');
+        }
+      }).catch(error => {
+        // Reset button state on error
+        continueBtn.disabled = false;
+        continueBtnText.classList.remove('hidden');
+        continueBtnLoading.classList.add('hidden');
+        showError(error.message || 'Failed to complete authentication. Please try again.');
+      });
+    }
+
+    // Try to copy on page load for convenience
+    document.getElementById('apiKeyDisplay').focus();
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Get the new key success page (for first-time wallet auth)
+ * @param apiKey - The full API key
+ * @param licenseType - The license type
+ * @param csrfToken - CSRF token for auth submission
+ */
+export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfToken: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Clone - API Key Created</title>
+  <style>${getStyles()}</style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">${getLogoSvg()}</div>
+        <div class="brand-title">Ignis Labs</div>
+        <div class="brand-product">Shadow Clone</div>
+      </div>
+
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <div class="success-message">
+        <div class="success-title">API Key Created</div>
+        <div class="success-text">
+          Your wallet has been verified and an API key has been generated.
+        </div>
+        <div class="license-badge">${escapeHtml(licenseType)} License</div>
+      </div>
+
+      <!-- API Key Display -->
+      <div class="status warning" style="margin-top: 24px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
+      </div>
+
+      <div class="form-group" style="margin-top: 16px;">
+        <label class="form-label">Your API Key</label>
+        <div style="position: relative;">
+          <input
+            type="text"
+            id="apiKeyDisplay"
+            class="form-input"
+            value="${escapeHtml(apiKey)}"
+            readonly
+            style="padding-right: 90px; font-family: monospace;"
+          >
+          <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+        <span>Copied to clipboard!</span>
+      </div>
+
+      <div id="errorStatus" class="status error hidden" style="margin-top: 12px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </span>
+        <span id="errorStatusText"></span>
+      </div>
+
+      <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
+        <span id="continueBtnText">Copy key first to continue</span>
+        <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
+      </button>
+
+      <div class="footer-note" style="margin-top: 16px;">
+        Store this key securely. You will need it if you log out or authenticate from another device.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let keyCopied = false;
+
+    function copyKey() {
+      const keyInput = document.getElementById('apiKeyDisplay');
+      keyInput.select();
+      document.execCommand('copy');
+
+      const copyStatus = document.getElementById('copyStatus');
+      copyStatus.classList.remove('hidden');
+
+      // Hide any previous error
+      document.getElementById('errorStatus').classList.add('hidden');
+
+      keyCopied = true;
+      const continueBtn = document.getElementById('continueBtn');
+      const continueBtnText = document.getElementById('continueBtnText');
+      continueBtn.disabled = false;
+      continueBtnText.textContent = 'Continue to Shadow Clone';
+    }
+
+    function showError(message) {
+      const errorStatus = document.getElementById('errorStatus');
+      document.getElementById('errorStatusText').textContent = message;
+      errorStatus.classList.remove('hidden');
+    }
+
+    function completeAuth() {
+      if (!keyCopied) return;
+
+      const continueBtn = document.getElementById('continueBtn');
+      const continueBtnText = document.getElementById('continueBtnText');
+      const continueBtnLoading = document.getElementById('continueBtnLoading');
+
+      // Show loading state immediately
+      continueBtn.disabled = true;
+      continueBtnText.classList.add('hidden');
+      continueBtnLoading.classList.remove('hidden');
+
+      // Hide any previous error
+      document.getElementById('errorStatus').classList.add('hidden');
+
+      // Submit to complete authentication
+      fetch('/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'apiKey=${encodeURIComponent(apiKey)}&csrf_token=${encodeURIComponent(csrfToken)}'
+      }).then(response => {
+        if (response.ok) {
+          window.location.href = '/success';
+        } else {
+          throw new Error('Authentication failed');
+        }
+      }).catch(error => {
+        // Reset button state on error
+        continueBtn.disabled = false;
+        continueBtnText.classList.remove('hidden');
+        continueBtnLoading.classList.add('hidden');
+        showError(error.message || 'Failed to complete authentication. Please try again.');
+      });
+    }
+
+    // Try to focus on key display for convenience
+    document.getElementById('apiKeyDisplay').focus();
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Get the logout page with options
+ * @param csrfToken - CSRF token for forms
+ * @param maskedApiKey - The masked API key
+ * @param walletAddress - The wallet address (optional)
+ */
+export function getLogoutPage(csrfToken: string, maskedApiKey: string, walletAddress?: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Clone - Logout</title>
+  <style>${getStyles()}</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" integrity="sha384-ro/pNP1sfmhdbpq60NKzKAYve9JahlgCklXcKvudVEd/osRAYz2RlPG5TvB7Q04t" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">${getLogoSvg()}</div>
+        <div class="brand-title">Ignis Labs</div>
+        <div class="brand-product">Shadow Clone</div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Logout from Shadow Clone</div>
+        <div class="section-subtitle">Choose how you want to logout</div>
+      </div>
+
+      <!-- Current Session Info -->
+      <div class="status info" style="margin-bottom: 24px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </span>
+        <span>Current API key: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${escapeHtml(maskedApiKey)}</code></span>
+      </div>
+
+      <!-- Status Messages -->
+      <div id="statusMessage" class="status hidden">
+        <span class="status-icon"></span>
+        <span id="statusText"></span>
+      </div>
+
+      <!-- Option 1: Copy & Logout Locally -->
+      <div style="margin-bottom: 16px;">
+        <button type="button" id="copyLogoutBtn" class="btn-secondary" style="text-align: left;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" style="flex-shrink: 0; margin-top: 2px;">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">Copy API Key & Logout Locally</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Keep your key valid for later use. You can re-authenticate anytime.</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Option 2: Revoke Permanently -->
+      <div style="margin-bottom: 24px;">
+        <button type="button" id="revokeBtn" class="btn-secondary" style="text-align: left; border-color: rgba(239, 68, 68, 0.3);">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="2" width="24" height="24" style="flex-shrink: 0; margin-top: 2px;">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              <line x1="10" y1="11" x2="10" y2="17"/>
+              <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px; color: var(--accent-red);">Revoke API Key Permanently</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Requires wallet signature. Key cannot be recovered after revocation!</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <button type="button" id="cancelBtn" class="btn-secondary" onclick="window.close()">
+        Cancel
+      </button>
+
+      <div class="footer-note" style="margin-top: 16px;">
+        Logging out locally keeps your key valid. Use "Revoke" only if you want to permanently invalidate your key.
+      </div>
+    </div>
+  </div>
+
+  <!-- Copy & Logout Modal -->
+  <div id="copyModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100;">
+    <div class="card" style="max-width: 400px; margin: 20px;">
+      <div class="section-header">
+        <div class="section-title">Copy Your API Key</div>
+        <div class="section-subtitle">Save this key before logging out</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your API Key</label>
+        <div style="position: relative;">
+          <input
+            type="text"
+            id="apiKeyDisplay"
+            class="form-input"
+            readonly
+            style="padding-right: 90px; font-family: monospace;"
+          >
+          <button type="button" id="copyKeyBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div id="copyConfirmStatus" class="status success hidden" style="margin-top: 12px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+        <span>Copied to clipboard!</span>
+      </div>
+
+      <button type="button" id="completeLogoutBtn" class="btn-primary" style="margin-top: 16px;" disabled>
+        <span id="completeLogoutBtnText">Copy key first to continue</span>
+        <span id="completeLogoutBtnLoading" class="hidden"><span class="spinner"></span></span>
+      </button>
+
+      <button type="button" id="cancelCopyBtn" class="btn-secondary" style="margin-top: 8px;">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Revoke Confirmation Modal -->
+  <div id="revokeModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100;">
+    <div class="card" style="max-width: 400px; margin: 20px;">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title" style="color: var(--accent-red);">Permanent Revocation</div>
+        <div class="section-subtitle">This action cannot be undone</div>
+      </div>
+
+      <div class="status error" style="margin-bottom: 16px;">
+        <span class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </span>
+        <span>Your API key will be permanently invalidated. You will need to regenerate a new key to use Shadow Clone again.</span>
+      </div>
+
+      <div id="revokeStatus" class="status hidden" style="margin-bottom: 16px;">
+        <span class="status-icon"></span>
+        <span id="revokeStatusText"></span>
+      </div>
+
+      <button type="button" id="confirmRevokeBtn" class="btn-primary" style="background: var(--accent-red);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span id="confirmRevokeBtnText">Connect Wallet & Revoke</span>
+        <span id="confirmRevokeBtnLoading" class="hidden"><span class="spinner"></span></span>
+      </button>
+
+      <button type="button" id="cancelRevokeBtn" class="btn-secondary" style="margin-top: 8px;">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const copyLogoutBtn = document.getElementById('copyLogoutBtn');
+    const revokeBtn = document.getElementById('revokeBtn');
+    const copyModal = document.getElementById('copyModal');
+    const revokeModal = document.getElementById('revokeModal');
+    const apiKeyDisplay = document.getElementById('apiKeyDisplay');
+    const copyKeyBtn = document.getElementById('copyKeyBtn');
+    const copyConfirmStatus = document.getElementById('copyConfirmStatus');
+    const completeLogoutBtn = document.getElementById('completeLogoutBtn');
+    const completeLogoutBtnText = document.getElementById('completeLogoutBtnText');
+    const completeLogoutBtnLoading = document.getElementById('completeLogoutBtnLoading');
+    const cancelCopyBtn = document.getElementById('cancelCopyBtn');
+    const confirmRevokeBtn = document.getElementById('confirmRevokeBtn');
+    const confirmRevokeBtnText = document.getElementById('confirmRevokeBtnText');
+    const confirmRevokeBtnLoading = document.getElementById('confirmRevokeBtnLoading');
+    const cancelRevokeBtn = document.getElementById('cancelRevokeBtn');
+    const revokeStatus = document.getElementById('revokeStatus');
+    const revokeStatusText = document.getElementById('revokeStatusText');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusText = document.getElementById('statusText');
+
+    let keyCopied = false;
+    const walletAddress = '${walletAddress ? escapeHtml(walletAddress) : ''}';
+
+    function showStatus(message, type) {
+      statusText.textContent = message;
+      statusMessage.className = 'status ' + type;
+      statusMessage.classList.remove('hidden');
+    }
+
+    function showRevokeStatus(message, type) {
+      revokeStatusText.textContent = message;
+      revokeStatus.className = 'status ' + type;
+      revokeStatus.classList.remove('hidden');
+    }
+
+    // Show copy modal
+    copyLogoutBtn.addEventListener('click', async function() {
+      // First fetch the full API key
+      try {
+        showStatus('Fetching your API key...', 'info');
+        const response = await fetch('/logout/get-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ csrf_token: '${csrfToken}' })
+        });
+        const data = await response.json();
+        if (data.success && data.apiKey) {
+          apiKeyDisplay.value = data.apiKey;
+          copyModal.classList.remove('hidden');
+          copyModal.style.display = 'flex';
+          statusMessage.classList.add('hidden');
+        } else {
+          showStatus(data.message || 'Failed to retrieve API key', 'error');
+        }
+      } catch (error) {
+        showStatus('Failed to retrieve API key', 'error');
+      }
+    });
+
+    // Copy key button
+    copyKeyBtn.addEventListener('click', function() {
+      apiKeyDisplay.select();
+      document.execCommand('copy');
+      copyConfirmStatus.classList.remove('hidden');
+      keyCopied = true;
+      completeLogoutBtn.disabled = false;
+      completeLogoutBtnText.textContent = 'Complete Logout';
+    });
+
+    // Complete logout button
+    completeLogoutBtn.addEventListener('click', async function() {
+      if (!keyCopied) return;
+
+      completeLogoutBtn.disabled = true;
+      completeLogoutBtnText.classList.add('hidden');
+      completeLogoutBtnLoading.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/logout/local', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ csrf_token: '${csrfToken}' })
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.href = '/logout/success?type=local';
+        } else {
+          showStatus(data.message || 'Logout failed', 'error');
+          copyModal.classList.add('hidden');
+          copyModal.style.display = 'none';
+        }
+      } catch (error) {
+        showStatus('Logout failed', 'error');
+        copyModal.classList.add('hidden');
+        copyModal.style.display = 'none';
+      }
+    });
+
+    // Cancel copy modal
+    cancelCopyBtn.addEventListener('click', function() {
+      copyModal.classList.add('hidden');
+      copyModal.style.display = 'none';
+      keyCopied = false;
+      completeLogoutBtn.disabled = true;
+      completeLogoutBtnText.textContent = 'Copy key first to continue';
+      copyConfirmStatus.classList.add('hidden');
+    });
+
+    // Show revoke modal
+    revokeBtn.addEventListener('click', function() {
+      revokeModal.classList.remove('hidden');
+      revokeModal.style.display = 'flex';
+    });
+
+    // Cancel revoke modal
+    cancelRevokeBtn.addEventListener('click', function() {
+      revokeModal.classList.add('hidden');
+      revokeModal.style.display = 'none';
+      revokeStatus.classList.add('hidden');
+    });
+
+    // ERC-712 Types for Revoke
+    const ERC712_REVOKE_TYPES = {
+      Revoke: [
+        { name: 'wallet', type: 'address' },
+        { name: 'nonce', type: 'string' },
+        { name: 'deadline', type: 'uint256' },
+        { name: 'action', type: 'string' }
+      ]
+    };
+
+    // Confirm revoke button
+    confirmRevokeBtn.addEventListener('click', async function() {
+      if (typeof window.ethereum === 'undefined') {
+        showRevokeStatus('No wallet detected. Please install MetaMask.', 'error');
+        return;
+      }
+
+      try {
+        confirmRevokeBtn.disabled = true;
+        confirmRevokeBtnText.textContent = 'Connecting...';
+        confirmRevokeBtnLoading.classList.remove('hidden');
+
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+
+        // Verify wallet if we have one
+        if (walletAddress && address.toLowerCase() !== walletAddress.toLowerCase()) {
+          showRevokeStatus('Please connect the wallet associated with this API key.', 'error');
+          confirmRevokeBtn.disabled = false;
+          confirmRevokeBtnText.textContent = 'Connect Wallet & Revoke';
+          confirmRevokeBtnLoading.classList.add('hidden');
+          return;
+        }
+
+        const network = await provider.getNetwork();
+        const chainId = Number(network.chainId);
+
+        const ERC712_DOMAIN = {
+          name: 'Shadow Clone',
+          version: '1',
+          chainId: chainId
+        };
+
+        const message = {
+          wallet: address,
+          nonce: crypto.randomUUID(),
+          deadline: BigInt(Math.floor(Date.now() / 1000) + 300),
+          action: 'revoke'
+        };
+
+        showRevokeStatus('Please sign the revoke request in your wallet...', 'info');
+        confirmRevokeBtnText.textContent = 'Signing...';
+
+        const signature = await signer.signTypedData(ERC712_DOMAIN, ERC712_REVOKE_TYPES, message);
+
+        showRevokeStatus('Revoking API key...', 'info');
+        confirmRevokeBtnText.textContent = 'Revoking...';
+
+        const response = await fetch('/logout/revoke', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: {
+              wallet: message.wallet,
+              nonce: message.nonce,
+              deadline: Number(message.deadline),
+              action: message.action
+            },
+            signature: signature,
+            csrf_token: '${csrfToken}'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.location.href = '/logout/success?type=revoked';
+        } else {
+          showRevokeStatus(data.message || 'Revocation failed', 'error');
+          confirmRevokeBtn.disabled = false;
+          confirmRevokeBtnText.textContent = 'Connect Wallet & Revoke';
+          confirmRevokeBtnLoading.classList.add('hidden');
+        }
+      } catch (error) {
+        console.error('Revoke error:', error);
+        if (error.code === 4001 || error.code === 'ACTION_REJECTED') {
+          showRevokeStatus('Signature cancelled', 'warning');
+        } else {
+          showRevokeStatus('Error: ' + (error.message || 'Unknown error'), 'error');
+        }
+        confirmRevokeBtn.disabled = false;
+        confirmRevokeBtnText.textContent = 'Connect Wallet & Revoke';
+        confirmRevokeBtnLoading.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Get the logout success page
+ * @param type - The type of logout ('local' or 'revoked')
+ */
+export function getLogoutSuccessPage(type: 'local' | 'revoked'): string {
+  const isRevoked = type === 'revoked';
+  const title = isRevoked ? 'API Key Revoked' : 'Logged Out Successfully';
+  const message = isRevoked
+    ? 'Your API key has been permanently revoked. You will need to regenerate a new key to use Shadow Clone again.'
+    : 'You have been logged out. Your API key is still valid and can be used to log in again.';
+  const iconColor = isRevoked ? 'var(--accent-red)' : 'var(--accent-green)';
+  const iconBg = isRevoked ? 'rgba(239, 68, 68, 0.1)' : 'rgba(74, 222, 128, 0.1)';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Clone - ${escapeHtml(title)}</title>
+  <style>${getStyles()}</style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">${getLogoSvg()}</div>
+        <div class="brand-title">Ignis Labs</div>
+        <div class="brand-product">Shadow Clone</div>
+      </div>
+
+      <div style="width: 64px; height: 64px; margin: 0 auto 20px; background: ${iconBg}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+        ${isRevoked ? `
+        <svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" width="32" height="32">
+          <path d="M3 6h18"/>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        </svg>
+        ` : `
+        <svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" width="32" height="32">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        `}
+      </div>
+
+      <div class="success-message">
+        <div class="success-title" style="${isRevoked ? 'color: var(--accent-red);' : ''}">${escapeHtml(title)}</div>
+        <div class="success-text">${escapeHtml(message)}</div>
+      </div>
+
+      <div class="close-note" style="margin-top: 24px;">
+        You can close this window now.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto-close after 5 seconds
+    setTimeout(function() { window.close(); }, 5000);
+  </script>
 </body>
 </html>`;
 }
