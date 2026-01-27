@@ -23,6 +23,14 @@ import {
   getLogoutSuccessPage
 } from './authPages.js';
 import { logger } from '../utils/logger.js';
+import { validateHttpRequest, validateDeadline } from '../utils/httpValidation.js';
+import {
+  regenerateRequestSchema,
+  logoutGetKeyRequestSchema,
+  logoutLocalRequestSchema,
+  logoutRevokeRequestSchema,
+  pasteKeyRequestSchema
+} from '../schemas/httpSchemas.js';
 
 /**
  * Result of browser-based authentication
@@ -864,25 +872,23 @@ export class LocalAuthServer {
   private async handlePasteKey(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const formData = await this.parseFormData(req);
-      const apiKey = formData.get('apiKey');
-      const csrfToken = formData.get('csrf_token');
-      const walletAddress = formData.get('walletAddress');
+      const formObject = {
+        apiKey: formData.get('apiKey') || '',
+        csrf_token: formData.get('csrf_token') || '',
+        walletAddress: formData.get('walletAddress') || undefined
+      };
 
-      // Validate CSRF token
-      if (!csrfToken || csrfToken !== this.csrfToken) {
-        const html = getErrorPage('Invalid request. Please refresh and try again.');
-        res.writeHead(403, { 'Content-Type': 'text/html' });
-        res.end(html);
-        return;
-      }
+      // Validate with Zod schema
+      const validation = validateHttpRequest(pasteKeyRequestSchema, formObject, this.csrfToken);
 
-      // Validate API key presence
-      if (!apiKey || typeof apiKey !== 'string' || apiKey.length < 10) {
-        const html = getErrorPage('Please enter a valid API key.');
+      if (!validation.success) {
+        const html = getErrorPage(validation.error || 'Invalid request. Please refresh and try again.');
         res.writeHead(400, { 'Content-Type': 'text/html' });
         res.end(html);
         return;
       }
+
+      const { apiKey, walletAddress } = validation.data!;
 
       // Validate API key with backend
       const result = await this.validateApiKey(apiKey);
@@ -927,55 +933,24 @@ export class LocalAuthServer {
   private async handleRegenerate(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const body = await this.parseJsonBody(req);
-      const message = body.message as ERC712RegenerateMessage | undefined;
-      const signature = body.signature as string | undefined;
-      const csrf_token = body.csrf_token as string | undefined;
 
-      // Validate CSRF token
-      if (!csrf_token || csrf_token !== this.csrfToken) {
-        res.writeHead(403, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Invalid request. Please refresh and try again.'
-        }));
-        return;
-      }
+      // Validate with Zod schema
+      const validation = validateHttpRequest(regenerateRequestSchema, body, this.csrfToken);
 
-      // Validate required fields
-      if (!message || !signature) {
+      if (!validation.success) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
-          message: 'Missing required fields: message or signature'
+          message: validation.error || 'Invalid request'
         }));
         return;
       }
 
-      // Validate message fields
-      if (!message.wallet || !message.nonce || !message.deadline || message.action !== 'regenerate') {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Invalid message format'
-        }));
-        return;
-      }
-
+      const { message, signature } = validation.data!;
       const address = message.wallet;
 
-      // Validate Ethereum address format
-      if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Invalid Ethereum address format'
-        }));
-        return;
-      }
-
-      // Check deadline expiry
-      const now = Math.floor(Date.now() / 1000);
-      if (message.deadline < now) {
+      // Check deadline expiry (business logic, not schema validation)
+      if (!validateDeadline(message.deadline)) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
@@ -1207,14 +1182,15 @@ export class LocalAuthServer {
   private async handleLogoutGetKey(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const body = await this.parseJsonBody(req);
-      const csrf_token = body.csrf_token as string | undefined;
 
-      // Validate CSRF token
-      if (!csrf_token || csrf_token !== this.csrfToken) {
+      // Validate with Zod schema
+      const validation = validateHttpRequest(logoutGetKeyRequestSchema, body, this.csrfToken);
+
+      if (!validation.success) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
-          message: 'Invalid request. Please refresh and try again.'
+          message: validation.error || 'Invalid request. Please refresh and try again.'
         }));
         return;
       }
@@ -1249,14 +1225,15 @@ export class LocalAuthServer {
   private async handleLogoutLocal(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const body = await this.parseJsonBody(req);
-      const csrf_token = body.csrf_token as string | undefined;
 
-      // Validate CSRF token
-      if (!csrf_token || csrf_token !== this.csrfToken) {
+      // Validate with Zod schema
+      const validation = validateHttpRequest(logoutLocalRequestSchema, body, this.csrfToken);
+
+      if (!validation.success) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
-          message: 'Invalid request. Please refresh and try again.'
+          message: validation.error || 'Invalid request. Please refresh and try again.'
         }));
         return;
       }
@@ -1308,16 +1285,15 @@ export class LocalAuthServer {
   private async handleLogoutRevoke(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const body = await this.parseJsonBody(req);
-      const message = body.message as ERC712RevokeMessage | undefined;
-      const signature = body.signature as string | undefined;
-      const csrf_token = body.csrf_token as string | undefined;
 
-      // Validate CSRF token
-      if (!csrf_token || csrf_token !== this.csrfToken) {
-        res.writeHead(403, { 'Content-Type': 'application/json' });
+      // Validate with Zod schema
+      const validation = validateHttpRequest(logoutRevokeRequestSchema, body, this.csrfToken);
+
+      if (!validation.success) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
-          message: 'Invalid request. Please refresh and try again.'
+          message: validation.error || 'Invalid request'
         }));
         return;
       }
@@ -1331,41 +1307,11 @@ export class LocalAuthServer {
         return;
       }
 
-      // Validate required fields
-      if (!message || !signature) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Missing required fields: message or signature'
-        }));
-        return;
-      }
-
-      // Validate message fields
-      if (!message.wallet || !message.nonce || !message.deadline || message.action !== 'revoke') {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Invalid message format'
-        }));
-        return;
-      }
-
+      const { message, signature } = validation.data!;
       const address = message.wallet;
 
-      // Validate Ethereum address format
-      if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          message: 'Invalid Ethereum address format'
-        }));
-        return;
-      }
-
-      // Check deadline expiry
-      const now = Math.floor(Date.now() / 1000);
-      if (message.deadline < now) {
+      // Check deadline expiry (business logic, not schema validation)
+      if (!validateDeadline(message.deadline)) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
