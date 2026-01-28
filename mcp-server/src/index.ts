@@ -215,6 +215,7 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
 
           // Start browser-based authentication
           const { url } = await this.authService.startBrowserAuth();
+          openBrowser(url);
 
           logPerformance('authenticate', Date.now() - startTime, {
             success: true,
@@ -226,9 +227,9 @@ After authenticating in the browser, you can use all Shadow Clone tools.`,
                 type: 'text',
                 text: `# Authentication Required
 
-Please open the following URL in your browser:
+A browser window has been opened for you to authenticate.
 
-**${url}**
+**URL:** ${url}
 
 Enter your Shadow Clone API key on the page.
 Get your API key at: https://dashboard.ignislabs.ai
