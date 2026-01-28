@@ -97,8 +97,8 @@ function openBrowser(url: string): void {
 
 class ShadowCloneMCPServer {
   private server: Server;
-  private authService: AuthService;
-  private tools: CombinedTools;
+  private authService!: AuthService;
+  private tools!: CombinedTools;
 
   constructor() {
     this.server = new Server(
@@ -112,10 +112,16 @@ class ShadowCloneMCPServer {
         },
       }
     );
+    // Note: authService and tools are initialized in start() using factory pattern
+  }
 
-    this.authService = new AuthService();
+  /**
+   * Initialize services asynchronously using factory pattern
+   */
+  private async initializeServices(): Promise<void> {
+    // Use factory method for proper async initialization
+    this.authService = await AuthService.create();
     this.tools = new CombinedTools(this.authService);
-
     this.setupHandlers();
   }
 
@@ -376,6 +382,9 @@ Complete the logout process in your browser.`,
       version: config.server.version,
       environment: config.server.environment
     });
+
+    // Initialize services using factory pattern before setting up handlers
+    await this.initializeServices();
 
     const transport = new StdioServerTransport();
     await this.server.connect(transport);

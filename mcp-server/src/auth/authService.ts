@@ -61,14 +61,43 @@ export class AuthService {
   private readonly API_TIMEOUT_MS = 30000; // 30 second timeout for API calls
   private readonly EXTENDED_CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
-  constructor() {
+  // Singleton instance for factory pattern
+  private static instance: AuthService | null = null;
+  private initialized: boolean = false;
+
+  /**
+   * Private constructor - use AuthService.create() instead
+   */
+  private constructor() {
     // Store auth data in user's home directory
     const configDir = path.join(os.homedir(), '.shadow-clone');
     this.authFilePath = path.join(configDir, 'mcp-auth.json');
     this.apiEndpoint = process.env.SHADOW_CLONE_API_ENDPOINT || 'https://api.ignislabs.ai';
     this.apiKeyManager = ApiKeyManager.getInstance();
     this.creatorMode = CreatorMode.getInstance();
-    
+  }
+
+  /**
+   * Factory method for async initialization
+   * This ensures loadAuthData() and checkCachedApiKey() are properly awaited
+   */
+  static async create(): Promise<AuthService> {
+    if (AuthService.instance && AuthService.instance.initialized) {
+      return AuthService.instance;
+    }
+
+    const service = new AuthService();
+    await service.initialize();
+    AuthService.instance = service;
+    return service;
+  }
+
+  /**
+   * Async initialization that was previously in constructor
+   */
+  private async initialize(): Promise<void> {
+    if (this.initialized) return;
+
     // Check for creator mode first
     if (this.creatorMode.isCreatorMode()) {
       logger.info('🚀 Creator Mode Active - Authentication bypassed');
@@ -83,9 +112,11 @@ export class AuthService {
         lastVerified: Date.now()
       };
     } else {
-      this.loadAuthData();
-      this.checkCachedApiKey();
+      await this.loadAuthData();
+      await this.checkCachedApiKey();
     }
+
+    this.initialized = true;
   }
   
   private async checkCachedApiKey() {
@@ -360,7 +391,7 @@ export class AuthService {
             'X-API-Key': apiKey,
             'User-Agent': 'Shadow-Clone-MCP/0.1.0'
           },
-          timeout: this.API_TIMEOUT_MS // 5 second timeout for verification
+          timeout: this.API_TIMEOUT_MS // 30 second timeout for verification
         }
       );
       
