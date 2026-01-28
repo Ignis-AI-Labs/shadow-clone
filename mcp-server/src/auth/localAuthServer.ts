@@ -155,6 +155,15 @@ export interface LogoutResult {
 export type ServerMode = 'auth' | 'logout';
 
 /**
+ * Pending key delivery entry for token-based key transfer
+ */
+interface PendingKeyDelivery {
+  apiKey: string;
+  license: string;
+  expires: number;
+}
+
+/**
  * Local HTTP server for browser-based authentication
  */
 export class LocalAuthServer {
@@ -174,15 +183,85 @@ export class LocalAuthServer {
   private currentWalletAddress: string | null = null;
   private logoutCallback: LogoutCallbackFn | null = null;
 
+  // Token-based key delivery storage
+  private pendingKeyDelivery = new Map<string, PendingKeyDelivery>();
+  private static readonly KEY_DELIVERY_EXPIRY_MS = 60000; // 60 second expiry
+
+  // Nonce replay protection
+  private usedNonces = new Map<string, number>(); // nonce -> expiry timestamp
+
+  // Server-defined ERC-712 domain
+  private static readonly EXPECTED_DOMAIN: ERC712Domain = {
+    name: 'Shadow Clone',
+    version: '1',
+    chainId: 1
+  };
+
   private static readonly PORT_RANGE_START = 49152;
   private static readonly PORT_RANGE_END = 65535;
   private static readonly MAX_PORT_RETRIES = 10;
   private static readonly DEFAULT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
   private static readonly SHUTDOWN_DELAY_MS = 2000; // 2 seconds for page to load
 
+  // Content-Security-Policy header for all HTML responses
+  private static readonly CSP_HEADER = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src https://fonts.gstatic.com",
+    "connect-src 'self'",
+    "img-src 'self' data:",
+  ].join('; ');
+
   constructor(validateApiKey: ValidateApiKeyFn, apiEndpoint?: string) {
     this.validateApiKey = validateApiKey;
     this.apiEndpoint = apiEndpoint || process.env.SHADOW_CLONE_API_ENDPOINT || 'https://api.ignislabs.ai';
+  }
+
+  /**
+   * Store API key for secure delivery via token
+   * Returns a one-time token that can be used to retrieve the key
+   */
+  private storeKeyForDelivery(apiKey: string, license: string): string {
+    const token = crypto.randomUUID();
+    this.pendingKeyDelivery.set(token, {
+      apiKey,
+      license,
+      expires: Date.now() + LocalAuthServer.KEY_DELIVERY_EXPIRY_MS
+    });
+    return token;
+  }
+
+  /**
+   * Retrieve API key by token and delete it (one-time use)
+   */
+  private retrieveKeyByToken(token: string): { apiKey: string; license: string } | null {
+    const entry = this.pendingKeyDelivery.get(token);
+    if (!entry || entry.expires < Date.now()) {
+      this.pendingKeyDelivery.delete(token);
+      return null;
+    }
+    this.pendingKeyDelivery.delete(token); // One-time use
+    return { apiKey: entry.apiKey, license: entry.license };
+  }
+
+  /**
+   * Check if a nonce has already been used
+   */
+  private isNonceUsed(nonce: string): boolean {
+    // Clean up expired nonces
+    const now = Math.floor(Date.now() / 1000);
+    for (const [n, expiry] of this.usedNonces) {
+      if (expiry < now) this.usedNonces.delete(n);
+    }
+    return this.usedNonces.has(nonce);
+  }
+
+  /**
+   * Mark a nonce as used
+   */
+  private markNonceUsed(nonce: string, deadline: number): void {
+    this.usedNonces.set(nonce, deadline);
   }
 
   /**
@@ -453,6 +532,8 @@ export class LocalAuthServer {
       this.handleExistingKeyPage(res, url);
     } else if (req.method === 'GET' && url.pathname === '/new-key-success') {
       this.handleNewKeySuccessPage(res, url);
+    } else if (req.method === 'POST' && url.pathname === '/get-key-by-token') {
+      this.handleGetKeyByToken(req, res);
     } else if (req.method === 'GET' && url.pathname === '/regenerate-success') {
       this.handleRegenerateSuccessPage(res, url);
     } else if (req.method === 'GET' && url.pathname === '/success') {
@@ -483,7 +564,8 @@ export class LocalAuthServer {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }
@@ -625,9 +707,19 @@ export class LocalAuthServer {
       const now = Math.floor(Date.now() / 1000);
       if (message.deadline < now) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 
-          success: false, 
-          message: 'Signature expired. Please sign again.' 
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Signature expired. Please sign again.'
+        }));
+        return;
+      }
+
+      // Check for nonce replay
+      if (this.isNonceUsed(message.nonce)) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'This signature has already been used. Please sign again.'
         }));
         return;
       }
@@ -636,12 +728,8 @@ export class LocalAuthServer {
         address: address.slice(0, 10) + '...'
       });
 
-      // Use client-provided domain or default
-      const verificationDomain = domain || {
-        name: 'Shadow Clone',
-        version: '1',
-        chainId: 1
-      };
+      // Always use server-defined domain, ignore client domain
+      const verificationDomain = LocalAuthServer.EXPECTED_DOMAIN;
 
       // ERC-712 types for verification
       const verificationTypes = {
@@ -690,9 +778,13 @@ export class LocalAuthServer {
         address: address.slice(0, 10) + '...'
       });
 
+      // Mark nonce as used after successful verification
+      this.markNonceUsed(message.nonce, message.deadline);
+
       // Forward to backend API (with full ERC-712 payload)
       try {
-        const backendResponse = await this.forwardWalletAuthToBackend(address, message, signature, verificationDomain);
+        // Removed unused clientDomain parameter
+        const backendResponse = await this.forwardWalletAuthToBackend(address, message, signature);
 
         if (backendResponse.success && backendResponse.apiKey) {
           // Check if this is an existing key (masked) or a new key
@@ -718,15 +810,21 @@ export class LocalAuthServer {
           const validationResult = await this.validateApiKey(backendResponse.apiKey);
 
           if (validationResult.success) {
-            // Return success with redirect to new key page
+            // Store key securely and return token instead of key in URL
+            const token = this.storeKeyForDelivery(
+              backendResponse.apiKey,
+              validationResult.licenseType || 'Active'
+            );
+
+            // Return success with redirect to new key page using token (not key in URL)
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({
               success: true,
               isNewKey: true,
-              apiKey: backendResponse.apiKey,
+              token, // Client will use this to fetch key securely
               licenseType: validationResult.licenseType,
               walletAddress: address,
-              redirectUrl: `/new-key-success?key=${encodeURIComponent(backendResponse.apiKey)}&license=${encodeURIComponent(validationResult.licenseType || 'Active')}`
+              redirectUrl: `/new-key-success?token=${encodeURIComponent(token)}`
             }));
 
             // Don't resolve auth promise yet - wait for user to copy key
@@ -746,12 +844,13 @@ export class LocalAuthServer {
         }
       } catch (backendError) {
         // Backend endpoint not available - return graceful fallback
+        // Use generic message that doesn't leak implementation details
         logger.info('Wallet auth backend not available, returning fallback response');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
           notImplemented: true,
-          message: 'Wallet authentication backend coming soon. Please use your API key for now.',
+          message: 'Wallet authentication is currently unavailable. Please use your API key.',
           walletAddress: address
         }));
       }
@@ -785,12 +884,12 @@ export class LocalAuthServer {
 
   /**
    * Forward wallet authentication to backend API (ERC-712 format)
+   * Removed unused clientDomain parameter
    */
   private forwardWalletAuthToBackend(
     address: string,
     message: ERC712AuthMessage,
-    signature: string,
-    clientDomain?: ERC712Domain
+    signature: string
   ): Promise<WalletAuthResponse> {
     return new Promise((resolve, reject) => {
       const url = new URL(`${this.apiEndpoint}/wallet-auth`);
@@ -872,6 +971,14 @@ export class LocalAuthServer {
       if (!csrfToken || csrfToken !== this.csrfToken) {
         const html = getErrorPage('Invalid request. Please refresh and try again.');
         res.writeHead(403, { 'Content-Type': 'text/html' });
+        res.end(html);
+        return;
+      }
+
+      // Validate Ethereum address format if provided
+      if (walletAddress && !/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+        const html = getErrorPage('Invalid wallet address format.');
+        res.writeHead(400, { 'Content-Type': 'text/html' });
         res.end(html);
         return;
       }
@@ -984,19 +1091,38 @@ export class LocalAuthServer {
         return;
       }
 
+      // Check for nonce replay on regenerate
+      if (this.isNonceUsed(message.nonce)) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'This signature has already been used. Please sign again.'
+        }));
+        return;
+      }
+
       logger.info('Processing regenerate request', {
         address: address.slice(0, 10) + '...'
       });
+
+      // Mark nonce as used
+      this.markNonceUsed(message.nonce, message.deadline);
 
       // Forward to backend
       try {
         const backendResponse = await this.forwardRegenerateToBackend(address, message, signature);
 
         if (backendResponse.success && backendResponse.apiKey) {
+          // Store key securely and return token instead of key in URL
+          const token = this.storeKeyForDelivery(
+            backendResponse.apiKey,
+            backendResponse.licenseType || 'Active'
+          );
+
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
             success: true,
-            apiKey: backendResponse.apiKey,
+            token, // Client will use this to redirect to regenerate-success page
             licenseType: backendResponse.licenseType || 'Active',
             walletAddress: address
           }));
@@ -1043,7 +1169,8 @@ export class LocalAuthServer {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }
@@ -1052,44 +1179,100 @@ export class LocalAuthServer {
    * Handle new key success page request
    */
   private handleNewKeySuccessPage(res: http.ServerResponse, url: URL): void {
-    const apiKey = url.searchParams.get('key') || '';
-    const licenseType = url.searchParams.get('license') || 'Active';
+    const token = url.searchParams.get('token') || '';
 
-    if (!apiKey) {
+    if (!token) {
       res.writeHead(302, { 'Location': '/' });
       res.end();
       return;
     }
 
-    const html = getNewKeySuccessPage(apiKey, licenseType, this.csrfToken);
+    // Pass token to page - the page will fetch the key via POST /get-key-by-token
+    const html = getNewKeySuccessPage(token, this.csrfToken);
     res.writeHead(200, {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
+  }
+
+  /**
+   * Handle secure key retrieval by token
+   */
+  private async handleGetKeyByToken(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    try {
+      const body = await this.parseJsonBody(req);
+      const token = body.token as string | undefined;
+      const csrf_token = body.csrf_token as string | undefined;
+
+      // Validate CSRF token
+      if (!csrf_token || csrf_token !== this.csrfToken) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Invalid request. Please refresh and try again.'
+        }));
+        return;
+      }
+
+      if (!token) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Missing token'
+        }));
+        return;
+      }
+
+      const keyData = this.retrieveKeyByToken(token);
+      if (!keyData) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Token expired or invalid. Please restart the authentication process.'
+        }));
+        return;
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        apiKey: keyData.apiKey,
+        license: keyData.license
+      }));
+    } catch (error) {
+      logger.error('Error handling get key by token request:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: false,
+        message: 'An unexpected error occurred.'
+      }));
+    }
   }
 
   /**
    * Handle regenerate success page request
    */
   private handleRegenerateSuccessPage(res: http.ServerResponse, url: URL): void {
-    const apiKey = url.searchParams.get('key') || '';
-    const licenseType = url.searchParams.get('license') || 'Active';
+    const token = url.searchParams.get('token') || '';
 
-    if (!apiKey) {
+    if (!token) {
       res.writeHead(302, { 'Location': '/' });
       res.end();
       return;
     }
 
-    const html = getRegenerateSuccessPage(apiKey, licenseType, this.csrfToken);
+    // Pass token to page - the page will fetch the key via POST /get-key-by-token
+    const html = getRegenerateSuccessPage(token, this.csrfToken);
     res.writeHead(200, {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }
@@ -1103,7 +1286,8 @@ export class LocalAuthServer {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }
@@ -1196,7 +1380,8 @@ export class LocalAuthServer {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }
@@ -1374,9 +1559,22 @@ export class LocalAuthServer {
         return;
       }
 
+      // Check for nonce replay on revoke
+      if (this.isNonceUsed(message.nonce)) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'This signature has already been used. Please sign again.'
+        }));
+        return;
+      }
+
       logger.info('Processing revoke logout', {
         address: address.slice(0, 10) + '...'
       });
+
+      // Mark nonce as used
+      this.markNonceUsed(message.nonce, message.deadline);
 
       // Forward to backend
       try {
@@ -1450,7 +1648,8 @@ export class LocalAuthServer {
       'Content-Type': 'text/html',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
       'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': LocalAuthServer.CSP_HEADER
     });
     res.end(html);
   }

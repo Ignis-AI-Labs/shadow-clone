@@ -4,7 +4,6 @@ import { ModularTools } from './modularTools.js';
 import { UpdateChecker } from './updateChecker.js';
 import { WorkspaceInitializer } from './workspaceInitializer.js';
 import { ApiKeyStatus } from './apiKeyStatus.js';
-import { LogoutTool } from './logout.js';
 
 interface ToolDefinition {
   name: string;
@@ -22,7 +21,6 @@ export class CombinedTools {
   private updateChecker: UpdateChecker;
   private workspaceInitializer: WorkspaceInitializer;
   private apiKeyStatus: ApiKeyStatus;
-  private logoutTool: LogoutTool;
 
   constructor(private authService: AuthService) {
     this.embeddedTools = new EmbeddedPromptTools(authService);
@@ -30,7 +28,6 @@ export class CombinedTools {
     this.updateChecker = new UpdateChecker(authService);
     this.workspaceInitializer = new WorkspaceInitializer(authService);
     this.apiKeyStatus = new ApiKeyStatus(authService);
-    this.logoutTool = new LogoutTool(authService);
   }
 
   getToolDefinitions(): ToolDefinition[] {
@@ -40,8 +37,17 @@ export class CombinedTools {
     const updateTool = this.updateChecker.getToolDefinition();
     const workspaceTool = this.workspaceInitializer.getToolDefinition();
     const statusTool = this.apiKeyStatus.getToolDefinition();
-    const logoutTool = this.logoutTool.getToolDefinition();
-    
+
+    const logoutTool: ToolDefinition = {
+      name: 'logout',
+      description: 'Log out from Shadow Clone. Opens a browser window with options to copy your API key before logout or permanently revoke it.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        required: []
+      }
+    };
+
     // Return all tools, with utility tools first (authenticate, logout, status...)
     return [
       ...embedded.filter(tool => tool.name === 'authenticate'),
@@ -55,11 +61,7 @@ export class CombinedTools {
   }
 
   async executeTool(name: string, args: any): Promise<string> {
-    // Check if it's the logout tool
-    if (name === 'logout') {
-      return this.logoutTool.execute();
-    }
-
+    
     // Check if it's the update checker
     if (name === 'check_for_updates') {
       return this.updateChecker.checkForUpdates();

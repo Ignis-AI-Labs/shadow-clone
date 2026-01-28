@@ -3,9 +3,14 @@
  *
  * These templates are served by the local authentication server
  * to enable browser-based API key entry and wallet connection.
- * 
+ *
  * Design system matches Ignis Labs brand guidelines.
  */
+
+// Constants for timeout values
+const PAGE_CLOSE_DELAY_MS = 3000; // 3 seconds before auto-closing success pages
+const SUCCESS_REDIRECT_DELAY_MS = 500; // 0.5 seconds for success redirect
+const LOGOUT_AUTO_CLOSE_DELAY_MS = 5000; // 5 seconds before auto-closing logout success
 
 /**
  * Common CSS styles for all auth pages - Ignis Labs Design System
@@ -809,7 +814,7 @@ export function getAuthFormPage(csrfToken: string): string {
               types: ERC712_TYPES,
               message: messageForServer,
               signature: signature,
-              csrf_token: '${csrfToken}'
+              csrf_token: ${JSON.stringify(csrfToken)}
             })
           });
 
@@ -943,7 +948,7 @@ export function getSuccessPage(licenseType: string): string {
   </div>
 
   <script>
-    setTimeout(function() { window.close(); }, 3000);
+    setTimeout(function() { window.close(); }, ${PAGE_CLOSE_DELAY_MS});
   </script>
 </body>
 </html>`;
@@ -1171,8 +1176,8 @@ export function getExistingKeyPage(csrfToken: string, maskedKey: string, walletA
         const address = await signer.getAddress();
 
         // Verify it's the same wallet
-        if (address.toLowerCase() !== '${walletAddress.toLowerCase()}') {
-          showStatus('Please connect the same wallet: ${walletAddress.slice(0, 10)}...', 'error');
+        if (address.toLowerCase() !== ${JSON.stringify(walletAddress.toLowerCase())}) {
+          showStatus('Please connect the same wallet: ' + ${JSON.stringify(walletAddress.slice(0, 10))} + '...', 'error');
           regenerateBtn.disabled = false;
           regenerateBtnText.textContent = 'Regenerate API Key';
           regenerateBtnLoading.classList.add('hidden');
@@ -1212,16 +1217,16 @@ export function getExistingKeyPage(csrfToken: string, maskedKey: string, walletA
               action: message.action
             },
             signature: signature,
-            csrf_token: '${csrfToken}'
+            csrf_token: ${JSON.stringify(csrfToken)}
           })
         });
 
         const data = await response.json();
 
-        if (data.success && data.apiKey) {
+        if (data.success && data.token) {
           showStatus('Success! Redirecting...', 'success');
-          // Redirect to success page with new key
-          window.location.href = '/regenerate-success?key=' + encodeURIComponent(data.apiKey) + '&license=' + encodeURIComponent(data.licenseType || 'Active');
+          // Redirect to success page with token (not key in URL)
+          window.location.href = '/regenerate-success?token=' + encodeURIComponent(data.token);
         } else {
           showStatus(data.message || 'Regeneration failed', 'error');
           regenerateBtn.disabled = false;
@@ -1247,11 +1252,10 @@ export function getExistingKeyPage(csrfToken: string, maskedKey: string, walletA
 
 /**
  * Get the regenerate success page showing the new API key
- * @param apiKey - The new full API key
- * @param licenseType - The license type
+ * @param token - The token to retrieve the API key
  * @param csrfToken - CSRF token for auth submission
  */
-export function getRegenerateSuccessPage(apiKey: string, licenseType: string, csrfToken: string): string {
+export function getRegenerateSuccessPage(token: string, csrfToken: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1280,45 +1284,61 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
         <div class="success-text">
           Your old key has been revoked and a new one has been created.
         </div>
-        <div class="license-badge">${escapeHtml(licenseType)} License</div>
+        <div id="licenseBadge" class="license-badge hidden">Loading...</div>
       </div>
 
-      <!-- API Key Display -->
-      <div class="status warning" style="margin-top: 24px;">
-        <span class="status-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </span>
-        <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
+      <!-- Loading State -->
+      <div id="loadingState" class="status info" style="margin-top: 24px;">
+        <span class="status-icon"><span class="spinner"></span></span>
+        <span>Retrieving your API key...</span>
       </div>
 
-      <div class="form-group" style="margin-top: 16px;">
-        <label class="form-label">Your New API Key</label>
-        <div style="position: relative;">
-          <input
-            type="text"
-            id="apiKeyDisplay"
-            class="form-input"
-            value="${escapeHtml(apiKey)}"
-            readonly
-            style="padding-right: 90px; font-family: monospace;"
-          >
-          <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
-            Copy
-          </button>
+      <!-- API Key Display (hidden until loaded) -->
+      <div id="keySection" class="hidden">
+        <div class="status warning" style="margin-top: 24px;">
+          <span class="status-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
         </div>
-      </div>
 
-      <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
-        <span class="status-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-        <span>Copied to clipboard!</span>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">Your New API Key</label>
+          <div style="position: relative;">
+            <input
+              type="text"
+              id="apiKeyDisplay"
+              class="form-input"
+              readonly
+              style="padding-right: 90px; font-family: monospace;"
+            >
+            <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
+          <span class="status-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </span>
+          <span>Copied to clipboard!</span>
+        </div>
+
+        <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
+          <span id="continueBtnText">Copy key first to continue</span>
+          <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
+        </button>
+
+        <div class="footer-note" style="margin-top: 16px;">
+          Store this key securely. You will need it if you log out or authenticate from another device.
+        </div>
       </div>
 
       <div id="errorStatus" class="status error hidden" style="margin-top: 12px;">
@@ -1331,20 +1351,42 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
         </span>
         <span id="errorStatusText"></span>
       </div>
-
-      <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
-        <span id="continueBtnText">Copy key first to continue</span>
-        <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
-      </button>
-
-      <div class="footer-note" style="margin-top: 16px;">
-        Store this key securely. You will need it if you log out or authenticate from another device.
-      </div>
     </div>
   </div>
 
   <script>
     let keyCopied = false;
+    let apiKey = '';
+    const csrfToken = ${JSON.stringify(csrfToken)};
+    const token = ${JSON.stringify(token)};
+
+    // Fetch the API key securely via POST
+    async function fetchApiKey() {
+      try {
+        const response = await fetch('/get-key-by-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, csrf_token: csrfToken })
+        });
+        const data = await response.json();
+
+        if (data.success && data.apiKey) {
+          apiKey = data.apiKey;
+          document.getElementById('apiKeyDisplay').value = apiKey;
+          document.getElementById('licenseBadge').textContent = (data.license || 'Active') + ' License';
+          document.getElementById('licenseBadge').classList.remove('hidden');
+          document.getElementById('loadingState').classList.add('hidden');
+          document.getElementById('keySection').classList.remove('hidden');
+          document.getElementById('apiKeyDisplay').focus();
+        } else {
+          showError(data.message || 'Failed to retrieve API key. Please restart the authentication process.');
+          document.getElementById('loadingState').classList.add('hidden');
+        }
+      } catch (error) {
+        showError('Failed to retrieve API key. Please restart the authentication process.');
+        document.getElementById('loadingState').classList.add('hidden');
+      }
+    }
 
     function copyKey() {
       const keyInput = document.getElementById('apiKeyDisplay');
@@ -1371,7 +1413,7 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
     }
 
     function completeAuth() {
-      if (!keyCopied) return;
+      if (!keyCopied || !apiKey) return;
 
       const continueBtn = document.getElementById('continueBtn');
       const continueBtnText = document.getElementById('continueBtnText');
@@ -1389,7 +1431,7 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
       fetch('/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'apiKey=${encodeURIComponent(apiKey)}&csrf_token=${encodeURIComponent(csrfToken)}'
+        body: 'apiKey=' + encodeURIComponent(apiKey) + '&csrf_token=' + encodeURIComponent(csrfToken)
       }).then(response => {
         if (response.ok) {
           window.location.href = '/success';
@@ -1405,8 +1447,8 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
       });
     }
 
-    // Try to copy on page load for convenience
-    document.getElementById('apiKeyDisplay').focus();
+    // Fetch key on page load
+    fetchApiKey();
   </script>
 </body>
 </html>`;
@@ -1414,11 +1456,10 @@ export function getRegenerateSuccessPage(apiKey: string, licenseType: string, cs
 
 /**
  * Get the new key success page (for first-time wallet auth)
- * @param apiKey - The full API key
- * @param licenseType - The license type
+ * @param token - The token to retrieve the API key
  * @param csrfToken - CSRF token for auth submission
  */
-export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfToken: string): string {
+export function getNewKeySuccessPage(token: string, csrfToken: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1447,45 +1488,61 @@ export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfTo
         <div class="success-text">
           Your wallet has been verified and an API key has been generated.
         </div>
-        <div class="license-badge">${escapeHtml(licenseType)} License</div>
+        <div id="licenseBadge" class="license-badge hidden">Loading...</div>
       </div>
 
-      <!-- API Key Display -->
-      <div class="status warning" style="margin-top: 24px;">
-        <span class="status-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </span>
-        <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
+      <!-- Loading State -->
+      <div id="loadingState" class="status info" style="margin-top: 24px;">
+        <span class="status-icon"><span class="spinner"></span></span>
+        <span>Retrieving your API key...</span>
       </div>
 
-      <div class="form-group" style="margin-top: 16px;">
-        <label class="form-label">Your API Key</label>
-        <div style="position: relative;">
-          <input
-            type="text"
-            id="apiKeyDisplay"
-            class="form-input"
-            value="${escapeHtml(apiKey)}"
-            readonly
-            style="padding-right: 90px; font-family: monospace;"
-          >
-          <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
-            Copy
-          </button>
+      <!-- API Key Display (hidden until loaded) -->
+      <div id="keySection" class="hidden">
+        <div class="status warning" style="margin-top: 24px;">
+          <span class="status-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span><strong>Save this key now!</strong> You won't be able to see it again.</span>
         </div>
-      </div>
 
-      <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
-        <span class="status-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-        <span>Copied to clipboard!</span>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">Your API Key</label>
+          <div style="position: relative;">
+            <input
+              type="text"
+              id="apiKeyDisplay"
+              class="form-input"
+              readonly
+              style="padding-right: 90px; font-family: monospace;"
+            >
+            <button type="button" id="copyBtn" onclick="copyKey()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent-copper); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div id="copyStatus" class="status success hidden" style="margin-top: 12px;">
+          <span class="status-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </span>
+          <span>Copied to clipboard!</span>
+        </div>
+
+        <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
+          <span id="continueBtnText">Copy key first to continue</span>
+          <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
+        </button>
+
+        <div class="footer-note" style="margin-top: 16px;">
+          Store this key securely. You will need it if you log out or authenticate from another device.
+        </div>
       </div>
 
       <div id="errorStatus" class="status error hidden" style="margin-top: 12px;">
@@ -1498,20 +1555,42 @@ export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfTo
         </span>
         <span id="errorStatusText"></span>
       </div>
-
-      <button type="button" id="continueBtn" class="btn-primary" style="margin-top: 24px;" disabled onclick="completeAuth()">
-        <span id="continueBtnText">Copy key first to continue</span>
-        <span id="continueBtnLoading" class="hidden"><span class="spinner"></span></span>
-      </button>
-
-      <div class="footer-note" style="margin-top: 16px;">
-        Store this key securely. You will need it if you log out or authenticate from another device.
-      </div>
     </div>
   </div>
 
   <script>
     let keyCopied = false;
+    let apiKey = '';
+    const csrfToken = ${JSON.stringify(csrfToken)};
+    const token = ${JSON.stringify(token)};
+
+    // Fetch the API key securely via POST
+    async function fetchApiKey() {
+      try {
+        const response = await fetch('/get-key-by-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, csrf_token: csrfToken })
+        });
+        const data = await response.json();
+
+        if (data.success && data.apiKey) {
+          apiKey = data.apiKey;
+          document.getElementById('apiKeyDisplay').value = apiKey;
+          document.getElementById('licenseBadge').textContent = (data.license || 'Active') + ' License';
+          document.getElementById('licenseBadge').classList.remove('hidden');
+          document.getElementById('loadingState').classList.add('hidden');
+          document.getElementById('keySection').classList.remove('hidden');
+          document.getElementById('apiKeyDisplay').focus();
+        } else {
+          showError(data.message || 'Failed to retrieve API key. Please restart the authentication process.');
+          document.getElementById('loadingState').classList.add('hidden');
+        }
+      } catch (error) {
+        showError('Failed to retrieve API key. Please restart the authentication process.');
+        document.getElementById('loadingState').classList.add('hidden');
+      }
+    }
 
     function copyKey() {
       const keyInput = document.getElementById('apiKeyDisplay');
@@ -1538,7 +1617,7 @@ export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfTo
     }
 
     function completeAuth() {
-      if (!keyCopied) return;
+      if (!keyCopied || !apiKey) return;
 
       const continueBtn = document.getElementById('continueBtn');
       const continueBtnText = document.getElementById('continueBtnText');
@@ -1556,7 +1635,7 @@ export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfTo
       fetch('/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'apiKey=${encodeURIComponent(apiKey)}&csrf_token=${encodeURIComponent(csrfToken)}'
+        body: 'apiKey=' + encodeURIComponent(apiKey) + '&csrf_token=' + encodeURIComponent(csrfToken)
       }).then(response => {
         if (response.ok) {
           window.location.href = '/success';
@@ -1572,8 +1651,8 @@ export function getNewKeySuccessPage(apiKey: string, licenseType: string, csrfTo
       });
     }
 
-    // Try to focus on key display for convenience
-    document.getElementById('apiKeyDisplay').focus();
+    // Fetch key on page load
+    fetchApiKey();
   </script>
 </body>
 </html>`;
@@ -1785,7 +1864,8 @@ export function getLogoutPage(csrfToken: string, maskedApiKey: string, walletAdd
     const statusText = document.getElementById('statusText');
 
     let keyCopied = false;
-    const walletAddress = '${walletAddress ? escapeHtml(walletAddress) : ''}';
+    // Use JSON.stringify for safe JS injection
+    const walletAddress = ${JSON.stringify(walletAddress || '')};
 
     function showStatus(message, type) {
       statusText.textContent = message;
@@ -1807,7 +1887,7 @@ export function getLogoutPage(csrfToken: string, maskedApiKey: string, walletAdd
         const response = await fetch('/logout/get-key', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ csrf_token: '${csrfToken}' })
+          body: JSON.stringify({ csrf_token: ${JSON.stringify(csrfToken)} })
         });
         const data = await response.json();
         if (data.success && data.apiKey) {
@@ -1845,7 +1925,7 @@ export function getLogoutPage(csrfToken: string, maskedApiKey: string, walletAdd
         const response = await fetch('/logout/local', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ csrf_token: '${csrfToken}' })
+          body: JSON.stringify({ csrf_token: ${JSON.stringify(csrfToken)} })
         });
         const data = await response.json();
         if (data.success) {
@@ -1955,7 +2035,7 @@ export function getLogoutPage(csrfToken: string, maskedApiKey: string, walletAdd
               action: message.action
             },
             signature: signature,
-            csrf_token: '${csrfToken}'
+            csrf_token: ${JSON.stringify(csrfToken)}
           })
         });
 
@@ -2042,8 +2122,8 @@ export function getLogoutSuccessPage(type: 'local' | 'revoked'): string {
   </div>
 
   <script>
-    // Auto-close after 5 seconds
-    setTimeout(function() { window.close(); }, 5000);
+    // Use constant for timeout - auto-close after delay
+    setTimeout(function() { window.close(); }, ${LOGOUT_AUTO_CLOSE_DELAY_MS});
   </script>
 </body>
 </html>`;
