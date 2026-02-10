@@ -7,14 +7,14 @@ This guide covers branch conventions, commit standards, and PR workflow for all 
 ## Branch Model
 
 ```
-main          Production-ready code. Deploy target.
- └── dev      Active development. Integration branch. Nobody works directly on dev.
-      └── {author}/{type}-{description}   Feature branches (one per dev/agent).
+upstream/main          Production-ready code. Deploy target.
+ └── upstream/dev      Integration branch. All PRs target here.
+      └── your-fork/dev   Your working copy. Commit here, PR into upstream/dev.
 ```
 
-- **`main`** -- Production. Merges from `dev` only (release PRs).
-- **`dev`** -- Development integration. All feature PRs target this branch. **Do not commit directly to `dev`** -- always work on a feature branch and PR into `dev`.
-- **Feature branches** -- Each developer or agent forks the repo and works on their own feature branch off `dev`. When ready, open a PR from your fork targeting `dev` for review and merge.
+- **`main`** (upstream) -- Production. Merges from `dev` only (release PRs).
+- **`dev`** (upstream) -- Integration branch. All contributor PRs target this branch.
+- **`dev`** (your fork) -- Your working branch. Fork the repo, commit to your fork's `dev`, then open a PR into the upstream `dev`.
 
 ## Branch Naming
 
@@ -60,15 +60,17 @@ docs: add migration guide for branch rename
 
 ### Feature -> dev (standard)
 
-Every developer and agent works on their own fork. No one pushes directly to `dev`.
+Every developer and agent works on their own fork's `dev` branch, then PRs into the upstream `dev`.
 
 1. Fork the repo on GitHub
-2. Clone your fork and branch from `dev`: `git checkout -b {author}/{type}-{description} dev`
-3. Do all work on your feature branch -- commit using conventional commits
-4. Push to your fork and open a PR targeting `dev` on the upstream repo
-5. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
-6. Request 1 reviewer
-7. After approval, squash-merge into `dev`
+2. Clone your fork: `git clone <your-fork-url> && cd shadow-clone`
+3. Add upstream remote: `git remote add upstream <upstream-url>`
+4. Sync your `dev` with upstream: `git pull upstream dev`
+5. Do all work on your fork's `dev` branch -- commit using conventional commits
+6. Push to your fork: `git push origin dev`
+7. Open a PR from your fork's `dev` targeting upstream `dev`
+8. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
+9. After approval, squash-merge into upstream `dev`
 
 ### dev -> main (release only)
 
@@ -90,7 +92,7 @@ Every developer and agent works on their own fork. No one pushes directly to `de
 
 AI agents (Claude, Copilot, etc.) follow the same rules:
 
-- Use `agent/` or `claude/` as the author prefix (e.g., `claude/feat-session-management`)
+- Fork the repo and work on their fork's `dev` branch, same as human contributors
 - Write conventional commit messages
 - Fill out the PR template completely
 - Reference task IDs from `TASKS.md` in the PR body
@@ -130,7 +132,8 @@ Your feature branches (e.g., `mihir/feat-*`) are unaffected -- they already foll
 
 | Action | Command |
 |--------|---------|
-| Start feature | `git checkout -b {author}/{type}-{desc} dev` |
+| Sync with upstream | `git pull upstream dev` |
+| Push your work | `git push origin dev` |
 | Build | `cd mcp-server && npm run build` |
 | Type check | `cd mcp-server && npm run lint` |
 | Run tests | `cd mcp-server && npm test` |
