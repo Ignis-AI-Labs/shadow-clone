@@ -70,7 +70,35 @@ Production API: `https://api.ignislabs.ai`
 
 ## Testing
 
-MCP Server has no automated tests currently (`npm test` exits with error). Test infrastructure is a priority for the security hardening phase.
+```bash
+cd mcp-server
+npm test                   # Run test suite
+npm run test:coverage      # Run with coverage report
+```
+
+Test infrastructure is being set up (see `I-P4-01` in TASKS.md). For now, verify changes with:
+- `npm run build` -- TypeScript compilation succeeds
+- `npm run lint` -- No type errors
+
+## Branch Model
+
+```
+main    ← Production (default branch, protected)
+dev     ← Development integration (all PRs target here)
+{author}/{type}-{description}  ← Feature branches off dev
+```
+
+- Feature branches merge into `dev` via PR (1 approval required)
+- `dev` merges into `main` for releases only
+- See `CONTRIBUTING.md` for full conventions
+
+## Task Tracking
+
+- **`TASKS.md`** -- All tasks with IDs, priorities, dependencies, and PR links
+- **`CONTRIBUTING.md`** -- Branch naming, commit conventions, PR workflow
+- **`.github/PULL_REQUEST_TEMPLATE.md`** -- PR template with checklists
+
+Task IDs use format `{Component}-P{Priority}-{Number}` (e.g., `B-P1-04`). Reference these in commits and PRs.
 
 ## Important Conventions
 
