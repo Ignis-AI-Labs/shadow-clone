@@ -88,7 +88,7 @@ dev     ← Development integration (all PRs target here)
 {author}/{type}-{description}  ← Feature branches off dev
 ```
 
-- Feature branches merge into `dev` via PR (1 approval required)
+- Contributors fork the repo and work on feature branches, then PR into `dev`
 - `dev` merges into `main` for releases only
 - See `CONTRIBUTING.md` for full conventions
 

@@ -45,7 +45,7 @@ Task IDs follow the format `{Component}-P{Priority}-{Number}`.
 | ID | Task | Status | Depends on | PR |
 |----|------|--------|------------|-----|
 | I-P1-01 | CI pipeline (build + lint on PRs) | OPEN | D-P0-01 | -- |
-| I-P1-02 | Branch protection rules (main + dev) | OPEN | D-P0-01 | -- |
+| I-P1-02 | ~~Branch protection rules~~ | N/A (fork-based workflow) | -- | -- |
 | I-P4-01 | Test infrastructure setup (Jest/Vitest) | OPEN | I-P1-01 | -- |
 | I-P4-02 | Code coverage reporting | OPEN | I-P4-01 | -- |
 
@@ -65,10 +65,9 @@ B-P0-01 (API key encryption) [DONE]
 │   └── B-P1-06 (Rate limiting) [OPEN]
 │
 D-P0-01 (Branch reorg) [DONE]
-├── I-P1-01 (CI pipeline) [OPEN]
-│   └── I-P4-01 (Test infra) [OPEN]
-│       └── I-P4-02 (Coverage) [OPEN]
-└── I-P1-02 (Branch protection) [OPEN]
+└── I-P1-01 (CI pipeline) [OPEN]
+    └── I-P4-01 (Test infra) [OPEN]
+        └── I-P4-02 (Coverage) [OPEN]
 ```
 
 ### Critical Path
