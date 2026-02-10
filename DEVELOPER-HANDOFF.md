@@ -1,9 +1,9 @@
 # Shadow Clone - Developer Onboarding & Project Scope
 
-**Document Version:** 1.1
-**Date:** January 19, 2026
+**Document Version:** 2.0
+**Date:** February 11, 2026
 **Author:** Project Lead
-**Status:** Repository cleaned - MCP-only architecture
+**Status:** Repository cleaned - MCP-only architecture, branch protocol established
 
 ---
 
@@ -12,6 +12,8 @@
 Shadow Clone is a **prompt engineering orchestration system** that delivers structured macros to AI agents, enabling them to simulate specialized expert teams. This is NOT a prompt injection system - it's an **orchestration framework** that helps users organize, deploy, and manage complex AI workflows through well-structured prompt delivery.
 
 **Key Distinction:** We teach AI how to behave like experts. We don't inject commands - we deliver methodology.
+
+> **New here?** Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) for branch conventions and PR workflow, and [`TASKS.md`](TASKS.md) for the prioritized task list with dependencies.
 
 ---
 
@@ -448,9 +450,10 @@ This is a key differentiator - letting users create and save their own orchestra
 ### Development Environment Setup
 
 ```bash
-# Clone repository
+# Clone repository and switch to dev branch
 git clone <repo-url>
 cd shadow-clone
+git checkout dev
 
 # MCP Server setup
 cd mcp-server
@@ -462,6 +465,8 @@ npm run build        # TypeScript compilation
 npm run build:prod   # Production (with obfuscation)
 npm run lint         # Type checking
 ```
+
+> See [`CONTRIBUTING.md`](CONTRIBUTING.md) for branch naming, commit conventions, and the full PR workflow.
 
 ### Key Files to Understand
 
