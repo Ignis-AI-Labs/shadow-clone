@@ -12,9 +12,9 @@ main          Production-ready code. Deploy target.
       └── {author}/{type}-{description}   Feature branches (one per dev/agent).
 ```
 
-- **`main`** -- Production. Merges from `dev` only (release PRs). Requires 1 approval, no direct push.
+- **`main`** -- Production. Merges from `dev` only (release PRs).
 - **`dev`** -- Development integration. All feature PRs target this branch. **Do not commit directly to `dev`** -- always work on a feature branch and PR into `dev`.
-- **Feature branches** -- Each developer or agent works on their own feature branch off `dev`. When ready, open a PR targeting `dev` for review and merge.
+- **Feature branches** -- Each developer or agent forks the repo and works on their own feature branch off `dev`. When ready, open a PR from your fork targeting `dev` for review and merge.
 
 ## Branch Naming
 
@@ -60,14 +60,15 @@ docs: add migration guide for branch rename
 
 ### Feature -> dev (standard)
 
-Every developer and agent works on their own feature branch. No one pushes directly to `dev`.
+Every developer and agent works on their own fork. No one pushes directly to `dev`.
 
-1. Branch from `dev`: `git checkout -b {author}/{type}-{description} dev`
-2. Do all work on your feature branch -- commit using conventional commits
-3. Push your branch and open a PR targeting `dev`
-4. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
-5. Request 1 reviewer
-6. After approval, squash-merge into `dev`
+1. Fork the repo on GitHub
+2. Clone your fork and branch from `dev`: `git checkout -b {author}/{type}-{description} dev`
+3. Do all work on your feature branch -- commit using conventional commits
+4. Push to your fork and open a PR targeting `dev` on the upstream repo
+5. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
+6. Request 1 reviewer
+7. After approval, squash-merge into `dev`
 
 ### dev -> main (release only)
 
