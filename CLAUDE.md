@@ -83,12 +83,12 @@ Test infrastructure is being set up (see `I-P4-01` in TASKS.md). For now, verify
 ## Branch Model
 
 ```
-main    ← Production (default branch, protected)
-dev     ← Development integration (all PRs target here)
-{author}/{type}-{description}  ← Feature branches off dev
+upstream/main  ← Production (default branch)
+upstream/dev   ← Integration (all PRs target here)
+your-fork/dev  ← Your working branch (commit here, PR into upstream/dev)
 ```
 
-- Contributors fork the repo and work on feature branches, then PR into `dev`
+- Contributors fork the repo, work on their fork's `dev`, then PR into upstream `dev`
 - `dev` merges into `main` for releases only
 - See `CONTRIBUTING.md` for full conventions
 
