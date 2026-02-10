@@ -7,14 +7,16 @@ This guide covers branch conventions, commit standards, and PR workflow for all 
 ## Branch Model
 
 ```
-upstream/main          Production-ready code. Deploy target.
- └── upstream/dev      Integration branch. All PRs target here.
-      └── your-fork/dev   Your working copy. Commit here, PR into upstream/dev.
+main                        Production-ready code. Deploy target.
+ └── dev                    Integration branch. All PRs target here.
+      ├── mihir/dev         Mihir's working branch
+      ├── eli/dev           Eli's working branch
+      └── claude/dev        Claude agent's working branch
 ```
 
-- **`main`** (upstream) -- Production. Merges from `dev` only (release PRs).
-- **`dev`** (upstream) -- Integration branch. All contributor PRs target this branch.
-- **`dev`** (your fork) -- Your working branch. Fork the repo, commit to your fork's `dev`, then open a PR into the upstream `dev`.
+- **`main`** -- Production. Merges from `dev` only (release PRs).
+- **`dev`** -- Integration branch. All contributor PRs target this branch. Nobody commits directly to `dev`.
+- **`{author}/dev`** -- Your personal working branch. Commit here, then PR into `dev`.
 
 ## Branch Naming
 
@@ -60,17 +62,20 @@ docs: add migration guide for branch rename
 
 ### Feature -> dev (standard)
 
-Every developer and agent works on their own fork's `dev` branch, then PRs into the upstream `dev`.
+Every developer and agent works on their own branch, then PRs into `dev`.
 
-1. Fork the repo on GitHub
-2. Clone your fork: `git clone <your-fork-url> && cd shadow-clone`
-3. Add upstream remote: `git remote add upstream <upstream-url>`
-4. Sync your `dev` with upstream: `git pull upstream dev`
-5. Do all work on your fork's `dev` branch -- commit using conventional commits
-6. Push to your fork: `git push origin dev`
-7. Open a PR from your fork's `dev` targeting upstream `dev`
-8. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
-9. After approval, squash-merge into upstream `dev`
+1. Create your branch from `dev`: `git checkout -b {author}/dev dev`
+2. Do all work on your branch -- commit using conventional commits
+3. Push your branch: `git push -u origin {author}/dev`
+4. Open a PR from your branch targeting `dev`
+5. Fill out the PR template (`.github/PULL_REQUEST_TEMPLATE.md`)
+6. After approval, squash-merge into `dev`
+
+To stay up to date with `dev`:
+```bash
+git checkout {author}/dev
+git pull origin dev
+```
 
 ### dev -> main (release only)
 
@@ -92,7 +97,7 @@ Every developer and agent works on their own fork's `dev` branch, then PRs into 
 
 AI agents (Claude, Copilot, etc.) follow the same rules:
 
-- Fork the repo and work on their fork's `dev` branch, same as human contributors
+- Use `agent/dev` or `claude/dev` as their working branch, same as human contributors
 - Write conventional commit messages
 - Fill out the PR template completely
 - Reference task IDs from `TASKS.md` in the PR body
@@ -132,8 +137,9 @@ Your feature branches (e.g., `mihir/feat-*`) are unaffected -- they already foll
 
 | Action | Command |
 |--------|---------|
-| Sync with upstream | `git pull upstream dev` |
-| Push your work | `git push origin dev` |
+| Create your branch | `git checkout -b {author}/dev dev` |
+| Sync with dev | `git pull origin dev` |
+| Push your work | `git push origin {author}/dev` |
 | Build | `cd mcp-server && npm run build` |
 | Type check | `cd mcp-server && npm run lint` |
 | Run tests | `cd mcp-server && npm test` |
