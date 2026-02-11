@@ -1,6 +1,8 @@
 # Contributing to Shadow Clone
 
-This guide covers branch conventions, commit standards, and PR workflow for all contributors -- human developers and AI agents alike.
+Shadow Clone is a free, open-source AI orchestration system. We welcome contributions from everyone -- human developers and AI agents alike.
+
+This guide covers branch conventions, commit standards, PR workflow, and how to contribute new prompts.
 
 ---
 
@@ -32,7 +34,7 @@ Format: `{author}/{type}-{description}`
 | `chore` | Build, CI, dependency updates |
 
 Examples:
-- `mihir/feat-browser-auth`
+- `mihir/feat-zod-validation`
 - `eli/fix-rate-limiter-bypass`
 - `claude/docs-update-readme`
 
@@ -48,14 +50,14 @@ body (optional)
 footer (optional)
 ```
 
-Types match branch types above. Scope is optional but encouraged (`auth`, `tools`, `prompts`, `build`).
+Types match branch types above. Scope is optional but encouraged (`tools`, `prompts`, `build`, `utils`).
 
 Examples:
 ```
-feat(auth): add browser-based OAuth flow
-fix(tools): validate Zod schemas before tool dispatch
-chore: update webpack config for prod builds
-docs: add migration guide for branch rename
+feat(tools): add new specialist agent type
+fix(validation): handle empty string inputs
+chore: update dependencies
+docs: add prompt contribution guide
 ```
 
 ## Pull Request Workflow
@@ -89,7 +91,6 @@ git pull origin dev
 
 - All PRs require at least 1 approval
 - Stale reviews are dismissed on new pushes (on `main`)
-- PRs touching `src/auth/` or `src/config/production.ts` require extra scrutiny -- tag the security reviewer
 - Check the build passes: `cd mcp-server && npm run build`
 - Check types pass: `cd mcp-server && npm run lint`
 
@@ -102,34 +103,35 @@ AI agents (Claude, Copilot, etc.) follow the same rules:
 - Fill out the PR template completely
 - Reference task IDs from `TASKS.md` in the PR body
 
+## Contributing New Prompts
+
+Shadow Clone's value comes from high-quality prompt engineering macros. Here's how to contribute new or improved prompts:
+
+### Prompt Location
+All prompts live in `mcp-server/src/prompts/content/` as TypeScript files.
+
+### Prompt Quality Standards
+- Use positive framing ("do X" not "don't do Y")
+- Include clear role definitions for agent personas
+- Provide specific, actionable methodology steps
+- Include output format specifications
+- Define quality standards and constraints
+
+### Adding a New Prompt
+1. Create a new `.ts` file in `mcp-server/src/prompts/content/`
+2. Export the content following the existing pattern
+3. Register the prompt in `mcp-server/src/prompts/content/index.ts`
+4. Wire it up in the appropriate tool handler
+5. Test with `npm run build && npm run lint`
+
+### Improving Existing Prompts
+- Open an issue describing what you'd improve and why
+- Submit a PR with the changes
+- Include before/after examples if possible
+
 ## Dependencies Between PRs
 
 Some PRs must merge in order. Check `TASKS.md` for the dependency graph. If your PR depends on another, note it in the PR template under **Dependencies**.
-
----
-
-## Migration Guide
-
-If you have stale local branches from before the reorganization (Feb 2026), run:
-
-```bash
-# Fetch new remote state
-git fetch --prune
-
-# Switch to new dev branch
-git checkout -b dev origin/dev
-
-# Delete old local branches
-git branch -D main-dev main-prod master dev-testing 2>/dev/null
-
-# Create local main tracking branch
-git branch main origin/main
-
-# Set remote HEAD
-git remote set-head origin main
-```
-
-Your feature branches (e.g., `mihir/feat-*`) are unaffected -- they already follow the naming convention.
 
 ---
 
@@ -143,4 +145,3 @@ Your feature branches (e.g., `mihir/feat-*`) are unaffected -- they already foll
 | Build | `cd mcp-server && npm run build` |
 | Type check | `cd mcp-server && npm run lint` |
 | Run tests | `cd mcp-server && npm test` |
-| Production build | `cd mcp-server && npm run build:prod` |

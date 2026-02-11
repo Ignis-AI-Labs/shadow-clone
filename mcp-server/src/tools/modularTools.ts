@@ -1,4 +1,3 @@
-import { AuthService } from '../auth/authService.js';
 import * as prompts from '../prompts/content/index.js';
 
 interface ToolDefinition {
@@ -12,7 +11,6 @@ interface ToolDefinition {
 }
 
 export class ModularTools {
-  constructor(private authService: AuthService) {}
 
   getToolDefinitions(): ToolDefinition[] {
     return [
@@ -1308,17 +1306,16 @@ ${category === 'all' || category === 'documentation' ? `
 ` : ''}
 
 ## Quick Tips
-1. Always authenticate first with your API key
-2. These tools teach YOU professional methodologies
-3. YOU implement the actual code following these patterns
-4. Each tool is a "power-up" for your capabilities
-5. Combine tools for comprehensive solutions
+1. These tools teach YOU professional methodologies
+2. YOU implement the actual code following these patterns
+3. Each tool is a "power-up" for your capabilities
+4. Combine tools for comprehensive solutions
+5. No authentication needed - Shadow Clone is free and open-source
 
 ## Getting Started
-1. authenticate - Set up your Shadow Clone license
-2. show_commands - Display this reference (you're here!)
-3. shadow_clone_plan - Start planning your project
-4. Execute the methodologies provided
+1. show_commands - Display this reference (you're here!)
+2. shadow_clone_plan - Start planning your project
+3. Execute the methodologies provided
 
 Remember: Shadow Clone makes YOU more capable by providing battle-tested methodologies!`;
 

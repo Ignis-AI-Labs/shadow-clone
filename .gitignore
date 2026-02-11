@@ -4,6 +4,9 @@
 .waves/
 .backup/
 
+# Local development (creator mode, local configs)
+.shadow-local/
+
 # IDE and editor files
 .vscode/
 .idea/

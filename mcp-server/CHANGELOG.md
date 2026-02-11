@@ -1,145 +1,62 @@
 # Shadow Clone MCP Server Changelog
 
+## [0.3.0] - 2025-02-11
+
+### Changed - Open Source Pivot
+- **Free and open-source**: Shadow Clone is now completely free with no authentication required
+- Removed all authentication, API key, and NFT license verification code
+- Removed `authenticate` and `api_key_status` tools
+- Removed webpack obfuscation from build pipeline
+- Removed `axios` dependency (was only used for auth API calls)
+- Switched to MIT License
+- All 14 tools are immediately available without any setup beyond installation
+
+### Removed
+- `authService.ts` - API key validation and NFT verification
+- `apiKeyManager.ts` - API key caching and persistence
+- `creatorMode.ts` - Creator mode authentication bypass
+- `apiKeyStatus.ts` - API key status reporting tool
+- `shadowCloneTools.ts` - Legacy API-fetching tool (dead code)
+- Webpack obfuscation build step and dependencies
+
 ## [0.2.3] - 2024-12-19
 
 ### Added
-- 📖 **USER-GUIDE.md**: Complete human-readable guide for using Shadow Clone
-  - Beginner, intermediate, and advanced usage patterns
-  - Complete command reference with examples
-  - Pro tips and best practices
-  - Learning path for users
-  - Command cheat sheet
+- Workspace initializer improvements
+- Embedded user guide content
 
 ### Changed
-- 🔧 Workspace initializer now creates USER-GUIDE.md for humans
-- 📚 Added embedded user guide content as fallback
+- Workspace initializer now creates USER-GUIDE.md for humans
 
 ## [0.2.2] - 2024-12-19
 
 ### Fixed
-- 🔧 Fixed `check_for_updates` tool to read version from package.json instead of hardcoded value
-- ✅ Version checker now correctly reports the running version
+- Fixed `check_for_updates` tool to read version from package.json instead of hardcoded value
 
 ## [0.2.1] - 2024-12-19
 
 ### Changed
-- 🔧 **Workspace Initializer Redesigned**: Now ACTUALLY creates files instead of returning instructions
-  - Handles existing CLAUDE.md files by appending Shadow Clone section
-  - Includes complete command reference for both local and MCP tools
-  - Creates comprehensive instruction files for all AI assistants
-  - Properly stores API key in .env as backup
-  - Smart handling of existing files (append vs overwrite)
-
-### Fixed
-- 📝 Added missing Shadow Clone commands to instruction templates
-- ✅ Workspace initializer now executes file operations directly (the ONE tool that does)
-- 🔄 Proper handling of existing CLAUDE.md files
+- Workspace initializer redesigned to actually create files instead of returning instructions
+- Smart handling of existing files (append vs overwrite)
 
 ## [0.2.0] - 2024-12-19
 
 ### Added
-- 🚀 **Workspace Initialization Tool**: `initialize_workspace` - Creates AI instruction files in projects
-  - Automatically generates CLAUDE.md, .ai/instructions.md, .github/copilot-instructions.md
-  - Stores API key in .env as backup when initializing
-  - Embeds Shadow Clone documentation directly in workspaces
-  - Ensures all AI assistants understand Shadow Clone commands
-  - Returns instructions for AI to follow (no direct file operations)
-- 📊 **API Key Status Tool**: `api_key_status` - Check authentication and cache status
-  - Shows current authentication state
-  - Displays all cache storage locations and their status
-  - Indicates if Creator Mode is active
-  - Provides helpful setup instructions
-- 🚀 **Creator Mode**: Privileged local mode for Shadow Clone creator
-  - Automatic detection via `.shadow-local/creator-config.json`
-  - Complete authentication bypass for creator
-  - UNLIMITED license type with all features enabled
-  - Works offline without API calls
-- 🔑 **API Key Caching System**: Multi-tier storage for convenience
-  - Environment variables (highest priority)
-  - Local .env files (auto-gitignored)
-  - Global config (~/.shadow-clone/config.json)
-  - Memory cache for session persistence
-  - Automatic revalidation every 5 minutes
-- 🔐 **Real-time NFT verification**: Authentication checks NFT ownership in real-time
-  - Removed 24-hour expiration - Access remains active as long as you own the NFT
-  - Immediate access revocation when NFT is transferred or sold
-  - Verification caching to reduce API calls (1 minute cache)
-
-### Changed
-- 📝 All tool descriptions now explicitly state "NO code execution"
-- 🎯 Prompts include clear disclaimers about being prompt engineering macros
-- 🔄 Authentication checks multiple cache locations before requiring login
-- 🎮 Server automatically detects creator mode on startup
-- 📝 Updated error messages to be more specific about NFT ownership
-- ✨ Clarified that Shadow Clone is a prompt engineering macro system
-- 🔧 Updated all tool descriptions to emphasize instruction delivery
-
-### Security
-- 🔐 API keys are obfuscated when stored
-- 📁 .env files automatically added to .gitignore
-- 🛡️ Restrictive file permissions on Unix systems
-- ✅ NFT ownership is verified before each tool execution
-- 🔄 Graceful fallback to cached verification during network issues
-- 📍 Wallet address tracking for license verification
+- Workspace initialization tool (`initialize_workspace`)
+- Multiple orchestration modes (plan, feature, debug, optimize, refactor, audit, research)
+- Comprehensive monitoring and rate limiting
+- Input validation and sanitization
 
 ### Technical
-- Added `verifyNFTOwnership()` method for real-time checks
-- Implemented verification result caching
-- Added `clearVerificationCache()` for forcing fresh checks
-- Added `getWalletAddress()` to track associated wallet
-- Fixed TypeScript compilation errors in apiKeyManager
-- Added comprehensive monitoring and rate limiting
+- Production-ready security: rate limiting, path traversal protection, execution timeouts
+- Sensitive data masking in logs
+- Health checks and metrics
 
 ## [0.1.0] - 2024-12-01
 
 ### Initial Release
-
-#### Features
-- 🚀 Full Shadow Clone orchestration system via MCP
-- 🤖 AI-agnostic tool descriptions (works with any AI assistant)
-- 🔐 API key authentication with Ignis AI Labs
-- 📋 Multiple orchestration modes (plan, feature, debug, optimize, refactor, audit, research)
-- 🛠️ Modular tools for specialized tasks
-- 🔄 Automatic update checking
-- 🏭 Production-ready with comprehensive security and monitoring
-
-#### Security
-- Input validation and sanitization
-- Rate limiting to prevent abuse
-- Sensitive data masking in logs
-- Path traversal protection
-- Execution timeouts
-
-#### Monitoring
-- Health checks and metrics
-- Performance logging
-- Error tracking
-- Resource usage monitoring
-
-#### Tools Included
-- `authenticate` - API key authentication
-- `shadow_clone_orchestrate` - Main orchestration system
-- `shadow_clone_plan` - Project planning mode
-- `get_agent_template` - Agent behavior templates
-- `deploy_agent_team` - Team deployment
-- `deploy_specialist_agent` - Specialist deployment
-- `quick_fix` - Rapid problem solving
-- `code_review_team` - Code review methodology
-- `generate_tests` - Test generation
-- `execute_single_wave` - Single wave execution
-- `create_documentation` - Documentation creation
-- `architecture_consultant` - Architecture consultation
-- `check_for_updates` - Version checking
-
-#### Documentation
-- Comprehensive README
-- Installation guide for local development
-- Production deployment guide
-- User guide with examples
-- Update instructions
-
-#### Notes
-- All tools return instructions for AI assistants to follow
-- Outputs are directed to `.waves/` directory
-- Internal prompts in `.shadow/` are never exposed
-- Compatible with Claude Desktop and other MCP clients
+- Full Shadow Clone orchestration system via MCP
+- AI-agnostic tool descriptions
+- Multiple orchestration modes
+- Modular tools for specialized tasks
+- Automatic update checking

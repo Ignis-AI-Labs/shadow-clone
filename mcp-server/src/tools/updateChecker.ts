@@ -1,6 +1,5 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { AuthService } from '../auth/authService.js';
 import { config } from '../config/production.js';
 
 const execAsync = promisify(exec);
@@ -16,7 +15,6 @@ interface ToolDefinition {
 }
 
 export class UpdateChecker {
-  constructor(private authService: AuthService) {}
 
   getToolDefinition(): ToolDefinition {
     return {
