@@ -1,5 +1,5 @@
-// Auto-generated from team-agent-templates.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Team Agent Templates
+// Source of truth: edit this file directly
 export const content = `# Team and Agent Templates
 *A comprehensive guide for composing effective Shadow Clone agent teams*
 

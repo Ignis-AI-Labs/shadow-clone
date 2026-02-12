@@ -1,5 +1,5 @@
-// Auto-generated from mode-completion-template.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Mode Completion Template
+// Source of truth: edit this file directly
 export const content = `# MODE COMPLETION SUMMARY TEMPLATE
 
 *Use this template to create comprehensive completion summaries that showcase successful project outcomes with measurable results*

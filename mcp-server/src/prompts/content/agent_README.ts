@@ -1,5 +1,5 @@
-// Auto-generated from README.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Agent Rules README
+// Source of truth: edit this file directly
 export const content = `# Agent Rules System (Consolidated)
 
 ## Overview

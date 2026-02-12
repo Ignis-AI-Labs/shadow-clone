@@ -1,5 +1,5 @@
-// Auto-generated from shadow-clone-optimize.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Optimize Mode Configuration
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================

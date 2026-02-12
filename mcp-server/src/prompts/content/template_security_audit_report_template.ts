@@ -1,5 +1,5 @@
-// Auto-generated from SECURITY_AUDIT_REPORT_TEMPLATE.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Security Audit Report Template
+// Source of truth: edit this file directly
 export const content = `# SECURITY AUDIT REPORT TEMPLATE
 
 <audit_metadata>

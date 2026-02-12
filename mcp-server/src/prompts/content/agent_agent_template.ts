@@ -1,5 +1,5 @@
-// Auto-generated from agent_template.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Agent Template
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================

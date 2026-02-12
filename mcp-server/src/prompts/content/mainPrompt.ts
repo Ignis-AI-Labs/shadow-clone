@@ -1,5 +1,5 @@
-// Auto-generated from shadow-clone-prompt.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Main Orchestration Prompt
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO SYSTEM
 =========================================================
@@ -18,10 +18,6 @@ YOU will:
 The Shadow Clone MCP Server is ONLY delivering these instructions to you.
 It does NOT execute any code or manage any processes.
 =========================================================
-
-LOCAL VERSION FOR TESTING ONLY
-This version reads from local files instead of API
-INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 -->
 
 # Shadow Clone System - Prompt Engineering Instructions for AI Execution
@@ -29,7 +25,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 <task>
   <context>
     <purpose>
-      The Shadow Clone System is an AI orchestration framework that manages teams of specialized agents to complete complex software engineering tasks. This LOCAL version loads all configurations from the .shadow-local directory for testing and development purposes.
+      The Shadow Clone System is an AI orchestration framework that manages teams of specialized agents to complete complex software engineering tasks. All configurations are embedded directly in the MCP server prompts.
     </purpose>
     
     <philosophy>
@@ -54,17 +50,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     
     <critical_files>
       <constitution>docs/CONSTITUTION.md</constitution>
-      <core_rules>.shadow-local/agent_rules/core_rules.md</core_rules>
-      <base_path>{current_dir}/.shadow-local</base_path>
-      <source_mode>local</source_mode>
+      <core_rules>Embedded in MCP server prompts</core_rules>
+      <source_mode>embedded</source_mode>
     </critical_files>
-    
-    <security_critical>
-      SECURITY WARNING: NEVER create or copy .shadow/ directory
-      The .shadow/ folder contains API-only content that must NEVER exist locally
-      This is a critical security risk - these files are for Claude's API use only
-      Use ONLY .shadow-local/ for local testing
-    </security_critical>
   </system_constants>
 
   <workspace_structure>
@@ -79,18 +67,6 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
     </critical_location_note>
     
     <directories>
-      <directory path=".shadow-local/">
-        <purpose>LOCAL TESTING configuration files only</purpose>
-        <contents>agent_rules/, templates/, mode_configs/, shadow-clone-prompt.md</contents>
-        <security>NEVER confuse with .shadow/ which is API-only and must not exist locally</security>
-      </directory>
-      
-      <prohibited_directory path=".shadow/">
-        <warning>NEVER CREATE THIS DIRECTORY</warning>
-        <reason>Contains API keys and sensitive content for Claude's use only</reason>
-        <security>Creating .shadow/ locally is a CRITICAL SECURITY VIOLATION</security>
-      </prohibited_directory>
-      
       <directory path=".waves/">
         <purpose>Active wave execution workspace</purpose>
         <subdirectories>
@@ -157,9 +133,9 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       </clean_state>
       
       <branch_strategy>
-        <rule>Always work on development branches</rule>
-        <format>dev-[mode]-[description]</format>
-        <reason>Protects main/master branches from direct modifications</reason>
+        <model>main (production) → dev (integration) → {name}/dev (personal)</model>
+        <rule>Work on personal branch, PR into dev, seniors merge to main</rule>
+        <format>{name}/{type}-{description}</format>
       </branch_strategy>
       
       <commit_protocol>
@@ -168,6 +144,13 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
         <reason>Maintains clean git history and enables easy rollback</reason>
       </commit_protocol>
     </git_requirements>
+
+    <task_first_methodology>
+      <rule>Wave 0 of any mode verifies task tracking exists and creates it if missing</rule>
+      <rule>Task lists must exist before implementation begins: TASKS-backend.md, TASKS-frontend.md, TASKS-shared.md</rule>
+      <rule>Every PR references a task ID from the appropriate TASKS-*.md file</rule>
+      <rule>Task IDs follow format: {Component}-P{Priority}-{Number}</rule>
+    </task_first_methodology>
 
     <record_keeper_requirements>
       <mandatory_presence>
@@ -298,7 +281,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       <steps>
         <step>Verify git repository has clean working tree</step>
         <step>Ensure development branch (create if needed)</step>
-        <step>Verify all .shadow-local components exist</step>
+        <step>Verify all required components exist</step>
         <step>Create wave-0 directory structure</step>
         <step>Initialize tracking systems</step>
       </steps>
@@ -306,7 +289,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
 
     <phase number="2" name="team_configuration">
       <steps>
-        <step>Load team templates from .shadow-local/templates/</step>
+        <step>Load team templates from embedded prompt content</step>
         <step>Configure teams based on project type</step>
         <step>Ensure Record Keeper Collective in every team</step>
         <step>Calculate required number of Record Keepers</step>
@@ -441,8 +424,8 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       <steps>
         <step>VERIFY Phase 7 git commit exists before proceeding</step>
         <step>Deploy Shadow Clone Protocol Validator Agent</step>
-        <step>Provide validator with .shadow-local/testing/MODE_EXECUTION_FLOWCHART.md</step>
-        <step>Provide validator with .shadow-local/testing/VALIDATOR_AGENT_TEMPLATE.md</step>
+        <step>Provide validator with MODE_EXECUTION_FLOWCHART reference</step>
+        <step>Provide validator with VALIDATOR_AGENT_TEMPLATE reference</step>
         <step>Validator performs comprehensive compliance assessment</step>
         <step>Validator generates TEST_VALIDATION_REPORT.md in project root</step>
       </steps>
@@ -500,7 +483,7 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       1. Identity and role within the system
       2. Current wave number and workspace location
       3. Pre-wave deliverables created by RK Collective
-      4. Full core rules from .shadow-local/agent_rules/core_rules.md (includes role specializations)
+      4. Full core rules (includes role specializations)
       5. Project context and specific assignment
       6. Quality commitment statement
     </agent_prompt_structure>
@@ -647,16 +630,6 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   </mode_specific_deliverables>
 
   <error_handling>
-    <security_violations priority="HIGHEST">
-      <if_shadow_directory_found>
-        1. STOP ALL EXECUTION IMMEDIATELY
-        2. DO NOT proceed with any operations
-        3. Alert user about critical security breach
-        4. Exit with error: ".shadow/ directory found - this is API-only content"
-        5. Instruct to remove .shadow/ and use only .shadow-local/
-      </if_shadow_directory_found>
-    </security_violations>
-    
     <system_failures>
       <steps>
         1. Stop all work immediately
@@ -732,20 +705,13 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
       The actual implementation uses the orchestrator's native capabilities.
     </note>
 
-    <function name="verify_security">
-      <purpose>Ensure no .shadow/ directory exists locally</purpose>
-      <critical>Exit immediately if .shadow/ is found - this is a security breach</critical>
-      <action>Only .shadow-local/ should exist for local testing</action>
-    </function>
-    
     <function name="verify_git_clean">
       <purpose>Ensure no uncommitted changes before execution</purpose>
       <on_failure>Exit with guidance on committing, stashing, or discarding changes</on_failure>
     </function>
 
     <function name="load_rules">
-      <purpose>Load all agent rules from .shadow-local/agent_rules/</purpose>
-      <critical>NEVER load from .shadow/ - only from .shadow-local/</critical>
+      <purpose>Load all agent rules from embedded prompt content</purpose>
       <returns>Core rules content including all agent specializations</returns>
     </function>
 
@@ -785,13 +751,12 @@ INCLUDES TEST MODE - REMOVE BEFORE PRODUCTION
   </implementation_functions>
 
   <success_factors>
-    <local_mode_specific>
-      1. Read actual file content from .shadow-local, not just references
-      2. Include full rule text in every agent prompt
-      3. Verify all components exist before deployment
-      4. Handle missing files gracefully with clear errors
-      5. No API calls - everything from local filesystem
-    </local_mode_specific>
+    <deployment_specific>
+      1. Include full rule text in every agent prompt
+      2. Verify all components exist before deployment
+      3. Handle missing data gracefully with clear errors
+      4. All prompt content is embedded in the MCP server
+    </deployment_specific>
 
     <general_principles>
       1. Every agent is a master of their craft

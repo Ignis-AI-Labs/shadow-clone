@@ -79,9 +79,29 @@ dev            ← Integration (all PRs target here)
 - `dev` merges into `main` for releases only
 - See `CONTRIBUTING.md` for full conventions
 
+## Code Standards
+
+### Functional Programming
+- Write pure functions: same inputs produce same output, no side effects
+- Prefer immutability: `const`, spread operators, no mutation
+- Composition over inheritance: combine small functions for complex behavior
+- Single responsibility: one function does one thing well
+
+### Size Limits
+- **Functions**: 30 lines target, 50 lines hard ceiling
+- **Files**: 200 lines target, 300 lines hard ceiling
+- **Parameters**: Max 3-4 per function (use an options object beyond that)
+
+### Task-First
+- Create or claim a task in `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before writing code
+- Every commit and PR references a task ID (e.g., "Implements B-P1-01")
+
 ## Task Tracking
 
-- **`TASKS.md`** -- All tasks with IDs, priorities, dependencies, and PR links
+- **`TASKS.md`** -- Hub linking to domain-specific task files
+- **`TASKS-backend.md`** -- MCP server tasks (B-* prefix)
+- **`TASKS-frontend.md`** -- Dashboard/UI tasks (F-* prefix)
+- **`TASKS-shared.md`** -- Docs, infra, CI/CD tasks (S-* prefix)
 - **`CONTRIBUTING.md`** -- Branch naming, commit conventions, PR workflow
 - **`.github/PULL_REQUEST_TEMPLATE.md`** -- PR template with checklists
 

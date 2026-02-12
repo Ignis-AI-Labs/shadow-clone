@@ -1,5 +1,5 @@
-// Auto-generated from shadow-clone-plan.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Planning Mode Configuration
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================
@@ -261,6 +261,18 @@ This is a methodology for YOU to adopt and execute.
   </validation>
 </wave_progression>
 
+<task_list_requirement>
+  <rule>Planning mode must produce structured task lists as a primary deliverable</rule>
+  <rule>MASTER_PLAN.md must include a task breakdown using the standard format</rule>
+  <format>
+    | ID | Task | Status | Assignee | Depends on | PR |
+    |----|------|--------|----------|------------|-----|
+    Use component prefixes: B (Backend), F (Frontend), S (Shared)
+    Use priority levels: P0 (Foundation), P1 (Quality), P2 (Features), P3 (Community)
+  </format>
+  <rule>Task lists are saved to TASKS-backend.md, TASKS-frontend.md, or TASKS-shared.md as appropriate</rule>
+</task_list_requirement>
+
 <success_criteria>
   <criterion>Clear, actionable MASTER_PLAN ready for implementation teams</criterion>
   <criterion>All requirements captured and addressed in planning</criterion>
@@ -268,6 +280,7 @@ This is a methodology for YOU to adopt and execute.
   <criterion>Implementation phases clearly defined with milestones</criterion>
   <criterion>Risks identified with mitigation strategies documented</criterion>
   <criterion>Success metrics defined for project validation</criterion>
+  <criterion>Structured task list produced with IDs, priorities, and dependencies</criterion>
 </success_criteria>
 
 <implementation_note>

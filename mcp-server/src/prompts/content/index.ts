@@ -1,5 +1,5 @@
-// Auto-generated prompt exports
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Prompt content exports
+// Source of truth: edit this file directly
 
 export * from './mainPrompt';
 

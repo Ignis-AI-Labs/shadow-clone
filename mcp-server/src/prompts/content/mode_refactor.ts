@@ -1,5 +1,5 @@
-// Auto-generated from shadow-clone-refactor.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Refactor Mode Configuration
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================
@@ -23,6 +23,17 @@ This is a methodology for YOU to adopt and execute.
       Well-structured code accelerates development, reduces bugs, and makes systems easier to understand and maintain.
       By breaking down complex monoliths into focused modules, we create a foundation for sustainable growth.
     </motivation>
+
+    <target_state>
+      All refactoring should move code toward functional programming principles:
+      - Pure functions: same inputs always produce same output, no side effects
+      - Immutability: const declarations, spread operators, no mutation
+      - Composition over inheritance: combine small functions to build complex behavior
+      - Single responsibility: one function does one thing well
+      - Functions under 50 lines, files under 300 lines
+      - Side effects isolated at boundaries (I/O, database, API calls at the edges)
+      - Declarative patterns (map/filter/reduce) over imperative loops where clarity permits
+    </target_state>
     
     <audience>
       Development teams seeking to improve code quality, reduce technical debt, and establish clear architectural boundaries

@@ -29,6 +29,14 @@
 - [ ] Tested locally with MCP client
 - [ ] No new TypeScript errors introduced
 
+## Code Quality Checklist
+
+- [ ] All new functions are pure where feasible
+- [ ] No function exceeds 50 lines
+- [ ] No file exceeds 300 lines
+- [ ] Task ID referenced (from TASKS-*.md)
+- [ ] Work done on `{name}/dev` branch, PR targets `dev`
+
 ## Security Checklist
 
 <!-- Complete this section if the PR touches auth, crypto, or security config -->

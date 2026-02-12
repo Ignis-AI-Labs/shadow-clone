@@ -94,6 +94,25 @@ git pull origin dev
 - Check the build passes: `cd mcp-server && npm run build`
 - Check types pass: `cd mcp-server && npm run lint`
 
+## Code Standards
+
+### Functional Programming Principles
+- **Pure functions**: Same inputs always produce same output, no side effects
+- **Immutability**: Use `const`, spread operators, avoid mutation
+- **Composition over inheritance**: Combine small functions for complex behavior
+- **Single responsibility**: One function does one thing well
+- **Declarative over imperative**: `map`/`filter`/`reduce` over manual loops where clarity permits
+
+### Size Limits
+- **Functions**: 30 lines target, 50 lines hard ceiling
+- **Files**: 200 lines target, 300 lines hard ceiling
+- **Parameters**: Max 3-4 per function (use an options object beyond that)
+
+### Task-First Requirement
+- A task must exist in `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before work begins
+- Every PR references a task ID (e.g., "Implements B-P1-01")
+- Claim tasks by adding your name to the Assignee column
+
 ## AI Agent Contributions
 
 AI agents (Claude, Copilot, etc.) follow the same rules:
@@ -101,7 +120,7 @@ AI agents (Claude, Copilot, etc.) follow the same rules:
 - Use `agent/dev` or `claude/dev` as their working branch, same as human contributors
 - Write conventional commit messages
 - Fill out the PR template completely
-- Reference task IDs from `TASKS.md` in the PR body
+- Reference task IDs from `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` in the PR body
 
 ## Contributing New Prompts
 

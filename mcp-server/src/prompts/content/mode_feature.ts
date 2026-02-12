@@ -1,5 +1,5 @@
-// Auto-generated from shadow-clone-feature.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Feature Mode Configuration
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================
@@ -180,6 +180,12 @@ Ensure the feature meets all quality, security, and performance standards before
 - Maintain clear communication between waves
 - Track technical debt for future optimization
 - Celebrate incremental progress and learning
+- Write pure functions: same inputs produce same output, no side effects
+- Prefer immutability: const declarations, spread operators, no mutation
+- Keep functions under 50 lines and files under 300 lines
+- Composition over inheritance: combine small functions for complex behavior
+- Isolate side effects at boundaries (I/O, database, API calls at the edges)
+- Single responsibility: one function does one thing well
 </best_practices>
 </mode_guidelines>
 

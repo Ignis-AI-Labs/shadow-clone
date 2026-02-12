@@ -1,5 +1,5 @@
-// Auto-generated from MASTER_PLAN_TEMPLATE.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Master Plan Template
+// Source of truth: edit this file directly
 export const content = `# MASTER PLAN TEMPLATE
 *A comprehensive guide for creating effective project master plans with concrete examples*
 

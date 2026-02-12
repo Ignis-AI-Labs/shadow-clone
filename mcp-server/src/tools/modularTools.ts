@@ -119,7 +119,7 @@ export class ModularTools {
             reviewType: {
               type: 'string',
               description: 'Focus area',
-              enum: ['security', 'performance', 'quality', 'architecture', 'comprehensive'],
+              enum: ['security', 'performance', 'quality', 'architecture', 'comprehensive', 'fp_compliance'],
             },
             files: {
               type: 'array',
@@ -471,6 +471,13 @@ ${reviewFocus}
 4. Suggest improvements with examples
 5. Prioritize findings by severity
 
+## Mandatory Checks (all reviews)
+Regardless of review type, every review must include:
+1. **FP compliance**: Are functions pure? Is state immutable? Are side effects isolated?
+2. **Size limits**: Functions under 50 lines? Files under 300 lines?
+3. **Branching protocol**: Work on {name}/dev, PRs target dev, conventional commits?
+4. **Task-first**: Does the PR reference a task ID from TASKS-*.md?
+
 ## Deliverables
 Create a comprehensive review report including:
 - Executive summary of findings
@@ -479,6 +486,7 @@ Create a comprehensive review report including:
 - Recommended fixes with code samples
 - Overall code quality assessment
 - Action items prioritized by impact
+- Mandatory check results (FP, size, branching, task ID)
 
 Execute the ${reviewType} code review.
 `;
@@ -707,23 +715,44 @@ Generate comprehensive ${testType} tests for the target files.
 - Proper error handling
 - Code duplication
 - Test coverage
-- Documentation quality`,
-      
+- Documentation quality
+- Functional programming compliance (pure functions, immutability)
+- Function size limits (30 line target, 50 line ceiling)
+- File size limits (200 line target, 300 line ceiling)`,
+
       architecture: `
 - Design pattern usage
 - Component coupling
 - Dependency management
 - Scalability concerns
 - Separation of concerns
-- API design quality`,
-      
+- API design quality
+- Composition over inheritance
+- Side effect isolation at boundaries
+- No mutable shared state across modules`,
+
       comprehensive: `
 - All security vulnerabilities
 - Performance bottlenecks
 - Code quality issues
 - Architecture concerns
 - Test coverage gaps
-- Documentation completeness`,
+- Documentation completeness
+- FP compliance (pure functions, immutability, composition)
+- Function/file size limits
+- Branching protocol compliance
+- Task ID referenced in PR`,
+
+      fp_compliance: `
+- Pure function verification (no side effects)
+- Immutability adherence (const, spread, no mutation)
+- Function size limits (30 line target, 50 line ceiling)
+- File size limits (200 line target, 300 line ceiling)
+- Composition over inheritance
+- Single responsibility per function
+- Side effect boundary isolation
+- Parameter count (max 3-4, use options object)
+- No mutable shared state across modules`,
     };
 
     return focuses[reviewType] || focuses.quality;

@@ -1,5 +1,5 @@
-// Auto-generated from core_rules.md
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Core Agent Rules
+// Source of truth: edit this file directly
 export const content = `<!--
 IMPORTANT: THIS IS A PROMPT ENGINEERING MACRO
 ================================================
@@ -37,6 +37,28 @@ This is a methodology for YOU to adopt and execute.
     </excellence_standard>
   </quality_commitment>
 
+  <code_standards>
+    <functional_programming>
+      <principle>Write pure functions: same inputs always produce same output, no side effects</principle>
+      <principle>Prefer immutability: const declarations, spread operators, no mutation</principle>
+      <principle>Composition over inheritance: combine small functions to build complex behavior</principle>
+      <principle>Single responsibility: one function does one thing well</principle>
+      <principle>Keep functions small: 30 lines target, 50 lines hard ceiling</principle>
+      <principle>Keep files focused: 200 lines target, 300 lines hard ceiling</principle>
+      <principle>Isolate side effects at boundaries: I/O, database, API calls stay at the edges</principle>
+      <principle>Declarative over imperative: map/filter/reduce over manual loops where clarity permits</principle>
+    </functional_programming>
+
+    <anti_patterns>
+      <avoid>Functions exceeding 50 lines</avoid>
+      <avoid>Files exceeding 300 lines</avoid>
+      <avoid>Functions with more than 3-4 parameters (use an options object)</avoid>
+      <avoid>Deeply nested callbacks or conditionals (extract into named functions)</avoid>
+      <avoid>Mutable shared state across modules</avoid>
+      <avoid>Class hierarchies deeper than 2 levels</avoid>
+    </anti_patterns>
+  </code_standards>
+
   <git_discipline>
     <clean_repository_requirement>
       <rule>Maintain a clean working tree at all times</rule>
@@ -51,17 +73,22 @@ This is a methodology for YOU to adopt and execute.
       <principle>Preserve project history integrity</principle>
       <action>Report any uncommitted changes immediately for resolution</action>
     </professional_standards>
+
+    <branching_model>
+      <structure>
+        main (production) → dev (integration) → {name}/dev (personal)
+      </structure>
+      <rules>
+        <rule>Work on your personal branch: {name}/dev</rule>
+        <rule>All pull requests target dev, never main</rule>
+        <rule>Only senior developers merge dev into main for releases</rule>
+        <rule>Use conventional commits: type(scope): description</rule>
+      </rules>
+      <naming>{author}/{type}-{description} (e.g., eli/feat-zod-validation)</naming>
+    </branching_model>
   </git_discipline>
 
   <workspace_organization>
-    <security_protocol priority="CRITICAL">
-      <rule>NEVER create or copy .shadow/ directory</rule>
-      <rule>NEVER access or reference .shadow/ content</rule>
-      <reason>.shadow/ contains API-only sensitive content that must not exist locally</reason>
-      <violation>Creating .shadow/ locally is a CRITICAL SECURITY BREACH</violation>
-      <correct_path>Use ONLY .shadow-local/ for all local configurations</correct_path>
-    </security_protocol>
-    
     <wave_directory_protocol>
       <rule>Conduct all work within your assigned wave directory: .waves/wave-[N]/</rule>
       <reason>Wave isolation prevents conflicts, maintains clear ownership, and enables parallel execution</reason>
@@ -96,7 +123,7 @@ This is a methodology for YOU to adopt and execute.
     </wave_directory_protocol>
     
     <template_compliance>
-      <requirement>Follow .shadow-local/agent_rules/agent_template.md structure precisely</requirement>
+      <requirement>Follow the agent template structure precisely</requirement>
       <includes>Role, Wave, Team, Workspace, Job, Todo Management, Dependencies, Deliverables, Files, Handoff</includes>
       <critical>Workspace field specifies your wave folder - this is mandatory</critical>
       <benefit>Consistency enables system-wide coordination and understanding</benefit>
@@ -116,6 +143,25 @@ This is a methodology for YOU to adopt and execute.
   </file_operations>
 
   <task_management>
+    <task_first_mandate priority="CRITICAL">
+      <rule>Create a task list before writing any code, always</rule>
+      <rule>No implementation begins until tasks are documented</rule>
+      <rule>Task lists live in the repo: TASKS-backend.md, TASKS-frontend.md, TASKS-shared.md</rule>
+      <rule>Every PR references a task ID</rule>
+    </task_first_mandate>
+
+    <task_format>
+      <id_pattern>{Component}-P{Priority}-{Number}</id_pattern>
+      <components>B (Backend), F (Frontend), S (Shared/Common)</components>
+      <priorities>P0 (Foundation), P1 (Quality), P2 (Features), P3 (Community)</priorities>
+    </task_format>
+
+    <claiming>
+      <rule>Claim a task by adding your name to the Assignee column</rule>
+      <rule>Unclaim by removing your name if you can't continue</rule>
+      <rule>Update status as work progresses: OPEN → IN PROGRESS → DONE</rule>
+    </claiming>
+
     <todo_requirements>
       <principle>Create detailed todos from your assigned tasks</principle>
       <principle>Update status in real-time as work progresses</principle>
@@ -530,21 +576,6 @@ This is a methodology for YOU to adopt and execute.
       <final_wave>Audit Specialist verifies + Technical Writer documents + DevOps prepares deployment</final_wave>
     </wave_integration_patterns>
   </agent_roles>
-
-  <prohibited_actions priority="CRITICAL">
-    <security_violations>
-      - NEVER create .shadow/ directory (API-only content)
-      - NEVER copy files from .shadow/ to local repository
-      - NEVER reference or load from .shadow/ path
-      - NEVER confuse .shadow/ with .shadow-local/
-      - NEVER expose API configurations locally
-    </security_violations>
-    <reason>
-      .shadow/ contains sensitive API keys and configurations
-      These are for Claude's API use only and must not exist locally
-      Always use .shadow-local/ for local testing
-    </reason>
-  </prohibited_actions>
 
   <critical_reminders>
     <for_all_agents>
