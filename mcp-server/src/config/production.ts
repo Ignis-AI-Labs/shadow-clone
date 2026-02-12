@@ -32,6 +32,7 @@ export interface Config {
     format: 'json' | 'simple';
     includeTimestamp: boolean;
     maskSensitiveData: boolean;
+    filePath: string | null;
   };
 
   // Paths configuration
@@ -46,6 +47,11 @@ export interface Config {
     maxExecutionTime: number;
     maxMemoryUsage: number;
     enableMetrics: boolean;
+  };
+
+  // Telemetry configuration
+  telemetry: {
+    enabled: boolean;
   };
 }
 
@@ -78,6 +84,7 @@ export const config: Config = {
     format: (process.env.LOG_FORMAT as 'json' | 'simple') || 'json',
     includeTimestamp: process.env.LOG_TIMESTAMP !== 'false',
     maskSensitiveData: process.env.LOG_MASK_SENSITIVE !== 'false',
+    filePath: process.env.LOG_FILE_PATH || null,
   },
 
   paths: {
@@ -90,6 +97,10 @@ export const config: Config = {
     maxExecutionTime: parseInt(process.env.MAX_EXECUTION_TIME || '300000'), // 5 minutes
     maxMemoryUsage: parseInt(process.env.MAX_MEMORY_USAGE || '524288000'), // 500MB
     enableMetrics: process.env.ENABLE_METRICS === 'true',
+  },
+
+  telemetry: {
+    enabled: process.env.TELEMETRY_ENABLED !== 'false',
   },
 };
 

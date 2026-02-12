@@ -49,6 +49,7 @@ import { config, validateConfig } from './config/production.js';
 import { validateToolName, validateString, sanitizeObject } from './utils/validation.js';
 import { globalRateLimiter } from './utils/rateLimiter.js';
 import { healthMonitor } from './utils/monitoring.js';
+import { telemetry } from './utils/telemetry.js';
 
 // Validate configuration on startup
 try {
@@ -62,6 +63,7 @@ class ShadowCloneMCPServer {
   private server: Server;
   private authService: AuthService;
   private tools: CombinedTools;
+  private startTime = Date.now();
 
   constructor() {
     this.server = new Server(
@@ -144,9 +146,10 @@ class ShadowCloneMCPServer {
           
           const result = await this.authService.authenticate(apiKey);
           
-          logPerformance('authenticate', Date.now() - startTime, { 
-            success: result.success 
+          logPerformance('authenticate', Date.now() - startTime, {
+            success: result.success
           });
+          telemetry.trackToolInvocation('authenticate', Date.now() - startTime, result.success);
           return {
             content: [
               {
@@ -188,7 +191,8 @@ class ShadowCloneMCPServer {
         ]) as string;
         
         logPerformance(`tool:${validatedName}`, Date.now() - startTime);
-        
+        telemetry.trackToolInvocation(validatedName, Date.now() - startTime, true);
+
         return {
           content: [
             {
@@ -202,8 +206,10 @@ class ShadowCloneMCPServer {
         
         // Record error for monitoring
         healthMonitor.recordError();
-        
-        logError(error as Error, { 
+        telemetry.trackToolInvocation(validatedName, duration, false);
+        telemetry.trackError(error instanceof Error ? error.constructor.name : 'UnknownError', 'tool_execution', validatedName);
+
+        logError(error as Error, {
           tool: validatedName, 
           duration,
           clientId 
@@ -245,7 +251,8 @@ class ShadowCloneMCPServer {
       logLevel: config.logging.level,
       rateLimit: `${config.rateLimit.maxRequests} requests per ${config.rateLimit.windowMs}ms`
     });
-    
+    telemetry.trackServerStart();
+
     if (config.server.environment === 'production') {
       logInfo('Running in production mode with enhanced security and monitoring');
     }
@@ -265,6 +272,8 @@ class ShadowCloneMCPServer {
         await this.server.close();
         globalRateLimiter.destroy();
         clearTimeout(shutdownTimeout);
+        telemetry.trackServerStop(Date.now() - this.startTime);
+        await telemetry.shutdown();
         logInfo('Graceful shutdown completed');
         process.exit(0);
       } catch (error) {
@@ -278,12 +287,14 @@ class ShadowCloneMCPServer {
     
     // Handle uncaught errors
     process.on('uncaughtException', (error) => {
+      telemetry.trackError('UncaughtException', 'process');
       logError(error, { context: 'uncaughtException' });
       shutdown('uncaughtException');
     });
-    
+
     process.on('unhandledRejection', (reason, promise) => {
-      logError(new Error(`Unhandled rejection: ${reason}`), { 
+      telemetry.trackError('UnhandledRejection', 'process');
+      logError(new Error(`Unhandled rejection: ${reason}`), {
         context: 'unhandledRejection',
         promise: promise.toString()
       });

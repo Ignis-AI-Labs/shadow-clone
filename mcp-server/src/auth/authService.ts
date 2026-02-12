@@ -183,7 +183,8 @@ export class AuthService {
           headers: {
             'X-API-Key': apiKey,
             'User-Agent': 'Shadow-Clone-MCP/0.1.0'
-          }
+          },
+          timeout: 10000
         }
       );
 

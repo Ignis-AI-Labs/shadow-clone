@@ -1,6 +1,7 @@
 import { config } from '../config/production.js';
 import { globalRateLimiter } from './rateLimiter.js';
 import { logInfo } from './logger.js';
+import { telemetry } from './telemetry.js';
 import os from 'os';
 
 export interface HealthStatus {
@@ -143,6 +144,7 @@ export class HealthMonitor {
         const metrics = this.getMetrics();
         logInfo('System metrics', { metrics });
       }
+      telemetry.trackSystemMetrics();
     }, intervalMs);
   }
 
