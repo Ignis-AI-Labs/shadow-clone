@@ -1,4 +1,6 @@
 import winston from 'winston';
+import * as fs from 'fs';
+import * as path from 'path';
 import { config } from '../config/production.js';
 
 // Custom format to mask sensitive data
@@ -61,7 +63,9 @@ export const logger = winston.createLogger({
   },
   format: config.server.environment === 'production' ? productionFormat : developmentFormat,
   transports: [
-    new winston.transports.Console({
+    // Route all logs to stderr so stdout stays reserved for the MCP JSON-RPC protocol
+    new winston.transports.Stream({
+      stream: process.stderr,
       handleExceptions: true,
       handleRejections: true,
     }),
@@ -69,16 +73,19 @@ export const logger = winston.createLogger({
   exitOnError: false,
 });
 
-// Production-specific logging to stderr for errors
-if (config.server.environment === 'production') {
-  logger.add(
-    new winston.transports.Console({
-      level: 'error',
+// Optional file logging, enabled by setting LOG_FILE_PATH
+if (config.logging.filePath) {
+  try {
+    fs.mkdirSync(path.dirname(config.logging.filePath), { recursive: true });
+    logger.add(new winston.transports.File({
+      filename: config.logging.filePath,
+      format: productionFormat,
       handleExceptions: true,
       handleRejections: true,
-      stderrLevels: ['error', 'crit', 'alert', 'emerg'],
-    })
-  );
+    }));
+  } catch (error) {
+    logger.error('Failed to create file log transport', { error: (error as Error).message });
+  }
 }
 
 // Export convenience methods with proper typing

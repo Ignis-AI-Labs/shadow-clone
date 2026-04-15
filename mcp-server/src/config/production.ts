@@ -32,6 +32,7 @@ export interface Config {
     format: 'json' | 'simple';
     includeTimestamp: boolean;
     maskSensitiveData: boolean;
+    filePath: string | null;
   };
 
   // Paths configuration
@@ -78,6 +79,7 @@ export const config: Config = {
     format: (process.env.LOG_FORMAT as 'json' | 'simple') || 'json',
     includeTimestamp: process.env.LOG_TIMESTAMP !== 'false',
     maskSensitiveData: process.env.LOG_MASK_SENSITIVE !== 'false',
+    filePath: process.env.LOG_FILE_PATH || null,
   },
 
   paths: {
