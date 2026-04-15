@@ -2,6 +2,7 @@ import { EmbeddedPromptTools } from './embeddedPromptTools.js';
 import { ModularTools } from './modularTools.js';
 import { UpdateChecker } from './updateChecker.js';
 import { WorkspaceInitializer } from './workspaceInitializer.js';
+import { validateToolInput } from '../utils/zodValidation.js';
 
 interface ToolDefinition {
   name: string;
@@ -43,26 +44,24 @@ export class CombinedTools {
   }
 
   async executeTool(name: string, args: any): Promise<string> {
-    // Check if it's the update checker
+    const validatedArgs = validateToolInput(name, args);
+
     if (name === 'check_for_updates') {
       return this.updateChecker.checkForUpdates();
     }
 
-    // Check if it's the workspace initializer
     if (name === 'initialize_workspace') {
-      return this.workspaceInitializer.initializeWorkspace(args);
+      return this.workspaceInitializer.initializeWorkspace(validatedArgs);
     }
 
-    // Check if it's an embedded tool
     const embeddedToolNames = this.embeddedTools.getToolDefinitions().map(t => t.name);
     if (embeddedToolNames.includes(name)) {
-      return this.embeddedTools.executeTool(name, args);
+      return this.embeddedTools.executeTool(name, validatedArgs);
     }
 
-    // Check if it's a modular tool
     const modularToolNames = this.modularTools.getToolDefinitions().map(t => t.name);
     if (modularToolNames.includes(name)) {
-      return this.modularTools.executeTool(name, args);
+      return this.modularTools.executeTool(name, validatedArgs);
     }
 
     throw new Error(`Unknown tool: ${name}`);
