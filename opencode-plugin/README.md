@@ -9,7 +9,7 @@ a `VERDICT: APPROVE | REVISE | BLOCK` line.
 
 ## What it provides
 
-- **Tool `echo_review`** (`sc.js`) — args: `context` (what you did) and `files`
+- **Tool `echo_review`** (`echo.js`) — args: `context` (what you did) and `files`
   (paths changed). Returns the review text. The plugin delegates to the shared
   bridge script, so the review logic has one source of truth.
 - **Command `/echo`** (`command/echo.md`) — puts GLM into paired-review mode: it calls
@@ -17,7 +17,7 @@ a `VERDICT: APPROVE | REVISE | BLOCK` line.
 
 ## Install (global — works in any project)
 
-Run the installer, which copies `sc.js` into OpenCode's global plugin directory
+Run the installer, which copies `echo.js` into OpenCode's global plugin directory
 (`~/.config/opencode/plugin/`) **and** `command/echo.md` into the command directory
 (`~/.config/opencode/command/`):
 
@@ -33,7 +33,7 @@ call `echo_review` after each work unit.
 > lives in `~/.config/opencode/node_modules`, so the plugin must physically sit in
 > `~/.config/opencode/plugin/`. A symlink pointing back into this repo resolves the
 > import from the wrong tree and the plugin silently fails to load. Re-run
-> `./install.sh` after editing `sc.js`. (Note: the directory is `plugin/`,
+> `./install.sh` after editing `echo.js`. (Note: the directory is `plugin/`,
 > singular, in OpenCode 1.17.x — not `plugins/`.)
 
 ## Requirements

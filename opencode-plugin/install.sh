@@ -8,7 +8,7 @@
 # ~/.config/opencode/plugin/ — a symlink whose target is elsewhere (e.g. this repo)
 # resolves the import from the wrong tree and silently fails to load.
 #
-# Re-run this after editing sc.js.
+# Re-run this after editing echo.js.
 
 set -euo pipefail
 

@@ -15,9 +15,11 @@
 set -euo pipefail
 
 readonly HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly REPO_ROOT="$(cd "${HERE}/.." && pwd)"
 readonly DEST="${HOME}/.claude/sc"
 readonly AGENT_DIR="${HOME}/.config/opencode/agent"
 readonly CONFIG_DIR="${HOME}/.config/sc"
+readonly CLAUDE_CMD_DIR="${HOME}/.claude/commands"
 
 # --- deploy the canonical copy ---------------------------------------------
 mkdir -p "${DEST}/lib" "${DEST}/templates"
@@ -33,6 +35,17 @@ echo "sc: installed bridge -> ${DEST}"
 mkdir -p "${AGENT_DIR}"
 cp "${HERE}/agent/echo-reviewer.md" "${AGENT_DIR}/echo-reviewer.md"
 echo "sc: installed reviewer agent -> ${AGENT_DIR}/echo-reviewer.md"
+
+# --- /echo slash command for Claude Code -----------------------------------
+# Source of truth is repo_root/claude/commands/echo.md; copied to the user-level
+# command directory so Claude Code discovers /echo in any project.
+mkdir -p "${CLAUDE_CMD_DIR}"
+if [ -f "${REPO_ROOT}/claude/commands/echo.md" ]; then
+  cp "${REPO_ROOT}/claude/commands/echo.md" "${CLAUDE_CMD_DIR}/echo.md"
+  echo "sc: installed Claude /echo command -> ${CLAUDE_CMD_DIR}/echo.md"
+else
+  echo "sc: WARN — ${REPO_ROOT}/claude/commands/echo.md missing; skipping /echo install." >&2
+fi
 
 # --- config (never clobber the user's) -------------------------------------
 mkdir -p "${CONFIG_DIR}"
