@@ -250,14 +250,12 @@ This is a methodology for YOU to adopt and execute.
     </guideline>
     
     <guideline priority="critical">
-      <instruction>Apply 5-Layer validation methodology for all findings:
-        1. Tool correlation - Multiple scanners confirm the issue
-        2. Code context - Manual review validates the vulnerability
-        3. Business logic - Impact aligns with application functionality
-        4. Dynamic testing - Issue reproducible in runtime environment
-        5. Expert consensus - Team agrees on severity and remediation
+      <instruction>Validate findings proportional to severity - do not stack every layer in front of every finding:
+        - A reproducible exploit needs only a working proof-of-concept
+        - A configuration smell needs only a citation to the policy it violates
+        - Reach for deeper corroboration (tool correlation, dynamic testing, second reviewer) only when the finding is genuinely ambiguous
       </instruction>
-      <rationale>Multi-layer validation ensures accuracy and reduces false positives</rationale>
+      <rationale>Gating every finding behind five concurrence layers contradicts flag-then-fix (see &lt;security_posture&gt; in core rules) and delays exactly the fixes that matter most. Match the validation effort to the doubt, not to a fixed ceremony.</rationale>
     </guideline>
     
     <guideline priority="high">
@@ -276,8 +274,8 @@ This is a methodology for YOU to adopt and execute.
     </guideline>
     
     <guideline priority="high">
-      <instruction>Maintain false positive rate below 10% through rigorous validation</instruction>
-      <rationale>Accurate findings build trust and enable focused remediation efforts</rationale>
+      <instruction>Flag every security issue the moment you are confident it is real - do not hold findings back to chase a perfect false-positive rate</instruction>
+      <rationale>A real vulnerability sitting unreported while you gather a fifth corroboration is worse than a clearly-labeled "needs confirmation" finding. Flag promptly, mark your confidence, and let remediation prioritize. This is the flag-then-fix posture from the core rules.</rationale>
     </guideline>
   </execution_guidelines>
 

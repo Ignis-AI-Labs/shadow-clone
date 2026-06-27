@@ -6,15 +6,35 @@ Shadow Clone is an MCP server that delivers professional prompt engineering macr
 
 **No API keys. No authentication. Just install and go.**
 
-## Quick Start
+## Four ways to use it
 
-### 1. Install
+The same prompt macros, four delivery channels — pick what fits your setup.
+
+### A — Run it locally with one command (recommended)
+
+```bash
+npx @shadow-clone/web
+```
+
+Spins up a local server, opens your browser to the Shadow Clone UI. No account, no API key, no cloud round-trip. Works offline once installed. **Ideal for normal people who want to use it on their own machine without thinking about servers.**
+
+### B — Download a zip, double-click
+
+Grab `shadow-clone-web.zip` from a GitHub release, unzip, open `index.html` in any browser. Truly zero-install — the entire UI is static HTML/JS/CSS bundled with the prompts. Works on a USB stick.
+
+### C — Visit the hosted URL
+
+_(coming soon — `shadow-clone.ignislabs.ai`)_
+
+Same UI, one click away, no install. Best when you just want to try it.
+
+### D — MCP server (Claude Desktop / VS Code)
+
+For power users with an MCP-compatible client. The tools become native commands inside your AI assistant.
 
 ```bash
 npm install -g @shadow-clone/mcp-server
 ```
-
-### 2. Configure Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -28,9 +48,7 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### 3. Use
-
-All 13 tools are immediately available in your Claude conversations. No setup, no authentication.
+All 13 tools become available in your Claude conversations.
 
 ```
 "Use shadow_clone_orchestrate in feature mode to build a real-time chat system"
@@ -155,13 +173,25 @@ All deliverables are organized in the `.waves/` directory for orchestration task
 
 ```bash
 git clone https://github.com/ElijahMoses/shadow-clone.git
-cd shadow-clone/mcp-server
+cd shadow-clone
+
+# MCP server
+cd mcp-server
 npm install
 npm run build        # TypeScript compilation
 npm run dev          # Development mode with watch
 npm run lint         # Type checking
 npm test             # Run tests
+
+# Web UI (separate workspace)
+cd ../web
+npm install
+npm run dev          # http://localhost:3000
+npm run build        # Production build
+npm run type-check   # tsc --noEmit
 ```
+
+The web UI imports prompt content directly from `mcp-server/src/prompts/content/` via a TypeScript path alias — both apps share one source of truth, so edits to a prompt show up in both places.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branch conventions and PR workflow.
 

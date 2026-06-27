@@ -38,6 +38,7 @@ yarn-error.log*
 build/
 dist/
 *.egg-info/
+*.tsbuildinfo
 .eggs/
 
 # Testing

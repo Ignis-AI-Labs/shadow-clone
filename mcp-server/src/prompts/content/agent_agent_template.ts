@@ -50,14 +50,14 @@ This template provides the definitive structure for how agents communicate their
     <files>
       <file path=".waves/wave-[N]/deliverables/[filename]" purpose="[Mode-specific final deliverable]"/>
       <file path=".waves/wave-[N]/src/[filename]" purpose="[Source code - Feature/Debug/Refactor only]"/>
-      <file path=".waves/wave-[N]/tests/[filename]" purpose="[Test files when applicable]"/>
+      <file path=".waves/wave-[N]/tests/integration-[feature].test.[ext]" purpose="[Real end-to-end integration test - REQUIRED for any user-facing route, action, or page-level data flow you ship]"/>
       <file path=".waves/wave-[N]/drafts/[filename]" purpose="[Work in progress - if needed]"/>
     </files>
     <rules>
       <rule>Work exclusively within assigned wave folder</rule>
       <rule>Use deliverables/ for mode-specific outputs only (see mode config)</rule>
       <rule>Place source code in src/ (Feature/Debug/Refactor modes)</rule>
-      <rule>Place test files in tests/ when creating tests</rule>
+      <rule>If your deliverable exposes a user-facing route, action, or page-level data flow, ship its real end-to-end integration test in tests/ in the SAME handoff - no mocks for the system under test (see &lt;integration_testing&gt; in core rules)</rule>
       <rule>Use drafts/ ONLY if you need workspace (not for research)</rule>
       <rule>NEVER create research/, planning/, or temp/ directories</rule>
       <rule>NEVER create files in rk-operations/ (RK only)</rule>

@@ -122,6 +122,8 @@ Each wave must produce:
 - Risk mitigation strategies with concrete actions
 - Implementation complexity analysis with effort estimates
 - Lessons learned documentation
+
+Grounding rule: quote and cite the source you actually read - the doc URL, the file and line, the benchmark output. Do not paraphrase "best practices" from memory. A claim without a citation is a guess, and guesses are not evidence (see <planning_discipline> in core rules: verify assumptions, do not invent them).
 </evidence_requirements>
 </dynamic_waves>
 

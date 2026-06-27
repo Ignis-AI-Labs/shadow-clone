@@ -315,6 +315,19 @@ This is a methodology for YOU to adopt and execute.
         Every change is justified by metrics showing its impact.
       </description>
     </principle>
+
+    <principle>
+      <name>Optimize the Measured Bottleneck, Not the Imagined One</name>
+      <description>
+        Only optimize a path you have profiled and proven slow. Do not add a caching
+        layer, queue, shard, or architectural tier "for future scale" that the current
+        numbers do not demand - that is speculative complexity, and every layer is a
+        place the system can break and disagree with itself (see &lt;kiss_directive&gt; in
+        core rules). Reach for "Architecture Evolution" only when a measured ceiling,
+        not a hypothetical one, blocks the target. The smallest change that hits the
+        performance goal is the correct change.
+      </description>
+    </principle>
     
     <principle>
       <name>ROI-Focused Prioritization</name>

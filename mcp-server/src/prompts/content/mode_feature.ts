@@ -56,10 +56,11 @@ Set the foundation for successful feature implementation by thoroughly understan
    - **AI/ML Features**: ML Engineer, Data Scientist, Model Validator
    </team_patterns>
 
-3. **Security Threat Model**
+3. **Security Threat Model** (security is the first thought, authored here in Wave-0 - not deferred to the validation wave)
    - Potential attack vectors identified
-   - Mitigation strategies defined
-   - Security testing requirements documented
+   - Data-layer access control and resource-level authorization planned for every privileged path
+   - Secrets-at-the-boundary plan (nothing reaches the client bundle or logs)
+   - Mitigation strategies and security testing requirements documented
 
 4. **Wave Allocation Strategy**
    <complexity_guidelines>
@@ -105,10 +106,10 @@ Teams are dynamically composed based on Wave-0 analysis, always including a Reco
 <wave_deliverables>
 **Each Implementation Wave Produces**:
 - Functional code for assigned components
-- Unit tests achieving >80% code coverage
+- A real end-to-end integration test for every user-facing function shipped this wave (real session, real database, real network — no mocks for the system under test; see <integration_testing> in core rules)
 - Integration documentation with clear API contracts
 - Performance metrics demonstrating efficiency
-- Security measures implemented and documented
+- Security measures implemented and documented (data-layer access control, resource-level authorization, secrets at the boundary — see <security_posture> in core rules)
 </wave_deliverables>
 
 ### Final Wave: Comprehensive Validation & Release
@@ -133,10 +134,11 @@ Ensure the feature meets all quality, security, and performance standards before
    - Edge case verification
    - Integration testing with existing features
 
-2. **Security Assessment**
-   - Penetration testing against threat model
-   - Vulnerability scanning
-   - Security best practices audit
+2. **Security Confirmation** (the threat model and access-control plan were authored in Wave-0 — this wave confirms they held, it does not invent them)
+   - Verify the Wave-0 threat model was implemented as designed
+   - Confirm data-layer access control and resource-level authorization on every privileged path (see <security_posture> in core rules)
+   - Penetration testing against the threat model; vulnerability scanning
+   - Confirm no secret reaches a client bundle, log line, or fallback path
 
 3. **Performance Validation**
    - Load testing under expected usage
@@ -164,13 +166,13 @@ Ensure the feature meets all quality, security, and performance standards before
 ## Implementation Guidelines
 
 ### Key Principles for Success
-1. **Wave-0 Sets the Stage**: Thorough analysis in Wave-0 determines optimal team composition for all subsequent waves
-2. **Right-Size Your Teams**: Match team size and expertise to feature complexity
-3. **Maintain Continuity**: Include a Record Keeper in every wave to preserve context and decisions
-4. **Prioritize Security**: Implement security measures from the beginning rather than as an afterthought
-5. **Test Early and Often**: Follow test-driven development practices throughout implementation
-6. **Enable Gradual Rollout**: Use feature flags to control feature exposure
-7. **Match Expertise to Needs**: Ensure cross-functional expertise aligns with feature requirements
+1. **Wave-0 Sets the Stage**: Thorough analysis in Wave-0 determines optimal team composition for all subsequent waves. Threat model and access-control plan land in Wave-0 deliverables, not in the final validation wave — security is the first thought, not a review pass.
+2. **Right-Size Your Teams**: Match team size and expertise to feature complexity. Default to the smallest team that can do the work; add specialists only when the third concrete coordination need appears, not the first imagined one.
+3. **Maintain Continuity**: Include a Record Keeper in every wave to preserve context and decisions.
+4. **Push the Claim Before Coding**: Every agent pulls, edits the task tracker, pushes a "claim:" commit, and waits for the push to succeed BEFORE writing the first line of implementation code. Parallel waves collide otherwise. See <claim_before_you_work> in core rules.
+5. **Test the Real Thing**: Every user-facing function ships with a real end-to-end integration test in the same PR. Tests hit running routes over the network with real sessions — no mocks for the system under test.
+6. **Enable Gradual Rollout**: Use feature flags to control feature exposure.
+7. **Match Expertise to Needs**: Ensure cross-functional expertise aligns with feature requirements.
 
 ### Development Best Practices
 <best_practices>
@@ -200,9 +202,10 @@ Your feature implementation succeeds when it achieves:
 - Smooth integration with existing system components
 
 ### Quality Assurance
-- Comprehensive test suite with >80% code coverage
-- All automated tests passing consistently
-- Manual testing scenarios documented and verified
+- Every user-facing function has a real end-to-end integration test in the same PR — no mocks for the system under test
+- Tests assert the end result a real user observes, not internal implementation state
+- Failure modes exercised (expired session, missing permission, dependency down, malformed input), not only the happy path
+- The full integration suite runs green after every build — a red suite blocks the PR
 
 ### Security Confidence
 - Security review completed with no critical vulnerabilities

@@ -511,10 +511,13 @@ It does NOT execute any code or manage any processes.
 
     <testing_requirements>
       <requirements>
-        - 100% test pass rate before wave completion
-        - Integration tests for all APIs
-        - No regression in existing functionality
-        - Performance within requirements
+        - Every user-facing function ships with a real end-to-end integration test in the same PR
+        - Tests hit running routes over the network with real sessions — no mocks for the system under test
+        - Tests assert the end result a real user observes, not internal implementation state
+        - Exercise failure modes (expired session, missing permission, dependency down, malformed input), not only the happy path
+        - The full integration suite passes before wave completion — a red suite blocks completion, never silence the test
+        - Paste the exact integration-test invocation and output in the PR test plan as proof the suite ran green
+        - No regression in existing functionality; performance within requirements
       </requirements>
     </testing_requirements>
 

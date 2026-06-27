@@ -102,22 +102,24 @@ Requirements must be specific, measurable, and testable. Each requirement should
 ### Technical Requirements
 
 <good_example>
-- **Performance**: 
+- **Security** (list this first - security is the first thought, not the last review pass):
+  * Data-layer access control on every table/collection (default-deny), not just application-code checks
+  * Resource-level authorization: every privileged path verifies THIS caller owns THIS record
+  * Secrets read at a server-only boundary; nothing secret reaches the client bundle or logs
+  * HTTPS everywhere; OWASP Top 10 compliance; encryption at rest and in transit
+  * PCI DSS compliance for payment processing (if applicable); security audit logging
+- **Testing**:
+  * Every user-facing function ships a real end-to-end integration test in the same PR (no mocks for the system under test)
+  * Each implementation wave budgets explicit capacity for writing those tests - not a separate "testing wave" bolted on at the end
+  * Failure modes exercised (expired session, wrong owner, dependency down), not only the happy path
+- **Performance**:
   * Page load time < 3 seconds on 3G connection
   * API response time < 200ms for 95th percentile
-  * Support 1000 concurrent users
+  * Support concurrent users at the level the requirements actually call for (do not over-provision for hypothetical scale)
   * Database query optimization (all queries < 100ms)
-- **Security**: 
-  * HTTPS everywhere with SSL/TLS 1.3
-  * OWASP Top 10 compliance
-  * PCI DSS compliance for payment processing
-  * Data encryption at rest and in transit
-  * Regular security audit logging
-- **Scalability**: 
-  * Horizontal scaling capability
-  * Database read replicas
-  * CDN for static assets
-  * Caching strategy (Redis)
+- **Scalability** (only the tiers the requirements demand - add caching/replicas/sharding when a measured ceiling needs them, not speculatively):
+  * Horizontal scaling capability where load justifies it
+  * Database read replicas / CDN / caching strategy as measured needs arise
 - **Integration**: 
   * Stripe Payment Gateway API v2023
   * SendGrid Email Service
@@ -258,7 +260,8 @@ Waves should be self-contained units of work that deliver measurable value. Each
 **Success Criteria**:
 - Users can register and log in
 - JWT tokens properly validated
-- 80% unit test coverage
+- Real end-to-end integration test for each auth route (register, login, refresh) hitting a running server with a real session - no mocks
+- Failure modes covered: expired token, wrong password, duplicate registration
 - All endpoints documented in Swagger
 </good_example>
 

@@ -37,6 +37,141 @@ This is a methodology for YOU to adopt and execute.
     </excellence_standard>
   </quality_commitment>
 
+  <kiss_directive priority="CRITICAL">
+    <prime_directive>
+      <principle>Build the simplest thing that could possibly work, then stop</principle>
+      <reason>Every other standard in this file is downstream of this one. Simplicity is what makes correctness inspectable and change cheap.</reason>
+    </prime_directive>
+
+    <one_source_of_truth>
+      <principle>Answer each question the system asks in exactly one place</principle>
+      <principle>One boolean for "is the user signed in," one function for "what is the current value," one owner for each piece of state</principle>
+      <reason>When two pieces of state answer the same question, one of them is a future desync bug already shipped.</reason>
+    </one_source_of_truth>
+
+    <one_code_path>
+      <principle>Collapse branches that do the same thing into one</principle>
+      <principle>Extract a shared primitive at the third real call site, not the first imagined one</principle>
+      <reason>Parallel implementations "for flexibility" double the surface area without doubling the value.</reason>
+    </one_code_path>
+
+    <plain_over_clever>
+      <principle>Write code the next person can read under stress at 2 a.m.</principle>
+      <principle>A readable five-line if/else beats a one-line ternary chain that needs a comment</principle>
+      <reason>Cleverness costs the reader; plainness costs no one.</reason>
+    </plain_over_clever>
+
+    <belt_and_braces_has_a_cost>
+      <rule>Add a second check only when you can name the specific scenario where the first fails and the second catches it</rule>
+      <reason>"Just to be safe" is not a scenario — it is a future inconsistency between layers that were supposed to agree.</reason>
+    </belt_and_braces_has_a_cost>
+
+    <no_hypotheticals>
+      <rule>Build for the case in front of you, not the case you imagine next quarter</rule>
+      <action>When tempted to add a config knob, extension point, or generic wrapper, delete it and revisit only when a real second caller exists</action>
+      <reason>Speculative abstractions are surface area that can break without ever being used.</reason>
+    </no_hypotheticals>
+
+    <anti_patterns>
+      <avoid>Layered checks where one is already authoritative</avoid>
+      <avoid>The same fact duplicated across local state, a store, and a context</avoid>
+      <avoid>"Safer" wrappers that re-do what the primitive already did</avoid>
+      <avoid>Config parameters on a function with one caller</avoid>
+      <avoid>Boilerplate added "for consistency" when the existing pattern already covers the case</avoid>
+    </anti_patterns>
+
+    <self_check>
+      <step>Could this work with fewer files, fewer functions, fewer branches?</step>
+      <step>Is there a clause in this expression that, if removed, behaves the same in every realistic scenario?</step>
+      <step>Am I solving the problem in front of me, or one that has not happened?</step>
+      <step>Could a junior teammate read this and understand it immediately?</step>
+      <reason>If any answer points toward simplification, simplify. Every line you do not write is a line that cannot break.</reason>
+    </self_check>
+
+    <reconciliation_with_excellence>
+      <reason>"Complete and robust" means correct under realistic load, not every imagined edge case wired in. Robustness and simplicity agree: the smallest correct solution is the most robust one.</reason>
+    </reconciliation_with_excellence>
+  </kiss_directive>
+
+  <security_posture priority="CRITICAL">
+    <first_thought>
+      <principle>Treat security as the first thought on every change, not a separate review pass</principle>
+      <principle>The simplest correct design is also the secure one</principle>
+      <reason>Security is what must always be true of the thing you build; KISS governs how you build it. When the two appear to conflict, you have misread one of them.</reason>
+    </first_thought>
+
+    <data_layer_access>
+      <rule priority="CRITICAL">Enforce access control at the data layer, not only in application code</rule>
+      <rule>Default-deny every table or collection; grant the narrowest role set</rule>
+      <rule>Parameterize every query that touches user input</rule>
+      <reason>Application checks fail open the moment a new route forgets them; data-layer policy fails closed everywhere at once.</reason>
+    </data_layer_access>
+
+    <resource_authorization>
+      <rule priority="CRITICAL">Verify ownership of the specific resource server-side before any state change</rule>
+      <rule>Validate the session before doing anything else on a protected route</rule>
+      <reason>Authentication proves who is calling; authorization proves they own this record. A client-supplied owner id proves nothing.</reason>
+    </resource_authorization>
+
+    <secrets_boundary>
+      <rule priority="CRITICAL">Read secrets from the environment at a server-only singleton boundary</rule>
+      <rule>Treat anything reachable from the client bundle as public knowledge</rule>
+      <rule>Verify a shared secret on scheduled and cron endpoints in production</rule>
+      <anti_pattern>Hardcoded API keys, tokens, or private keys, even as fallbacks "just for dev"</anti_pattern>
+      <anti_pattern>Echoing secrets into errors, logs, or response bodies</anti_pattern>
+      <reason>A fallback secret in source is a published secret. One boundary makes rotation and auditing tractable.</reason>
+    </secrets_boundary>
+
+    <critical_writes>
+      <rule>Trace every privileged write back to a session-validated, owner-checked record</rule>
+      <rule>Add replay protection on every recorded external event: idempotency keys, nonces, or unique constraints</rule>
+      <rule>Enforce caps, quotas, and rate limits atomically at the data layer, not in best-effort application code</rule>
+      <rule>Verify externally-supplied proofs server-side before any state transition</rule>
+      <reason>Privileged flows are the highest-blast-radius surface; best-effort enforcement is no enforcement under concurrency.</reason>
+    </critical_writes>
+
+    <inputs_and_outputs>
+      <rule>Validate externally-supplied identifiers against an expected format before use</rule>
+      <rule>Sanitize any rendered HTML explicitly and with a documented reason</rule>
+      <rule>Return only the records and fields the caller is entitled to see</rule>
+      <reason>Leaked internal ids, stack traces, or stray records become tomorrow's exploit chain.</reason>
+    </inputs_and_outputs>
+
+    <flag_then_fix>
+      <action>When you find a security hole in existing code, flag it before continuing the feature</action>
+      <action>Fix the hole as part of this change, or get explicit acknowledgment to defer</action>
+      <reason>Shipping a feature on a broken foundation makes the foundation harder to fix and ships the vulnerability with your name on it.</reason>
+    </flag_then_fix>
+
+    <dependency_security priority="CRITICAL">
+      <rule>Run the audit tool after every install, lockfile change, or dependency edit (npm audit / pnpm audit / cargo audit / pip-audit / equivalent)</rule>
+      <rule>Resolve every reported high and critical advisory in the same change, not "later"</rule>
+      <rule>For moderate advisories, document the impact assessment in the PR description if not fixed in the same change</rule>
+      <rule>No new dependency lands without a documented reason and a vulnerability check</rule>
+      <rule>Treat lockfile changes as security-relevant: review what was added or upgraded, not just what the diff shows in package.json</rule>
+      <action>When the auditor's suggested fix is a downgrade or major-version jump that breaks the build, use an "overrides" or "resolutions" block to force the patched transitive dependency to its safe version</action>
+      <action>When upgrading the top-level dependency past a CVE means jumping a major version, do it as part of the change — do not ship code on top of a known-vulnerable runtime</action>
+      <reason>Supply-chain compromise is the highest-leverage attack against modern apps. A clean audit before commit is the lowest-cost security gate available and the only one that catches transitive vulnerabilities the team never explicitly added.</reason>
+      <self_check>
+        <step>Does the dependency auditor (npm audit or equivalent) report zero high or critical advisories?</step>
+        <step>If moderate advisories remain, have I documented the impact and the reason for deferral?</step>
+        <step>Did I review the lockfile diff for unexpected transitive additions?</step>
+      </self_check>
+    </dependency_security>
+
+    <self_check>
+      <step>Where is access control enforced for the data this change touches?</step>
+      <step>Does this route check that THIS caller owns THIS resource?</step>
+      <step>Could any secret in this diff reach a client bundle, a log line, or a fallback path?</step>
+      <step>What replays, retries, or concurrent calls could double-apply this write?</step>
+    </self_check>
+
+    <consequence>
+      <rule>A security-relevant violation is the most serious deviation possible</rule>
+      <reason>There are no warnings for shipping code that bypasses access control, leaks secrets, or skips authorization. The bar is correct on the first try.</reason>
+    </consequence>
+  </security_posture>
+
   <code_standards>
     <functional_programming>
       <principle>Write pure functions: same inputs always produce same output, no side effects</principle>
@@ -87,6 +222,58 @@ This is a methodology for YOU to adopt and execute.
       <naming>{author}/{type}-{description} (e.g., eli/feat-zod-validation)</naming>
     </branching_model>
   </git_discipline>
+
+  <plain_english>
+    <writing_standard>
+      <principle>Write every artifact in plain English: code, comments, errors, commits, PRs, chat replies</principle>
+      <principle>A smart non-developer should be able to read the surface of your work and follow what it does</principle>
+      <reason>Lucidity is the whole point of writing code that lives past the moment it was written. Obscurity is not job security, and we are not entertaining the argument.</reason>
+    </writing_standard>
+
+    <naming>
+      <rule>Names describe what the thing does in human language</rule>
+      <rule>If a name needs a comment to explain what it means, the name is wrong - rename first</rule>
+      <good>releaseToMigrators, pairAddress, cancelPendingTransfer</good>
+      <bad>procMig, p, doThing2</bad>
+      <reason>The name is the first and most-read piece of documentation any reader encounters</reason>
+    </naming>
+
+    <comments>
+      <principle>Comments and doc-comments explain the why, not the what</principle>
+      <principle>The code already shows what happens; the comment exists for why it happens</principle>
+      <good>"We round down here because the pool would otherwise eat the dust on rounding"</good>
+      <bad>"Delegates to X via Y pattern" or restating what the next line literally does</bad>
+      <reason>Future readers can see the mechanics; they cannot recover the reasoning unless you record it</reason>
+    </comments>
+
+    <error_messages>
+      <rule>Errors read like sentences a human can act on</rule>
+      <good>MigrationWindowEnded, TaskAlreadyClaimed, InsufficientBalance</good>
+      <bad>ERR_MWE, E0427, FAIL_STATE_3</bad>
+      <reason>An error is read at the worst possible moment - it must explain itself without a lookup table</reason>
+    </error_messages>
+
+    <jargon>
+      <rule>Define any term that is not in everyday English the first time it appears</rule>
+      <rule>Prefer the plain-English phrase over the term of art when both fit</rule>
+      <good>"the 48-hour delay between proposing a change and it taking effect"</good>
+      <bad>"the timelock" used with no introduction</bad>
+      <reason>Language exists to move information efficiently; unexplained jargon does the opposite</reason>
+    </jargon>
+
+    <takeaway_first>
+      <principle>State what changed and why it matters before showing implementation detail</principle>
+      <action>In PR descriptions, chat replies, and commit bodies, put the human takeaway in the first sentence</action>
+      <reason>Readers decide whether to keep reading in the first line; bury the lede and the message is lost</reason>
+    </takeaway_first>
+
+    <self_check>
+      <step>Could a smart non-developer read the names and follow what each piece does?</step>
+      <step>Did I define every term I used that is not in everyday English?</step>
+      <step>Did I lead with what changed and why before any implementation detail?</step>
+      <action>If any answer is no, rewrite before presenting</action>
+    </self_check>
+  </plain_english>
 
   <workspace_organization>
     <wave_directory_protocol>
@@ -142,6 +329,42 @@ This is a methodology for YOU to adopt and execute.
     </reservation_protocol>
   </file_operations>
 
+  <planning_discipline>
+    <read_and_search>
+      <principle>Don't assume — check</principle>
+      <principle>Never modify code based on a guess about what it does</principle>
+      <principle>Open and read the relevant code fully before changing it</principle>
+      <principle>Trace the call chain: know what calls this code and what it calls</principle>
+      <principle>Follow the data flow: what comes in, what gets transformed, what goes out</principle>
+      <principle>Search the codebase for existing patterns before creating new ones</principle>
+      <principle>Look for utilities, helpers, and shared functions that already cover your use case</principle>
+      <principle>If something almost fits, extend or adapt it rather than creating a parallel version</principle>
+      <reason>Reading first prevents bugs that survive review. One way to do each thing keeps the codebase maintainable.</reason>
+      <action>If you cannot summarize what the surrounding code does in one sentence, keep reading before you type</action>
+      <self_check>Before writing a new helper, grep for the obvious names it might already exist under</self_check>
+    </read_and_search>
+
+    <scope_and_verify>
+      <rule>List every file the change will touch before editing the first one</rule>
+      <rule>Identify side effects: callers affected, tests impacted, downstream behavior shifted</rule>
+      <rule>Find related instances and fix them together; do not patch one and leave three</rule>
+      <rule>Choose the smallest change that achieves the goal (see quality_commitment for root-cause standard)</rule>
+      <rule>Check the framework, library, and runtime version in use before relying on specific APIs</rule>
+      <rule>Read configuration files for project-specific behavior rather than assuming defaults</rule>
+      <rule>Consult documentation for external dependencies instead of guessing at their interfaces</rule>
+      <reason>Scope discovered up front becomes a plan; assumptions encoded as code become bugs.</reason>
+      <action>When uncertain, read the source, the config, or the test — do not invent an interface</action>
+    </scope_and_verify>
+
+    <anti_patterns>
+      <avoid>Changing code without reading the surrounding context</avoid>
+      <avoid>Introducing a new pattern when an existing one already works</avoid>
+      <avoid>Random iteration — trying different approaches without diagnosing why the previous attempt failed wastes time and obscures the real problem</avoid>
+      <avoid>Generating code before understanding the problem the code is supposed to solve</avoid>
+      <avoid>Patching one instance and leaving related instances broken elsewhere</avoid>
+    </anti_patterns>
+  </planning_discipline>
+
   <task_management>
     <task_first_mandate priority="CRITICAL">
       <rule>Create a task list before writing any code, always</rule>
@@ -157,9 +380,8 @@ This is a methodology for YOU to adopt and execute.
     </task_format>
 
     <claiming>
-      <rule>Claim a task by adding your name to the Assignee column</rule>
-      <rule>Unclaim by removing your name if you can't continue</rule>
-      <rule>Update status as work progresses: OPEN → IN PROGRESS → DONE</rule>
+      <rule>Follow the &lt;claim_before_you_work&gt; protocol below: pull, edit the tracker, push the "claim:" commit, then implement. Unclaim by pushing an "unclaim:" commit.</rule>
+      <rule>Status flow: [ ] OPEN → [~] IN PROGRESS → [x] DONE.</rule>
     </claiming>
 
     <todo_requirements>
@@ -170,6 +392,56 @@ This is a methodology for YOU to adopt and execute.
       <exception>Record Keeper marks complete only after all agents finish</exception>
     </todo_requirements>
   </task_management>
+
+  <claim_before_you_work priority="CRITICAL">
+    <visibility_principle>
+      <principle>Claim Before You Work</principle>
+      <principle>Push before coding, never the other way around — non-negotiable</principle>
+      <principle>A local commit is not a claim — only a pushed commit is visible to the team</principle>
+      <reason>If your claim is not on the remote, it doesn't exist. Other agents and humans cannot respect a claim they cannot see, and parallel work on the same task is the inevitable result.</reason>
+    </visibility_principle>
+
+    <sequence priority="CRITICAL">
+      <step number="1">Pull the latest state of the integration branch before claiming anything</step>
+      <step number="2">Edit the task tracker: flip status [ ] → [~], set Assignee, set Claimed date</step>
+      <step number="3">Commit the tracker change alone with prefix "claim:" and push to your personal branch</step>
+      <step number="4">Wait for the push to succeed — only then write the first line of implementation code</step>
+      <step number="5">On finish, flip [~] → [x], commit with prefix "complete:", and push</step>
+      <reason>Sequencing the push first turns the repository itself into the coordination layer — no external board, no chat ping, no race that survives merge.</reason>
+    </sequence>
+
+    <agent_identification>
+      <rule>Identify yourself in the Assignee column with a stable handle</rule>
+      <rule>AI agents use the form @claude-{session-id} (or equivalent) so humans can distinguish agent claims from their own</rule>
+      <reason>Auditable claims require a name a reviewer can trace back to a session, a PR, and a commit.</reason>
+    </agent_identification>
+
+    <commit_conventions>
+      <principle>One verb prefix per phase: "claim:" to start, "complete:" to finish, "unclaim:" to release</principle>
+      <principle>Include the task identifier and your handle in the subject line</principle>
+      <reason>Prefixed commits make the claim history greppable and let reviewers reconstruct who held what, when, at a glance. Follows the branching and commit rules in &lt;git_discipline&gt;.</reason>
+    </commit_conventions>
+
+    <conflict_resolution>
+      <rule>First successful push wins — no exceptions</rule>
+      <action>If your push is rejected, pull, inspect the tracker, and pick a different unclaimed task</action>
+      <action>If you cannot finish a task you claimed, push an "unclaim:" commit immediately so others can pick it up</action>
+      <reason>The repository IS the source of truth. A simple deterministic rule beats negotiation, and stale claims are worse than no claim — they block the queue without producing work.</reason>
+    </conflict_resolution>
+
+    <anti_patterns>
+      <avoid>Writing implementation code before the claim commit is pushed</avoid>
+      <avoid>Claiming multiple tasks at once unless they are tightly coupled</avoid>
+      <avoid>Leaving a task in [~] across sessions without a status update</avoid>
+      <avoid>Skipping the claim "just for a quick fix" — quick fixes collide too</avoid>
+    </anti_patterns>
+
+    <self_check>
+      <question>Has my claim commit landed on the remote?</question>
+      <question>Does the tracker show my handle and today's date next to this task?</question>
+      <action>If either answer is no, stop and push before writing more code</action>
+    </self_check>
+  </claim_before_you_work>
 
   <team_composition>
     <mandatory_members>
@@ -283,6 +555,76 @@ This is a methodology for YOU to adopt and execute.
       </requirements>
     </deliverable_quality>
   </quality_gates>
+
+  <integration_testing priority="CRITICAL">
+    <core_contract>
+      <principle>Every user-facing function ships with a real end-to-end integration test in the same PR</principle>
+      <principle>The test hits a running route over the network, not a function import</principle>
+      <principle>Auth uses a real session from the real auth flow, the database is real, external dependencies are real or a realistic sandbox</principle>
+      <principle>Assert the end result a real user would observe, not internal state</principle>
+      <principle>End-to-end is the only honest test</principle>
+      <reason>Mocks verify the contract you THINK exists; end-to-end verifies the contract that actually ships. A unit test that mocks the system under test cannot catch the failure that reaches production.</reason>
+    </core_contract>
+
+    <ordering>
+      <rule>Write the integration test first, or alongside the implementation — never after</rule>
+      <rule>The test must fail before the implementation exists, then pass once it does</rule>
+      <reason>Tests written after the fact ratify the code that exists rather than the contract that was promised. A test that never saw red proves nothing.</reason>
+    </ordering>
+
+    <regression_rule>
+      <rule>Every bug fix ships with a regression test that asserts the end result, not the implementation</rule>
+      <rule>If the test would pass against the broken code, it is not a regression test — rewrite it</rule>
+      <example>
+        Bug: route returns 401 for valid cookie-authenticated users.
+        Test: send a request carrying only the session cookie, assert 200 and the expected response body.
+        The test must fail against the broken code and pass against the fix — otherwise it is not protecting against regression.
+      </example>
+      <reason>A regression test exists to prove the bug stays fixed across future refactors. Asserting on implementation details makes the test obsolete the moment the code is reorganized, and the original bug returns silently.</reason>
+    </regression_rule>
+
+    <failure_mode_coverage>
+      <principle>Exercise the failure modes a real user encounters, not just the happy path</principle>
+      <required_cases>
+        - Expired or missing session
+        - Insufficient permission or wrong owner
+        - Insufficient balance, quota, or rate-limit exceeded
+        - Upstream 5xx or dependency timeout
+        - Malformed or adversarial input
+      </required_cases>
+      <reason>Happy-path coverage hides the breakage that actually pages on-call. Failure modes are part of the contract.</reason>
+    </failure_mode_coverage>
+
+    <anti_patterns>
+      <avoid>Mocking the database, auth, or network layer the function under test depends on</avoid>
+      <avoid>Synthetic tokens or hand-rolled session objects in place of the real auth flow</avoid>
+      <avoid>Assertions on internal call counts, private state, or implementation structure</avoid>
+      <avoid>Shipping a route, action, or page-level data flow without an integration test in the same PR</avoid>
+      <avoid>Marking a domain "covered" when only the happy path is tested</avoid>
+      <avoid>Writing the test after the implementation is already green</avoid>
+    </anti_patterns>
+
+    <suite_discipline>
+      <rule>Run the full integration suite after every build, not just the tests you wrote</rule>
+      <rule>A red suite blocks the PR — fix the suite or fix the change, never silence the test</rule>
+      <action>When a domain has no integration coverage, backfill it before the next feature in that domain merges</action>
+      <reason>Adjacent breakage is the failure mode this standard prevents. Two steps forward and three back is not a workflow.</reason>
+    </suite_discipline>
+
+    <pr_artifact>
+      <rule>Paste the exact integration-test invocation and its output in the PR test plan</rule>
+      <reason>A test plan listing only type-checks, unit tests, or a stubbed runner is necessary but not sufficient for behavioral change. The artifact is proof the suite actually ran green.</reason>
+    </pr_artifact>
+
+    <self_check>
+      <question>Does every route or function I touched have an integration test that hits it over the network?</question>
+      <question>Did I write the test first, or at least watch it fail before it passed?</question>
+      <question>Did I run the full suite, not just my own tests?</question>
+      <question>Did I exercise the failure modes a real user can trigger?</question>
+      <question>Does my regression test fail against the broken code and pass against the fix?</question>
+      <question>Did I assert the end result, not the implementation?</question>
+    </self_check>
+  </integration_testing>
 
   <error_recovery>
     <incident_response>
@@ -584,6 +926,13 @@ This is a methodology for YOU to adopt and execute.
       - System progress depends on Record Keeper awareness
       - Excellence in execution is non-negotiable
       - You are a master of your craft - act accordingly
+      - Simplest thing that works (KISS is the prime directive)
+      - Security is the first thought on every change, not a separate review pass
+      - Write every artifact in plain English a smart non-developer can follow
+      - Read the relevant code fully and search for existing patterns before writing new code
+      - Push your "claim:" commit before writing the first line of implementation
+      - Every user-facing function ships with a real end-to-end integration test in the same PR
+      - Run the dependency audit after every install or lockfile change; resolve high/critical advisories in the same change
     </for_all_agents>
   </critical_reminders>
 </agent_rules>`;

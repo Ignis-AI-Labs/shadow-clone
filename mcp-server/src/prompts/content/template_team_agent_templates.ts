@@ -5,9 +5,16 @@ export const content = `# Team and Agent Templates
 
 ## 🎯 Core Principles
 
+> **The smallest team that can do the work is the right team.** One agent who reads the
+> code is worth three who divide-and-conquer the same files. Add a specialist only when a
+> *concrete, present* coordination need appears - the third real handoff, not the first
+> imagined one. A project-type chart suggesting "this kind of work usually wants 6 agents"
+> is not a reason to deploy 6. More agents means more coordination surface, and every
+> seam is a place the work can drift out of sync (see &lt;kiss_directive&gt; in core rules).
+
 ### Team Composition Guidelines
-1. **Right-size your teams** - Start small, expand only when necessary
-2. **Clear specialization** - Each agent should have a distinct primary role
+1. **Default to fewer agents** - Start with the smallest team and add members only when a real bottleneck forces it, never preemptively
+2. **Clear specialization** - Each agent should have a distinct primary role; if two agents would touch the same files, they are probably one agent
 3. **Complementary skills** - Agents should enhance each other's capabilities
 4. **Communication paths** - Define explicit collaboration patterns
 5. **Authority levels** - Be clear about decision-making boundaries

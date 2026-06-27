@@ -45,19 +45,27 @@ This is a methodology for YOU to adopt and execute.
     </team_composition>
     
     <critical_tasks>
+      <task priority="0">
+        <action>Push a "claim:" commit on the bug task before any analysis or code — pull, edit the tracker, push, wait for success</action>
+        <rationale>First successful push wins. Without this, two debuggers end up patching the same file in parallel — the most common collision in any debug effort. See &lt;claim_before_you_work&gt; in core rules.</rationale>
+      </task>
       <task priority="1">
+        <action>Read the affected code path end-to-end before diagnosing — open the failure site, trace what calls it, what it calls, what data flows through it</action>
+        <rationale>A guess at the cause becomes a patch at the wrong layer. Reading is faster than re-debugging. See &lt;planning_discipline&gt; in core rules — never modify code based on a guess about what it does.</rationale>
+      </task>
+      <task priority="2">
         <action>Reproduce the issue in an isolated environment</action>
         <rationale>Controlled reproduction ensures accurate diagnosis without affecting production</rationale>
       </task>
-      <task priority="2">
+      <task priority="3">
         <action>Classify issue severity (Critical/High/Medium/Low)</action>
         <rationale>Proper classification ensures appropriate resource allocation and response time</rationale>
       </task>
-      <task priority="3">
+      <task priority="4">
         <action>Analyze blast radius and affected systems</action>
         <rationale>Understanding impact scope guides containment and communication strategies</rationale>
       </task>
-      <task priority="4">
+      <task priority="5">
         <action>Design debug strategy with appropriate wave count</action>
         <rationale>Tailored approaches ensure efficient resolution based on issue complexity</rationale>
       </task>

@@ -171,7 +171,17 @@ This is a methodology for YOU to adopt and execute.
     Build systematically on previous work.
     Each wave reads and incorporates insights from earlier waves.
   </principle>
-  
+
+  <principle>
+    Plan the simplest thing that solves the problem in front of you.
+    Do not design for hypotheticals - no speculative microservices, extra tables, extension points, or scale tiers the requirements do not call for. The right abstraction shows up at the third real need, not the first imagined one (see &lt;kiss_directive&gt; in core rules). A plan a small team can actually execute beats an elaborate one they cannot.
+  </principle>
+
+  <principle>
+    Ground every recommendation in something you read.
+    Cite the doc, the source file, or the benchmark behind each technical choice. Do not paraphrase best practices from memory - verify them (see &lt;planning_discipline&gt; in core rules).
+  </principle>
+
   <activities_to_perform>
     - Research industry best practices and proven patterns
     - Analyze project requirements and technical constraints

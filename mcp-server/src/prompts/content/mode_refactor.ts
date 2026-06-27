@@ -212,9 +212,9 @@ This is a methodology for YOU to adopt and execute.
         <area name="Testing">
           <actions>
             - Improve code testability through better design
-            - Add comprehensive test coverage
-            - Refactor test code for maintainability
-            - Establish testing best practices
+            - Add real end-to-end integration coverage for behavior the suite does not yet protect (no mocks for the system under test - see &lt;integration_testing&gt; in core rules)
+            - Refactor test code for maintainability without weakening what it asserts
+            - Keep tests asserting the end result a real user observes, not internal implementation that a refactor will churn
           </actions>
         </area>
         
@@ -229,10 +229,11 @@ This is a methodology for YOU to adopt and execute.
       </focus-areas>
       
       <wave-process>
-        <step order="1">Run complete test suite to ensure green baseline</step>
+        <step order="0">Push a "claim:" commit on the refactor task before changing a single line - pull, edit the tracker, push, wait for success (see &lt;claim_before_you_work&gt; in core rules; low-friction edits collide too)</step>
+        <step order="1">Read the target code end-to-end and run the full integration suite to confirm a green baseline - the baseline that matters is real end-to-end tests, not unit tests that can stay green while the user-facing behavior breaks</step>
         <step order="2">Apply selected refactoring pattern to target code</step>
-        <step order="3">Verify behavior remains unchanged through testing</step>
-        <step order="4">Update or add tests to improve coverage</step>
+        <step order="3">Verify behavior remains unchanged by re-running the integration suite - assert the same end results a real user observes</step>
+        <step order="4">Add or update real end-to-end tests for any behavior not already covered (no mocks for the system under test)</step>
         <step order="5">Document architectural decisions and rationale</step>
         <step order="6">Review changes with team before proceeding</step>
       </wave-process>
