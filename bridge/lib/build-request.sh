@@ -31,7 +31,7 @@ sc_build_request() {
   # rather than failing silently (Rule 3: no silent failures).
   if [ ! -f "${PROJECT_DIR}/AGENTS.md" ]; then
     echo "sc: WARNING — no AGENTS.md at ${PROJECT_DIR}. Reviewing without a project law." >&2
-    echo "sc:           Run 'bash ~/.sc/sc-init.sh' to scaffold one." >&2
+    echo "sc:           Run 'bash ~/.claude/sc/sc-init.sh' to scaffold one." >&2
   fi
   {
     echo "# Echo Review Request"
@@ -104,7 +104,7 @@ sc_build_request() {
       echo
       echo "No project law was provided. Review against sound general engineering"
       echo "practice, and raise the missing AGENTS.md as a finding so the user can"
-      echo "scaffold one with \`bash ~/.sc/sc-init.sh\`."
+      echo "scaffold one with \`bash ~/.claude/sc/sc-init.sh\`."
     fi
   } > "${REQ}"
 }

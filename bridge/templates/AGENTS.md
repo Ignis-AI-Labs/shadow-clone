@@ -6,7 +6,7 @@ autonomous — reads it fully before touching anything.**
 This is the single source of truth. `CLAUDE.md` and any other agent entrypoint
 point here. Do not duplicate rules elsewhere; amend them here.
 
-> **Using Shadow Clone in your own project?** Run `bash ~/.sc/sc-init.sh` from your project
+> **Using Shadow Clone in your own project?** Run `bash ~/.claude/sc/sc-init.sh` from your project
 > root to scaffold this file (and a `CLAUDE.md` pointer), or copy it manually — then
 > adapt it. **Rules 1–8 are an example starter set** — change them to match your stack and
 > standards. **Rule 9 is the echo review protocol** — keep it; it is what the loop
@@ -29,8 +29,8 @@ the **Builder**; the other agent is the **Reviewer**. Review is **bidirectional*
 
 | Direction               | Builder            | Reviewer           | Bridge                |
 | ----------------------- | ------------------ | ------------------ | --------------------- |
-| Claude is working       | Claude Code        | configurable (default GLM) | `~/.sc/ask-glm.sh`   |
-| second model is working | configurable (default GLM) | Claude Code        | `~/.sc/ask-claude.sh`|
+| Claude is working       | Claude Code        | configurable (default GLM) | `~/.claude/sc/ask-glm.sh`   |
+| second model is working | configurable (default GLM) | Claude Code        | `~/.claude/sc/ask-claude.sh`|
 
 Models are configurable (see the repo README). Both roles are bound by every rule
 below — there is one standard, not two, and it does not change with who holds the pen.
@@ -131,8 +131,8 @@ self-contained change (feature, fix, module, refactor). Trivial non-code edits
 
 ### The exchange
 
-- Reviews are dispatched by the direction-appropriate bridge: `~/.sc/ask-glm.sh`
-  (Claude → second model) or `~/.sc/ask-claude.sh` (second model → Claude). On the
+- Reviews are dispatched by the direction-appropriate bridge: `~/.claude/sc/ask-glm.sh`
+  (Claude → second model) or `~/.claude/sc/ask-claude.sh` (second model → Claude). On the
   OpenCode side the `echo_review` tool wraps the bridge.
 - Each exchange is logged under `.sc/exchange/` as a timestamped
   `*-request.md` / `*-response.md` pair — a durable, auditable record.
