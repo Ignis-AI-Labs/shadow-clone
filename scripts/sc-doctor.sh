@@ -28,6 +28,8 @@ readonly CONFIG_DIR="${HOME}/.config/sc"
 readonly CLAUDE_CMD_DIR="${HOME}/.claude/commands"
 readonly OPENCODE_DIR="${HOME}/.config/opencode"
 readonly CLAUDE_CMD_SRC="${REPO_ROOT}/claude/commands"
+readonly PROTOCOLS_SRC="${REPO_ROOT}/protocols"
+readonly PROTOCOLS_DEST="${HOME}/.claude/sc/protocols"
 
 # Top-level bridge scripts that get invoked as commands — must be +x.
 # (bridge/install.sh chmods exactly these.)
@@ -178,6 +180,33 @@ check_path() {
   done
 }
 
+check_protocols() {
+  printf '\nCoding standards (%s):\n' "${PROTOCOLS_DEST}"
+  if [ ! -d "${PROTOCOLS_SRC}" ]; then
+    report FAIL "protocols source dir" "missing: ${PROTOCOLS_SRC}"
+    return
+  fi
+  if [ ! -d "${PROTOCOLS_DEST}" ]; then
+    report FAIL "protocols deployed dir" "missing: ${PROTOCOLS_DEST}"
+    return
+  fi
+  local missing=0 total=0
+  for src in "${PROTOCOLS_SRC}"/*.md; do
+    [ -e "${src}" ] || continue
+    total=$((total + 1))
+    local name; name="$(basename "${src}")"
+    if [ ! -f "${PROTOCOLS_DEST}/${name}" ]; then
+      report FAIL "${name}" "not deployed"
+      missing=$((missing + 1))
+    fi
+  done
+  if [ "${total}" -eq 0 ]; then
+    report FAIL "any protocols" "no *.md files in ${PROTOCOLS_SRC}"
+  elif [ "${missing}" -eq 0 ]; then
+    report OK "${total} protocol(s) deployed"
+  fi
+}
+
 check_upgrade_residue() {
   printf '\nUpgrade residue (warn-only):\n'
   local any=0
@@ -201,6 +230,7 @@ check_config
 check_claude_commands
 check_opencode
 check_path
+check_protocols
 check_upgrade_residue
 
 printf '\n'

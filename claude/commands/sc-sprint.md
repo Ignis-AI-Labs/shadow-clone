@@ -1,0 +1,282 @@
+---
+description: Shadow Clone sprint mode — plan one upcoming sprint inside an active codebase (current-state first, then task decomp + risk, then SPRINT_PLAN.md)
+---
+
+You are now operating in **Shadow Clone Sprint mode** for the rest of this session. This mode plans **one upcoming sprint inside a codebase that already exists**. It is the right mode when:
+
+- The repo is live; people are committing to it.
+- The architecture is already chosen.
+- You are framing a bounded chunk of work for a known team and a known deadline.
+
+It is **not** the right mode for greenfield project planning — for that, exit and use `/sc-plan`. It is also not the right mode for multi-sprint or quarter-scale planning — for that, use `/sc-roadmap`.
+
+The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
+
+## Step 1 — Capture context (ask before starting)
+
+Use the **AskUserQuestion** tool to ask the user, in one batch:
+
+1. **Sprint goal** (header `Goal`) — one sentence: what does this sprint ship? Free-text.
+2. **Sprint length** (header `Length`) — options: `1 week`, `2 weeks`, `3 weeks`, `1 month`.
+3. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`.
+4. **Risk tolerance** (header `Risk`) — options: `Low (live system, careful rollouts)`, `Standard (normal release cadence)`, `High (experimental area, OK to break things)`.
+
+Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0.
+
+## Step 2 — Run the methodology
+
+# Sprint Mode Configuration
+
+<mode_overview>
+  <purpose>
+    Sprint Mode produces a focused, executable plan for one upcoming sprint in an
+    already-running codebase. Unlike Planning Mode (greenfield), Sprint Mode starts
+    by reading the system that exists and frames the sprint within it.
+  </purpose>
+
+  <why_important>
+    Sprints fail when the plan was written without looking at the code. The
+    architecture, the in-flight branches, the recent incidents, the half-finished
+    refactors — all of that is invisible to a planner who works only from the
+    sprint goal. This mode forces the agent team to ground every task in the
+    real current state.
+  </why_important>
+
+  <critical_protocol>
+    <sprint_plan_location>
+      CRITICAL: SPRINT_PLAN.md MUST be created at
+      .waves/wave-2/deliverables/SPRINT_PLAN.md. This is the only valid location.
+    </sprint_plan_location>
+
+    <file_organization>
+      Sprint Mode uses EXACTLY 3 waves with ONE deliverable per wave:
+      - Wave 0: CURRENT_STATE.md      in .waves/wave-0/deliverables/
+      - Wave 1: TASK_DECOMP.md        in .waves/wave-1/deliverables/
+      - Wave 2: SPRINT_PLAN.md        in .waves/wave-2/deliverables/
+    </file_organization>
+  </critical_protocol>
+</mode_overview>
+
+<wave_structure>
+  <wave_0>
+    <name>Current State Read</name>
+    <purpose>
+      Establish the ground truth of the codebase as it exists today, so every task
+      in Wave 1 is anchored in real code paths, real recent commits, and real
+      in-flight work — not in a wishful sketch.
+    </purpose>
+
+    <team_composition>
+      - Code Cartographer: Maps the architecture relevant to the sprint goal (directories, key modules, public APIs).
+      - History Reader: Surveys recent commits, open PRs, and unfinished refactors that the sprint will collide with.
+      - Constraints Surveyor: Identifies platform, deployment, data-migration, and on-call constraints in effect.
+      - Record Keeper: Consolidates findings into CURRENT_STATE.md.
+    </team_composition>
+
+    <deliverables>
+      <deliverable path=".waves/wave-0/deliverables/CURRENT_STATE.md">
+        Single document capturing:
+        - The architectural slice the sprint will touch (with file paths)
+        - Recent activity in that slice: last 20-30 commits, open PRs, branches in flight
+        - Known in-flight refactors or migrations the sprint must navigate around
+        - Active constraints: deploy windows, freeze periods, dependencies on other teams
+        - Open questions the team should resolve before Wave 1 starts
+      </deliverable>
+    </deliverables>
+
+    <instructions>
+      1. Read the code first. Cite files and line ranges, not summaries from memory.
+      2. Run `git log --since='30 days ago' -- <relevant paths>` to surface recent activity.
+      3. List every open PR that touches the sprint's surface area.
+      4. Flag any uncommitted work in `git status` that affects the plan.
+      5. Consolidate into CURRENT_STATE.md and explicitly mark any open question.
+    </instructions>
+  </wave_0>
+
+  <wave_1>
+    <name>Task Decomposition &amp; Risk Identification</name>
+    <purpose>
+      Break the sprint goal into concrete tasks with dependencies, sizes, and risks,
+      grounded in the current state surfaced in Wave 0.
+    </purpose>
+
+    <team_composition>
+      - Decomposition Lead: Breaks the sprint goal into discrete tasks (each one a coherent PR).
+      - Dependency Mapper: Identifies inter-task dependencies and cross-team dependencies.
+      - Risk Auditor: Surfaces risks specific to changing live code (breakage, migrations, rollback).
+      - Estimator: Sizes each task against the team's actual capacity (Sprint Length × Team Size).
+      - Record Keeper: Consolidates into TASK_DECOMP.md.
+    </team_composition>
+
+    <deliverables>
+      <deliverable path=".waves/wave-1/deliverables/TASK_DECOMP.md">
+        Consolidated document containing:
+        - Task table: ID, title, scope, estimate, dependencies, owner candidates
+        - Dependency graph (text or mermaid) showing serial vs. parallel paths
+        - Risk register: each risk with severity, trigger, and mitigation
+        - Out-of-scope list: things the sprint goal could imply but is NOT going to do
+        - Done criteria for the sprint as a whole
+      </deliverable>
+    </deliverables>
+
+    <instructions>
+      1. Tasks are PR-sized. If a single "task" needs more than 3 days of one person's time, split it.
+      2. Every task lists the files or modules it will touch (verify against Wave 0's map).
+      3. Risks must include rollback strategy when the change is irreversible by default (DB migrations, public-API contracts, third-party integrations).
+      4. The estimate must respect the user's stated Team Size × Sprint Length — flag overflow rather than silently fitting it.
+      5. Explicitly list what is OUT of scope; defending the boundary is half the work.
+    </instructions>
+  </wave_1>
+
+  <wave_2>
+    <name>Sprint Plan Synthesis</name>
+    <purpose>
+      Synthesize current-state findings (Wave 0) and task decomposition (Wave 1)
+      into a single SPRINT_PLAN.md the team can execute against.
+    </purpose>
+
+    <team_composition>
+      - Sprint Architect: Assembles the final plan with sprint goal, phases, and milestones.
+      - Quality Planner: Defines acceptance criteria and the definition of done per task.
+      - Rollback Strategist: Documents the rollback path for every risky change.
+      - Record Keeper: Finalizes SPRINT_PLAN.md and a structured task list.
+    </team_composition>
+
+    <deliverables>
+      <deliverable path=".waves/wave-2/deliverables/SPRINT_PLAN.md">
+        CRITICAL: The only valid location for SPRINT_PLAN.md.
+        Complete sprint blueprint including:
+        1. Sprint Goal (one paragraph)
+        2. Current State Summary (3-5 sentences, linking to CURRENT_STATE.md)
+        3. Task List (structured table, see format below)
+        4. Dependency Graph (text or mermaid)
+        5. Risk Register (with mitigations and rollback)
+        6. Done Criteria
+        7. Out of Scope
+        8. Daily Checkpoint Plan (what gets reported each day)
+      </deliverable>
+    </deliverables>
+
+    <instructions>
+      1. Read both prior deliverables before drafting; reference them by relative link.
+      2. Pull the task table into SPRINT_PLAN.md verbatim from TASK_DECOMP.md.
+      3. Make the rollback strategy concrete: command-line steps, not "we'll revert."
+      4. The Daily Checkpoint Plan answers "what does the team report each morning?" in one sentence.
+    </instructions>
+  </wave_2>
+</wave_structure>
+
+<sprint_guidelines>
+  <principle>
+    Ground every task in the code that exists. If a task can't cite a file path or
+    module name from Wave 0, it is not yet a real task — it is a wish.
+  </principle>
+
+  <principle>
+    Plan for rollback before you plan for ship. Every change to live code gets a
+    rollback story; "revert the commit" only works for code-only changes with no
+    data migration and no external API surface.
+  </principle>
+
+  <principle>
+    Capacity is a hard constraint, not an aspiration. If Sprint Length × Team Size
+    cannot fit the decomposition, flag the overflow to the user before Wave 2.
+    Don't quietly squeeze.
+  </principle>
+
+  <principle>
+    Out-of-scope is a deliverable. The list of things the sprint will NOT do is
+    just as important as the list of things it will. Defending it from scope
+    creep is how the sprint actually ships.
+  </principle>
+
+  <activities_to_perform>
+    - Read the code paths relevant to the sprint goal end-to-end
+    - Survey recent commits, open PRs, and in-flight refactors
+    - Decompose the sprint goal into PR-sized tasks with dependencies
+    - Estimate each task against the team's real capacity
+    - Surface risks specific to changing live code
+    - Define a rollback strategy for every risky change
+    - Document the out-of-scope list
+    - Specify a daily checkpoint to keep the sprint visible
+  </activities_to_perform>
+
+  <workspace_organization>
+    <structure>
+      .waves/wave-0/
+        deliverables/     # ONLY CURRENT_STATE.md
+        drafts/           # Work-in-progress
+        rk-operations/    # ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
+
+      .waves/wave-1/
+        deliverables/     # ONLY TASK_DECOMP.md
+        drafts/
+        rk-operations/
+
+      .waves/wave-2/
+        deliverables/     # ONLY SPRINT_PLAN.md — final deliverable
+        drafts/
+        rk-operations/
+    </structure>
+  </workspace_organization>
+</sprint_guidelines>
+
+<task_table_format>
+  <rule>The task table in TASK_DECOMP.md and SPRINT_PLAN.md uses this exact shape:</rule>
+  <format>
+    | ID | Title | Scope (files/modules) | Estimate | Depends on | Owner | Status |
+    |----|-------|-----------------------|----------|------------|-------|--------|
+    Use component prefixes: B (Backend), F (Frontend), S (Shared), I (Infra).
+    Use status values: Open / Claimed / In Progress / Review / Done.
+  </format>
+  <rule>Estimates use person-days, not story points. The total must fit Sprint Length × Team Size with at least 20% buffer.</rule>
+</task_table_format>
+
+<success_criteria>
+  <criterion>Every task in SPRINT_PLAN.md is grounded in a file path or module from CURRENT_STATE.md</criterion>
+  <criterion>Total estimate fits the team's capacity with a documented buffer</criterion>
+  <criterion>Every risky change has a concrete rollback strategy</criterion>
+  <criterion>Out-of-scope list is explicit</criterion>
+  <criterion>Done criteria are testable, not aspirational</criterion>
+  <criterion>The team can execute against the plan without a follow-up planning meeting</criterion>
+</success_criteria>
+
+---
+
+## Standards (every wave must adhere)
+
+Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/` (deployed by `bridge/install.sh`). Every deliverable produced in this mode is judged against them. When you spawn a subagent, include the relevant protocols in its context.
+
+**Core (always apply):**
+
+- `Functional Programming & Purity Protocol.md` — pure functions, immutability, composition over inheritance
+- `Comprehensive Code Quality and Consistency Protocol.md` — naming, structure, no dead code, no monoliths
+- `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
+- `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
+- `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
+
+**Additional emphasis for this mode:**
+
+- `Testing & Quality Assurance Protocol.md` — integration tests for every shipped change
+- `DevOps & Deployment Protocol.md` — rollback plans, deploy windows, release discipline
+
+When a finding flags a protocol violation, cite the protocol filename and section so the Builder can verify.
+
+---
+
+## Subagents
+
+When this methodology calls for an "agent team" or distinct specialist roles, you have two ways to execute:
+
+- **Sequential**: play each role yourself, working through the responsibilities one at a time and writing the deliverable at the end of the wave.
+- **Parallel**: use the **Task** (Agent) tool to spawn one subagent per role with `subagent_type="general-purpose"`. Each subagent receives its role's responsibilities plus the context from prior waves. The Record Keeper role aggregates outputs.
+
+Default to parallel for waves with 3+ distinct roles and independent responsibilities. Sequential is fine for smaller waves and tightly-coupled work.
+
+## Closing each wave
+
+After each wave's deliverable is written, briefly report to the user: what was produced, where it landed, what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+
+---
+
+Acknowledge that Sprint mode is active and ask any clarifying questions inline, then begin Wave 0.

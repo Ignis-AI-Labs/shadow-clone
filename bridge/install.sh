@@ -22,7 +22,10 @@ readonly CONFIG_DIR="${HOME}/.config/sc"
 readonly CLAUDE_CMD_DIR="${HOME}/.claude/commands"
 
 # --- deploy the canonical copy ---------------------------------------------
-mkdir -p "${DEST}/lib" "${DEST}/templates"
+# (DEST/protocols is also rm+recreated by the deploy block below on success,
+# so its presence is fully managed there; the top-level mkdir only ensures
+# it exists on failure paths.)
+mkdir -p "${DEST}/lib" "${DEST}/templates" "${DEST}/protocols"
 cp "${HERE}/ask-glm.sh"    "${DEST}/ask-glm.sh"
 cp "${HERE}/ask-claude.sh" "${DEST}/ask-claude.sh"
 cp "${HERE}/sc-init.sh"    "${DEST}/sc-init.sh"
@@ -30,6 +33,28 @@ cp "${HERE}/lib/"*.sh      "${DEST}/lib/"
 cp "${HERE}/templates/"*   "${DEST}/templates/"
 chmod +x "${DEST}/ask-glm.sh" "${DEST}/ask-claude.sh" "${DEST}/sc-init.sh"
 echo "sc: installed bridge -> ${DEST}"
+
+# --- deploy the canonical coding-standards (protocols/) ---------------------
+# Source of truth: repo_root/protocols/*.md. Every /sc-* mode command
+# references these by absolute path under ${DEST}/protocols/. New protocol
+# files deploy automatically the moment they land in repo_root/protocols/.
+# Surface real failures (perm denied, disk full, no matches) — no silent fallback.
+protocols_src="${REPO_ROOT}/protocols"
+if [ ! -d "${protocols_src}" ]; then
+  echo "sc: WARN — ${protocols_src} missing; /sc-* mode commands will have no canonical standards to point at." >&2
+else
+  shopt -s nullglob
+  protocol_files=("${protocols_src}/"*.md)
+  shopt -u nullglob
+  if [ "${#protocol_files[@]}" -eq 0 ]; then
+    echo "sc: WARN — no *.md files in ${protocols_src}; nothing to deploy." >&2
+  else
+    rm -rf "${DEST}/protocols"
+    mkdir -p "${DEST}/protocols"
+    cp "${protocol_files[@]}" "${DEST}/protocols/"
+    echo "sc: installed ${#protocol_files[@]} protocol(s) -> ${DEST}/protocols/"
+  fi
+fi
 
 # --- reviewer persona for the OpenCode (GLM) side --------------------------
 mkdir -p "${AGENT_DIR}"

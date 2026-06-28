@@ -22,13 +22,15 @@ verifies the install.
 
 ## Orchestration modes
 
-These mirror Shadow Clone's seven prompt modes. Each one deploys the appropriate
-specialist agent team and runs the work in waves. Each command asks 3-4 context
-questions up front (via `AskUserQuestion`) before starting Wave 0.
+Each command asks 3-4 context questions up front (via `AskUserQuestion`) before
+starting Wave 0. Every mode adheres to the canonical engineering standards
+deployed to `~/.claude/sc/protocols/` (see "Coding standards" below).
 
 | Command | What it does | Status |
 |---|---|---|
-| `/sc-plan` | Plan mode — wave planning, master plan template, scope decomposition before any code is written. | ✅ Available |
+| `/sc-plan` | **Greenfield** plan mode — wave planning, MASTER_PLAN.md, scope decomposition before any code is written. Best for new projects. | ✅ Available |
+| `/sc-sprint` | **Active-codebase** sprint plan — Wave 0 reads current state, Wave 1 decomposes + risks, Wave 2 produces SPRINT_PLAN.md. | ✅ Available |
+| `/sc-roadmap` | **Multi-sprint horizon** plan — Wave 0 strategic context, Wave 1 workstreams + dependencies, Wave 2 ROADMAP.md with decision gates. | ✅ Available |
 | `/sc-feature` | Feature mode — multi-wave implementation team for a focused capability. | ✅ Available |
 | `/sc-refactor` | Refactor mode — safe restructure team with behavior-preserving discipline. | ✅ Available |
 | `/sc-debug` | Debug mode — investigation team, root-cause analysis, hypothesis-then-test. | ✅ Available |
@@ -52,8 +54,33 @@ These are bash scripts in `scripts/` — they're run with `bash scripts/<name>.s
 
 | Script | What it does |
 |---|---|
-| `scripts/sc-doctor.sh` | Verify the Shadow Clone install is healthy — checks every deployed path and required CLI, warns on stale files from prior installs. |
+| `scripts/sc-doctor.sh` | Verify the Shadow Clone install is healthy — checks every deployed path, required CLI, and protocols deployment; warns on stale files from prior installs. |
 | `scripts/sc-last-verdict.sh` | Print the verdict line from the most recent `/sc-echo` review in `.sc/exchange/`. |
+
+## Coding standards
+
+The canonical engineering standards live in `protocols/` in the repo and are deployed to `~/.claude/sc/protocols/` by `bridge/install.sh`. Every `/sc-*` mode command requires adherence to them.
+
+**Core standards (apply to every mode):**
+
+- `Functional Programming & Purity Protocol.md`
+- `Comprehensive Code Quality and Consistency Protocol.md`
+- `SECURITY_CHECKLIST.md`
+- `Error Handling & Resilience Protocol.md`
+- `AI-Assisted Development Protocol.md`
+
+**Additional protocols (referenced by relevant modes):**
+
+- `Architecture & System Design Protocol.md`
+- `Code Efficiency & Performance Protocol.md`
+- `Testing & Quality Assurance Protocol.md`
+- `Documentation Standards for Software Teams.md`
+- `Audit Protocol.md`
+- `Dependency & Supply Chain Management Protocol.md`
+- `DevOps & Deployment Protocol.md`
+- `Multi Agent Protocol.md`
+
+Each mode's body lists its core + additional emphasis. When a `/sc-echo` review flags a protocol violation, the finding cites the protocol filename so the Builder can verify.
 
 ## Status legend
 

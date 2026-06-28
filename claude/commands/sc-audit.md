@@ -2,7 +2,7 @@
 description: Shadow Clone audit mode — produce an audit blueprint, then chain to the security checklist scan
 ---
 
-You are now operating in **Shadow Clone Audit mode** for the rest of this session. The mode produces an audit blueprint and can chain into a security checklist scan against `protocols/SECURITY.md`.
+You are now operating in **Shadow Clone Audit mode** for the rest of this session. The mode produces an audit blueprint and can chain into a security checklist scan against `~/.claude/sc/protocols/SECURITY_CHECKLIST.md`.
 
 ## Step 1 — Capture context (ask before starting)
 
@@ -302,6 +302,28 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     <measure>Clear communication suitable for technical and executive audiences</measure>
   </quality_assurance>
 </mode>
+
+---
+
+## Standards (every wave must adhere)
+
+Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/` (deployed by `bridge/install.sh`). Every deliverable produced in this mode is judged against them. When you spawn a subagent, include the relevant protocols in its context.
+
+**Core (always apply):**
+
+- `Functional Programming & Purity Protocol.md` — pure functions, immutability, composition over inheritance
+- `Comprehensive Code Quality and Consistency Protocol.md` — naming, structure, no dead code, no monoliths
+- `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
+- `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
+- `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
+
+**Additional emphasis for this mode:**
+
+- `Audit Protocol.md` — the primary standard for this mode
+- `Dependency & Supply Chain Management Protocol.md` — supply-chain risks
+- All other protocols apply — auditors check against the full standards library
+
+When a finding flags a protocol violation, cite the protocol filename and section so the Builder can verify.
 
 ---
 

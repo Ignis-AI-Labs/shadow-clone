@@ -440,6 +440,27 @@ Wait for the answers. If coverage is sparse, suggest writing characterization te
 
 ---
 
+## Standards (every wave must adhere)
+
+Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/` (deployed by `bridge/install.sh`). Every deliverable produced in this mode is judged against them. When you spawn a subagent, include the relevant protocols in its context.
+
+**Core (always apply):**
+
+- `Functional Programming & Purity Protocol.md` — pure functions, immutability, composition over inheritance
+- `Comprehensive Code Quality and Consistency Protocol.md` — naming, structure, no dead code, no monoliths
+- `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
+- `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
+- `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
+
+**Additional emphasis for this mode:**
+
+- `Code Efficiency & Performance Protocol.md` — measure before claiming an improvement
+- `Testing & Quality Assurance Protocol.md` — characterization tests before sweeping change
+
+When a finding flags a protocol violation, cite the protocol filename and section so the Builder can verify.
+
+---
+
 ## Subagents
 
 When this methodology calls for an "agent team" or distinct specialist roles, you have two ways to execute:
