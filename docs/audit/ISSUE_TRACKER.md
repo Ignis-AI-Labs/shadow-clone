@@ -110,6 +110,25 @@ _None yet._
   this entry is the flag that the prior period was non-conforming. The lifecycle
   branch is being migrated to `efficio/dev` as part of the new flow.
 
+- **Issue ID**: ECHO-003
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3 of Phase C port)
+- **Date Discovered**: 2026-06-28
+- **Source**: `/sc-echo` paired-review of the 7-mode Phase C port
+- **Severity**: Info (Low)
+- **Location**: `claude/commands/sc-plan.md` — `task_list_requirement` (~lines 337-347) vs `file_creation_discipline` (~lines 280-307)
+- **Description**: Pre-existing internal tension (inherited verbatim from
+  `mcp-server/src/prompts/content/mode_plan.ts`, not introduced by the port).
+  `task_list_requirement` directs saving `TASKS-backend.md` / `TASKS-frontend.md` /
+  `TASKS-shared.md` without specifying a path, while `file_creation_discipline`
+  mandates "NEVER create files outside the designated wave structure." A reader
+  could be confused about where task lists land relative to `.waves/`.
+- **Resolution**: Deferred. Reviewer marked "Low priority; defer if desired"
+  during the round-3 APPROVE. Fix in a future touch — either specify
+  `.waves/wave-2/deliverables/TASKS-*.md` as the path, or add an explicit
+  task-list exemption to `file_creation_discipline`. Either way, fix in both
+  the slash command AND the upstream `mcp-server/src/prompts/content/mode_plan.ts`
+  so they don't re-diverge.
+
 ---
 
 ## False Positive

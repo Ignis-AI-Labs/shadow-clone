@@ -20,22 +20,25 @@ verifies the install.
 | `/sc-help` | Show this catalog. | ✅ Available |
 | `/sc-echo` | Enter paired-review mode — a second model reviews each completed work unit against `AGENTS.md`, returning `VERDICT: APPROVE \| REVISE \| BLOCK \| ERROR`. Loop up to 3 rounds per unit. | ✅ Available |
 
-## Orchestration modes (Phase C)
+## Orchestration modes
 
 These mirror Shadow Clone's seven prompt modes. Each one deploys the appropriate
-specialist agent team and runs the work in waves.
+specialist agent team and runs the work in waves. Each command asks 3-4 context
+questions up front (via `AskUserQuestion`) before starting Wave 0.
 
 | Command | What it does | Status |
 |---|---|---|
-| `/sc-plan` | Plan mode — wave planning, master plan template, scope decomposition before any code is written. | 🚧 Phase C |
-| `/sc-feature` | Feature mode — multi-wave implementation team for a focused capability. | 🚧 Phase C |
-| `/sc-refactor` | Refactor mode — safe restructure team with behavior-preserving discipline. | 🚧 Phase C |
-| `/sc-debug` | Debug mode — investigation team, root-cause analysis, hypothesis-then-test. | 🚧 Phase C |
-| `/sc-optimize` | Optimize mode — performance team, measure-first, micro-vs-macro tradeoff awareness. | 🚧 Phase C |
-| `/sc-research` | Research mode — open-ended investigation team for tech selection or spike work. | 🚧 Phase C |
-| `/sc-audit` | Audit mode — planning team that produces an audit blueprint, then chains into the security checklist scan. | 🚧 Phase C |
+| `/sc-plan` | Plan mode — wave planning, master plan template, scope decomposition before any code is written. | ✅ Available |
+| `/sc-feature` | Feature mode — multi-wave implementation team for a focused capability. | ✅ Available |
+| `/sc-refactor` | Refactor mode — safe restructure team with behavior-preserving discipline. | ✅ Available |
+| `/sc-debug` | Debug mode — investigation team, root-cause analysis, hypothesis-then-test. | ✅ Available |
+| `/sc-optimize` | Optimize mode — performance team, measure-first, micro-vs-macro tradeoff awareness. | ✅ Available |
+| `/sc-research` | Research mode — open-ended investigation team for tech selection or spike work. | ✅ Available |
+| `/sc-audit` | Audit mode — planning team that produces an audit blueprint, then chains into the security checklist scan. | ✅ Available |
 
-## Rapid utilities (Phase C)
+## Rapid utilities
+
+These are smaller, single-purpose helpers — still on the roadmap (not yet built).
 
 | Command | What it does | Status |
 |---|---|---|
