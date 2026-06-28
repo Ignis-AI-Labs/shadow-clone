@@ -90,6 +90,31 @@ _None yet._
 - **Verification**: `node --check` passes; fix applied after the 3-round /sc-echo cap.
   Manual review only.
 
+- **Issue ID**: SCWS-001
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3 of wave/subagent protocol work)
+- **Date Discovered**: 2026-06-29
+- **Source**: `/sc-echo` paired-review of the Shadow Clone Wave & Subagent Coordination Protocol introduction
+- **Severity**: Medium
+- **Location**: `protocols/Shadow Clone Wave & Subagent Coordination Protocol.md` §3 — `4-7 / Standard` table row
+- **Description**: §1 was reworded to state the Record Keeper "runs strictly after specialists … RK is never concurrent," but §3's Standard row still framed the cap as "4 + 1 = 5 total," invoking concurrent counting and contradicting §1 — the exact contradiction F2 was meant to eliminate, left half-applied.
+
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-29
+- **Fix Description**: Rewrote §3 Standard row's parenthetical to "per-wave peak concurrency = 4 specialists; RK is never concurrent with them — see §1." Removed the "4 + 1 = 5 total" framing.
+- **Verification**: Manual read of §1 and §3 — both now state concurrency in specialist-only terms. Fix applied after the 3-round /sc-echo cap; the reviewer did not re-verify.
+
+- **Issue ID**: SCWS-002
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3 of wave/subagent protocol work)
+- **Date Discovered**: 2026-06-29
+- **Source**: `/sc-echo` paired-review of the Shadow Clone Wave & Subagent Coordination Protocol introduction
+- **Severity**: Low
+- **Location**: `protocols/Shadow Clone Wave & Subagent Coordination Protocol.md` §2 wave lifecycle (steps 6-7) vs. each mode's `## Closing each wave` section
+- **Description**: Round 2 attempted to remove a closing-instruction duplication by deleting it from the mode-level Subagents block, but §2 steps 6-7 still spelled out the wave-close summary + `/sc-echo` dispatch — duplicating the mode body's `## Closing each wave` section. F4 was unresolved.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-29
+- **Fix Description**: Collapsed §2 steps 6-7 into a single step 6 that cross-references "the mode body's `## Closing each wave` section" as the single source of truth.
+- **Verification**: Manual read of §2 and any one mode body's Closing section — only one place now describes the close-wave behavior. Fix applied after the 3-round /sc-echo cap; the reviewer did not re-verify.
+
 ---
 
 ## Deferred

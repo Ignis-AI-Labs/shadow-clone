@@ -21,6 +21,8 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
 3. **Parallel workstreams** (header `Streams`) — options: `1 (single thread)`, `2-3`, `4-5`, `6+ (large org)`.
 4. **Output emphasis** (header `Output`) — options: `ROADMAP.md (single doc)`, `ROADMAP.md + per-sprint backlog stubs`, `ROADMAP.md + decision matrix`.
 
+5. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`. Drives the per-wave subagent spawn cap (see the Subagents section below).
+
 Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0.
 
 ## Step 2 — Run the methodology
@@ -270,14 +272,23 @@ When a finding flags a protocol violation, cite the protocol filename and sectio
 
 ---
 
-## Subagents
+## Subagents & wave coordination
 
-When this methodology calls for an "agent team" or distinct specialist roles, you have two ways to execute:
+Spawning is governed by the **Shadow Clone Wave & Subagent Coordination Protocol** at `~/.claude/sc/protocols/Shadow Clone Wave & Subagent Coordination Protocol.md`. Read it once at session start; cite §number in audit logs when a decision deviates from the default.
 
-- **Sequential**: play each role yourself, working through the responsibilities one at a time and writing the deliverable at the end of the wave.
-- **Parallel**: use the **Task** (Agent) tool to spawn one subagent per role with `subagent_type="general-purpose"`. Each subagent receives its role's responsibilities plus the context from prior waves. The Record Keeper role aggregates outputs.
+### This mode's defaults
 
-Default to parallel for waves with 3+ distinct roles and independent responsibilities. Sequential is fine for smaller waves and tightly-coupled work.
+- **Wave count:** declared in `<wave_structure>` above. Hard ceiling at 5 waves.
+- **Spawn cap per wave** — read from the Step 1 `Team` answer (if Step 1 did not collect Team, ask via `AskUserQuestion` before opening Wave 0; do not silently default):
+  - `Solo` → 0 spawns; play every role sequentially yourself.
+  - `2-3` → up to 2 specialist clones in parallel; you play the Record Keeper.
+  - `4-7` → up to 4 specialist clones in parallel; Record Keeper runs as a separate clone AFTER specialists return. Per-wave concurrent peak is 4 (under the §1 hard cap of 5).
+  - `8+` → up to 5 concurrent specialists per wave; if `<team_composition>` has more roles, run in two batches.
+- **Always-present role:** Record Keeper. Never merged, never dropped. Authors the wave's deliverable.
+
+### Procedure (lives in the Protocol)
+
+Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 mandatory clone-prompt elements (§4), Standards passing (§5), Record Keeper contract (§6), failure handling (§7), skip rules (§8), and audit logging (§9) are all defined in the Protocol — follow them by section. Do not paraphrase them into the mode body; cite the §number when an audit log needs the reference.
 
 ## Closing each wave
 

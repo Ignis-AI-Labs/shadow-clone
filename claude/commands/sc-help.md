@@ -69,6 +69,11 @@ The canonical engineering standards live in `protocols/` in the repo and are dep
 - `Error Handling & Resilience Protocol.md`
 - `AI-Assisted Development Protocol.md`
 
+**Operational protocols (govern HOW Shadow Clone runs):**
+
+- `Multi Agent Protocol.md` — orchestrator-worker theory and numeric caps (upstream allows ≤5-7 reports, 3-5 concurrent sweet spot)
+- `Shadow Clone Wave & Subagent Coordination Protocol.md` — Shadow-Clone-specific operational rules: wave lifecycle, role-to-clone mapping, team-size capping, mandatory clone-prompt contents, Record Keeper contract, failure modes, audit logging. This protocol **tightens** the upstream range to a hard **5 concurrent specialists** per wave, with the Record Keeper running strictly after specialists (not counted against the concurrent cap).
+
 **Additional protocols (referenced by relevant modes):**
 
 - `Architecture & System Design Protocol.md`
@@ -78,7 +83,6 @@ The canonical engineering standards live in `protocols/` in the repo and are dep
 - `Audit Protocol.md`
 - `Dependency & Supply Chain Management Protocol.md`
 - `DevOps & Deployment Protocol.md`
-- `Multi Agent Protocol.md`
 
 Each mode's body lists its core + additional emphasis. When a `/sc-echo` review flags a protocol violation, the finding cites the protocol filename so the Builder can verify.
 
