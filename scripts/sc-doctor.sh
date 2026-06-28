@@ -19,10 +19,15 @@ set -euo pipefail
 
 # --- pure: where each piece is expected to live -----------------------------
 
+# The doctor lives in <repo>/scripts/, so the repo root is one level up.
+# Used to enumerate the canonical source of /sc-* slash commands.
+readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 readonly BRIDGE_DIR="${HOME}/.claude/sc"
 readonly CONFIG_DIR="${HOME}/.config/sc"
 readonly CLAUDE_CMD_DIR="${HOME}/.claude/commands"
 readonly OPENCODE_DIR="${HOME}/.config/opencode"
+readonly CLAUDE_CMD_SRC="${REPO_ROOT}/claude/commands"
 
 # Top-level bridge scripts that get invoked as commands — must be +x.
 # (bridge/install.sh chmods exactly these.)
@@ -139,9 +144,24 @@ check_config() {
   check_file "${CONFIG_DIR}/config" "config"
 }
 
-check_claude_command() {
-  printf '\nClaude Code /sc-echo command:\n'
-  check_file "${CLAUDE_CMD_DIR}/sc-echo.md" "sc-echo.md"
+check_claude_commands() {
+  printf '\nClaude Code /sc-* commands (%s):\n' "${CLAUDE_CMD_DIR}"
+  if [ ! -d "${CLAUDE_CMD_SRC}" ]; then
+    report FAIL "source dir" "missing: ${CLAUDE_CMD_SRC}"
+    return
+  fi
+  # Derive the expected list from the canonical source so the doctor stays in
+  # lockstep with bridge/install.sh — no hardcoded list to drift.
+  local any=0
+  for src in "${CLAUDE_CMD_SRC}"/sc-*.md; do
+    [ -e "${src}" ] || continue
+    any=1
+    local name; name="$(basename "${src}")"
+    check_file "${CLAUDE_CMD_DIR}/${name}" "${name}"
+  done
+  if [ "${any}" -eq 0 ]; then
+    report FAIL "any /sc-* commands" "no sc-*.md files in ${CLAUDE_CMD_SRC}"
+  fi
 }
 
 check_opencode() {
@@ -178,7 +198,7 @@ printf 'sc-doctor: checking Shadow Clone install...\n'
 
 check_bridge
 check_config
-check_claude_command
+check_claude_commands
 check_opencode
 check_path
 check_upgrade_residue
