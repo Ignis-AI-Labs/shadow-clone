@@ -120,8 +120,8 @@ functional bug) · **Medium** (correctness/maintenance) · **Low** (cosmetic/sty
 This repository runs a **bidirectional** paired-review loop. Whoever does the work is
 the Builder; the other agent independently checks it. Two perspectives, one standard.
 
-- When **Claude** builds, the **second model** reviews (`/echo` in Claude Code).
-- When the **second model** builds, **Claude** reviews (`/echo` in OpenCode).
+- When **Claude** builds, the **second model** reviews (`/sc-echo` in Claude Code).
+- When the **second model** builds, **Claude** reviews (`/sc-echo` in OpenCode).
 
 ### When review fires
 
@@ -133,7 +133,7 @@ self-contained change (feature, fix, module, refactor). Trivial non-code edits
 
 - Reviews are dispatched by the direction-appropriate bridge: `~/.claude/sc/ask-glm.sh`
   (Claude → second model) or `~/.claude/sc/ask-claude.sh` (second model → Claude). On the
-  OpenCode side the `echo_review` tool wraps the bridge.
+  OpenCode side the `sc_echo_review` tool wraps the bridge.
 - Each exchange is logged under `.sc/exchange/` as a timestamped
   `*-request.md` / `*-response.md` pair — a durable, auditable record.
 - The Reviewer receives: the Builder's context, the git diff, the full text of the

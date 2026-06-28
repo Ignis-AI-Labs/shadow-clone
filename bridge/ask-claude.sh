@@ -57,7 +57,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 REQ="${EXCHANGE_DIR}/${STAMP}-request.md"
 RESP="${EXCHANGE_DIR}/${STAMP}-response.md"
 
-# --- reviewer contract (mirrors agent/echo-reviewer.md) ----------------------
+# --- reviewer contract (mirrors agent/sc-echo-reviewer.md) ----------------------
 read -r -d '' SYS <<'SYSEOF' || true
 You are the Reviewer in an echo paired-review loop. The Builder has completed a unit
 of work and submitted it to you. Review it independently and rigorously — a second,
@@ -93,7 +93,7 @@ exactly "VERDICT: APPROVE", "VERDICT: REVISE", or "VERDICT: BLOCK" — it is par
 by machine.
 SYSEOF
 
-# Per-pass invoker used by echo_review ($1=request file, $2=response file).
+# Per-pass invoker used by sc_echo_review ($1=request file, $2=response file).
 # Request is piped via stdin to avoid argument-length limits on large diffs.
 # Mutating tools are disallowed so the reviewer stays read-only. The shared runner
 # bounds, retries, reaps, and never hangs.
@@ -111,7 +111,7 @@ sc_mark_in_review "ask-claude.sh"
 
 # Build + review, splitting into multiple passes if the payload is large so the
 # reviewer always sees every file in full.
-echo_review
+sc_echo_review
 
 # --- emit ------------------------------------------------------------------
 echo "sc: review logged at ${RESP}" >&2

@@ -8,7 +8,7 @@
 # ~/.config/opencode/plugin/ — a symlink whose target is elsewhere (e.g. this repo)
 # resolves the import from the wrong tree and silently fails to load.
 #
-# Re-run this after editing echo.js.
+# Re-run this after editing sc-echo.js.
 
 set -euo pipefail
 
@@ -17,9 +17,9 @@ readonly PLUGIN_DIR="${HOME}/.config/opencode/plugin"
 readonly COMMAND_DIR="${HOME}/.config/opencode/command"
 
 mkdir -p "${PLUGIN_DIR}" "${COMMAND_DIR}"
-cp "${HERE}/echo.js" "${PLUGIN_DIR}/echo.js"
-cp "${HERE}/command/echo.md" "${COMMAND_DIR}/echo.md"
+cp "${HERE}/sc-echo.js" "${PLUGIN_DIR}/sc-echo.js"
+cp "${HERE}/command/sc-echo.md" "${COMMAND_DIR}/sc-echo.md"
 
-echo "sc: installed tool   -> ${PLUGIN_DIR}/echo.js"
-echo "sc: installed command -> ${COMMAND_DIR}/echo.md"
-echo "sc: run /echo inside an OpenCode session to activate paired-review mode."
+echo "sc: installed tool   -> ${PLUGIN_DIR}/sc-echo.js"
+echo "sc: installed command -> ${COMMAND_DIR}/sc-echo.md"
+echo "sc: run /sc-echo inside an OpenCode session to activate paired-review mode."

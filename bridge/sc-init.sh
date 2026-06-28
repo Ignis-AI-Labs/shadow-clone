@@ -33,4 +33,4 @@ create_if_missing() {
 create_if_missing AGENTS.md
 create_if_missing CLAUDE.md
 
-printf 'sc: ready. Adapt AGENTS.md (Rules 1-8) to your project, keep Rule 9, then run /echo.\n'
+printf 'sc: ready. Adapt AGENTS.md (Rules 1-8) to your project, keep Rule 9, then run /sc-echo.\n'

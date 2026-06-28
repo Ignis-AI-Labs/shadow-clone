@@ -45,13 +45,24 @@ readonly BRIDGE_DATA_FILES=(
 
 # Files the OpenCode-side installer must deploy.
 readonly OPENCODE_FILES=(
-  "agent/echo-reviewer.md"
-  "plugin/echo.js"
-  "command/echo.md"
+  "agent/sc-echo-reviewer.md"
+  "plugin/sc-echo.js"
+  "command/sc-echo.md"
 )
 
 # External CLIs the bridge calls directly.
 readonly REQUIRED_CMDS=("opencode" "claude" "flock" "setsid")
+
+# Installed paths from earlier names that should no longer exist. A user
+# upgrading from a previous Shadow Clone may have both old and new files
+# registered side by side; the doctor warns (never fails) so they know to
+# clean up. Extend this list when a future rename ships.
+readonly STALE_FILES=(
+  "${HOME}/.claude/commands/echo.md"
+  "${HOME}/.config/opencode/command/echo.md"
+  "${HOME}/.config/opencode/agent/echo-reviewer.md"
+  "${HOME}/.config/opencode/plugin/echo.js"
+)
 
 # --- impure: reporting ------------------------------------------------------
 
@@ -101,6 +112,16 @@ check_cmd() {
   fi
 }
 
+# check_stale PATH — warn (but never fail) if a file from a prior naming
+# is still installed. Two competing installs is a quiet way for users to
+# end up running an outdated /echo alongside the current /sc-echo.
+check_stale() {
+  local path="$1"
+  if [ -e "${path}" ]; then
+    printf '  WARN  stale install: %s — remove this file.\n' "${path}"
+  fi
+}
+
 # --- check groups -----------------------------------------------------------
 
 check_bridge() {
@@ -119,8 +140,8 @@ check_config() {
 }
 
 check_claude_command() {
-  printf '\nClaude Code /echo command:\n'
-  check_file "${CLAUDE_CMD_DIR}/echo.md" "echo.md"
+  printf '\nClaude Code /sc-echo command:\n'
+  check_file "${CLAUDE_CMD_DIR}/sc-echo.md" "sc-echo.md"
 }
 
 check_opencode() {
@@ -137,6 +158,20 @@ check_path() {
   done
 }
 
+check_upgrade_residue() {
+  printf '\nUpgrade residue (warn-only):\n'
+  local any=0
+  for p in "${STALE_FILES[@]}"; do
+    if [ -e "${p}" ]; then
+      check_stale "${p}"
+      any=1
+    fi
+  done
+  if [ "${any}" -eq 0 ]; then
+    printf '  OK    no stale files from prior installs.\n'
+  fi
+}
+
 # --- main -------------------------------------------------------------------
 
 printf 'sc-doctor: checking Shadow Clone install...\n'
@@ -146,6 +181,7 @@ check_config
 check_claude_command
 check_opencode
 check_path
+check_upgrade_residue
 
 printf '\n'
 if [ "${FAILS}" -eq 0 ]; then

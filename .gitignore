@@ -4,6 +4,9 @@
 .waves/
 .backup/
 
+# Per-project /sc-echo review exchange log (request/response pairs)
+.sc/
+
 # Local development (creator mode, local configs)
 .shadow-local/
 

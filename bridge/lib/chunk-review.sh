@@ -26,8 +26,8 @@ sc_verdict_of() {
   [ -n "${v}" ] && echo "${v}" || echo "ERROR"
 }
 
-# echo_review: build + invoke, chunking by SC_MAX_CHARS when needed. Writes RESP.
-echo_review() {
+# sc_echo_review: build + invoke, chunking by SC_MAX_CHARS when needed. Writes RESP.
+sc_echo_review() {
   local budget="${SC_MAX_CHARS:-200000}"
 
   # Fixed per-request overhead: AGENTS.md + the context note + markup slack.

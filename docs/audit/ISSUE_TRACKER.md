@@ -52,6 +52,44 @@ _None yet._
   guard refuses nested reviews). Confirmed live: an `ai-6` review and an `msra` review
   ran concurrently without blocking, and the 27h zombie tree was reaped.
 
+- **Issue ID**: ECHO-001
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3)
+- **Date Discovered**: 2026-06-28
+- **Source**: `/sc-echo` paired-review of the `echo` → `sc-echo` system-wide rename
+- **Severity**: Low
+- **Location**: `opencode-plugin/sc-echo.js` — file-header JSDoc (top of file)
+- **Description**: F2 of the rename review updated the inline `execute` JSDoc and the
+  tool `description` to include `VERDICT: …|ERROR`, but the top-of-file header comment
+  still listed only `APPROVE|REVISE|BLOCK`. A reader scanning the header only would
+  miss the transport-signal and could loop on a bridge failure — the exact failure
+  mode F2 was meant to prevent.
+
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-28
+- **Fix Description**: Updated the file-header JSDoc to list
+  `APPROVE|REVISE|BLOCK|ERROR` with the same ERROR semantics noted in the inline
+  JSDoc (surface to human, do not loop).
+- **Verification**: `node --check` passes; fix applied after the 3-round /sc-echo cap
+  had elapsed (REVISE at round 3), so the Reviewer did not re-verify the patched
+  header. Manual review only.
+
+- **Issue ID**: ECHO-002
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3)
+- **Date Discovered**: 2026-06-28
+- **Source**: `/sc-echo` paired-review of the `echo` → `sc-echo` system-wide rename
+- **Severity**: Info
+- **Location**: `opencode-plugin/sc-echo.js` — `execute()` callback, `ctx.directory`
+- **Description**: `const dir = ctx.directory || directory;` throws TypeError if the
+  SDK ever calls `execute(args)` without a context object. Likely a no-op under the
+  current OpenCode contract, but a silent-failure-path Rule 3 wants explicit.
+
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-28
+- **Fix Description**: Guarded the access with `ctx?.directory` so a missing context
+  falls back to the session `directory` instead of throwing.
+- **Verification**: `node --check` passes; fix applied after the 3-round /sc-echo cap.
+  Manual review only.
+
 ---
 
 ## Deferred

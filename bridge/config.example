@@ -12,7 +12,7 @@
 : "${SC_REVIEWER_MODEL:=zai-coding-plan/glm-5.2}"
 
 # OpenCode agent used for the review (read-only persona shipped with Shadow Clone).
-: "${SC_REVIEWER_AGENT:=echo-reviewer}"
+: "${SC_REVIEWER_AGENT:=sc-echo-reviewer}"
 
 # --- Reviewer when the other model builds (ask-claude.sh, via Claude Code) ---
 # A `claude --model` alias or full model id (e.g. opus, sonnet, claude-opus-4-8).

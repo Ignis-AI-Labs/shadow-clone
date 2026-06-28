@@ -13,12 +13,12 @@ After you complete each **work unit** — a coherent, self-contained change (a f
 feature, bug fix, new module, or refactor) — do the following before telling the user
 it's done:
 
-1. **Dispatch a review.** Call the **`echo_review`** tool with:
+1. **Dispatch a review.** Call the **`sc_echo_review`** tool with:
    - `context`: a concise description of what you did and why.
    - `files`: the paths of every file you created or modified in this work unit.
 
    The tool hands the work (git diff, full file contents, and `AGENTS.md`) to the
-   Claude Reviewer and returns its review. (If the `echo_review` tool is unavailable,
+   Claude Reviewer and returns its review. (If the `sc_echo_review` tool is unavailable,
    fall back to: `bash ~/.claude/sc/ask-claude.sh "<context>" <files...>`.)
 
 2. **Read the verdict** on the final `VERDICT:` line of the output.

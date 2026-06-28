@@ -10,7 +10,7 @@
 #
 # Configurable via env or ${XDG_CONFIG_HOME:-~/.config}/sc/config:
 #   SC_REVIEWER_MODEL   provider/model for the reviewer (default zai-coding-plan/glm-5.2)
-#   SC_REVIEWER_AGENT   OpenCode agent to use            (default echo-reviewer)
+#   SC_REVIEWER_AGENT   OpenCode agent to use            (default sc-echo-reviewer)
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ SC_CONFIG="${SC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/sc/config}"
 [ -f "${SC_CONFIG}" ] && . "${SC_CONFIG}"
 
 readonly MODEL="${SC_REVIEWER_MODEL:-zai-coding-plan/glm-5.2}"
-readonly AGENT="${SC_REVIEWER_AGENT:-echo-reviewer}"
+readonly AGENT="${SC_REVIEWER_AGENT:-sc-echo-reviewer}"
 # Physical path (-P): the file-containment filter compares against realpath output,
 # so PROJECT_DIR must also be symlink-resolved or every file is wrongly skipped when
 # the project root is reached through a symlink.
@@ -59,7 +59,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 REQ="${EXCHANGE_DIR}/${STAMP}-request.md"
 RESP="${EXCHANGE_DIR}/${STAMP}-response.md"
 
-# Per-pass invoker used by echo_review ($1=request file, $2=response file).
+# Per-pass invoker used by sc_echo_review ($1=request file, $2=response file).
 # The request is attached as a file to avoid argument-length limits on large diffs.
 # NOTE: the message positional MUST come before --file= (the flag is a greedy array).
 # --port 0 gives each run its own random server port (isolation across concurrent
@@ -80,7 +80,7 @@ sc_mark_in_review "ask-glm.sh"
 
 # Build + review, splitting into multiple passes if the payload is large so the
 # reviewer always sees every file in full.
-echo_review
+sc_echo_review
 
 # --- emit ------------------------------------------------------------------
 echo "sc: review logged at ${RESP}" >&2

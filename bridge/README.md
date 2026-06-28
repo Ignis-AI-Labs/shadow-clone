@@ -12,7 +12,7 @@ bridge/
   sc-init.sh       scaffold AGENTS.md + CLAUDE.md into a project
   install.sh        deploy everything (see below)
   config.example    tunables, seeded to ~/.config/sc/config
-  agent/            echo-reviewer.md — the read-only OpenCode reviewer persona
+  agent/            sc-echo-reviewer.md — the read-only OpenCode reviewer persona
   templates/        AGENTS.md + CLAUDE.md used by sc-init.sh
   lib/
     guard.sh        re-entrancy guard (a reviewer can't start a review)

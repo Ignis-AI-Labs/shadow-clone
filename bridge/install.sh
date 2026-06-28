@@ -5,7 +5,7 @@
 #
 # Deploys:
 #   ~/.claude/sc/                              ask-*.sh, lib/, sc-init.sh, templates/
-#   ~/.config/opencode/agent/echo-reviewer.md  the read-only reviewer persona
+#   ~/.config/opencode/agent/sc-echo-reviewer.md  the read-only reviewer persona
 #   ~/.config/sc/config                        from config.example, only if absent
 #
 # Existing user config is never overwritten. Re-run after editing anything here.
@@ -33,18 +33,18 @@ echo "sc: installed bridge -> ${DEST}"
 
 # --- reviewer persona for the OpenCode (GLM) side --------------------------
 mkdir -p "${AGENT_DIR}"
-cp "${HERE}/agent/echo-reviewer.md" "${AGENT_DIR}/echo-reviewer.md"
-echo "sc: installed reviewer agent -> ${AGENT_DIR}/echo-reviewer.md"
+cp "${HERE}/agent/sc-echo-reviewer.md" "${AGENT_DIR}/sc-echo-reviewer.md"
+echo "sc: installed reviewer agent -> ${AGENT_DIR}/sc-echo-reviewer.md"
 
-# --- /echo slash command for Claude Code -----------------------------------
-# Source of truth is repo_root/claude/commands/echo.md; copied to the user-level
-# command directory so Claude Code discovers /echo in any project.
+# --- /sc-echo slash command for Claude Code -----------------------------------
+# Source of truth is repo_root/claude/commands/sc-echo.md; copied to the user-level
+# command directory so Claude Code discovers /sc-echo in any project.
 mkdir -p "${CLAUDE_CMD_DIR}"
-if [ -f "${REPO_ROOT}/claude/commands/echo.md" ]; then
-  cp "${REPO_ROOT}/claude/commands/echo.md" "${CLAUDE_CMD_DIR}/echo.md"
-  echo "sc: installed Claude /echo command -> ${CLAUDE_CMD_DIR}/echo.md"
+if [ -f "${REPO_ROOT}/claude/commands/sc-echo.md" ]; then
+  cp "${REPO_ROOT}/claude/commands/sc-echo.md" "${CLAUDE_CMD_DIR}/sc-echo.md"
+  echo "sc: installed Claude /sc-echo command -> ${CLAUDE_CMD_DIR}/sc-echo.md"
 else
-  echo "sc: WARN — ${REPO_ROOT}/claude/commands/echo.md missing; skipping /echo install." >&2
+  echo "sc: WARN — ${REPO_ROOT}/claude/commands/sc-echo.md missing; skipping /sc-echo install." >&2
 fi
 
 # --- config (never clobber the user's) -------------------------------------
