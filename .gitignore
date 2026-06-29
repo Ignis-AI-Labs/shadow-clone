@@ -7,8 +7,15 @@
 # Per-project /sc-echo review exchange log (request/response pairs)
 .sc/
 
-# Local development (creator mode, local configs)
+# Legacy MCP-era prompt content (replaced by protocols/ + claude/commands/)
+.shadow/
+
+# Personal / local-only artifacts (do not commit)
+wsl-creator-config.json
 .shadow-local/
+DEVELOPER-HANDOFF.md
+CLAUDE_TEMPLATE.md
+image.png
 
 # IDE and editor files
 .vscode/
