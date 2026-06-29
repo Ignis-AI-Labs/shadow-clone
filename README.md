@@ -16,7 +16,7 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 ## Install
 
 ```bash
-git clone https://github.com/ElijahMoses/shadow-clone.git
+git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 bash bridge/install.sh
 bash scripts/sc-doctor.sh        # verify the install is healthy

@@ -52,13 +52,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ElijahMoses/shadow-clone.git",
+    "url": "https://github.com/Ignis-AI-Labs/shadow-clone.git",
     "directory": "mcp-server"
   },
   "bugs": {
-    "url": "https://github.com/ElijahMoses/shadow-clone/issues"
+    "url": "https://github.com/Ignis-AI-Labs/shadow-clone/issues"
   },
-  "homepage": "https://github.com/ElijahMoses/shadow-clone/tree/main/mcp-server",
+  "homepage": "https://github.com/Ignis-AI-Labs/shadow-clone/tree/main/mcp-server",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "dotenv": "^16.3.1",
