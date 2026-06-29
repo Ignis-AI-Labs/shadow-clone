@@ -2,14 +2,14 @@
 description: Shadow Clone planning mode — produce a MASTER_PLAN through Wave-0 foundation, Wave-1 research, Wave-2 synthesis
 ---
 
-You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `.waves/wave-2/deliverables/MASTER_PLAN.md`.
+You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `.waves/wave-2/deliverables/MASTER_PLAN.md`. Plans sit in the middle of the Shadow Clone hierarchy (**sprint** (hours) → **plan** (day) → **roadmap** (week)) — longer than a sprint's quick flow, shorter than a roadmap's multi-sprint sequence.
 
 ## Step 1 — Capture context (ask before starting)
 
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Project goal** (header `Goal`) — one sentence describing what we're planning. Free-text.
-2. **Time horizon** (header `Horizon`) — options: `Hours (Recommended)`, `1-2 days`, `Weeks`, `Open-ended`. **Bias toward the shorter realistic option.** AI-augmented work compresses planning horizons by roughly 5-40× (wall-clock) vs. legacy human-only teams, depending on scope shape: a plan a 4-person team would have spent ~40h on is typically 1-3 hours of `/sc-plan` waves (≈13-40×); a multi-sprint roadmap a team would have stretched across a quarter is typically 1-2 weeks (≈6-12×). Only recommend `Weeks` when the scope genuinely spans multiple distinct subsystems or coordinated cross-team work. Never inflate the horizon to fit an ambitious goal — descope the plan instead.
+2. **Time horizon** (header `Horizon`) — options: `Hours`, `1 day (Recommended)`, `2-3 days`, `1 week+`. **Bias toward the shorter realistic option.** Plans live in the middle of the Shadow Clone hierarchy: longer than a sprint (which is sub-day, a "quick flow"), shorter than a roadmap (which is week-scale). A typical AI-augmented plan takes about a day — long enough to do real foundation + research + synthesis across the three waves, short enough that the user isn't waiting for legacy human cadence. `Hours` is for a small focused plan (single feature, tight MVP); `1 day` is the typical case; `2-3 days` for plans with significant research breadth; `1 week+` only for genuinely multi-subsystem or cross-team scope. Never inflate to "Weeks" because the goal sounds ambitious — descope the plan instead.
 3. **Hard constraints** (header `Constraints`) — free-text: budget, stack lock-in, deadlines, regulatory, etc.
 4. **Output location** (header `Output`) — options: `Default (.waves/)`, `Custom path`.
 

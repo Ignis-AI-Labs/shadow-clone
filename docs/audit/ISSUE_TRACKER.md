@@ -127,6 +127,18 @@ _None yet._
 - **Fix Description**: Rewrote sc-help intro to "Every Shadow Clone surface is a slash command: the umbrella `/sc`, plus the `/sc-<name>` mode family." Updated sc.md frontmatter description to mention both `/sc` and `/sc-*`.
 - **Verification**: Manual read; fix applied after the 3-round /sc-echo cap. Also during R3 the reviewer flagged that `bridge/install.sh`'s glob might not have been updated alongside `sc-doctor`'s — verified locally: install.sh:73 already uses `sc*.md` (changed in R2), so the "lockstep" claim was correct; the reviewer just couldn't see install.sh in the R3 dispatch.
 
+- **Issue ID**: SP-001
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` round 3 of the planning-hierarchy recalibration)
+- **Date Discovered**: 2026-06-29
+- **Source**: `/sc-echo` paired-review of the sprint(hours) → plan(day) → roadmap(week) hierarchy recalibration
+- **Severity**: Medium / Low
+- **Location**: `claude/commands/sc-roadmap.md` — STRATEGIC_CONTEXT deliverable description (`in the last 1-2 horizons`) and Wave 0 instruction 2 (lookback only covered `1 week` and `2-4 weeks` options)
+- **Description**: After recalibrating roadmap horizons to `Days / 1 week (Rec) / 2-4 weeks / Open-ended`, two downstream references were stale: (a) the STRATEGIC_CONTEXT deliverable said to survey "the last 1-2 horizons" of shipped initiatives — for a 1-week horizon that resolves to 1-2 weeks, contradicting the State-of-the-Union Reader's "recent 1-3 months" and Wave 0 instruction 2's "1-2 months"; (b) Wave 0 instruction 2's lookback windows only mapped `1 week` and `2-4 weeks`, leaving `Days` and `Open-ended` without guidance.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-29
+- **Fix Description**: Aligned STRATEGIC_CONTEXT deliverable to "the last 1-3 months" with an inline reference back to the role description so the three lookback windows agree. Extended Wave 0 instruction 2 to map all four horizon options: `Days` → last 2-4 weeks, `1 week` → 1-2 months, `2-4 weeks` → 2-3 months, `Open-ended` → 3-6 months.
+- **Verification**: Manual read; fix applied after the 3-round /sc-echo cap. The reviewer did not re-verify.
+
 ---
 
 ## Deferred

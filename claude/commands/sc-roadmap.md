@@ -2,7 +2,7 @@
 description: Shadow Clone roadmap mode — plan a multi-sprint horizon for an active codebase (current state → workstreams + sequencing → ROADMAP.md)
 ---
 
-You are now operating in **Shadow Clone Roadmap mode** for the rest of this session. This mode plans a **multi-sprint horizon** (typically 1-2 weeks of AI-augmented sprint sequencing, up to a few months for strategic / multi-team work) inside a codebase that already exists. It is the right mode when:
+You are now operating in **Shadow Clone Roadmap mode** for the rest of this session. This mode plans a **multi-sprint horizon** — the largest unit in the Shadow Clone hierarchy (**sprint** (hours) → **plan** (day) → **roadmap** (week)). Typically 1 week of AI-augmented sprint sequencing, up to a few weeks for multi-subsystem or cross-team work. It is the right mode when:
 
 - The horizon spans more than one sprint.
 - Multiple workstreams may run in parallel.
@@ -17,7 +17,7 @@ The deliverable is `.waves/wave-2/deliverables/ROADMAP.md`.
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Strategic objective** (header `Objective`) — one to three sentences: what does this horizon achieve? Free-text.
-2. **Horizon** (header `Horizon`) — options: `Days`, `1-2 weeks (Recommended)`, `1-3 months`, `Open-ended`. **Bias toward the shorter realistic option.** With AI-augmented work plus parallel-subagent sprints, a roadmap that legacy teams ran for a quarter is typically 1-2 weeks in this system. `Days` fits a small multi-step initiative; `1-2 weeks` is the typical AI-augmented horizon spanning a handful of sprints; `1-3 months` only for strategic / multi-team / cross-product work; `Open-ended` for indefinite strategic direction. Never default to "1 quarter" or "6 months" because legacy roadmaps were that long — AI compresses horizons by roughly 5-40× (wall-clock) depending on scope shape (matches the same headline range used by `/sc-plan`; the quarter→1-2-weeks example here is ~6-12× within that band).
+2. **Horizon** (header `Horizon`) — options: `Days`, `1 week (Recommended)`, `2-4 weeks`, `Open-ended`. **Bias toward the shorter realistic option.** Roadmaps sit at the top of the Shadow Clone hierarchy: longer than a plan (day-scale) and a sprint (sub-day). The week is the natural roadmap unit — long enough to sequence multiple sprints and plans with explicit decision gates, short enough that AI-augmented teams can actually execute against it. `Days` fits a small multi-step initiative; `1 week` is the typical case; `2-4 weeks` for multi-subsystem or cross-team work; `Open-ended` for strategic direction without a fixed end date. Never default to "1 quarter" or "6 months" — those are legacy human cadences. AI compresses horizons dramatically; the hierarchy is sprint (hours) → plan (day) → roadmap (week).
 3. **Parallel workstreams** (header `Streams`) — options: `1 (single thread)`, `2-3`, `4-5`, `6+ (large org)`.
 4. **Output emphasis** (header `Output`) — options: `ROADMAP.md (single doc)`, `ROADMAP.md + per-sprint backlog stubs`, `ROADMAP.md + decision matrix`.
 
@@ -70,7 +70,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
     <team_composition>
       - System Cartographer: Maps the architecture at the level relevant to the horizon (services, data flow, integration points).
-      - State-of-the-Union Reader: Surveys recent quarters of activity — major shipped initiatives, in-flight refactors, technical debt registry.
+      - State-of-the-Union Reader: Surveys the recent 1-3 months of activity — major shipped initiatives, in-flight refactors, technical debt registry.
       - Constraints Surveyor: Identifies headcount, deployment, compliance, and external-dependency constraints in effect for the horizon.
       - Stakeholder Mapper: Identifies the human stakeholders for each likely workstream (engineering owners, product, design, security).
       - Record Keeper: Consolidates findings into STRATEGIC_CONTEXT.md.
@@ -80,7 +80,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       <deliverable path=".waves/wave-0/deliverables/STRATEGIC_CONTEXT.md">
         Single document capturing:
         - The system map at horizon-relevant granularity (services, data flow, key integrations)
-        - Recent activity: major shipped initiatives in the last 1-2 horizons, in-flight refactors, known tech debt
+        - Recent activity: major shipped initiatives in the last 1-3 months (matches the State-of-the-Union Reader's window above), in-flight refactors, known tech debt
         - Hard constraints: headcount, freeze periods, compliance milestones, third-party SLAs
         - Stakeholder map: who owns what surface area
         - Open strategic questions the team must resolve before Wave 1
@@ -89,7 +89,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
     <instructions>
       1. Read the system at a higher level than Sprint Mode would — services and contracts, not individual files. Still cite real names.
-      2. Read recent project memory / commit history at the horizon scale (e.g., for a quarter, look at the last quarter or two).
+      2. Read recent project memory / commit history at the horizon scale. Lookback windows by horizon option: `Days` → last 2-4 weeks; `1 week` → last 1-2 months; `2-4 weeks` → last 2-3 months; `Open-ended` → last 3-6 months.
       3. List every known constraint with a date or owner attached.
       4. Map stakeholders by surface area so Wave 1 can attribute workstreams to real humans.
       5. Surface any strategic question that should be answered before workstream selection.
@@ -199,7 +199,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
   <activities_to_perform>
     - Read the system at horizon-relevant granularity (services, contracts, data flow)
-    - Survey recent quarters of shipped work and in-flight initiatives
+    - Survey the recent 1-3 months of shipped work and in-flight initiatives
     - Decompose the strategic objective into workstreams with owners
     - Map inter-workstream dependencies and identify the critical path
     - Sequence workstreams into sprints with explicit parallel/serial structure

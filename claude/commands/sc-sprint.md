@@ -2,13 +2,13 @@
 description: Shadow Clone sprint mode — plan one upcoming sprint inside an active codebase (current-state first, then task decomp + risk, then SPRINT_PLAN.md)
 ---
 
-You are now operating in **Shadow Clone Sprint mode** for the rest of this session. This mode plans **one upcoming sprint inside a codebase that already exists**. It is the right mode when:
+You are now operating in **Shadow Clone Sprint mode** for the rest of this session. This mode plans **one upcoming sprint inside a codebase that already exists** — a sub-day quick flow, the smallest unit in the Shadow Clone hierarchy (**sprint** (hours) → **plan** (day) → **roadmap** (week)). It is the right mode when:
 
 - The repo is live; people are committing to it.
 - The architecture is already chosen.
-- You are framing a bounded chunk of work for a known team and a known deadline.
+- You are framing a bounded chunk of work that fits inside a working day — typically under an hour of focused AI-augmented execution.
 
-It is **not** the right mode for greenfield project planning — for that, exit and use `/sc-plan`. It is also not the right mode for multi-sprint or quarter-scale planning — for that, use `/sc-roadmap`.
+It is **not** the right mode for greenfield project planning — for that, exit and use `/sc-plan`. It is also not the right mode for multi-sprint or week-scale planning — for that, use `/sc-roadmap`.
 
 The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
 
@@ -17,7 +17,7 @@ The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Sprint goal** (header `Goal`) — one sentence: what does this sprint ship? Free-text.
-2. **Sprint length** (header `Length`) — options: `Hours`, `1 day (Recommended)`, `2-3 days`, `1 week+`. **Bias toward the shorter realistic option.** With AI-augmented work and parallel-subagent waves, a sprint that legacy 2-3 person teams ran in 2 weeks is typically 1 day in this system. `Hours` fits single-PR focused work; `1 day` is the typical AI-augmented sprint; `2-3 days` for multi-feature batches; `1 week+` only for genuinely cross-component or carefully-staged work. Never default to a longer option because "sprints are 2 weeks" — that's legacy human cadence. If scope doesn't fit the chosen length, cut scope, don't lengthen.
+2. **Sprint length** (header `Length`) — options: `< 1 hour (Recommended)`, `1-2 hours`, `Half-day`, `Full day`. **Bias hard toward the shortest realistic option.** A sprint is a *quick flow*, not a calendar week — multiple sprints run inside a single working day. `< 1 hour` is the typical AI-augmented sprint (single-PR or single-focused-change); `1-2 hours` for a small batch / multi-PR cluster; `Half-day` for heavier multi-feature work; `Full day` only as overflow when staging is genuinely careful. If scope doesn't fit `Full day`, this isn't a sprint anymore — surface that to the user and recommend `/sc-plan` instead. Never inflate sprint length to fit ambitious scope; cut scope or escalate to a plan.
 3. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`.
 4. **Risk tolerance** (header `Risk`) — options: `Low (live system, careful rollouts)`, `Standard (normal release cadence)`, `High (experimental area, OK to break things)`.
 
@@ -120,7 +120,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </deliverables>
 
     <instructions>
-      1. Tasks are PR-sized. If a single "task" needs more than 3 days of one person's time, split it.
+      1. Tasks are PR-sized. If a single "task" exceeds the chosen sprint length (i.e., one person can't ship it inside the `Length` window), split it.
       2. Every task lists the files or modules it will touch (verify against Wave 0's map).
       3. Risks must include rollback strategy when the change is irreversible by default (DB migrations, public-API contracts, third-party integrations).
       4. The estimate must respect the user's stated Team Size × Sprint Length — flag overflow rather than silently fitting it.
@@ -153,7 +153,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
         5. Risk Register (with mitigations and rollback)
         6. Done Criteria
         7. Out of Scope
-        8. Checkpoint Plan — cadence matches sprint length: hourly for an `Hours` sprint, daily for `1 day` and longer. Specifies what gets reported at each checkpoint.
+        8. Checkpoint Plan — cadence matches sprint length: continuous/rolling for `< 1 hour` and `1-2 hours` (no formal checkpoint, just final report), a single mid-sprint checkpoint for `Half-day`, start + end checkpoints for `Full day`. Specifies what gets reported at each checkpoint.
       </deliverable>
     </deliverables>
 
@@ -161,7 +161,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       1. Read both prior deliverables before drafting; reference them by relative link.
       2. Pull the task table into SPRINT_PLAN.md verbatim from TASK_DECOMP.md.
       3. Make the rollback strategy concrete: command-line steps, not "we'll revert."
-      4. The Checkpoint Plan answers "what does the team report at each checkpoint?" in one sentence, where the checkpoint cadence matches the sprint length (hourly for `Hours`, daily for `1 day` and up).
+      4. The Checkpoint Plan answers "what does the team report at each checkpoint?" in one sentence. Cadence matches sprint length: continuous/rolling for `< 1 hour` and `1-2 hours` (just the final report), a single mid-sprint checkpoint for `Half-day`, start + end checkpoints for `Full day`.
     </instructions>
   </wave_2>
 </wave_structure>
@@ -198,7 +198,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     - Surface risks specific to changing live code
     - Define a rollback strategy for every risky change
     - Document the out-of-scope list
-    - Specify a checkpoint (cadence matching the sprint length: hourly for `Hours`, daily for `1 day` and up) to keep the sprint visible
+    - Specify a checkpoint plan (cadence matching the sprint length per the rules above) to keep the sprint visible
   </activities_to_perform>
 
   <workspace_organization>
@@ -229,7 +229,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     Use component prefixes: B (Backend), F (Frontend), S (Shared), I (Infra).
     Use status values: Open / Claimed / In Progress / Review / Done.
   </format>
-  <rule>Estimates use person-days, not story points. The total must fit Sprint Length × Team Size with at least 20% buffer.</rule>
+  <rule>Estimates use person-hours (or fractions of a half-day for `Half-day` / `Full day` sprints), not story points. The total must fit Sprint Length × Team Size with at least 20% buffer.</rule>
 </task_table_format>
 
 <success_criteria>
