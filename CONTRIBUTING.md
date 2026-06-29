@@ -2,7 +2,7 @@
 
 Shadow Clone is a free, open-source AI orchestration system. We welcome contributions from everyone -- human developers and AI agents alike.
 
-This guide covers branch conventions, commit standards, PR workflow, and how to contribute new prompts.
+This guide covers branch conventions, commit standards, PR workflow, and how to contribute slash commands, protocols, and prompts.
 
 ---
 
@@ -20,21 +20,13 @@ main                        Production-ready code. Deploy target.
 
 ## Branch Naming
 
-Format: `{author}/{type}-{description}`
-
-| Type | Use for |
-|------|---------|
-| `feat` | New features or capabilities |
-| `fix` | Bug fixes |
-| `refactor` | Code restructuring (no behavior change) |
-| `test` | Adding or updating tests |
-| `docs` | Documentation only |
-| `chore` | Build, CI, dependency updates |
+Each contributor uses a **single working branch**: `{author}/dev`. All work
+on that branch; conventional-commit types live in the commit messages, not
+in the branch name.
 
 Examples:
-- `eli/feat-zod-validation`
-- `eli/fix-rate-limiter-bypass`
-- `claude/docs-update-readme`
+- `eli/dev`
+- `claude/dev`
 
 ## Commit Convention
 
@@ -48,7 +40,17 @@ body (optional)
 footer (optional)
 ```
 
-Types match branch types above. Scope is optional but encouraged (`tools`, `prompts`, `build`, `utils`).
+| Type | Use for |
+|---|---|
+| `feat` | New features or capabilities |
+| `fix` | Bug fixes |
+| `refactor` | Code restructuring (no behavior change) |
+| `test` | Adding or updating tests |
+| `docs` | Documentation only |
+| `chore` | Build, CI, dependency updates |
+
+Scope is optional but encouraged (`tools`, `prompts`, `build`, `utils`,
+`plan`, `echo`, `scws`, etc.).
 
 Examples:
 ```
@@ -89,8 +91,10 @@ git pull origin dev
 
 - All PRs require at least 1 approval
 - Stale reviews are dismissed on new pushes (on `main`)
-- Check the build passes: `cd mcp-server && npm run build`
-- Check types pass: `cd mcp-server && npm run lint`
+- For slash-command / protocol / bridge changes:
+  `bash bridge/install.sh && bash scripts/sc-doctor.sh` passes
+- For MCP server changes: `cd mcp-server && npm run build` and
+  `cd mcp-server && npm run lint` pass
 
 ## Code Standards
 
@@ -186,10 +190,11 @@ Some PRs must merge in order. Check `TASKS.md` for the dependency graph. If your
 ## Quick Reference
 
 | Action | Command |
-|--------|---------|
+|---|---|
 | Create your branch | `git checkout -b {author}/dev dev` |
 | Sync with dev | `git pull origin dev` |
 | Push your work | `git push origin {author}/dev` |
-| Build | `cd mcp-server && npm run build` |
-| Type check | `cd mcp-server && npm run lint` |
-| Run tests | `cd mcp-server && npm test` |
+| Verify plugin install | `bash bridge/install.sh && bash scripts/sc-doctor.sh` |
+| Build MCP server | `cd mcp-server && npm run build` |
+| Type-check MCP server | `cd mcp-server && npm run lint` |
+| Run MCP tests | `cd mcp-server && npm test` |
