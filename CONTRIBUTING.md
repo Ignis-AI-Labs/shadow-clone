@@ -15,8 +15,9 @@ main                        Production-ready code. Deploy target.
 ```
 
 - **`main`** -- Production. Merges from `dev` only (release PRs).
-- **`dev`** -- Integration branch. All contributor PRs target this branch. Nobody commits directly to `dev`.
+- **`dev`** -- Integration branch. All contributor PRs target this branch.
 - **`{author}/dev`** -- Your personal working branch. Commit here, then PR into `dev`.
+- Never push directly to `dev` or `main`.
 
 ## Branch Naming
 
@@ -90,7 +91,7 @@ git pull origin dev
 ### Code Review Requirements
 
 - All PRs require at least 1 approval
-- Stale reviews are dismissed on new pushes (on `main`)
+- Stale reviews are dismissed on new pushes (configure this in branch protection on both `dev` and `main`)
 - For slash-command / protocol / bridge changes:
   `bash bridge/install.sh && bash scripts/sc-doctor.sh` passes
 - For MCP server changes: `cd mcp-server && npm run build` and
@@ -183,7 +184,7 @@ files.
 
 ## Dependencies Between PRs
 
-Some PRs must merge in order. Check `TASKS.md` for the dependency graph. If your PR depends on another, note it in the PR template under **Dependencies**.
+Some PRs must merge in order. `TASKS.md` is the index — see the four domain files it links to (`TASKS-plugin.md`, `TASKS-backend.md`, `TASKS-frontend.md`, `TASKS-shared.md`) for the dependency graph. If your PR depends on another task, note it in the PR template under **Dependencies**.
 
 ---
 
