@@ -285,12 +285,15 @@ export function validateArray<T>(
 /**
  * Sanitizes objects by removing undefined and null values
  */
-export function sanitizeObject<T extends Record<string, any>>(obj: T): Partial<T> {
+export function sanitizeObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
   const result: Partial<T> = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null) {
-      result[key as keyof T] = value;
+      // `value` was narrowed from `unknown` (the generic constraint);
+      // the source object guarantees it belongs at this key, so the
+      // assertion is safe and preserves type inference at call sites.
+      result[key as keyof T] = value as T[keyof T];
     }
   }
   

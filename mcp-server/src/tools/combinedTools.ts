@@ -43,7 +43,7 @@ export class CombinedTools {
     ];
   }
 
-  async executeTool(name: string, args: any): Promise<string> {
+  async executeTool(name: string, args: unknown): Promise<string> {
     const validatedArgs = validateToolInput(name, args);
 
     if (name === 'check_for_updates') {

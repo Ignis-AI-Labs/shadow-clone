@@ -69,7 +69,7 @@ export class WorkspaceInitializer {
       );
     }
 
-    let results = [];
+    let results: string[] = [];
 
     try {
       // 1. Ensure .gitignore has Shadow Clone patterns
@@ -147,12 +147,15 @@ export class WorkspaceInitializer {
         results.push('Created .vscode/ai-instructions.md');
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      // Do NOT echo raw fs error text back to the MCP client — it
+      // contains resolved absolute paths (CWE-209). The detailed
+      // message stays in server logs via the thrown chain; the
+      // client gets a generic remediation hint.
+      void error;
       return `# Error During Initialization
 
-An error occurred: ${error.message}
-
-Please check the project path and permissions.`;
+Initialization failed; check that the project path is writable and that the MCP server has sufficient permissions.`;
     }
 
     return `# Shadow Clone Workspace Initialization Complete!

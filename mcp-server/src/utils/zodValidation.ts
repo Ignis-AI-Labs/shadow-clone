@@ -38,9 +38,19 @@ export function validateToolInput(toolName: string, args: unknown): unknown {
   } else {
     // No schema: accept the args object but still run path-validation
     // on known path-bearing field names. Non-path fields pass through.
-    validated = (args && typeof args === 'object'
-      ? { ...(args as Record<string, unknown>) }
-      : {});
+    // Reject non-object scalars explicitly — silently coercing a
+    // string/number to `{}` would let a malformed call run with all
+    // defaults (Rule 1/6 "no silent failures").
+    if (args === undefined || args === null) {
+      validated = {};
+    } else if (typeof args === 'object' && !Array.isArray(args)) {
+      validated = { ...(args as Record<string, unknown>) };
+    } else {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        'Tool arguments must be an object'
+      );
+    }
   }
 
   return applyPathValidation(validated);
