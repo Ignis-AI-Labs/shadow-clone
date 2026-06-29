@@ -19,7 +19,7 @@ export function SiteHeader() {
             How it works
           </Link>
           <a
-            href="https://github.com/ElijahMoses/shadow-clone"
+            href="https://github.com/Ignis-AI-Labs/shadow-clone"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 rounded-sm"

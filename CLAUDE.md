@@ -93,19 +93,20 @@ dev            ← Integration (all PRs target here)
 - **Parameters**: Max 3-4 per function (use an options object beyond that)
 
 ### Task-First
-- Create or claim a task in `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before writing code
-- Every commit and PR references a task ID (e.g., "Implements B-P1-01")
+- Create or claim a task in `TASKS-plugin.md`, `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before writing code
+- Every commit and PR references a task ID (e.g., "Implements P-P1-04")
 
 ## Task Tracking
 
 - **`TASKS.md`** -- Hub linking to domain-specific task files
-- **`TASKS-backend.md`** -- MCP server tasks (B-* prefix)
-- **`TASKS-frontend.md`** -- Dashboard/UI tasks (F-* prefix)
+- **`TASKS-plugin.md`** -- Slash commands / bridge / protocols tasks (P-* prefix) — **primary surface**
+- **`TASKS-backend.md`** -- MCP server tasks (B-* prefix) — secondary surface
+- **`TASKS-frontend.md`** -- Web UI tasks (F-* prefix)
 - **`TASKS-shared.md`** -- Docs, infra, CI/CD tasks (S-* prefix)
 - **`CONTRIBUTING.md`** -- Branch naming, commit conventions, PR workflow
 - **`.github/PULL_REQUEST_TEMPLATE.md`** -- PR template with checklists
 
-Task IDs use format `{Component}-P{Priority}-{Number}` (e.g., `B-P1-04`). Reference these in commits and PRs.
+Task IDs use format `{Component}-P{Priority}-{Number}` (e.g., `P-P1-04`). Reference these in commits and PRs.
 
 ## Important Conventions
 

@@ -37,12 +37,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Description**: `install.sh` uses plain `cp` with no `umask` and no `chmod`. The user's `~/.config/sc/config` lands `0644` (world-readable on default umask 022) and is `source`d as shell at every bridge invocation. Today the file holds nothing sensitive; over time users will add `SC_*` lines that may include API endpoint overrides or secrets. World-read of secrets if a user adds them; world-write turns into RCE inside the bridge. Recommended fix: `install -m 0600 config.example "${CONFIG_DIR}/config"` + `chmod 700 "${CONFIG_DIR}"`. Long-term: parse `KEY=VALUE` lines with allowlist instead of `source`.
 
 - **Issue ID**: AUDIT-004
+- **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance specialist, Wave 1) — confirmed Wave 0 Compliance Officer carry-forward #1
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-001
 - **Severity**: High (license-coherence defect)
 - **Location**: `/NOTICE`
 - **Description**: The repo's `NOTICE` file declares the project "PROPRIETARY & CONFIDENTIAL", threatens criminal prosecution, references `.shadow/* - TRADE SECRETS`. `LICENSE` is MIT and `README.md` says "free, open-source." Direct license contradiction on a freshly-public repo. Causes downstream license scanners (FOSSA, Black Duck) to flag the repo as mixed-license and confuses first-time visitors about which terms govern. Recommended fix: delete the file. If an attribution-style NOTICE is wanted later (e.g., once bundled binaries ship from `web/out/`), introduce it then in Apache-style format.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Deleted `/NOTICE` (242 lines of proprietary boilerplate). The MIT `LICENSE` is sufficient on its own. If an attribution NOTICE is wanted later when bundled binaries ship, introduce it then.
 
 - **Issue ID**: AUDIT-005
 - **Discovered By**: Reviewer (Application Security specialist, Wave 1)
@@ -143,28 +147,40 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Description**: `LOG_FILE_PATH` env var flows directly to `fs.mkdirSync(path.dirname(p), { recursive: true })` then `winston.transports.File({ filename: p })`. No path normalization, no containment check, no symlink rejection. A malicious tweak to the MCP launcher config (`~/.claude.json`) setting `LOG_FILE_PATH=/home/user/.ssh/authorized_keys` causes winston JSON lines to append there. Recommended fix: define allowed-roots set; `path.resolve` + `path.relative` containment check; reject paths containing symlinks via `fs.realpathSync.native` recheck; refuse if `path.dirname` does not already exist (drop `recursive: true`).
 
 - **Issue ID**: AUDIT-017
+- **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1) — confirmed Wave 0 carry-forward #2
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-002
 - **Severity**: Medium
 - **Location**: `web/.env.example`
 - **Description**: References the deleted Supabase-auth/NFT system: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_SECRET`, `IGNIS_ELITE_CONTRACT`, `PIONEER_CONTRACT`, `ETH_RPC_URL`. None are read anywhere in `web/src/`. Misleading to new contributors. Recommended fix: rewrite as "No environment variables required" or delete entirely.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Rewrote `web/.env.example` as a single comment block stating "No environment variables are required" with a brief explanation that the pre-pivot Supabase/auth/NFT vars were removed in commit `ad5341e`. File kept as a marker so contributors see intentional zero-env design.
 
 - **Issue ID**: AUDIT-018
+- **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-003
 - **Severity**: Medium
 - **Location**: `web/src/components/SiteHeader.tsx:22`
 - **Description**: One residual `ElijahMoses` GitHub link surviving the `Ignis-AI-Labs` rename: `href="https://github.com/ElijahMoses/shadow-clone"`. Github's auto-redirect carries the click, but the canonical URL should match the README + `mcp-server/package.json`. Recommended fix: change to `https://github.com/Ignis-AI-Labs/shadow-clone`.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Updated `href` in `web/src/components/SiteHeader.tsx:22` to `https://github.com/Ignis-AI-Labs/shadow-clone`. `grep -rIn 'ElijahMoses' . --exclude-dir=.archive --exclude-dir=.waves` now returns 0 hits.
 
 - **Issue ID**: AUDIT-019
+- **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-004
 - **Severity**: Medium
 - **Location**: `CLAUDE.md:96, 100-104`
 - **Description**: Task Tracking section omits `TASKS-plugin.md`. The plugin pivot promoted `P-*` tasks to the **primary** surface but `CLAUDE.md` still lists only backend/frontend/shared. Most consequential doc drift remaining after the pivot. Recommended fix: add `TASKS-plugin.md` to both bullets; reorder so plugin is first.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Updated `CLAUDE.md` Task-First and Task Tracking sections: added `TASKS-plugin.md` to both bullet lists, reordered so plugin is first (as primary surface), changed task-ID example from `B-P1-01` to `P-P1-04`, marked backend as "secondary surface."
 
 - **Issue ID**: AUDIT-020
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
@@ -175,12 +191,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Description**: 4.5× the 300-line hard ceiling in `CLAUDE.md`/`CONTRIBUTING.md`. Contains 9 of the worst function-size violations (getToolDefinitions 264 lines, getDocumentationConfig 111, showCommands 109, getWaveConfiguration 96, etc.). Recommended fix: split per-tool files (`quick-fix.ts`, `code-review-team.ts`, etc.) and extract configuration lookups into a `config/` module of `as const` records.
 
 - **Issue ID**: AUDIT-021
+- **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass — also closes SC-002/dotenv from the AUDIT-026 aggregate)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance + Supply Chain, Wave 1) — closes Wave 0 carry-forward #3
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-006; Supply Chain finding SC-001
 - **Severity**: Medium
 - **Location**: `mcp-server/src/auth/encryption.ts` (243 lines); `mcp-server/src/auth/` directory
 - **Description**: Confirmed dead post-pivot. `grep -rn "from.*auth/\|require.*auth/" mcp-server/src` returns 0 hits. Last remnant of pre-pivot NFT/AES-256-GCM API-key encryption layer. Compiles into the published npm tarball as `dist/auth/encryption.js` despite being unreferenced. Recommended fix: delete `mcp-server/src/auth/` directory; re-run `npm run build:prod`; verify no `dist/auth/` in next publish.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Deleted `mcp-server/src/auth/encryption.ts` (243 lines) and the `auth/` directory via `git rm -r`. Ran `npm uninstall dotenv` to drop the orphan prod dep (SC-002 from the AUDIT-026 aggregate; was unused since the auth removal). `npm run lint` (`tsc --noEmit`) passes. `mcp-server/package.json` now declares only `@modelcontextprotocol/sdk`, `winston`, `zod` as runtime deps.
 
 - **Issue ID**: AUDIT-022
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
