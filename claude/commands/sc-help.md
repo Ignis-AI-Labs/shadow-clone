@@ -28,9 +28,9 @@ deployed to `~/.claude/sc/protocols/` (see "Coding standards" below).
 
 | Command | What it does | Status |
 |---|---|---|
-| `/sc-plan` | **Greenfield** plan mode — wave planning, MASTER_PLAN.md, scope decomposition before any code is written. Best for new projects. | ✅ Available |
-| `/sc-sprint` | **Active-codebase** sprint plan — Wave 0 reads current state, Wave 1 decomposes + risks, Wave 2 produces SPRINT_PLAN.md. | ✅ Available |
-| `/sc-roadmap` | **Multi-sprint horizon** plan — Wave 0 strategic context, Wave 1 workstreams + dependencies, Wave 2 ROADMAP.md with decision gates. | ✅ Available |
+| `/sc-plan` | **Greenfield** plan mode — produces MASTER_PLAN.md as a DAG of phases with explicit prerequisites, parallel branches, and load-bearing items. No timelines; work gets done when it gets done. | ✅ Available |
+| `/sc-sprint` | **Active-codebase** sprint — one milestone, decomposed into a PR-sized task DAG (prerequisites, parallel-with, load-bearing flags). Produces SPRINT_PLAN.md with a pipeline diagram. No durations; phase-triggered check-ins. | ✅ Available |
+| `/sc-roadmap` | **Multi-milestone pipeline** — Wave 0 strategic context, Wave 1 workstream DAG with prerequisites + parallelism + load-bearing flags, Wave 2 ROADMAP.md with decision gates. No timelines; the pipeline is shaped by the graph, not the calendar. | ✅ Available |
 | `/sc-feature` | Feature mode — multi-wave implementation team for a focused capability. | ✅ Available |
 | `/sc-refactor` | Refactor mode — safe restructure team with behavior-preserving discipline. | ✅ Available |
 | `/sc-debug` | Debug mode — investigation team, root-cause analysis, hypothesis-then-test. | ✅ Available |

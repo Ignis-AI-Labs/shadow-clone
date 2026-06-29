@@ -2,13 +2,15 @@
 description: Shadow Clone sprint mode — plan one upcoming sprint inside an active codebase (current-state first, then task decomp + risk, then SPRINT_PLAN.md)
 ---
 
-You are now operating in **Shadow Clone Sprint mode** for the rest of this session. This mode plans **one upcoming sprint inside a codebase that already exists** — a sub-day quick flow, the smallest unit in the Shadow Clone hierarchy (**sprint** (hours) → **plan** (day) → **roadmap** (week)). It is the right mode when:
+You are now operating in **Shadow Clone Sprint mode** for the rest of this session. This mode plans **one upcoming sprint inside a codebase that already exists** — the smallest unit in the Shadow Clone hierarchy: **sprint (one milestone) → plan (several phases to a project milestone) → roadmap (sequenced milestones across an initiative)**. Work in phases and milestones, not timelines. *"Work gets done when it gets done."*
+
+It is the right mode when:
 
 - The repo is live; people are committing to it.
 - The architecture is already chosen.
-- You are framing a bounded chunk of work that fits inside a working day — typically under an hour of focused AI-augmented execution.
+- You are framing a single bounded chunk of work that ships one milestone.
 
-It is **not** the right mode for greenfield project planning — for that, exit and use `/sc-plan`. It is also not the right mode for multi-sprint or week-scale planning — for that, use `/sc-roadmap`.
+It is **not** the right mode for greenfield project planning — for that, exit and use `/sc-plan`. It is also not the right mode for multi-milestone sequencing across an initiative — for that, use `/sc-roadmap`.
 
 The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
 
@@ -16,10 +18,9 @@ The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
 
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
-1. **Sprint goal** (header `Goal`) — one sentence: what does this sprint ship? Free-text.
-2. **Sprint length** (header `Length`) — options: `< 1 hour (Recommended)`, `1-2 hours`, `Half-day`, `Full day`. **Bias hard toward the shortest realistic option.** A sprint is a *quick flow*, not a calendar week — multiple sprints run inside a single working day. `< 1 hour` is the typical AI-augmented sprint (single-PR or single-focused-change); `1-2 hours` for a small batch / multi-PR cluster; `Half-day` for heavier multi-feature work; `Full day` only as overflow when staging is genuinely careful. If scope doesn't fit `Full day`, this isn't a sprint anymore — surface that to the user and recommend `/sc-plan` instead. Never inflate sprint length to fit ambitious scope; cut scope or escalate to a plan.
-3. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`.
-4. **Risk tolerance** (header `Risk`) — options: `Low (live system, careful rollouts)`, `Standard (normal release cadence)`, `High (experimental area, OK to break things)`.
+1. **Sprint goal / milestone** (header `Goal`) — free-text: the one coherent shippable outcome this sprint produces, named in the user's own words (e.g. "checkout flow live with real Stripe", "auth migration off legacy session store", "ABI dump complete with addresses"). A sprint is **one milestone** — the goal IS the milestone. If the user names two or more independent milestones, this isn't a sprint — surface that and recommend `/sc-plan` instead. No duration is collected; **work gets done when it gets done**. Wave 2's "Sprint Goal (one paragraph)" expands this answer into context.
+2. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`.
+3. **Risk tolerance** (header `Risk`) — options: `Low (live system, careful rollouts)`, `Standard (normal release cadence)`, `High (experimental area, OK to break things)`.
 
 Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0.
 
@@ -104,15 +105,15 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       - Decomposition Lead: Breaks the sprint goal into discrete tasks (each one a coherent PR).
       - Dependency Mapper: Identifies inter-task dependencies and cross-team dependencies.
       - Risk Auditor: Surfaces risks specific to changing live code (breakage, migrations, rollback).
-      - Estimator: Sizes each task against the team's actual capacity (Sprint Length × Team Size).
+      - Graph Balancer: Examines the dependency graph against the team's size — flags bottlenecks where serialized work would idle most of the team, suggests splits or reorderings that let the work run in parallel. Does NOT estimate time; sizes by parallelism, not by duration.
       - Record Keeper: Consolidates into TASK_DECOMP.md.
     </team_composition>
 
     <deliverables>
       <deliverable path=".waves/wave-1/deliverables/TASK_DECOMP.md">
         Consolidated document containing:
-        - Task table: ID, title, scope, estimate, dependencies, owner candidates
-        - Dependency graph (text or mermaid) showing serial vs. parallel paths
+        - Task table: ID, title, scope, prerequisites, parallel-with, load-bearing flag, owner candidates (no duration column — see task_table_format below)
+        - Dependency analysis: serial vs. parallel paths identified in prose / a list (the canonical visualization is built in Wave 2's `Pipeline` section — do not redraw the graph here)
         - Risk register: each risk with severity, trigger, and mitigation
         - Out-of-scope list: things the sprint goal could imply but is NOT going to do
         - Done criteria for the sprint as a whole
@@ -120,10 +121,10 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </deliverables>
 
     <instructions>
-      1. Tasks are PR-sized. If a single "task" exceeds the chosen sprint length (i.e., one person can't ship it inside the `Length` window), split it.
+      1. Tasks are PR-sized: each one a coherent change that ships independently. If a single "task" can't be reviewed as one PR — split it.
       2. Every task lists the files or modules it will touch (verify against Wave 0's map).
       3. Risks must include rollback strategy when the change is irreversible by default (DB migrations, public-API contracts, third-party integrations).
-      4. The estimate must respect the user's stated Team Size × Sprint Length — flag overflow rather than silently fitting it.
+      4. Do not estimate task durations. Instead, verify the dependency graph supports the team's parallelism — if more than half the tasks serialize through one bottleneck, flag the imbalance and propose a restructure rather than silently accepting the bottleneck.
       5. Explicitly list what is OUT of scope; defending the boundary is half the work.
     </instructions>
   </wave_1>
@@ -136,7 +137,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </purpose>
 
     <team_composition>
-      - Sprint Architect: Assembles the final plan with sprint goal, phases, and milestones.
+      - Sprint Architect: Assembles the final plan with the sprint goal, its phases, and its single milestone (a sprint is one milestone — see Step 1).
       - Quality Planner: Defines acceptance criteria and the definition of done per task.
       - Rollback Strategist: Documents the rollback path for every risky change.
       - Record Keeper: Finalizes SPRINT_PLAN.md and a structured task list.
@@ -149,11 +150,11 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
         1. Sprint Goal (one paragraph)
         2. Current State Summary (3-5 sentences, linking to CURRENT_STATE.md)
         3. Task List (structured table, see format below)
-        4. Dependency Graph (text or mermaid)
+        4. Pipeline — single canonical DAG (mermaid `graph LR` preferred, text-flow acceptable) showing every task with prerequisites and parallel branches explicit; load-bearing nodes marked (e.g. `**[B-01]**` in mermaid). This is the team's execution map.
         5. Risk Register (with mitigations and rollback)
         6. Done Criteria
         7. Out of Scope
-        8. Checkpoint Plan — cadence matches sprint length: continuous/rolling for `< 1 hour` and `1-2 hours` (no formal checkpoint, just final report), a single mid-sprint checkpoint for `Half-day`, start + end checkpoints for `Full day`. Specifies what gets reported at each checkpoint.
+        8. Milestone Check-ins — phase-triggered, not time-triggered. List the natural break-points at which the team reports: task claimed (start), task complete (PR up), blocker hit (escalate), dependency resolved (next can start). The sprint's single milestone (from Step 1) is the final check-in. No daily/hourly cadence — checkpoints fire on events.
       </deliverable>
     </deliverables>
 
@@ -161,7 +162,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       1. Read both prior deliverables before drafting; reference them by relative link.
       2. Pull the task table into SPRINT_PLAN.md verbatim from TASK_DECOMP.md.
       3. Make the rollback strategy concrete: command-line steps, not "we'll revert."
-      4. The Checkpoint Plan answers "what does the team report at each checkpoint?" in one sentence. Cadence matches sprint length: continuous/rolling for `< 1 hour` and `1-2 hours` (just the final report), a single mid-sprint checkpoint for `Half-day`, start + end checkpoints for `Full day`.
+      4. The Milestone Check-ins list answers "at what natural events does the team report, and what do they report?" — phase transitions (claim, ship, block, unblock), not clock time. The sprint's milestone (Step 1 answer) is the final check-in.
     </instructions>
   </wave_2>
 </wave_structure>
@@ -179,9 +180,10 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   </principle>
 
   <principle>
-    Capacity is a hard constraint, not an aspiration. If Sprint Length × Team Size
-    cannot fit the decomposition, flag the overflow to the user before Wave 2.
-    Don't quietly squeeze.
+    Parallelism, not duration, is the capacity question. Verify the dependency
+    graph against the team's size — if work serializes through a bottleneck,
+    flag the imbalance and propose a restructure. Never estimate task durations;
+    work gets done when it gets done.
   </principle>
 
   <principle>
@@ -193,12 +195,13 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   <activities_to_perform>
     - Read the code paths relevant to the sprint goal end-to-end
     - Survey recent commits, open PRs, and in-flight refactors
-    - Decompose the sprint goal into PR-sized tasks with dependencies
-    - Estimate each task against the team's real capacity
+    - Decompose the sprint goal into PR-sized tasks
+    - Build the task DAG: explicit prerequisites per task, parallel branches marked, load-bearing tasks (those whose failure blocks the most downstream work) flagged
+    - Verify the graph is parallelism-friendly for the team size — no single bottleneck swallowing the work
     - Surface risks specific to changing live code
     - Define a rollback strategy for every risky change
     - Document the out-of-scope list
-    - Specify a checkpoint plan (cadence matching the sprint length per the rules above) to keep the sprint visible
+    - List the milestone check-ins (phase-triggered, event-driven — not clock-time)
   </activities_to_perform>
 
   <workspace_organization>
@@ -222,19 +225,23 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 </sprint_guidelines>
 
 <task_table_format>
-  <rule>The task table in TASK_DECOMP.md and SPRINT_PLAN.md uses this exact shape:</rule>
+  <rule>The task table in TASK_DECOMP.md and SPRINT_PLAN.md uses this exact shape — a DAG with explicit prerequisites and load-bearing flags, NO duration column:</rule>
   <format>
-    | ID | Title | Scope (files/modules) | Estimate | Depends on | Owner | Status |
-    |----|-------|-----------------------|----------|------------|-------|--------|
+    | ID | Title | Scope (files/modules) | Prerequisites | Parallel-with | Load-bearing? | Owner | Status |
+    |----|-------|-----------------------|---------------|---------------|----------------|-------|--------|
     Use component prefixes: B (Backend), F (Frontend), S (Shared), I (Infra).
-    Use status values: Open / Claimed / In Progress / Review / Done.
+    Prerequisites: comma-separated task IDs that must reach Done first (empty = no prereqs, ready to start).
+    Parallel-with: comma-separated task IDs that can run alongside this one (no contention).
+    Load-bearing?: `Yes` if this task gates 2+ downstream tasks (critical path); `No` if it has 0-1 downstream dependents.
+    Status values: Open / Claimed / In Progress / Review / Done.
   </format>
-  <rule>Estimates use person-hours (or fractions of a half-day for `Half-day` / `Full day` sprints), not story points. The total must fit Sprint Length × Team Size with at least 20% buffer.</rule>
+  <rule>Never add a duration / estimate column. The pipeline is shaped by prerequisites and parallelism, not by clock time. Work gets done when it gets done.</rule>
+  <rule>The DAG visualization itself lives in SPRINT_PLAN.md's `Pipeline` section (Wave 2 deliverable item 4) — that is the single canonical location; do not redraw the graph elsewhere.</rule>
 </task_table_format>
 
 <success_criteria>
   <criterion>Every task in SPRINT_PLAN.md is grounded in a file path or module from CURRENT_STATE.md</criterion>
-  <criterion>Total estimate fits the team's capacity with a documented buffer</criterion>
+  <criterion>The task DAG has no single bottleneck swallowing the work; parallel branches are explicit; load-bearing tasks are flagged</criterion>
   <criterion>Every risky change has a concrete rollback strategy</criterion>
   <criterion>Out-of-scope list is explicit</criterion>
   <criterion>Done criteria are testable, not aspirational</criterion>

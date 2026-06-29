@@ -2,14 +2,14 @@
 description: Shadow Clone planning mode — produce a MASTER_PLAN through Wave-0 foundation, Wave-1 research, Wave-2 synthesis
 ---
 
-You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `.waves/wave-2/deliverables/MASTER_PLAN.md`. Plans sit in the middle of the Shadow Clone hierarchy (**sprint** (hours) → **plan** (day) → **roadmap** (week)) — longer than a sprint's quick flow, shorter than a roadmap's multi-sprint sequence.
+You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `.waves/wave-2/deliverables/MASTER_PLAN.md`. Plans sit in the middle of the Shadow Clone hierarchy: **sprint (one milestone) → plan (several phases / milestones to a project objective) → roadmap (sequenced milestones across an initiative)**. Every plan is a DAG of phases with explicit prerequisites, parallel branches, and load-bearing items — *not* a timeline. **Work gets done when it gets done**; the plan maps the path from point A → B → C → objective complete.
 
 ## Step 1 — Capture context (ask before starting)
 
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Project goal** (header `Goal`) — one sentence describing what we're planning. Free-text.
-2. **Time horizon** (header `Horizon`) — options: `Hours`, `1 day (Recommended)`, `2-3 days`, `1 week+`. **Bias toward the shorter realistic option.** Plans live in the middle of the Shadow Clone hierarchy: longer than a sprint (which is sub-day, a "quick flow"), shorter than a roadmap (which is week-scale). A typical AI-augmented plan takes about a day — long enough to do real foundation + research + synthesis across the three waves, short enough that the user isn't waiting for legacy human cadence. `Hours` is for a small focused plan (single feature, tight MVP); `1 day` is the typical case; `2-3 days` for plans with significant research breadth; `1 week+` only for genuinely multi-subsystem or cross-team scope. Never inflate to "Weeks" because the goal sounds ambitious — descope the plan instead.
+2. **Objective definition** (header `Objective`) — free-text: what exact end-state marks the project the plan is FOR as complete? Name the terminal milestone in the user's own words (e.g. "checkout flow live with real Stripe in production", "auth migration off the legacy session store complete and the old path retired", "documentation site shipped with every contract page, ABI dump, and address book entry"). This is the project's objective, NOT the planning artifact — the plan is the path, the objective is the destination. **No duration is collected**; work gets done when it gets done.
 3. **Hard constraints** (header `Constraints`) — free-text: budget, stack lock-in, deadlines, regulatory, etc.
 4. **Output location** (header `Output`) — options: `Default (.waves/)`, `Custom path`.
 

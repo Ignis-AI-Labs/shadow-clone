@@ -139,6 +139,18 @@ _None yet._
 - **Fix Description**: Aligned STRATEGIC_CONTEXT deliverable to "the last 1-3 months" with an inline reference back to the role description so the three lookback windows agree. Extended Wave 0 instruction 2 to map all four horizon options: `Days` → last 2-4 weeks, `1 week` → 1-2 months, `2-4 weeks` → 2-3 months, `Open-ended` → 3-6 months.
 - **Verification**: Manual read; fix applied after the 3-round /sc-echo cap. The reviewer did not re-verify.
 
+- **Issue ID**: PLAN-TL-001
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` rounds 1-3 of the timeline-removal refactor)
+- **Date Discovered**: 2026-06-29
+- **Source**: `/sc-echo` paired-review of the strip-timelines-and-reframe-around-DAG refactor across the three planning modes
+- **Severity**: Mixed (Medium / Low / Info)
+- **Location**: `claude/commands/sc-sprint.md`, `claude/commands/sc-plan.md`, `claude/commands/sc-roadmap.md` — multiple stale cross-references after replacing time-based options with milestone / DAG / load-bearing framing
+- **Description**: After replacing the Length / Horizon questions with milestone-based ones and dropping all duration concepts, ~15 stale cross-references survived in unchanged-by-this-Step lines: Communication Planner "weekly summary, end-of-sprint review"; "after Sprint 3" gate examples; duplicated DAG sections (Wave 1 dependency graph vs. Wave 2 Pipeline canonical); "Capacity check" success criterion; "the heart of this wave: dependency graph" (should be milestone pipeline); 14 `horizon` references in non-Step-1 prose; sc-sprint's Step 1 had near-identical Goal + Milestone free-text prompts; sc-plan's Objective example was self-referential.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-29
+- **Fix Description**: Three rounds of /sc-echo addressed 16 of 17 findings within the loop; one additional `horizon` straggler (Wave 1 instruction 5 "defends the horizon") was caught by the round-3 reviewer and fixed post-cap. A final local grep sweep then caught and fixed 4 more stragglers (mode-overview "long-horizon," Wave 1 instruction "size against the horizon," team_composition "horizon-relevant granularity," activities_to_perform "horizon-relevant granularity" + "capacity check; flag overflow," communication-plan "for the horizon," Standards section "long-horizon architecture decisions" / "production discipline across the horizon," "multi-sprint plan" in mode_overview, "per-sprint backlog stubs" / "per-sprint stubs" in Wave 2). Final state: `grep -niE 'horizon|sprint length|sprint count|multi-sprint|per-sprint' claude/commands/sc-{plan,sprint,roadmap}.md` returns 0 matches. The three planning modes now use only milestone / DAG / load-bearing / prerequisite / parallel-with vocabulary.
+- **Verification**: Local grep sweep returned 0 matches across all three planning modes; sc-doctor 13/13 commands OK; bridge/install.sh deploys cleanly. Fix applied after the 3-round /sc-echo cap; the reviewer did not re-verify the additional post-cap stragglers.
+
 ---
 
 ## Deferred
