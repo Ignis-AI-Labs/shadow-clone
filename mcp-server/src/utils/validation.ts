@@ -121,8 +121,9 @@ export function validatePath(
     );
   }
 
-  // Prevent directory traversal
-  if (normalizedPath.includes('../') || normalizedPath.includes('..\\')) {
+  // Prevent directory traversal (normalizedPath has backslashes
+  // already mapped to forward slashes above, so '..\\' is unreachable).
+  if (normalizedPath.includes('../')) {
     throw new McpError(
       ErrorCode.InvalidParams,
       `${fieldName} cannot contain directory traversal`

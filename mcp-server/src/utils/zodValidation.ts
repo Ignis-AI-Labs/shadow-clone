@@ -14,25 +14,36 @@ const PATH_FIELDS = ['projectPath', 'projectPlan', 'wavesDirectory', 'outputDire
 const PATH_ARRAY_FIELDS = ['files', 'targetFiles'];
 
 /**
- * Validate tool input against Zod schema
+ * Validate tool input against Zod schema.
+ *
+ * Path-security checks (root confinement) run unconditionally — even
+ * for tools without a registered Zod schema — so a tool that adds a
+ * path-bearing field without also registering a schema cannot bypass
+ * the AUDIT-001 boundary. Without this, `if (!schema) return args`
+ * would silently re-open the write-anywhere primitive.
  */
 export function validateToolInput(toolName: string, args: unknown): unknown {
   const schema = toolSchemaRegistry[toolName];
-  if (!schema) {
-    return args; // No schema defined, pass through
-  }
 
-  try {
-    const validated = schema.parse(args ?? {});
-
-    // Apply path security checks for path-like fields
-    return applyPathValidation(validated as Record<string, unknown>);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createSafeValidationError(error);
+  let validated: Record<string, unknown>;
+  if (schema) {
+    try {
+      validated = schema.parse(args ?? {}) as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw createSafeValidationError(error);
+      }
+      throw error;
     }
-    throw error;
+  } else {
+    // No schema: accept the args object but still run path-validation
+    // on known path-bearing field names. Non-path fields pass through.
+    validated = (args && typeof args === 'object'
+      ? { ...(args as Record<string, unknown>) }
+      : {});
   }
+
+  return applyPathValidation(validated);
 }
 
 /**

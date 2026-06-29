@@ -51,7 +51,11 @@ export class CombinedTools {
     }
 
     if (name === 'initialize_workspace') {
-      return this.workspaceInitializer.initializeWorkspace(validatedArgs);
+      // validatedArgs has been schema-checked and path-confined by
+      // validateToolInput; safe to widen to the handler's input type.
+      return this.workspaceInitializer.initializeWorkspace(
+        (validatedArgs ?? {}) as Parameters<typeof this.workspaceInitializer.initializeWorkspace>[0]
+      );
     }
 
     const embeddedToolNames = this.embeddedTools.getToolDefinitions().map(t => t.name);

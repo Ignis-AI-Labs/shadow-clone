@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 
 interface ToolDefinition {
   name: string;
@@ -9,6 +10,12 @@ interface ToolDefinition {
     properties: Record<string, any>;
     required?: string[];
   };
+}
+
+interface InitializeWorkspaceArgs {
+  projectPath?: string;
+  overwrite?: boolean;
+  includeTypes?: string[];
 }
 
 export class WorkspaceInitializer {
@@ -40,7 +47,7 @@ export class WorkspaceInitializer {
     };
   }
 
-  async initializeWorkspace(args: any): Promise<string> {
+  async initializeWorkspace(args: InitializeWorkspaceArgs): Promise<string> {
     const rawProjectPath = args.projectPath || process.cwd();
     const overwrite = args.overwrite || false;
     const includeTypes = args.includeTypes || ['claude', 'github', 'vscode', 'general'];
@@ -49,13 +56,16 @@ export class WorkspaceInitializer {
     // refuse to operate outside the MCP server's working directory.
     // zodValidation also enforces this at the input boundary; this
     // second layer guards against bypass via direct handler invocation
-    // or schema-registry misses.
+    // or schema-registry misses. Error message is intentionally
+    // generic — do not echo the server cwd or the rejected path back
+    // to the MCP client (CWE-209).
     const cwd = process.cwd();
     const projectPath = path.resolve(cwd, rawProjectPath);
     const rel = path.relative(cwd, projectPath);
     if (rel.startsWith('..') || path.isAbsolute(rel)) {
-      throw new Error(
-        `projectPath resolves outside the allowed root (cwd: ${cwd}, requested: ${rawProjectPath})`
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        'projectPath resolves outside the allowed root'
       );
     }
 
