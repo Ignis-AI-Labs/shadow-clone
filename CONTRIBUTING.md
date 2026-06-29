@@ -11,9 +11,7 @@ This guide covers branch conventions, commit standards, PR workflow, and how to 
 ```
 main                        Production-ready code. Deploy target.
  └── dev                    Integration branch. All PRs target here.
-      ├── mihir/dev         Mihir's working branch
-      ├── eli/dev           Eli's working branch
-      └── claude/dev        Claude agent's working branch
+      └── {author}/dev      Your personal working branch
 ```
 
 - **`main`** -- Production. Merges from `dev` only (release PRs).
@@ -34,7 +32,7 @@ Format: `{author}/{type}-{description}`
 | `chore` | Build, CI, dependency updates |
 
 Examples:
-- `mihir/feat-zod-validation`
+- `eli/feat-zod-validation`
 - `eli/fix-rate-limiter-bypass`
 - `claude/docs-update-readme`
 
@@ -109,44 +107,75 @@ git pull origin dev
 - **Parameters**: Max 3-4 per function (use an options object beyond that)
 
 ### Task-First Requirement
-- A task must exist in `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before work begins
-- Every PR references a task ID (e.g., "Implements B-P1-01")
+- A task must exist in `TASKS-plugin.md`, `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before work begins
+- Every PR references a task ID (e.g., "Implements P-P1-04")
 - Claim tasks by adding your name to the Assignee column
 
 ## AI Agent Contributions
 
 AI agents (Claude, Copilot, etc.) follow the same rules:
 
-- Use `agent/dev` or `claude/dev` as their working branch, same as human contributors
+- Use `{agent}/dev` (e.g. `claude/dev`) as their working branch, same as human contributors
 - Write conventional commit messages
 - Fill out the PR template completely
-- Reference task IDs from `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` in the PR body
+- Reference task IDs from `TASKS-plugin.md`, `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` in the PR body
 
-## Contributing New Prompts
+## Contributing slash commands (primary surface)
 
-Shadow Clone's value comes from high-quality prompt engineering macros. Here's how to contribute new or improved prompts:
+The Shadow Clone command surface lives at `claude/commands/sc*.md`. Each
+command is a single markdown file with frontmatter, an `AskUserQuestion`
+preamble batch, three waves of work, and a Standards block referencing
+`protocols/`. `bridge/install.sh` deploys every `sc*.md` automatically — add
+a new file, re-run the installer, and it's live.
 
-### Prompt Location
-All prompts live in `mcp-server/src/prompts/content/` as TypeScript files.
+### Adding a new slash command
 
-### Prompt Quality Standards
-- Use positive framing ("do X" not "don't do Y")
-- Include clear role definitions for agent personas
-- Provide specific, actionable methodology steps
-- Include output format specifications
-- Define quality standards and constraints
+1. Open a task in `TASKS-plugin.md` (prefix `P-*`).
+2. Create `claude/commands/sc-<your-mode>.md`. Use any existing command as a
+   structural template (e.g. `claude/commands/sc-feature.md`).
+3. Each command should:
+   - Start with a `---` frontmatter block including a one-line `description:`
+   - Open with an `AskUserQuestion` preamble batch (3–5 context questions)
+   - Run in **three waves** (research → plan → deliver), each producing one
+     deliverable under `.waves/wave-N/deliverables/`
+   - Cite the applicable protocols from `protocols/` in a Standards block
+   - End with a Closing block summarizing the final artifact
+4. Re-run `bash bridge/install.sh && bash scripts/sc-doctor.sh` to verify the
+   command deploys and is healthy.
+5. Add an entry to `claude/commands/sc-help.md` so users can discover it.
 
-### Adding a New Prompt
-1. Create a new `.ts` file in `mcp-server/src/prompts/content/`
-2. Export the content following the existing pattern
-3. Register the prompt in `mcp-server/src/prompts/content/index.ts`
-4. Wire it up in the appropriate tool handler
-5. Test with `npm run build && npm run lint`
+### Improving existing slash commands
 
-### Improving Existing Prompts
-- Open an issue describing what you'd improve and why
-- Submit a PR with the changes
-- Include before/after examples if possible
+- Open an issue or task describing what you'd improve and why
+- Submit a PR with the changes; `/sc-echo` will paired-review the diff
+- The reviewer judges against `AGENTS.md` and the cited protocols
+
+## Contributing protocols
+
+The 14 canonical protocols in `protocols/` are the engineering standards
+every mode adheres to.
+
+1. Open a task in `TASKS-shared.md` (prefix `S-*`).
+2. New protocols go in `protocols/<Name> Protocol.md`. They deploy
+   automatically to `~/.claude/sc/protocols/` on the next `install.sh` run.
+3. Update `claude/commands/sc-help.md` to list the new protocol under the
+   appropriate tier (core / operational / additional).
+4. If the new protocol is a core standard, add it to every relevant mode's
+   Standards block.
+
+## Contributing prompts to the MCP server (secondary surface)
+
+The MCP server at `mcp-server/` is still maintained as a secondary delivery
+channel. Prompts live in `mcp-server/src/prompts/content/` as TypeScript
+files.
+
+### Adding a new MCP prompt
+1. Open a task in `TASKS-backend.md` (prefix `B-*`).
+2. Create a new `.ts` file in `mcp-server/src/prompts/content/`.
+3. Export the content following the existing pattern.
+4. Register the prompt in `mcp-server/src/prompts/content/index.ts`.
+5. Wire it up in the appropriate tool handler.
+6. Test with `npm run build && npm run lint`.
 
 ## Dependencies Between PRs
 

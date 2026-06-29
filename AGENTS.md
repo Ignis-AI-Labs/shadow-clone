@@ -51,13 +51,13 @@ below — there is one standard, not two, and it does not change with who holds 
 
 ```
 main              ← live, deployed, stable — protected
-    └── develop   ← integration branch — protected
-            ├── feature/your-feature-name
-            └── bugfix/your-bugfix-name
+    └── dev       ← integration branch — protected, all PRs target here
+            └── {author}/dev   ← your personal working branch
 ```
 
-All work happens on feature branches; target `develop`, never `main` directly;
-branch names follow `[type]/[description]`.
+Every contributor works on their own `{author}/dev` branch and PRs into `dev`.
+`dev` merges into `main` for releases only. Never push directly to `dev` or
+`main`. See `CONTRIBUTING.md` for full conventions.
 
 ## RULE 3: CODE STRUCTURE
 
@@ -83,7 +83,7 @@ branch names follow `[type]/[description]`.
 ## RULE 5: PULL REQUEST OUTPUT
 
 PR content always includes: a one-line **Title**, a **Description** (what/why/context),
-and **Testing notes**. Target `develop` unless told otherwise.
+and **Testing notes**. Target `dev` unless told otherwise.
 
 ## RULE 6: SELF-CHECK BEFORE OUTPUT
 
