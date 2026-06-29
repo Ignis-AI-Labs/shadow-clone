@@ -13,12 +13,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 ### HIGH severity (5)
 
 - **Issue ID**: AUDIT-001
+- **Status**: RESOLVED 2026-06-30 (Theme 2 path-confinement pass)
 - **Discovered By**: Reviewer (Application Security specialist, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` (whole-repo audit, Wave 1 AppSec finding AS-001)
 - **Severity**: High (CWE-22 / CWE-73)
 - **Location**: `mcp-server/src/utils/validation.ts:93-127`; consumed by `mcp-server/src/tools/workspaceInitializer.ts:43-124`
 - **Description**: `validatePath` rejects `../` and a 4-entry substring denylist but does NOT confine to any root. Absolute paths like `/etc`, `/home/<user>/.ssh` pass. Combined with AUDIT-002 this gives a prompt-injected or confused MCP client a write-anywhere primitive bounded only by process credentials. Recommended fix: resolve candidate against `process.cwd()` and reject if resolved path doesn't start with allowed-root + sep; caller-side check in `workspaceInitializer.ts`.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Two-layer defense. (1) `validatePath` in `mcp-server/src/utils/validation.ts` gained a `containedIn?: string` option; when set, the input is resolved against that root with `path.resolve` and the result must produce a `path.relative` that does NOT start with `..` and is NOT absolute. (2) `zodValidation.ts` `applyPathValidation` now passes `containedIn: process.cwd()` for every single path field (`PATH_FIELDS`) and every array-of-paths field (`PATH_ARRAY_FIELDS`), so the boundary is enforced for ALL MCP tool inputs, not just `workspaceInitializer`. (3) `workspaceInitializer.initializeWorkspace` adds caller-side defense in depth: resolves the input again and throws if it escapes `process.cwd()`, guarding against bypass via direct handler invocation or schema-registry misses. `npm run lint` (`tsc --noEmit`) passes.
 
 - **Issue ID**: AUDIT-002
 - **Discovered By**: Reviewer (Application Security specialist, Wave 1)

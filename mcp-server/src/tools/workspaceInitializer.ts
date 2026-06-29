@@ -41,9 +41,23 @@ export class WorkspaceInitializer {
   }
 
   async initializeWorkspace(args: any): Promise<string> {
-    const projectPath = args.projectPath || process.cwd();
+    const rawProjectPath = args.projectPath || process.cwd();
     const overwrite = args.overwrite || false;
     const includeTypes = args.includeTypes || ['claude', 'github', 'vscode', 'general'];
+
+    // Caller-side defense (AUDIT-001): resolve the project path and
+    // refuse to operate outside the MCP server's working directory.
+    // zodValidation also enforces this at the input boundary; this
+    // second layer guards against bypass via direct handler invocation
+    // or schema-registry misses.
+    const cwd = process.cwd();
+    const projectPath = path.resolve(cwd, rawProjectPath);
+    const rel = path.relative(cwd, projectPath);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
+      throw new Error(
+        `projectPath resolves outside the allowed root (cwd: ${cwd}, requested: ${rawProjectPath})`
+      );
+    }
 
     let results = [];
 

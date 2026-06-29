@@ -1,3 +1,4 @@
+import * as nodePath from 'path';
 import { config } from '../config/production.js';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 
@@ -88,14 +89,19 @@ export function validateString(
 }
 
 /**
- * Validates and sanitizes file paths
+ * Validates and sanitizes file paths.
+ *
+ * When `containedIn` is provided, the path is resolved against that root
+ * and the result must remain inside it. This blocks absolute paths
+ * (e.g. /etc, /home/user/.ssh) and `..` escapes alike — defense against
+ * AUDIT-001 (CWE-22 / CWE-73).
  */
 export function validatePath(
-  path: unknown,
+  pathValue: unknown,
   fieldName: string,
-  options: { required?: boolean } = {}
+  options: { required?: boolean; containedIn?: string } = {}
 ): string | undefined {
-  const sanitized = validateString(path, fieldName, {
+  const sanitized = validateString(pathValue, fieldName, {
     required: options.required,
     maxLength: config.paths.maxPathLength,
   });
@@ -121,6 +127,20 @@ export function validatePath(
       ErrorCode.InvalidParams,
       `${fieldName} cannot contain directory traversal`
     );
+  }
+
+  // Root-confinement check: reject absolute paths or paths that
+  // resolve outside the allowed root.
+  if (options.containedIn) {
+    const root = nodePath.resolve(options.containedIn);
+    const resolved = nodePath.resolve(root, sanitized);
+    const rel = nodePath.relative(root, resolved);
+    if (rel.startsWith('..') || nodePath.isAbsolute(rel)) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `${fieldName} resolves outside the allowed root`
+      );
+    }
   }
 
   return sanitized;

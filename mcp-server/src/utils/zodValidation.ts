@@ -36,17 +36,22 @@ export function validateToolInput(toolName: string, args: unknown): unknown {
 }
 
 /**
- * Apply validatePath to path-like fields for security
- * This ensures forbidden paths and directory traversal are blocked
+ * Apply validatePath to path-like fields for security.
+ *
+ * Every path field is also root-confined to `process.cwd()` — absolute
+ * paths and resolved-out-of-root paths are rejected. Closes AUDIT-001
+ * (CWE-22 / CWE-73): the prior version only blocked relative `../`
+ * traversal, leaving absolute paths like `/etc` or `/home/user/.ssh`
+ * passing through to handlers that write files.
  */
 function applyPathValidation(obj: Record<string, unknown>): Record<string, unknown> {
   const result = { ...obj };
+  const root = process.cwd();
 
   // Validate single path fields
   for (const field of PATH_FIELDS) {
     if (typeof result[field] === 'string') {
-      // validatePath throws on forbidden paths or directory traversal
-      result[field] = validatePath(result[field] as string, field);
+      result[field] = validatePath(result[field] as string, field, { containedIn: root });
     }
   }
 
@@ -55,8 +60,7 @@ function applyPathValidation(obj: Record<string, unknown>): Record<string, unkno
     if (Array.isArray(result[field])) {
       result[field] = (result[field] as unknown[]).map((item, index) => {
         if (typeof item === 'string') {
-          // validatePath throws on forbidden paths or directory traversal
-          return validatePath(item, `${field}[${index}]`);
+          return validatePath(item, `${field}[${index}]`, { containedIn: root });
         }
         return item;
       });
