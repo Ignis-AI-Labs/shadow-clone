@@ -101,22 +101,22 @@ export function createSafeValidationError(error: z.ZodError): McpError {
     const code = issue.code;
 
     // Use type assertion to access Zod 4 specific properties
-    const issueAny = issue as unknown as Record<string, unknown>;
+    const issueProps = issue as unknown as Record<string, unknown>;
 
     switch (code) {
       case 'invalid_type':
         // Zod 4: has 'expected' property
-        return `${path}: expected ${issueAny.expected || 'valid type'}`;
+        return `${path}: expected ${issueProps.expected || 'valid type'}`;
       case 'invalid_value':
         // Zod 4: replaces 'invalid_enum_value', has 'values' property
-        if (Array.isArray(issueAny.values)) {
-          return `${path}: must be one of: ${(issueAny.values as unknown[]).join(', ')}`;
+        if (Array.isArray(issueProps.values)) {
+          return `${path}: must be one of: ${(issueProps.values as unknown[]).join(', ')}`;
         }
         return `${path}: invalid value`;
       case 'too_small': {
         // Zod 4: uses 'origin' instead of 'type', and 'minimum' property
-        const origin = issueAny.origin as string || 'value';
-        const minimum = issueAny.minimum;
+        const origin = issueProps.origin as string || 'value';
+        const minimum = issueProps.minimum;
         if (origin === 'string') {
           return `${path}: must be at least ${minimum} character(s)`;
         }
@@ -127,8 +127,8 @@ export function createSafeValidationError(error: z.ZodError): McpError {
       }
       case 'too_big': {
         // Zod 4: uses 'origin' instead of 'type', and 'maximum' property
-        const origin = issueAny.origin as string || 'value';
-        const maximum = issueAny.maximum;
+        const origin = issueProps.origin as string || 'value';
+        const maximum = issueProps.maximum;
         if (origin === 'string') {
           return `${path}: must be at most ${maximum} character(s)`;
         }

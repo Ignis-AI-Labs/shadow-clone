@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { logger } from '../utils/logger.js';
 
 interface ToolDefinition {
   name: string;
@@ -149,10 +150,13 @@ export class WorkspaceInitializer {
 
     } catch (error: unknown) {
       // Do NOT echo raw fs error text back to the MCP client — it
-      // contains resolved absolute paths (CWE-209). The detailed
-      // message stays in server logs via the thrown chain; the
-      // client gets a generic remediation hint.
-      void error;
+      // contains resolved absolute paths (CWE-209). Detail goes to
+      // server logs via winston; the client gets a generic
+      // remediation hint.
+      logger.error('initialize_workspace failed', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return `# Error During Initialization
 
 Initialization failed; check that the project path is writable and that the MCP server has sufficient permissions.`;

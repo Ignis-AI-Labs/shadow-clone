@@ -276,7 +276,8 @@ export function validateArray<T>(
   }
 
   if (options.validator) {
-    return value.map((item, index) => options.validator!(item, index));
+    const validator = options.validator;
+    return value.map((item, index) => validator(item, index));
   }
 
   return value as T[];
@@ -296,6 +297,6 @@ export function sanitizeObject<T extends Record<string, unknown>>(obj: T): Parti
       result[key as keyof T] = value as T[keyof T];
     }
   }
-  
+
   return result;
 }
