@@ -2,7 +2,7 @@
 description: Shadow Clone roadmap mode — plan a multi-sprint horizon for an active codebase (current state → workstreams + sequencing → ROADMAP.md)
 ---
 
-You are now operating in **Shadow Clone Roadmap mode** for the rest of this session. This mode plans a **multi-sprint horizon** (a quarter, a half, a major initiative) inside a codebase that already exists. It is the right mode when:
+You are now operating in **Shadow Clone Roadmap mode** for the rest of this session. This mode plans a **multi-sprint horizon** (typically 1-2 weeks of AI-augmented sprint sequencing, up to a few months for strategic / multi-team work) inside a codebase that already exists. It is the right mode when:
 
 - The horizon spans more than one sprint.
 - Multiple workstreams may run in parallel.
@@ -17,7 +17,7 @@ The deliverable is `.waves/wave-2/deliverables/ROADMAP.md`.
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Strategic objective** (header `Objective`) — one to three sentences: what does this horizon achieve? Free-text.
-2. **Horizon** (header `Horizon`) — options: `1 month`, `1 quarter`, `6 months`, `1 year`, `Open-ended`.
+2. **Horizon** (header `Horizon`) — options: `Days`, `1-2 weeks (Recommended)`, `1-3 months`, `Open-ended`. **Bias toward the shorter realistic option.** With AI-augmented work plus parallel-subagent sprints, a roadmap that legacy teams ran for a quarter is typically 1-2 weeks in this system. `Days` fits a small multi-step initiative; `1-2 weeks` is the typical AI-augmented horizon spanning a handful of sprints; `1-3 months` only for strategic / multi-team / cross-product work; `Open-ended` for indefinite strategic direction. Never default to "1 quarter" or "6 months" because legacy roadmaps were that long — AI compresses horizons by roughly 5-40× (wall-clock) depending on scope shape (matches the same headline range used by `/sc-plan`; the quarter→1-2-weeks example here is ~6-12× within that band).
 3. **Parallel workstreams** (header `Streams`) — options: `1 (single thread)`, `2-3`, `4-5`, `6+ (large org)`.
 4. **Output emphasis** (header `Output`) — options: `ROADMAP.md (single doc)`, `ROADMAP.md + per-sprint backlog stubs`, `ROADMAP.md + decision matrix`.
 
@@ -114,7 +114,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     <deliverables>
       <deliverable path=".waves/wave-1/deliverables/WORKSTREAMS.md">
         Consolidated document containing:
-        - Workstream table: ID, name, objective, success criteria, owner, rough sprint count
+        - Workstream table: ID, name, objective, success criteria, owner, rough sprint count (for `Days` horizons use half-day or hour increments instead — see Wave 1 instruction 1)
         - Dependency graph (mermaid or text) showing the critical path
         - Parallel vs. serial assessment: which workstreams can ship concurrently
         - Risk register at the horizon level (each risk has trigger, mitigation, and owner)
@@ -124,7 +124,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </deliverables>
 
     <instructions>
-      1. Each workstream is sized in sprints, not days. If a single workstream is bigger than half the horizon, split it.
+      1. Each workstream is sized in sprints, not days. **Carve-out for the `Days` horizon**: at that scale a sprint may be a single day or even hours, so size workstreams in half-day or hour increments instead — the unit rule is "smaller than the horizon's smallest natural slice." If a single workstream is bigger than half the horizon, split it.
       2. Every workstream cites the surface area from STRATEGIC_CONTEXT.md it will touch.
       3. The dependency graph is the heart of this wave — it determines what Wave 2 can sequence.
       4. Capacity check: total sprint count across workstreams must fit the horizon × parallel-stream count. Flag overflow rather than quietly fitting.

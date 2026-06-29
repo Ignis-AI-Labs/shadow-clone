@@ -17,7 +17,7 @@ The deliverable is `.waves/wave-2/deliverables/SPRINT_PLAN.md`.
 Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 1. **Sprint goal** (header `Goal`) — one sentence: what does this sprint ship? Free-text.
-2. **Sprint length** (header `Length`) — options: `1 week`, `2 weeks`, `3 weeks`, `1 month`.
+2. **Sprint length** (header `Length`) — options: `Hours`, `1 day (Recommended)`, `2-3 days`, `1 week+`. **Bias toward the shorter realistic option.** With AI-augmented work and parallel-subagent waves, a sprint that legacy 2-3 person teams ran in 2 weeks is typically 1 day in this system. `Hours` fits single-PR focused work; `1 day` is the typical AI-augmented sprint; `2-3 days` for multi-feature batches; `1 week+` only for genuinely cross-component or carefully-staged work. Never default to a longer option because "sprints are 2 weeks" — that's legacy human cadence. If scope doesn't fit the chosen length, cut scope, don't lengthen.
 3. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`.
 4. **Risk tolerance** (header `Risk`) — options: `Low (live system, careful rollouts)`, `Standard (normal release cadence)`, `High (experimental area, OK to break things)`.
 
@@ -153,7 +153,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
         5. Risk Register (with mitigations and rollback)
         6. Done Criteria
         7. Out of Scope
-        8. Daily Checkpoint Plan (what gets reported each day)
+        8. Checkpoint Plan — cadence matches sprint length: hourly for an `Hours` sprint, daily for `1 day` and longer. Specifies what gets reported at each checkpoint.
       </deliverable>
     </deliverables>
 
@@ -161,7 +161,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       1. Read both prior deliverables before drafting; reference them by relative link.
       2. Pull the task table into SPRINT_PLAN.md verbatim from TASK_DECOMP.md.
       3. Make the rollback strategy concrete: command-line steps, not "we'll revert."
-      4. The Daily Checkpoint Plan answers "what does the team report each morning?" in one sentence.
+      4. The Checkpoint Plan answers "what does the team report at each checkpoint?" in one sentence, where the checkpoint cadence matches the sprint length (hourly for `Hours`, daily for `1 day` and up).
     </instructions>
   </wave_2>
 </wave_structure>
@@ -198,7 +198,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     - Surface risks specific to changing live code
     - Define a rollback strategy for every risky change
     - Document the out-of-scope list
-    - Specify a daily checkpoint to keep the sprint visible
+    - Specify a checkpoint (cadence matching the sprint length: hourly for `Hours`, daily for `1 day` and up) to keep the sprint visible
   </activities_to_perform>
 
   <workspace_organization>
