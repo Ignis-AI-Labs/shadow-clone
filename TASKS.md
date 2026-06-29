@@ -1,39 +1,36 @@
-# Shadow Clone - Task Tracker
+# Shadow Clone — Task Tracker
 
-**Last updated:** February 2026
+**Last updated:** 2026-06-29
 
 Tasks are split into domain-specific files. Click below to find work:
 
 | Domain | File | Prefix | Scope |
-|--------|------|--------|-------|
-| Backend (MCP Server) | [TASKS-backend.md](TASKS-backend.md) | `B-*` | MCP server, tools, prompts, TypeScript |
-| Frontend (Dashboard) | [TASKS-frontend.md](TASKS-frontend.md) | `F-*` | Dashboard UI, prompt editor, gallery |
-| Shared (Docs/Infra) | [TASKS-shared.md](TASKS-shared.md) | `S-*` | Documentation, CI/CD, npm publish |
+|---|---|---|---|
+| Backend (MCP server) | [TASKS-backend.md](TASKS-backend.md) | `B-*` | `mcp-server/` — the secondary delivery surface |
+| Frontend (Web UI)    | [TASKS-frontend.md](TASKS-frontend.md) | `F-*` | `web/` — onboarding/marketing site |
+| Shared (Docs / Infra / CI) | [TASKS-shared.md](TASKS-shared.md) | `S-*` | Docs, CI/CD, install, distribution |
+| Plugin (slash commands)    | [TASKS-plugin.md](TASKS-plugin.md) | `P-*` | `claude/commands/`, `bridge/`, `protocols/` — the **primary** surface |
 
 ## Task ID Format
 
 `{Component}-P{Priority}-{Number}`
 
-- **Components:** B (Backend), F (Frontend), S (Shared)
+- **Components:** P (Plugin), B (Backend), F (Frontend), S (Shared)
 - **Priority:** P0 = Foundation, P1 = Quality, P2 = Features, P3 = Community
 
 ## How to Claim a Task
 
 1. Open the domain file above
-2. Find a task with status `OPEN` whose dependencies are met
-3. Put your name in the **Assignee** column
-4. Push to your `{name}/dev` branch and PR into `dev`
-5. Reference the task ID in your PR (e.g., "Implements B-P1-01")
+2. Find an `OPEN` task whose dependencies are met
+3. Put your handle in the **Assignee** column, flip status to `IN PROGRESS`
+4. Push the claim commit **before** writing implementation code
+   (see `protocols/Multi Agent Protocol.md`)
+5. Reference the task ID in your PR (e.g. "Implements P-P1-04")
 
-## Closed/Obsolete PRs
+## History
 
-The following PRs were part of the auth/NFT security hardening effort and are obsolete after the open-source pivot:
-
-| PR | Title | Status |
-|----|-------|--------|
-| [#6](https://github.com/ElijahMoses/shadow-clone/pull/6) | Security Hardening & Code Refactoring | Obsolete (auth removed) |
-| [#7](https://github.com/ElijahMoses/shadow-clone/pull/7) | Wallet Verification & Audit Logging | Obsolete (auth removed) |
-| [#8](https://github.com/ElijahMoses/shadow-clone/pull/8) | Browser-Based Auth Foundation | Obsolete (auth removed) |
-| [#9](https://github.com/ElijahMoses/shadow-clone/pull/9) | Zod Schema Validation | **Needs revision** for auth-free context |
-| [#10](https://github.com/ElijahMoses/shadow-clone/pull/10) | MCP-Only Security Access | Obsolete (prompts are open) |
-| [#11](https://github.com/ElijahMoses/shadow-clone/pull/11) | Docs Update | Obsolete (docs rewritten) |
+The auth/NFT-licensing system was removed in commit `ad5341e` ("open-source
+pivot"). PRs #6–#11 were the original closed-source security/auth track and
+are all closed. The slash-command pivot replaces the MCP-only delivery
+model; the MCP server remains as a secondary surface but new work targets
+the `/sc-*` plugin path.
