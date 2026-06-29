@@ -22,8 +22,8 @@ verifies the install.
 
 ## Orchestration modes
 
-Each command asks 3-4 context questions up front (via `AskUserQuestion`) before
-starting Wave 0. Every mode adheres to the canonical engineering standards
+Each command asks a short batch of context questions (3-5, via `AskUserQuestion`)
+up front before starting Wave 0. Every mode adheres to the canonical engineering standards
 deployed to `~/.claude/sc/protocols/` (see "Coding standards" below).
 
 | Command | What it does | Status |
@@ -37,6 +37,7 @@ deployed to `~/.claude/sc/protocols/` (see "Coding standards" below).
 | `/sc-optimize` | Optimize mode — performance team, measure-first, micro-vs-macro tradeoff awareness. | ✅ Available |
 | `/sc-research` | Research mode — open-ended investigation team for tech selection or spike work. | ✅ Available |
 | `/sc-audit` | Audit mode — planning team that produces an audit blueprint, then chains into the security checklist scan. | ✅ Available |
+| `/sc-test-audit` | Diagnose test-suite coverage gaps in an existing project — maps source surface against existing tests, flags missing integration tests where they make sense, surfaces security-sensitive paths without coverage. Read-only; does not run tests, does not generate them. | ✅ Available |
 
 ## Rapid utilities
 
