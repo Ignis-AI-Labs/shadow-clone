@@ -242,7 +242,7 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Source**: `/sc-audit` thematic group: MCP server quality hygiene
 - **Severity**: Low (aggregate)
 - **Location**: `mcp-server/src/**`
-- **Description**: Aggregates QA-010 (4 oversized bash functions in `bridge/lib/`), QA-011 (~37 oversized TS handlers), QA-013 (TASKS-*.md "Edit on dev" wording violates Rule 2), SC-002 (likely-orphan `dotenv` prod dep). Function-size refactor can be incremental; the TASKS wording is a one-line edit per file. Recommended fix: incremental refactor for the size violations; one-line wording fix in TASKS-*.md headers; remove `dotenv` from `mcp-server/package.json` if no use surfaces.
+- **Description**: Aggregates QA-010 (4 oversized bash functions in `bridge/lib/`), QA-011 (~37 oversized TS handlers), QA-013 (TASKS-*.md "Edit on dev" wording violates Rule 2), SC-002 (dotenv — **resolved via AUDIT-021** in Theme 4 pivot-cleanup pass). Function-size refactor can be incremental; the TASKS wording is a one-line edit per file. Recommended fix: incremental refactor for the size violations; one-line wording fix in TASKS-*.md headers.
 
 - **Issue ID**: AUDIT-027
 - **Discovered By**: Reviewer (Application Security, Wave 1)
