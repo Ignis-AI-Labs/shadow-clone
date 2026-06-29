@@ -115,6 +115,18 @@ _None yet._
 - **Fix Description**: Collapsed §2 steps 6-7 into a single step 6 that cross-references "the mode body's `## Closing each wave` section" as the single source of truth.
 - **Verification**: Manual read of §2 and any one mode body's Closing section — only one place now describes the close-wave behavior. Fix applied after the 3-round /sc-echo cap; the reviewer did not re-verify.
 
+- **Issue ID**: SC-001
+- **Discovered By**: Reviewer (GLM 5.2 via `/sc-echo` rounds 1-3 of the `/sc` umbrella init work)
+- **Date Discovered**: 2026-06-29
+- **Source**: `/sc-echo` paired-review of the `/sc` slash-command introduction
+- **Severity**: Low / Info
+- **Location**: `claude/commands/sc-help.md` intro paragraph (and `claude/commands/sc.md` frontmatter description)
+- **Description**: Two cosmetic phrasing stalenesses surfaced in R3 of the `/sc` review: the sc-help intro paragraph still said "Every Shadow Clone surface is a slash command prefixed `/sc-`. The umbrella entry point is `/sc` itself." — the first sentence is false given `/sc` exists. And `sc.md`'s frontmatter description ended with "the `/sc-*` command surface" rather than "/sc and /sc-*".
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-29
+- **Fix Description**: Rewrote sc-help intro to "Every Shadow Clone surface is a slash command: the umbrella `/sc`, plus the `/sc-<name>` mode family." Updated sc.md frontmatter description to mention both `/sc` and `/sc-*`.
+- **Verification**: Manual read; fix applied after the 3-round /sc-echo cap. Also during R3 the reviewer flagged that `bridge/install.sh`'s glob might not have been updated alongside `sc-doctor`'s — verified locally: install.sh:73 already uses `sc*.md` (changed in R2), so the "lockstep" claim was correct; the reviewer just couldn't see install.sh in the R3 dispatch.
+
 ---
 
 ## Deferred

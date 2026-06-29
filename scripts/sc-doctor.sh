@@ -20,7 +20,7 @@ set -euo pipefail
 # --- pure: where each piece is expected to live -----------------------------
 
 # The doctor lives in <repo>/scripts/, so the repo root is one level up.
-# Used to enumerate the canonical source of /sc-* slash commands.
+# Used to enumerate the canonical source of /sc and /sc-* slash commands.
 readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 readonly BRIDGE_DIR="${HOME}/.claude/sc"
@@ -147,22 +147,23 @@ check_config() {
 }
 
 check_claude_commands() {
-  printf '\nClaude Code /sc-* commands (%s):\n' "${CLAUDE_CMD_DIR}"
+  printf '\nClaude Code /sc commands (%s):\n' "${CLAUDE_CMD_DIR}"
   if [ ! -d "${CLAUDE_CMD_SRC}" ]; then
     report FAIL "source dir" "missing: ${CLAUDE_CMD_SRC}"
     return
   fi
   # Derive the expected list from the canonical source so the doctor stays in
   # lockstep with bridge/install.sh — no hardcoded list to drift.
+  # Glob "sc*.md" matches the umbrella /sc and every /sc-<name>.
   local any=0
-  for src in "${CLAUDE_CMD_SRC}"/sc-*.md; do
+  for src in "${CLAUDE_CMD_SRC}"/sc*.md; do
     [ -e "${src}" ] || continue
     any=1
     local name; name="$(basename "${src}")"
     check_file "${CLAUDE_CMD_DIR}/${name}" "${name}"
   done
   if [ "${any}" -eq 0 ]; then
-    report FAIL "any /sc-* commands" "no sc-*.md files in ${CLAUDE_CMD_SRC}"
+    report FAIL "any /sc commands" "no sc*.md files in ${CLAUDE_CMD_SRC}"
   fi
 }
 

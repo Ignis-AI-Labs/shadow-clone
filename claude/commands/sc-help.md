@@ -1,5 +1,5 @@
 ---
-description: Show the catalog of Shadow Clone /sc-* commands and what each one does
+description: Show the catalog of Shadow Clone /sc and /sc-* commands and what each one does
 ---
 
 Show the user the following catalog **exactly** as written below, then ask if they
@@ -7,16 +7,16 @@ want to use any of them. Do not invent commands; do not omit the "Status" column
 
 # Shadow Clone command catalog
 
-Every Shadow Clone surface is a slash command prefixed `/sc-`. The umbrella entry
-point is `/sc` itself. The commands below all live as files under
-`~/.claude/commands/sc-*.md` once `bridge/install.sh` has run — `bash scripts/sc-doctor.sh`
+Every Shadow Clone surface is a slash command: the umbrella `/sc`, plus the
+`/sc-<name>` mode family. They all live as files under
+`~/.claude/commands/sc*.md` once `bridge/install.sh` has run — `bash scripts/sc-doctor.sh`
 verifies the install.
 
 ## System
 
 | Command | What it does | Status |
 |---|---|---|
-| `/sc` | Activate Shadow Clone — walks the user through project init by asking inline questions (project type, language, conventions) and writing a local `CLAUDE.md` / `AGENTS.md` adapted from the canonical `protocols/` library. | 🚧 Phase B |
+| `/sc` | Activate Shadow Clone — walks the user through project init: detects existing setup, asks Type / Stack / Team / Stakes, derives a protocol shortlist, and writes (with user-gated overwrites) `AGENTS.md`, `CLAUDE.md`, `docs/audit/ISSUE_TRACKER.md`, and the `.waves/` scaffold. Surfaces a branching migration plan if non-conforming branches exist. | ✅ Available |
 | `/sc-help` | Show this catalog. | ✅ Available |
 | `/sc-echo` | Enter paired-review mode — a second model reviews each completed work unit against `AGENTS.md`, returning `VERDICT: APPROVE \| REVISE \| BLOCK \| ERROR`. Loop up to 3 rounds per unit. | ✅ Available |
 
@@ -92,5 +92,5 @@ Each mode's body lists its core + additional emphasis. When a `/sc-echo` review 
 - 🚧 **Phase B / Phase C** — planned per `UNIFICATION_PLAN.md`, not yet built.
 
 For the latest list of *currently installed* slash commands on this machine, look at
-`~/.claude/commands/sc-*.md`. Anything in that directory is invokable as
+`~/.claude/commands/sc*.md`. Anything in that directory is invokable as
 `/<filename-without-.md>`.
