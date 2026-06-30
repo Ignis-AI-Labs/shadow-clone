@@ -1,11 +1,18 @@
 import { z } from 'zod';
 import * as prompts from '../prompts/content/index.js';
-import { validateString, validateEnum, validateNumber, validatePath } from '../utils/validation.js';
 import {
   shadowCloneOrchestrateSchema,
   shadowClonePlanSchema,
   getAgentTemplateSchema,
 } from '../schemas/toolSchemas.js';
+
+// Note: this file used to call utils/validation `validate*` helpers
+// inline. They're gone — zod validation runs centrally in
+// combinedTools.executeTool via validateToolInput, and the schema
+// types flow in through `z.infer<...>` on each handler. Local
+// re-validation would be redundant and would mask Rule 6
+// "no silent failures" by re-running the same checks against
+// already-narrowed data.
 
 interface ToolDefinition {
   name: string;
@@ -97,9 +104,13 @@ export class EmbeddedPromptTools {
   }
 
   async executeTool(name: string, args: unknown): Promise<string> {
-    // args has been schema- and path-validated by validateToolInput in
-    // combinedTools.executeTool before reaching here; the casts below
-    // narrow to the per-handler inferred shape.
+    // Contract: this method is intended to be called ONLY by
+    // combinedTools.executeTool, which runs validateToolInput()
+    // (zod schema + path-confinement) on `args` before forwarding.
+    // The casts below narrow to the per-handler inferred shape on
+    // that load-bearing invariant — direct external callers that
+    // skip the combined dispatcher would defeat input validation
+    // and must not be added.
     switch (name) {
       case 'shadow_clone_orchestrate':
         return this.executeOrchestration(args as z.infer<typeof shadowCloneOrchestrateSchema>);
@@ -118,25 +129,11 @@ export class EmbeddedPromptTools {
   }
 
   private async executeOrchestration(args: z.infer<typeof shadowCloneOrchestrateSchema>): Promise<string> {
-    // Validate inputs
-    const mode = validateEnum(args.mode, 'mode',
-      ['plan', 'feature', 'debug', 'optimize', 'refactor', 'audit', 'research'] as const,
-      { required: true }
-    )!;
-
-    const projectDescription = validateString(args.projectDescription, 'projectDescription', {
-      required: true,
-      minLength: 10,
-      maxLength: 5000
-    })!;
-
-    const projectPlan = validatePath(args.projectPlan, 'projectPlan');
-    const wavesDirectory = validatePath(args.wavesDirectory, 'wavesDirectory') || './.waves/';
-    const maxAgentsPerWave = validateNumber(args.maxAgentsPerWave, 'maxAgentsPerWave', {
-      min: 1,
-      max: 20,
-      integer: true
-    }) || 10;
+    // args is already schema-validated (enum, length, path-confinement)
+    // by validateToolInput in combinedTools.executeTool.
+    const { mode, projectDescription, projectPlan } = args;
+    const wavesDirectory = args.wavesDirectory || './.waves/';
+    const maxAgentsPerWave = args.maxAgentsPerWave || 10;
 
     // Get the main orchestration prompt
     const mainPrompt = prompts.content;
@@ -168,14 +165,9 @@ Execute the Shadow Clone orchestration system with the above parameters and proj
   }
 
   private async executePlanning(args: z.infer<typeof shadowClonePlanSchema>): Promise<string> {
-    // Validate inputs
-    const projectVision = validateString(args.projectVision, 'projectVision', {
-      required: true,
-      minLength: 20,
-      maxLength: 10000
-    })!;
-
-    const wavesDirectory = validatePath(args.wavesDirectory, 'wavesDirectory') || './.waves/';
+    // args is already schema-validated by validateToolInput.
+    const projectVision = args.projectVision;
+    const wavesDirectory = args.wavesDirectory || './.waves/';
 
     // Get planning mode config
     const planConfig = this.getModeConfig('plan');
@@ -221,23 +213,23 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
     return modeModule.content;
   }
 
-  private getAgentTemplate(templateType: string | undefined): string {
-    // Validate template type
-    const validatedType = validateEnum(templateType, 'templateType',
-      ['core_rules', 'agent_template', 'team_templates'] as const,
-      { required: true }
-    )!;
+  private getAgentTemplate(templateType: z.infer<typeof getAgentTemplateSchema>['templateType'] | undefined): string {
+    // `templateType` is already enum-validated by validateToolInput
+    // when set; we only need to enforce required-ness here.
+    if (!templateType) {
+      throw new Error('templateType is required');
+    }
     const templateMap: Record<string, PromptModule> = {
       'core_rules': prompts.agent_core_rules,
       'agent_template': prompts.agent_agent_template,
       'team_templates': prompts.template_team_agent_templates,
     };
 
-    const template = templateMap[validatedType];
+    const template = templateMap[templateType];
     if (!template || !template.content) {
-      throw new Error(`Unknown template: ${validatedType}`);
+      throw new Error(`Unknown template: ${templateType}`);
     }
 
-    return `# Shadow Clone Agent Template: ${validatedType}\n\n${template.content}`;
+    return `# Shadow Clone Agent Template: ${templateType}\n\n${template.content}`;
   }
 }

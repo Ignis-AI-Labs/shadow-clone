@@ -319,9 +319,13 @@ export class ModularTools {
   }
 
   async executeTool(name: string, args: unknown): Promise<string> {
-    // args has been schema- and path-validated by validateToolInput in
-    // combinedTools.executeTool before reaching here; the casts below
-    // narrow to the per-handler inferred shape.
+    // Contract: this method is intended to be called ONLY by
+    // combinedTools.executeTool, which runs validateToolInput()
+    // (zod schema + path-confinement) on `args` before forwarding.
+    // The casts below narrow to the per-handler inferred shape on
+    // that load-bearing invariant — direct external callers that
+    // skip the combined dispatcher would defeat input validation
+    // and must not be added.
     switch (name) {
       case 'deploy_agent_team':
         return this.deployAgentTeam(args as z.infer<typeof deployAgentTeamSchema>);
