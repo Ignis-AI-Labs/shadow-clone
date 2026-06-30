@@ -15,68 +15,56 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
-### Option 1 — Claude Code plugin (recommended)
+### Recommended — clone + install.sh (full feature set, ~30 seconds)
 
-Shadow Clone is published as a discoverable Claude Code plugin. Inside
-Claude Code, add the marketplace and install the plugin:
+This gives you everything: the 13 `/sc-*` slash commands, the 15 canonical
+protocols, the bridge scripts that power `/sc-echo`, and the health-check
+script. One block, no follow-ups:
+
+```bash
+git clone --depth 1 --branch v0.2.4 https://github.com/Ignis-AI-Labs/shadow-clone.git
+cd shadow-clone
+bash bridge/install.sh
+bash scripts/sc-doctor.sh        # all checks should pass
+```
+
+Then in Claude Code, run `/sc` to scaffold a project. That's the full path.
+
+The installer deploys to:
+
+| What | Where |
+|---|---|
+| 13 slash commands | `~/.claude/commands/` |
+| Bridge scripts + reviewer | `~/.claude/sc/` |
+| 15 canonical protocols | `~/.claude/sc/protocols/` |
+| OpenCode reviewer persona | `~/.config/opencode/agent/sc-echo-reviewer.md` |
+| Bridge config (first run only) | `~/.config/sc/config` |
+
+User config is never overwritten — safe to re-run any time.
+
+### Alternative — Claude Code plugin (zero shell, partial feature set)
+
+If you only want the planning and execution modes and don't need
+`/sc-echo` paired review, you can install entirely from inside Claude
+Code without ever touching a shell:
 
 ```
 /plugin marketplace add Ignis-AI-Labs/shadow-clone
 /plugin install shadow-clone@ignis-labs
+/sc-bootstrap
 ```
 
-Claude Code auto-discovers the `/sc-*` slash commands from `commands/` and
-loads the bridge helpers from `bridge/`. To use `/sc-echo` (the paired-
-review loop) you still need OpenCode on your PATH — see the **Optional**
-section below.
+`/sc-bootstrap` tells you exactly which pieces landed and which didn't.
+The plugin loader only registers slash commands; it does NOT drop the
+bridge scripts, the protocol library, or the reviewer persona on disk.
+That means `/sc-echo` and `/sc-init` won't work until you also follow
+the "Recommended" path above. Run both for the complete experience.
 
-### Option 2 — Source clone (full bridge install)
+### `/sc-echo` requires OpenCode
 
-Pins a signed release tag so what you install matches what the maintainers
-reviewed and signed. This path also lands the bridge scripts under
-`~/.claude/sc/`, the OpenCode reviewer persona, and the `sc-doctor.sh`
-health check:
-
-```bash
-# Replace vX.Y.Z with the latest release tag from
-# https://github.com/Ignis-AI-Labs/shadow-clone/releases
-git clone --depth 1 --branch vX.Y.Z https://github.com/Ignis-AI-Labs/shadow-clone.git
-cd shadow-clone
-
-# Optional but recommended: verify the maintainer signature on the tag.
-# Requires the maintainer's public key in your gpg keyring.
-git verify-tag vX.Y.Z
-
-bash bridge/install.sh
-bash scripts/sc-doctor.sh        # verify the install is healthy
-```
-
-If you want to track `main` (contributors only — `main` may move in ways
-release tags don't), drop the `--branch` flag and skip `verify-tag`:
-
-```bash
-git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
-cd shadow-clone && bash bridge/install.sh
-```
-
-`install.sh` deploys:
-
-| What | Where |
-|---|---|
-| 13 slash commands (`sc*.md`) | `~/.claude/commands/` |
-| Bridge scripts + helpers     | `~/.claude/sc/` |
-| 15 canonical protocols       | `~/.claude/sc/protocols/` |
-| Paired-review reviewer agent | `~/.config/opencode/agent/sc-echo-reviewer.md` |
-| Bridge config (first run)    | `~/.config/sc/config` (from `config.example`) |
-
-Existing user config is never overwritten — re-run `install.sh` whenever you
-edit anything in this repo.
-
-### Optional — install OpenCode for paired review
-
-The paired-review loop (`/sc-echo`) uses a second AI model to audit each
-finished work unit. By default that's **GLM 5.2 via [OpenCode](https://opencode.ai/)**,
-running read-only. The bridge invokes it for you, but you need OpenCode
+The paired-review loop sends each completed work unit to a second model
+for review. By default that's **GLM 5.2 via [OpenCode](https://opencode.ai/)**,
+running read-only. The bridge calls it for you, but OpenCode has to be
 on your PATH:
 
 ```bash
