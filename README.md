@@ -15,38 +15,133 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
-### Recommended — clone + install.sh (full feature set, ~30 seconds)
+Pick the path that matches you. The first one assumes you've never opened
+a terminal; the second is for users who already have Claude Code open and
+just want to type a couple of slash commands.
 
-This gives you everything: the 13 `/sc-*` slash commands, the 15 canonical
-protocols, the bridge scripts that power `/sc-echo`, and the health-check
-script. One block, no follow-ups:
+> **Quickest path for power users:**
+> ```bash
+> git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
+> cd shadow-clone && bash bridge/install.sh && bash scripts/sc-doctor.sh
+> ```
+> Then in Claude Code, run `/sc`. Skip the rest of this section.
+
+---
+
+### Path A — Step-by-step guide (assumes no prior terminal experience)
+
+You will switch between two windows during this install: a **terminal**
+(black-background text window) and **Claude Code** (the AI assistant). I'll
+say which window every block of text goes into.
+
+#### Step 1 — Install Claude Code (if you don't have it)
+
+Download it from **[claude.com/code](https://claude.com/code)** and follow
+the installer for your operating system. When you're done, you should be
+able to open Claude Code as an app.
+
+#### Step 2 — Install Git (if you don't have it)
+
+Open the link for your OS, download the installer, and accept the defaults:
+
+- **Mac:** [git-scm.com/download/mac](https://git-scm.com/download/mac) — easiest is `brew install git` if you have Homebrew, otherwise the installer.
+- **Windows:** [git-scm.com/download/win](https://git-scm.com/download/win) — this also installs **Git Bash**, which is the terminal you'll use on Windows.
+- **Linux:** Use your package manager — `sudo apt install git` (Ubuntu/Debian), `sudo dnf install git` (Fedora), or `sudo pacman -S git` (Arch).
+
+#### Step 3 — Open your terminal
+
+This is the black-background window where you type commands.
+
+- **Mac:** Press `Cmd+Space` to open Spotlight, type **`Terminal`**, press Enter.
+- **Windows:** Open the Start menu, type **`Git Bash`**, click it. *Use Git Bash, not PowerShell or Command Prompt.*
+- **Linux:** Look for an app called **Terminal**, **Konsole**, or **GNOME Terminal** in your applications menu.
+
+You'll see a window with a prompt that ends in `$` or `>`. That's where
+the commands go.
+
+#### Step 4 — Paste this exact block **into the terminal** and press Enter
+
+Click into the terminal window first so it's focused. Then copy this
+whole block (all four lines) and paste it. On Mac use `Cmd+V`; on
+Windows Git Bash use `Shift+Insert` or right-click → Paste; on Linux use
+`Ctrl+Shift+V`.
 
 ```bash
-git clone --depth 1 --branch v0.2.4 https://github.com/Ignis-AI-Labs/shadow-clone.git
+git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 bash bridge/install.sh
-bash scripts/sc-doctor.sh        # all checks should pass
+bash scripts/sc-doctor.sh
 ```
 
-Then in Claude Code, run `/sc` to scaffold a project. That's the full path.
+You'll see a lot of text scroll by. The install is done when you see:
 
-The installer deploys to:
+```
+sc-doctor: all checks passed.
+```
 
-| What | Where |
-|---|---|
-| 13 slash commands | `~/.claude/commands/` |
-| Bridge scripts + reviewer | `~/.claude/sc/` |
-| 15 canonical protocols | `~/.claude/sc/protocols/` |
-| OpenCode reviewer persona | `~/.config/opencode/agent/sc-echo-reviewer.md` |
-| Bridge config (first run only) | `~/.config/sc/config` |
+If you see `sc-doctor: N check(s) failed.` instead, scroll up to find
+the FAIL line and jump to **Troubleshooting** below.
 
-User config is never overwritten — safe to re-run any time.
+#### Step 5 — Open Claude Code and open any folder
 
-### Alternative — Claude Code plugin (zero shell, partial feature set)
+Open the Claude Code app. From its file menu, **open a folder** — any
+folder is fine, even an empty one. You need a folder open before slash
+commands work.
 
-If you only want the planning and execution modes and don't need
-`/sc-echo` paired review, you can install entirely from inside Claude
-Code without ever touching a shell:
+#### Step 6 — Type this **into Claude Code's chat input** (NOT the terminal)
+
+Switch to Claude Code's window. In the chat box at the bottom, type:
+
+```
+/sc-help
+```
+
+and press Enter. You should see a list of all 14 Shadow Clone commands
+with `✅ Available` next to each. That confirms everything is wired up.
+
+If you see `Unknown command: /sc-help`, restart Claude Code (close it
+fully, open it again, reopen the folder), then try `/sc-help` once more.
+
+#### Step 7 — Try `/sc` to set up a real project
+
+Open the folder you actually want to work in (one with your code), and
+in Claude Code's chat type:
+
+```
+/sc
+```
+
+It will ask you 3–5 questions about your project (what kind, what
+stack, team size, stakes). Pick the answer that fits — or type your own
+if none of the multiple-choice options match. When it's done, your
+project has `AGENTS.md`, `CLAUDE.md`, a `docs/audit/ISSUE_TRACKER.md`
+scaffold, and a `.waves/` directory. You're ready.
+
+#### Step 8 (optional) — Install OpenCode for `/sc-echo` paired review
+
+`/sc-echo` sends each completed unit of work to a second AI model for an
+independent review. It requires **OpenCode**, a separate free CLI.
+
+**Paste this into the terminal** (not Claude Code):
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+opencode auth login
+```
+
+Follow the login prompts. After this, `/sc-echo` works inside Claude
+Code. Skip this step if you don't want paired-review — every other
+`/sc-*` command works without it.
+
+---
+
+### Path B — From inside Claude Code (no terminal, partial features)
+
+If you already have Claude Code open and don't want to use a terminal,
+you can install just the slash commands directly. **This does not give
+you `/sc-echo` paired review** — that needs the full install above.
+
+In Claude Code's chat box, type each line below and press Enter:
 
 ```
 /plugin marketplace add Ignis-AI-Labs/shadow-clone
@@ -54,25 +149,42 @@ Code without ever touching a shell:
 /sc-bootstrap
 ```
 
-`/sc-bootstrap` tells you exactly which pieces landed and which didn't.
-The plugin loader only registers slash commands; it does NOT drop the
-bridge scripts, the protocol library, or the reviewer persona on disk.
-That means `/sc-echo` and `/sc-init` won't work until you also follow
-the "Recommended" path above. Run both for the complete experience.
+`/sc-bootstrap` will tell you exactly which pieces are installed and
+which are missing. If it says "plugin-only install" and you want the
+full feature set, follow **Path A** above — the two paths are
+complementary; they don't conflict.
 
-### `/sc-echo` requires OpenCode
+---
 
-The paired-review loop sends each completed work unit to a second model
-for review. By default that's **GLM 5.2 via [OpenCode](https://opencode.ai/)**,
-running read-only. The bridge calls it for you, but OpenCode has to be
-on your PATH:
+### Troubleshooting
 
-```bash
-curl -fsSL https://opencode.ai/install | bash
+**`Marketplace "ignis-labs" not found`**
+You ran `/plugin install` before `/plugin marketplace add`. Run the
+`add` command first, then the `install` command.
+
+**`Failed to clone repository: ... Permission denied (publickey)`**
+This was a v0.2.4 bug — `/plugin install` was using SSH instead of HTTPS.
+v0.2.5 fixes it. If you still see this on v0.2.5, remove and re-add the
+marketplace so Claude Code refreshes the cached manifest:
+```
+/plugin marketplace remove ignis-labs
+/plugin marketplace add Ignis-AI-Labs/shadow-clone
+/plugin install shadow-clone@ignis-labs
 ```
 
-Without OpenCode, every other `/sc-*` command still works — only `/sc-echo`
-is gated on the reviewer.
+**`bash: command not found` or `git: command not found`** (in the terminal)
+You skipped Step 2 (Git install). Go back and install Git for your OS.
+
+**`Unknown command: /sc-help`** (in Claude Code)
+Claude Code didn't pick up the slash commands. Restart Claude Code fully
+(quit and reopen), open a folder, then try again. If it still doesn't
+work, run `bash scripts/sc-doctor.sh` from the terminal inside the
+`shadow-clone` folder — it'll print which file is missing.
+
+**`sc-doctor: N check(s) failed.`** (after the install)
+Scroll up in the terminal to find the FAIL line. Most common cause is
+running `bridge/install.sh` from somewhere other than the `shadow-clone`
+folder. Do `cd shadow-clone` first, then re-run.
 
 ---
 
