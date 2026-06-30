@@ -15,11 +15,29 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
+The recommended path pins a signed release tag so what you install
+matches what the maintainers reviewed and signed:
+
 ```bash
-git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
+# Replace vX.Y.Z with the latest release tag from
+# https://github.com/Ignis-AI-Labs/shadow-clone/releases
+git clone --depth 1 --branch vX.Y.Z https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
+
+# Optional but recommended: verify the maintainer signature on the tag.
+# Requires the maintainer's public key in your gpg keyring.
+git verify-tag vX.Y.Z
+
 bash bridge/install.sh
 bash scripts/sc-doctor.sh        # verify the install is healthy
+```
+
+If you want to track `main` (contributors only — `main` may move in ways
+release tags don't), drop the `--branch` flag and skip `verify-tag`:
+
+```bash
+git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
+cd shadow-clone && bash bridge/install.sh
 ```
 
 `install.sh` deploys:

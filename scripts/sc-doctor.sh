@@ -57,8 +57,10 @@ readonly OPENCODE_FILES=(
   "command/sc-echo.md"
 )
 
-# External CLIs the bridge calls directly.
-readonly REQUIRED_CMDS=("opencode" "claude" "flock" "setsid")
+# External CLIs the bridge calls directly. `realpath` is checked
+# separately because we need to assert the GNU `-m` extension; bare
+# presence of a BSD `realpath` is not sufficient (AUDIT-013).
+readonly REQUIRED_CMDS=("opencode" "claude" "flock" "setsid" "git" "cksum" "awk")
 
 # Installed paths from earlier names that should no longer exist. A user
 # upgrading from a previous Shadow Clone may have both old and new files
@@ -90,7 +92,11 @@ report() {
 
 check_file() {
   local path="$1" label="$2"
-  if [ -f "${path}" ]; then
+  if [ -L "${path}" ]; then
+    # IS-009: a symlink at an installed path is a strong signal of
+    # tampering or a half-failed upgrade — refuse to call it OK.
+    report FAIL "${label}" "is a symlink (refusing): ${path}"
+  elif [ -f "${path}" ]; then
     report OK "${label}"
   else
     report FAIL "${label}" "missing: ${path}"
@@ -101,7 +107,10 @@ check_file() {
 # bridge script is the textbook partial-install state we are here to catch.
 check_exec() {
   local path="$1" label="$2"
-  if [ ! -f "${path}" ]; then
+  if [ -L "${path}" ]; then
+    # IS-009 (see check_file).
+    report FAIL "${label}" "is a symlink (refusing): ${path}"
+  elif [ ! -f "${path}" ]; then
     report FAIL "${label}" "missing: ${path}"
   elif [ ! -x "${path}" ]; then
     report FAIL "${label}" "not executable: ${path}"
@@ -129,6 +138,70 @@ check_stale() {
   fi
 }
 
+# AUDIT-013: bare `realpath` is GNU on most Linux distros and BSD on
+# macOS. The bridge's file-containment filter uses `realpath -m`, a
+# GNU extension. Probe for the actual flag rather than trusting
+# presence alone.
+check_realpath_gnu_m() {
+  if ! command -v realpath >/dev/null 2>&1; then
+    report FAIL "realpath -m available" "realpath not on PATH"
+    return
+  fi
+  if realpath -m -- / >/dev/null 2>&1; then
+    report OK "realpath -m available"
+  else
+    report FAIL "realpath -m available" \
+      "installed realpath does not accept -m (BSD/macOS form). Install GNU coreutils (e.g. 'brew install coreutils' and use 'grealpath' or symlink it as realpath)."
+  fi
+}
+
+# IS-010: warn if ~/.config/sc/config is more permissive than 0600.
+# Pairs with the install.sh chmod 0600 from Theme 1 and the bridge's
+# _sc_source_config_safe guard from Theme 3 — surface drift early
+# rather than waiting for the bridge to refuse-to-source at runtime.
+# Portable stat (GNU `-c`/BSD `-f`).
+check_config_mode() {
+  local path="${CONFIG_DIR}/config"
+  if [ ! -f "${path}" ]; then
+    return  # absence already reported by check_config
+  fi
+  local mode=""
+  if stat -c '%a' "${path}" >/dev/null 2>&1; then
+    mode="$(stat -c '%a' "${path}")"
+  elif stat -f '%Lp' "${path}" >/dev/null 2>&1; then
+    mode="$(stat -f '%Lp' "${path}")"
+  else
+    printf '  WARN  config mode probe: no usable stat(1); skipped.\n'
+    return
+  fi
+  case "${mode}" in
+    600|640|400|440)
+      report OK "config mode (${mode})"
+      ;;
+    *)
+      printf '  WARN  config mode %s is too permissive (want 0600); run install.sh to normalize.\n' "${mode}"
+      ;;
+  esac
+}
+
+# IS-011: try to mkdir + write a sentinel under the lock dir the bridge
+# will actually use at runtime. A wedged or read-only ${XDG_RUNTIME_DIR}
+# is what would manifest as a "VERDICT: ERROR" on the first review —
+# catch it here instead.
+check_lock_dir() {
+  local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache/sc}/sc/locks}"
+  if ! mkdir -p "${lock_dir}" 2>/dev/null; then
+    report FAIL "lock dir writable" "mkdir failed for ${lock_dir}"
+    return
+  fi
+  local probe="${lock_dir}/.sc-doctor-probe-$$"
+  if : > "${probe}" 2>/dev/null && rm -f "${probe}"; then
+    report OK "lock dir writable (${lock_dir})"
+  else
+    report FAIL "lock dir writable" "cannot write to ${lock_dir}"
+  fi
+}
+
 # --- check groups -----------------------------------------------------------
 
 check_bridge() {
@@ -144,6 +217,7 @@ check_bridge() {
 check_config() {
   printf '\nConfig (%s):\n' "${CONFIG_DIR}"
   check_file "${CONFIG_DIR}/config" "config"
+  check_config_mode
 }
 
 check_claude_commands() {
@@ -179,6 +253,12 @@ check_path() {
   for c in "${REQUIRED_CMDS[@]}"; do
     check_cmd "${c}"
   done
+  check_realpath_gnu_m
+}
+
+check_runtime() {
+  printf '\nRuntime environment:\n'
+  check_lock_dir
 }
 
 check_protocols() {
@@ -225,6 +305,10 @@ check_upgrade_residue() {
 # --- main -------------------------------------------------------------------
 
 printf 'sc-doctor: checking Shadow Clone install...\n'
+# IS-012: print the active umask so users diagnosing mode-related
+# install drift (notably the 0600 config) can see what their shell
+# will set the moment they re-run install.sh.
+printf '  active umask: %s\n' "$(umask)"
 
 check_bridge
 check_config
@@ -232,6 +316,7 @@ check_claude_commands
 check_opencode
 check_path
 check_protocols
+check_runtime
 check_upgrade_residue
 
 printf '\n'

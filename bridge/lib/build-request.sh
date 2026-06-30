@@ -25,8 +25,36 @@ sc_fence() {
   printf '%*s' "${n}" '' | tr ' ' '`'
 }
 
+# AUDIT-013: assert GNU `realpath -m` is available before any request
+# uses it for containment. Probed once per process; cached in
+# SC_REALPATH_M_OK. Failing here is far better than silently
+# fall-through skipping every file at review time on a stat-only BSD
+# realpath.
+_sc_assert_gnu_realpath_m() {
+  [ "${SC_REALPATH_M_OK:-}" = "1" ] && return 0
+  if ! command -v realpath >/dev/null 2>&1; then
+    echo "sc: ERROR — 'realpath' is not on PATH; the file-containment filter cannot run." >&2
+    echo "sc:         Install GNU coreutils (Linux: package 'coreutils'; macOS: 'brew install coreutils')." >&2
+    return 1
+  fi
+  if ! realpath -m -- / >/dev/null 2>&1; then
+    echo "sc: ERROR — installed 'realpath' does not accept '-m' (BSD form)." >&2
+    echo "sc:         The file-containment filter requires GNU coreutils. On macOS:" >&2
+    echo "sc:           brew install coreutils" >&2
+    echo "sc:           ln -s \"\$(brew --prefix coreutils)/libexec/gnubin/realpath\" /usr/local/bin/realpath" >&2
+    echo "sc:         (or use 'grealpath' and adjust PATH so 'realpath' resolves to it)." >&2
+    return 1
+  fi
+  SC_REALPATH_M_OK=1
+  export SC_REALPATH_M_OK
+  return 0
+}
+
 # Assemble the review request at "${REQ}".
 sc_build_request() {
+  # Refuse to build a request if the containment filter cannot run.
+  _sc_assert_gnu_realpath_m || return 1
+
   # A missing law means a degraded, near-useless review. Warn the human loudly
   # rather than failing silently (Rule 3: no silent failures).
   if [ ! -f "${PROJECT_DIR}/AGENTS.md" ]; then

@@ -140,28 +140,40 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Fix Description**: (a) Both `bridge/ask-glm.sh` and `bridge/ask-claude.sh` now check `git check-ignore -q .sc/` at startup; if `.sc/` is not gitignored in the current repo they print a multi-line stderr warning telling the user that review request/response files contain full file contents and recommending `.gitignore`'d. The warning is suppressed by `SC_QUIET_GITIGNORE=1`. (b) `README.md` gained a "Data egress and privacy (paired-review)" subsection that enumerates exactly what leaves the user's machine on every review (full file text, `git diff HEAD`, project `AGENTS.md`, the `<context>` arg), where it lands (on disk in `.sc/exchange/` and in transit to the reviewer model's provider), and the two practical consequences (`.sc/` gitignore + don't review files containing secrets). The README also confirms that Shadow Clone itself makes zero outbound network calls in the bridge layer and notes the single `npm view` egress in `updateChecker.ts`. (c) Pre-send secret-pattern redaction is **not** in scope for this fix — left as an optional follow-up. The warning + README + provider disclosure cover the documented privacy posture, and the realpath containment filter still blocks files outside the project root.
 
 - **Issue ID**: AUDIT-011
+- **Status**: RESOLVED 2026-06-30 (Theme 5 install/doctor pass)
 - **Discovered By**: Reviewer (Supply Chain, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 SupplyChain finding SC-003
 - **Severity**: Medium (CWE-1357)
 - **Location**: `README.md:19-22` install block; `bridge/install.sh`
 - **Description**: TOFU install model — `git clone main` + `bash install.sh`. No tag pin, no signature verification, no checksum manifest. A `main`-push from a compromised maintainer reaches every user on next re-run of `install.sh`. Recommended fix: add tag-pinned install (`git clone --depth 1 --branch vX.Y.Z`) as the recommended path; reserve plain `git clone main` for contributors.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Rewrote the README "Install" section so the recommended path now uses `git clone --depth 1 --branch vX.Y.Z` with an explicit `git verify-tag vX.Y.Z` step before running `install.sh`. The unpinned `git clone main` form is preserved as a "track main (contributors only)" alternative, with the caveat that release tags may not be in sync. The actual signed-tag policy is documented under AUDIT-012's fix (CONTRIBUTING release section).
 
 - **Issue ID**: AUDIT-012
+- **Status**: RESOLVED 2026-06-30 (Theme 5 install/doctor pass — docs only; first signed tag follows on next release)
 - **Discovered By**: Reviewer (Supply Chain, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 SupplyChain finding SC-004
 - **Severity**: Medium (CWE-345)
 - **Location**: Release process (no policy doc yet)
 - **Description**: No signed release tags. `git tag -l` shows lightweight tags only; no `git verify-tag` step in the README install. Downstream cannot cryptographically verify a release identity. Recommended fix: adopt `git tag -s vX.Y.Z` policy. Document `git verify-tag` step in README.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Added a "Cutting a release tag (maintainers)" subsection to `CONTRIBUTING.md` that mandates `git tag -s vX.Y.Z` (signed annotated tag) and documents the `git push origin vX.Y.Z` step, plus a SHA256SUMS-with-detached-GPG-signature artifact (closes SC-005 from the AUDIT-025 aggregate). Also added a "Publishing the MCP server to npm" section documenting `npm publish --provenance` from a GitHub Actions OIDC workflow (closes SC-007 from AUDIT-025). The first signed tag will appear on the next release; until then the README install instructions point at a placeholder `vX.Y.Z` so users know to substitute the latest tag.
 
 - **Issue ID**: AUDIT-013
+- **Status**: RESOLVED 2026-06-30 (Theme 5 install/doctor pass)
 - **Discovered By**: Reviewer (Supply Chain, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 SupplyChain finding SC-008
 - **Severity**: Medium (CWE-754)
 - **Location**: `scripts/sc-doctor.sh:61`; `bridge/lib/build-request.sh` (`realpath -m` call)
 - **Description**: `realpath -m` is a GNU coreutils extension. On stock macOS (BSD `realpath`), the `-m` flag is unrecognized. sc-doctor does not check. The file-containment filter in `build-request.sh` silently no-ops on macOS — files outside `${PROJECT_DIR}` could be included in review requests. Recommended fix: add `realpath` to `REQUIRED_CMDS`; probe `realpath -m -- /` at doctor startup; hard-fail at source time in `build-request.sh` if the same probe fails.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: Both halves landed. `scripts/sc-doctor.sh` gained `check_realpath_gnu_m` which probes `realpath -m -- /` and reports FAIL (with a macOS-specific remediation hint to `brew install coreutils` and symlink as `realpath`) if the flag is unrecognized. `bridge/lib/build-request.sh` gained `_sc_assert_gnu_realpath_m` that does the same probe before assembling any request; the function caches the result in `SC_REALPATH_M_OK` so the probe only runs once per process. `sc_build_request` now `return 1`s on probe failure rather than silently letting a BSD-realpath no-op flow into the containment loop. Theme 3 R2-F3 (fail-closed when realpath unavailable) was a defense-in-depth that pairs with this; together a non-GNU realpath is now impossible to use silently.
 
 - **Issue ID**: AUDIT-014
 - **Status**: RESOLVED 2026-06-30 (Theme 1 symlink-hardening pass; co-resolved with AUDIT-003; also closes IS-013 `chmod +x` from AUDIT-025)
@@ -292,7 +304,8 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Source**: `/sc-audit` thematic group: install model hardening + sc-doctor strict mode
 - **Severity**: Low (aggregate)
 - **Location**: `bridge/install.sh`, `scripts/sc-doctor.sh`, `mcp-server/src/tools/updateChecker.ts`, release process
-- **Description**: Aggregates LOW findings IS-003 (no umask — **resolved via AUDIT-003** in Theme 1: `umask 077` added at top of `install.sh`), IS-006 (`${HOME}` empty unguarded — **resolved via AUDIT-003** in Theme 1: HOME sanity guard added), IS-007 (numeric env vars not type-validated), IS-009 (sc-doctor accepts symlinks), IS-010 (sc-doctor doesn't check config mode), IS-013 (chmod +x follows symlinks — **resolved via AUDIT-014** in Theme 1: `chmod +x` line removed, `install -m 0755` sets the bit), SC-005 (no SHA256SUMS manifest), SC-007 (no `npm publish --provenance`), SC-009 (sc-doctor missing `git cksum awk`), SC-011 (updateChecker swallows registry error). Theme 1 closed IS-003, IS-006, IS-013 inline; remaining sub-items (IS-007, IS-009, IS-010, SC-005, SC-007, SC-009, SC-011) await the sc-doctor strict-mode pass + release-process PR in Theme 5. See VULNERABILITY_REGISTER.md for individual fix details.
+- **Status**: PARTIALLY RESOLVED 2026-06-30 (Theme 1 + Theme 5; IS-007 remains)
+- **Description**: Aggregates LOW findings IS-003 (no umask — **resolved via AUDIT-003** in Theme 1: `umask 077` added at top of `install.sh`), IS-006 (`${HOME}` empty unguarded — **resolved via AUDIT-003** in Theme 1: HOME sanity guard added), IS-007 (numeric env vars not type-validated — **still Open**, follow-up), IS-009 (sc-doctor accepts symlinks — **resolved in Theme 5**: `check_file`/`check_exec` now refuse symlinks at installed paths), IS-010 (sc-doctor doesn't check config mode — **resolved in Theme 5**: `check_config_mode` runs portable stat and WARNs if not 0400/0440/0600/0640), IS-011 (sc-doctor missing lock-dir probe — **resolved in Theme 5**: `check_lock_dir` mkdir-and-sentinel under `${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache/sc}/sc/locks}`), IS-012 (sc-doctor doesn't print active umask — **resolved in Theme 5**: banner now prints `active umask`), IS-013 (chmod +x follows symlinks — **resolved via AUDIT-014** in Theme 1: `chmod +x` line removed, `install -m 0755` sets the bit), SC-005 (no SHA256SUMS manifest — **resolved in Theme 5**: CONTRIBUTING release section documents the artifact + GPG detached signature), SC-007 (no `npm publish --provenance` — **resolved in Theme 5**: CONTRIBUTING release section documents the GitHub Actions OIDC workflow), SC-009 (sc-doctor missing `git cksum awk` — **resolved in Theme 5**: added to `REQUIRED_CMDS`), SC-011 (updateChecker swallows registry error — **resolved in Theme 5**: `try`/`catch` now distinguishes registry failure from version-match and emits a specific "Could not contact npm registry" message). **Remaining open**: IS-007 (numeric env-var type validation in `bridge/lib/run-review.sh`) — self-DoS only, low-priority follow-up.
 
 - **Issue ID**: AUDIT-026
 - **Discovered By**: Reviewer (multiple Wave 1 specialists)

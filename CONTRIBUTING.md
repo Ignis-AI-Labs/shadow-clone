@@ -88,6 +88,62 @@ git pull origin dev
 4. Requires 1 approval
 5. Merge commit (not squash) to preserve history
 
+### Cutting a release tag (maintainers)
+
+After the release PR merges to `main`, cut a signed annotated tag so
+downstream installs can `git verify-tag`. The README's recommended
+install pins to these tags.
+
+```bash
+git checkout main
+git pull --ff-only
+git tag -s vX.Y.Z -m "Shadow Clone vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+Then publish a `SHA256SUMS` artifact alongside the GitHub release.
+This is a small belt-and-suspenders check for users who clone over
+HTTPS without verifying the tag signature:
+
+```bash
+# From the freshly checked-out tag:
+find bridge claude/commands protocols scripts opencode-plugin \
+  -type f \( -name '*.sh' -o -name '*.md' -o -name '*.js' \) \
+  -exec sha256sum {} + | LC_ALL=C sort > SHA256SUMS
+gpg --detach-sign --armor SHA256SUMS  # produces SHA256SUMS.asc
+# Attach SHA256SUMS and SHA256SUMS.asc to the GitHub release.
+```
+
+### Publishing the MCP server to npm (maintainers)
+
+The `mcp-server/` package ships to npm when a release tag is cut.
+Use `npm publish --provenance` from a GitHub Actions workflow with
+OIDC so downstream `npm audit` consumers see an SLSA L2 attestation
+linking the tarball back to the public source commit. **Do not
+publish from a local machine** — provenance only attaches in the
+CI runner with OIDC permissions.
+
+```yaml
+# Excerpt for .github/workflows/publish-mcp.yml
+permissions:
+  id-token: write   # required for OIDC + --provenance
+  contents: read
+steps:
+  - uses: actions/checkout@v4
+  - uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+      registry-url: 'https://registry.npmjs.org'
+  - run: npm ci
+    working-directory: mcp-server
+  - run: npm run build
+    working-directory: mcp-server
+  - run: npm publish --provenance --access public
+    working-directory: mcp-server
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
 ### Code Review Requirements
 
 - All PRs require at least 1 approval
