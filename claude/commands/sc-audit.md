@@ -259,12 +259,8 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     </guideline>
     
     <guideline priority="critical">
-      <instruction>Validate findings proportional to severity - do not stack every layer in front of every finding:
-        - A reproducible exploit needs only a working proof-of-concept
-        - A configuration smell needs only a citation to the policy it violates
-        - Reach for deeper corroboration (tool correlation, dynamic testing, second reviewer) only when the finding is genuinely ambiguous
-      </instruction>
-      <rationale>Gating every finding behind five concurrence layers contradicts flag-then-fix and delays exactly the fixes that matter most. Match the validation effort to the doubt, not to a fixed ceremony.</rationale>
+      <instruction>Apply the Gnosis Verification Protocol (`protocols/Gnosis Verification Protocol.md`) before reporting any finding. A finding must rest on at least one of: (a) a reproduction sequence, (b) a failing test, (c) a direct mechanical observation with a closed reasoning chain — no "could," "might," "may," "potentially." Findings that fail this gate are not findings; they are Research Questions and belong in a clearly-labeled separate section that does NOT contribute to BLOCK/REVISE verdicts.</instruction>
+      <rationale>"A bug that has not been verified is not a bug. It is a question." — Gnosis Verification Protocol §1. Inferred findings consume the Builder's most expensive resource (time) to investigate before being marked false-positive. The Reviewer pays the verification cost up front; the Builder receives only actionable items.</rationale>
     </guideline>
     
     <guideline priority="high">
@@ -283,8 +279,8 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     </guideline>
     
     <guideline priority="high">
-      <instruction>Flag every security issue the moment you are confident it is real - do not hold findings back to chase a perfect false-positive rate</instruction>
-      <rationale>A real vulnerability sitting unreported while you gather a fifth corroboration is worse than a clearly-labeled "needs confirmation" finding. Flag promptly, mark your confidence, and let remediation prioritize. This is the flag-then-fix posture</rationale>
+      <instruction>If a security concern cannot meet the Gnosis verification gate (`protocols/Gnosis Verification Protocol.md` §3) in-band, file it as a Research Question, NOT a finding. Specify the smallest test or observation that would convert it into a verified finding. Do not lower the bar to "flag now, prove later" — that posture is explicitly overridden by this protocol.</instruction>
+      <rationale>Flag-then-fix was previously the house posture; it produced too many speculative findings the Builder had to investigate to dismiss. The replacement is verify-or-research-question: the Reviewer either presents evidence or hands the Builder a specific path to gather evidence, never an unverified finding the Builder must work to disprove.</rationale>
     </guideline>
   </execution_guidelines>
 
@@ -321,6 +317,7 @@ Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/`
 
 **Additional emphasis for this mode:**
 
+- `Gnosis Verification Protocol.md` — **load-bearing.** No finding leaves Wave 1 or the final report without meeting §3's evidence gate (reproduction, failing test, or closed mechanical observation). Speculative concerns go in a Research Questions section that does NOT contribute to severity counts. Read this before any wave.
 - `Audit Protocol.md` — the primary standard for this mode
 - `Dependency & Supply Chain Management Protocol.md` — supply-chain risks
 - All other protocols apply — auditors check against the full standards library

@@ -18,6 +18,13 @@ The protocol is designed for production-critical software where code correctness
 
 **Every issue has an audit trail from discovery to resolution.** No issue is ever "fixed" without a logged explanation of what changed, why, and how it was verified. This applies to bugs, security vulnerabilities, architectural problems, and code quality issues alike.
 
+## Load-bearing companion: Gnosis Verification Protocol
+
+This protocol governs how findings are **tracked** once they exist. The **Gnosis Verification Protocol** (`protocols/Gnosis Verification Protocol.md`) governs what can become a finding in the first place. Read it before opening any audit; it overrides any prior "flag-then-fix" guidance and replaces it with verify-or-research-question.
+
+> "A bug that has not been verified is not a bug. It is a question."
+> — Gnosis Verification Protocol §1
+
 ---
 
 ## File Structure
