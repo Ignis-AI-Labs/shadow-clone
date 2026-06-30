@@ -203,6 +203,7 @@ Then you're ready to use any other `/sc-*` mode.
 
 ```
 /sc-help        # catalog of every Shadow Clone command
+/sc-update      # check for and apply Shadow Clone updates
 ```
 
 ### Want to use Shadow Clone to its fullest?

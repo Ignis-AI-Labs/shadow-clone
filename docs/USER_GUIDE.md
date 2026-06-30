@@ -36,7 +36,9 @@ work unit against your project's rules:
 | **Activation** | `/sc`, `/sc-help`, `/sc-bootstrap` | Set up a project. List the catalog. Verify install. |
 | **Planning** | `/sc-sprint`, `/sc-plan`, `/sc-roadmap` | One milestone / whole project / multi-milestone pipeline |
 | **Execution** | `/sc-feature`, `/sc-refactor`, `/sc-debug`, `/sc-optimize`, `/sc-research`, `/sc-audit`, `/sc-test-audit` | Build, restructure, investigate, profile, research, audit, audit-tests |
+| **Rapid** | `/sc-quick-fix`, `/sc-tests`, `/sc-docs` | Small focused change / generate tests / generate docs — single-pass, no multi-wave overhead |
 | **Quality gate** | `/sc-echo` | Turn on paired review — a second model judges every work unit |
+| **Lifecycle** | `/sc-update` | Check for and apply Shadow Clone updates |
 
 Every mode produces concrete deliverables (markdown files) to
 `.waves/wave-N/deliverables/` in your project. You don't have to take
