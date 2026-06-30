@@ -21,10 +21,26 @@ just want to type a couple of slash commands.
 
 > **Quickest path for power users:**
 > ```bash
-> git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
+> git clone --depth 1 --branch v0.2.9 https://github.com/Ignis-AI-Labs/shadow-clone.git
 > cd shadow-clone && bash bridge/install.sh && bash scripts/sc-doctor.sh
 > ```
 > Then in Claude Code, run `/sc`. Skip the rest of this section.
+
+### Platform support
+
+Shadow Clone runs anywhere bash, git, and Claude Code run — but the
+bridge has a few extra dependencies that aren't on every OS by default.
+This table shows what's needed where:
+
+| Platform | Status | Extra packages needed for the full feature set |
+|---|---|---|
+| **Linux** | ✅ First-class | None on most distros. Minimal containers may need `apt install util-linux coreutils` for `flock` and GNU `realpath`. |
+| **macOS** | ✅ Works with two `brew` installs | `brew install util-linux coreutils` (provides `flock`, `setsid`, GNU `realpath -m`). Without these the `/sc-echo` per-project lock and the file-containment filter run in degraded mode. |
+| **Windows (WSL)** | ✅ Recommended | Run Claude Code and the bridge inside Windows Subsystem for Linux (WSL2). Treat it as Linux from there — no extra packages. **This is the recommended Windows path.** |
+| **Windows (Git Bash native)** | ⚠ Degraded mode | Slash commands work. `/sc-echo` paired review runs without per-project lock serialization (Git Bash doesn't ship `flock`). For the full feature set, use WSL. |
+
+Step 2 below covers the extra-package install per OS so you don't have to
+chase this down separately.
 
 ---
 
@@ -40,20 +56,67 @@ Download it from **[claude.com/code](https://claude.com/code)** and follow
 the installer for your operating system. When you're done, you should be
 able to open Claude Code as an app.
 
-#### Step 2 — Install Git (if you don't have it)
+#### Step 2 — Install Git and the bridge dependencies (if you don't have them)
 
-Open the link for your OS, download the installer, and accept the defaults:
+Open the link for your OS, download the installer (if needed), and accept
+the defaults:
 
-- **Mac:** [git-scm.com/download/mac](https://git-scm.com/download/mac) — easiest is `brew install git` if you have Homebrew, otherwise the installer.
-- **Windows:** [git-scm.com/download/win](https://git-scm.com/download/win) — this also installs **Git Bash**, which is the terminal you'll use on Windows.
-- **Linux:** Use your package manager — `sudo apt install git` (Ubuntu/Debian), `sudo dnf install git` (Fedora), or `sudo pacman -S git` (Arch).
+**Mac:**
+
+```bash
+# If you have Homebrew (recommended):
+brew install git util-linux coreutils
+
+# If you don't have Homebrew, install it first from https://brew.sh
+# then run the line above.
+```
+
+The `util-linux` package provides `flock` and `setsid` (needed for
+`/sc-echo`'s per-project lock). The `coreutils` package provides the
+GNU version of `realpath` which the bridge's file-containment filter
+requires. Without these, the install will still work but `/sc-echo`
+runs in degraded mode.
+
+**Windows — use WSL (recommended):**
+
+The cleanest Windows path is **Windows Subsystem for Linux**. Open
+PowerShell as Administrator and run:
+
+```powershell
+wsl --install
+```
+
+Reboot when prompted. After WSL is up, install Claude Code inside WSL
+and follow the **Linux** instructions below from there.
+
+If you really want native Git Bash instead, download Git for Windows
+from [git-scm.com/download/win](https://git-scm.com/download/win) — but
+expect `/sc-echo` to run without per-project lock serialization (Git
+Bash doesn't ship `flock`).
+
+**Linux:**
+
+```bash
+# Ubuntu / Debian:
+sudo apt install git util-linux coreutils
+
+# Fedora / RHEL:
+sudo dnf install git util-linux coreutils
+
+# Arch:
+sudo pacman -S git util-linux coreutils
+```
+
+On most desktop Linux distros `util-linux` and `coreutils` are already
+installed by default — running these commands is a no-op if so.
 
 #### Step 3 — Open your terminal
 
 This is the black-background window where you type commands.
 
 - **Mac:** Press `Cmd+Space` to open Spotlight, type **`Terminal`**, press Enter.
-- **Windows:** Open the Start menu, type **`Git Bash`**, click it. *Use Git Bash, not PowerShell or Command Prompt.*
+- **Windows (WSL — recommended):** Open the Start menu, type **`Ubuntu`** (or the name of the distro you installed), press Enter. A Linux terminal opens. Run the install from inside there.
+- **Windows (native Git Bash):** Open the Start menu, type **`Git Bash`**, click it. *Use Git Bash, not PowerShell or Command Prompt.* `/sc-echo` will run in degraded mode — see Platform support above.
 - **Linux:** Look for an app called **Terminal**, **Konsole**, or **GNOME Terminal** in your applications menu.
 
 You'll see a window with a prompt that ends in `$` or `>`. That's where
@@ -67,7 +130,7 @@ Windows Git Bash use `Shift+Insert` or right-click → Paste; on Linux use
 `Ctrl+Shift+V`.
 
 ```bash
-git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
+git clone --depth 1 --branch v0.2.9 https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 bash bridge/install.sh
 bash scripts/sc-doctor.sh
@@ -185,6 +248,29 @@ work, run `bash scripts/sc-doctor.sh` from the terminal inside the
 Scroll up in the terminal to find the FAIL line. Most common cause is
 running `bridge/install.sh` from somewhere other than the `shadow-clone`
 folder. Do `cd shadow-clone` first, then re-run.
+
+**`FAIL realpath -m available — installed realpath does not accept -m (BSD/macOS form)`**
+You're on macOS and don't have GNU coreutils. Install it:
+```bash
+brew install coreutils
+```
+Then re-run `bash scripts/sc-doctor.sh`. If you don't have Homebrew yet,
+install it from <https://brew.sh> first.
+
+**`FAIL command "flock" not on PATH`** or **`sc: 'flock' not found; reviews run without serialization`**
+You're missing the `util-linux` package. Install it:
+```bash
+# Mac:
+brew install util-linux
+
+# Ubuntu/Debian:
+sudo apt install util-linux
+```
+On Windows Git Bash, `flock` isn't available — switch to WSL for the
+full feature set (see Platform support above).
+
+**`FAIL command "setsid" not on PATH`** (macOS)
+Comes with `util-linux` on Mac: `brew install util-linux`.
 
 ---
 
