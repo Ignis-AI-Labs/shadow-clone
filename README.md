@@ -15,24 +15,38 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
-Shadow Clone has two install paths and they're **complementary**, not
-alternatives. The plugin path gives you the slash commands; the source
-clone gives you the supporting infrastructure those commands rely on.
-For the full feature set you want both. For "just let me try the
-planning modes" the plugin alone is enough.
+### Recommended — clone + install.sh (full feature set, ~30 seconds)
 
-| | Plugin install | Source clone | Why |
-|---|---|---|---|
-| 13 `/sc-*` slash commands | ✅ | ✅ | The user-facing surface |
-| 15 canonical protocols at `~/.claude/sc/protocols/` | ❌ | ✅ | The modes cite them by absolute path |
-| Bridge scripts at `~/.claude/sc/` | ❌ | ✅ | `ask-glm.sh`, `ask-claude.sh`, `sc-init.sh` |
-| `/sc-echo` paired review works | ❌ | ✅ | Driven by the bridge |
-| OpenCode reviewer persona | ❌ | ✅ | `~/.config/opencode/agent/sc-echo-reviewer.md` |
-| `sc-doctor.sh` health check | ❌ | ✅ | Source script |
+This gives you everything: the 13 `/sc-*` slash commands, the 15 canonical
+protocols, the bridge scripts that power `/sc-echo`, and the health-check
+script. One block, no follow-ups:
 
-### Path A — Claude Code plugin (fastest)
+```bash
+git clone --depth 1 --branch v0.2.4 https://github.com/Ignis-AI-Labs/shadow-clone.git
+cd shadow-clone
+bash bridge/install.sh
+bash scripts/sc-doctor.sh        # all checks should pass
+```
 
-Inside Claude Code:
+Then in Claude Code, run `/sc` to scaffold a project. That's the full path.
+
+The installer deploys to:
+
+| What | Where |
+|---|---|
+| 13 slash commands | `~/.claude/commands/` |
+| Bridge scripts + reviewer | `~/.claude/sc/` |
+| 15 canonical protocols | `~/.claude/sc/protocols/` |
+| OpenCode reviewer persona | `~/.config/opencode/agent/sc-echo-reviewer.md` |
+| Bridge config (first run only) | `~/.config/sc/config` |
+
+User config is never overwritten — safe to re-run any time.
+
+### Alternative — Claude Code plugin (zero shell, partial feature set)
+
+If you only want the planning and execution modes and don't need
+`/sc-echo` paired review, you can install entirely from inside Claude
+Code without ever touching a shell:
 
 ```
 /plugin marketplace add Ignis-AI-Labs/shadow-clone
@@ -40,65 +54,17 @@ Inside Claude Code:
 /sc-bootstrap
 ```
 
-`/sc-bootstrap` checks what landed and tells you exactly what's missing.
-If you only want planning/exec modes, you can stop here. If you want
-`/sc-echo` paired review, follow the source-clone path next.
+`/sc-bootstrap` tells you exactly which pieces landed and which didn't.
+The plugin loader only registers slash commands; it does NOT drop the
+bridge scripts, the protocol library, or the reviewer persona on disk.
+That means `/sc-echo` and `/sc-init` won't work until you also follow
+the "Recommended" path above. Run both for the complete experience.
 
-### Path B — Source clone (full install)
+### `/sc-echo` requires OpenCode
 
-Pins a release tag so what you install matches what the maintainers shipped:
-
-```bash
-# Replace vX.Y.Z with the latest release tag from
-# https://github.com/Ignis-AI-Labs/shadow-clone/releases
-git clone --depth 1 --branch vX.Y.Z https://github.com/Ignis-AI-Labs/shadow-clone.git
-cd shadow-clone
-
-# Optional, recommended once signing is wired up:
-# git verify-tag vX.Y.Z
-
-bash bridge/install.sh
-bash scripts/sc-doctor.sh        # verify the install is healthy
-```
-
-If you want to track `main` (contributors only — `main` may move in ways
-release tags don't), drop the `--branch` flag:
-
-```bash
-git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
-cd shadow-clone && bash bridge/install.sh
-```
-
-### Path C — Both (recommended for everyday use)
-
-Plugin first, then source clone. The plugin install is the discoverable,
-zero-shell front door; the source clone gives you the protocols and the
-echo loop. After both:
-
-```bash
-bash scripts/sc-doctor.sh    # all green
-```
-
-and `/sc-bootstrap` reports fully installed.
-
-`install.sh` deploys:
-
-| What | Where |
-|---|---|
-| 13 slash commands (`sc*.md`) | `~/.claude/commands/` |
-| Bridge scripts + helpers     | `~/.claude/sc/` |
-| 15 canonical protocols       | `~/.claude/sc/protocols/` |
-| Paired-review reviewer agent | `~/.config/opencode/agent/sc-echo-reviewer.md` |
-| Bridge config (first run)    | `~/.config/sc/config` (from `config.example`) |
-
-Existing user config is never overwritten — re-run `install.sh` whenever you
-edit anything in this repo.
-
-### Optional — install OpenCode for paired review
-
-The paired-review loop (`/sc-echo`) uses a second AI model to audit each
-finished work unit. By default that's **GLM 5.2 via [OpenCode](https://opencode.ai/)**,
-running read-only. The bridge invokes it for you, but you need OpenCode
+The paired-review loop sends each completed work unit to a second model
+for review. By default that's **GLM 5.2 via [OpenCode](https://opencode.ai/)**,
+running read-only. The bridge calls it for you, but OpenCode has to be
 on your PATH:
 
 ```bash
