@@ -47,7 +47,9 @@ sc_build_request() {
     echo "## Builder context (what was done and why)"
     echo
     echo "<<<UNTRUSTED-BUILDER-CONTEXT>>>"
-    echo "${CONTEXT}"
+    # printf is option-safe — `echo "${CONTEXT}"` would mis-interpret
+    # a CONTEXT starting with `-n`/`-e`/`-E` as a builtin flag.
+    printf '%s\n' "${CONTEXT}"
     echo "<<<END-UNTRUSTED-BUILDER-CONTEXT>>>"
     echo
 
@@ -86,8 +88,14 @@ sc_build_request() {
         # are found and containment-checked consistently regardless of cwd.
         abs="${f}"
         case "${f}" in /*) : ;; *) abs="${PROJECT_DIR}/${f}" ;; esac
-        rp="$(realpath -m -- "${abs}" 2>/dev/null || true)"
-        [ -n "${rp}" ] || rp="${abs}"
+        # Fail-closed if realpath is unavailable (BSD/macOS without GNU
+        # coreutils, exotic builds). The fallback to the uncanonicalized
+        # path would let a `../` escape slip through the case match,
+        # defeating the defense-in-depth guarantee this filter exists for.
+        if ! rp="$(realpath -m -- "${abs}" 2>/dev/null)" || [ -z "${rp}" ]; then
+          echo "_(skipped, realpath unavailable for: ${f})_"
+          continue
+        fi
         case "${rp}" in
           "${PROJECT_DIR}"|"${PROJECT_DIR}"/*) : ;;
           *) echo "_(skipped, outside project root: ${f})_"; continue ;;

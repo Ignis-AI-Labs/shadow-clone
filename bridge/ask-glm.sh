@@ -37,7 +37,10 @@ _sc_source_config_safe() {
     mode="$(stat -c '%a' "${cfg}")"
   elif stat -f '%u' "${cfg}" >/dev/null 2>&1; then
     owner="$(stat -f '%u' "${cfg}")"
-    mode="$(stat -f '%Op' "${cfg}")"; mode="${mode: -3}"
+    # BSD %Lp = bare-permission octal (e.g. "600"); the older %Op
+    # specifier we used originally is not standard and silently
+    # produces unparseable output on real BSD/macOS.
+    mode="$(stat -f '%Lp' "${cfg}")"
   else
     echo "sc: WARN — cannot stat ${cfg}; skipping source as a precaution." >&2
     return 1
@@ -48,7 +51,7 @@ _sc_source_config_safe() {
   fi
   case "${mode}" in
     600|640|400|440) ;;
-    *) echo "sc: refusing to source ${cfg}: mode ${mode} is too permissive (need 0600 or 0640)." >&2; return 1 ;;
+    *) echo "sc: refusing to source ${cfg}: mode ${mode} is too permissive (allowed: 0400/0440/0600/0640)." >&2; return 1 ;;
   esac
   return 0
 }
