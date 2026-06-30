@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import * as fsSync from 'fs';
 import * as path from 'path';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from '../utils/logger.js';
@@ -73,78 +74,71 @@ export class WorkspaceInitializer {
     let results: string[] = [];
 
     try {
+      // All filesystem operations below use O_NOFOLLOW (via the
+      // *NoFollow helpers) and lstat-then-mkdir (non-recursive) for
+      // subdirectories. This closes AUDIT-002 / AUDIT-005 / CWE-59 +
+      // CWE-367: an attacker who plants a symlink at
+      // <projectPath>/CLAUDE.md → /etc/cron.d/legit no longer hits
+      // the symlink target — the open() syscall fails with ELOOP.
+
       // 1. Ensure .gitignore has Shadow Clone patterns
       const gitignorePath = path.join(projectPath, '.gitignore');
-
-      try {
-        const gitignoreContent = await fs.readFile(gitignorePath, 'utf-8');
-        if (!gitignoreContent.includes('.shadow-clone/') || !gitignoreContent.includes('.waves/')) {
-          await fs.appendFile(gitignorePath, '\n# Shadow Clone\n.shadow-clone/\n.waves/\n');
-          results.push('Updated .gitignore');
-        }
-      } catch {
-        await fs.writeFile(gitignorePath, '# Shadow Clone\n.shadow-clone/\n.waves/\n');
+      const existingGitignore = await this.readNoFollow(gitignorePath);
+      if (existingGitignore === null) {
+        await this.writeNoFollow(gitignorePath, '# Shadow Clone\n.shadow-clone/\n.waves/\n');
         results.push('Created .gitignore');
+      } else if (
+        !existingGitignore.includes('.shadow-clone/') ||
+        !existingGitignore.includes('.waves/')
+      ) {
+        await this.appendNoFollow(gitignorePath, '\n# Shadow Clone\n.shadow-clone/\n.waves/\n');
+        results.push('Updated .gitignore');
       }
 
       // 2. Create CLAUDE.md
       if (includeTypes.includes('claude')) {
         const claudePath = path.join(projectPath, 'CLAUDE.md');
         const claudeContent = this.getClaudeContent();
+        const existingClaude = await this.readNoFollow(claudePath);
 
-        try {
-          await fs.access(claudePath);
-          if (!overwrite) {
-            const existingContent = await fs.readFile(claudePath, 'utf-8');
-            if (!existingContent.includes('Shadow Clone')) {
-              await fs.appendFile(claudePath, '\n\n' + claudeContent);
-              results.push('Appended Shadow Clone instructions to existing CLAUDE.md');
-            } else {
-              results.push('CLAUDE.md already has Shadow Clone instructions');
-            }
-          } else {
-            await fs.writeFile(claudePath, claudeContent);
-            results.push('Overwrote CLAUDE.md with Shadow Clone instructions');
-          }
-        } catch {
-          await fs.writeFile(claudePath, claudeContent);
+        if (existingClaude === null) {
+          await this.writeNoFollow(claudePath, claudeContent);
           results.push('Created CLAUDE.md');
+        } else if (overwrite) {
+          await this.writeNoFollow(claudePath, claudeContent);
+          results.push('Overwrote CLAUDE.md with Shadow Clone instructions');
+        } else if (!existingClaude.includes('Shadow Clone')) {
+          await this.appendNoFollow(claudePath, '\n\n' + claudeContent);
+          results.push('Appended Shadow Clone instructions to existing CLAUDE.md');
+        } else {
+          results.push('CLAUDE.md already has Shadow Clone instructions');
         }
       }
 
       // 3. Create .ai/instructions.md
       if (includeTypes.includes('general')) {
         const aiDir = path.join(projectPath, '.ai');
-        await fs.mkdir(aiDir, { recursive: true });
-
+        await this.ensureRealDir(aiDir);
         const aiPath = path.join(aiDir, 'instructions.md');
-        const aiContent = this.getAIInstructionsContent();
-
-        await fs.writeFile(aiPath, aiContent);
+        await this.writeNoFollow(aiPath, this.getAIInstructionsContent());
         results.push('Created .ai/instructions.md');
       }
 
       // 4. Create .github/copilot-instructions.md
       if (includeTypes.includes('github')) {
         const githubDir = path.join(projectPath, '.github');
-        await fs.mkdir(githubDir, { recursive: true });
-
+        await this.ensureRealDir(githubDir);
         const copilotPath = path.join(githubDir, 'copilot-instructions.md');
-        const copilotContent = this.getCopilotContent();
-
-        await fs.writeFile(copilotPath, copilotContent);
+        await this.writeNoFollow(copilotPath, this.getCopilotContent());
         results.push('Created .github/copilot-instructions.md');
       }
 
       // 5. Create .vscode/ai-instructions.md
       if (includeTypes.includes('vscode')) {
         const vscodeDir = path.join(projectPath, '.vscode');
-        await fs.mkdir(vscodeDir, { recursive: true });
-
+        await this.ensureRealDir(vscodeDir);
         const vscodePath = path.join(vscodeDir, 'ai-instructions.md');
-        const vscodeContent = this.getVSCodeContent();
-
-        await fs.writeFile(vscodePath, vscodeContent);
+        await this.writeNoFollow(vscodePath, this.getVSCodeContent());
         results.push('Created .vscode/ai-instructions.md');
       }
 
@@ -357,5 +351,102 @@ This project uses Shadow Clone - a free, open-source prompt engineering macro sy
 3. **Professional approaches** - Industry best practices
 4. **Combine for complex tasks** - Use multiple tools together
 `;
+  }
+
+  // -------------------------------------------------------------------------
+  // Symlink-safe filesystem helpers (AUDIT-002 / AUDIT-005, CWE-59 + CWE-367).
+  // Every write goes through O_NOFOLLOW; every directory creation lstat-checks
+  // the existing path first and refuses if it is a symlink. The kernel's
+  // ELOOP on a symlinked target file is what makes these safe — Node's
+  // path-based fs.writeFile/appendFile/readFile transparently follow links.
+  // -------------------------------------------------------------------------
+
+  /**
+   * Ensure `dir` exists as a real (non-symlink) directory. If it already
+   * exists and is a symlink (or a non-directory), throws. The parent dir
+   * (the caller's `projectPath`) has already been path-confined; this
+   * helper does NOT mkdir recursively, so a hostile symlink at an
+   * intermediate ancestor cannot redirect the create.
+   */
+  private async ensureRealDir(dir: string): Promise<void> {
+    try {
+      const st = await fs.lstat(dir);
+      if (st.isSymbolicLink()) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          'destination directory exists as a symlink; refusing to follow'
+        );
+      }
+      if (!st.isDirectory()) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          'destination directory path exists but is not a directory'
+        );
+      }
+      return;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+    }
+    // Non-recursive: the parent must already exist (it's the validated
+    // projectPath). Refuse to mkdir a chain of dirs through unknown
+    // intermediates.
+    await fs.mkdir(dir);
+  }
+
+  /**
+   * Create/truncate `filePath` with O_NOFOLLOW. If the path is a
+   * symlink, the open() syscall fails with ELOOP — defeats AUDIT-002.
+   */
+  private async writeNoFollow(filePath: string, content: string): Promise<void> {
+    const flags =
+      fsSync.constants.O_WRONLY |
+      fsSync.constants.O_CREAT |
+      fsSync.constants.O_TRUNC |
+      fsSync.constants.O_NOFOLLOW;
+    const handle = await fs.open(filePath, flags, 0o644);
+    try {
+      await handle.writeFile(content);
+    } finally {
+      await handle.close();
+    }
+  }
+
+  /**
+   * Append to `filePath` with O_NOFOLLOW. Creates the file if missing
+   * (O_CREAT); refuses if the path is a symlink (ELOOP).
+   */
+  private async appendNoFollow(filePath: string, content: string): Promise<void> {
+    const flags =
+      fsSync.constants.O_WRONLY |
+      fsSync.constants.O_CREAT |
+      fsSync.constants.O_APPEND |
+      fsSync.constants.O_NOFOLLOW;
+    const handle = await fs.open(filePath, flags, 0o644);
+    try {
+      await handle.writeFile(content);
+    } finally {
+      await handle.close();
+    }
+  }
+
+  /**
+   * Read `filePath` without following symlinks. Returns the content on
+   * success, `null` if the file does not exist (ENOENT). Other errors
+   * (including ELOOP on a symlinked path) propagate.
+   */
+  private async readNoFollow(filePath: string): Promise<string | null> {
+    const flags = fsSync.constants.O_RDONLY | fsSync.constants.O_NOFOLLOW;
+    let handle;
+    try {
+      handle = await fs.open(filePath, flags);
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
+      throw err;
+    }
+    try {
+      return await handle.readFile('utf-8');
+    } finally {
+      await handle.close();
+    }
   }
 }

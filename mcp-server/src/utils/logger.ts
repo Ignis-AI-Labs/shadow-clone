@@ -1,7 +1,77 @@
 import winston from 'winston';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { config } from '../config/production.js';
+
+/**
+ * Resolve and validate a caller-supplied log file path. Closes AUDIT-016
+ * (CWE-22 + CWE-73): the prior version handed LOG_FILE_PATH straight to
+ * fs.mkdirSync({recursive: true}) and winston.transports.File, with no
+ * normalization, containment, or symlink rejection.
+ *
+ * Returns the safe absolute path on success, or null on rejection
+ * (caller skips the file transport — the server still runs).
+ */
+function safeLogFilePath(input: string): string | null {
+  const allowedRoots = [
+    path.resolve(os.homedir(), '.cache', 'shadow-clone', 'logs'),
+    path.resolve(os.tmpdir(), 'shadow-clone'),
+    path.resolve(process.cwd()),
+  ];
+
+  // Reject control chars / nulls outright; the rest of the logic
+  // operates on the cleaned string.
+  if (/[\x00-\x1F\x7F]/.test(input)) return null;
+
+  const resolved = path.resolve(input);
+
+  const containedIn = (root: string): boolean => {
+    const rel = path.relative(root, resolved);
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+  };
+
+  if (!allowedRoots.some(containedIn)) return null;
+
+  // Refuse if the destination path or its dirname is a symlink. We
+  // require the dirname to already exist (no `recursive: true` mkdir on
+  // an env-driven path — that lets a hostile env var materialize new
+  // directories anywhere we have write).
+  const dir = path.dirname(resolved);
+  let dirStat: fs.Stats;
+  try {
+    dirStat = fs.lstatSync(dir);
+  } catch {
+    return null;
+  }
+  if (dirStat.isSymbolicLink() || !dirStat.isDirectory()) return null;
+
+  // realpath the dir and re-check containment — defeats a symlinked
+  // intermediate ancestor under an allowed root pointing elsewhere.
+  let realDir: string;
+  try {
+    realDir = fs.realpathSync(dir);
+  } catch {
+    return null;
+  }
+  if (!allowedRoots.some((root) => {
+    const rel = path.relative(root, realDir);
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+  })) {
+    return null;
+  }
+
+  // The file itself may not yet exist (that's the normal create case),
+  // but if something is there it must not be a symlink.
+  try {
+    const fileStat = fs.lstatSync(resolved);
+    if (fileStat.isSymbolicLink()) return null;
+  } catch {
+    // File doesn't exist yet — that's fine.
+  }
+
+  return path.join(realDir, path.basename(resolved));
+}
 
 // Custom format to mask sensitive data
 const maskSensitive = winston.format((info) => {
@@ -73,18 +143,28 @@ export const logger = winston.createLogger({
   exitOnError: false,
 });
 
-// Optional file logging, enabled by setting LOG_FILE_PATH
+// Optional file logging, enabled by setting LOG_FILE_PATH. The path is
+// validated against an allow-list of roots and refused if any component
+// is a symlink (AUDIT-016 / CWE-22 / CWE-73). On rejection, we log a
+// warning and run with stderr-only — never fail the server.
 if (config.logging.filePath) {
-  try {
-    fs.mkdirSync(path.dirname(config.logging.filePath), { recursive: true });
-    logger.add(new winston.transports.File({
-      filename: config.logging.filePath,
-      format: productionFormat,
-      handleExceptions: true,
-      handleRejections: true,
-    }));
-  } catch (error) {
-    logger.error('Failed to create file log transport', { error: (error as Error).message });
+  const safePath = safeLogFilePath(config.logging.filePath);
+  if (safePath === null) {
+    logger.warn(
+      'LOG_FILE_PATH rejected by path validator (not under an allowed root, or contains a symlink). File logging disabled.',
+      { requested: config.logging.filePath }
+    );
+  } else {
+    try {
+      logger.add(new winston.transports.File({
+        filename: safePath,
+        format: productionFormat,
+        handleExceptions: true,
+        handleRejections: true,
+      }));
+    } catch (error) {
+      logger.error('Failed to create file log transport', { error: (error as Error).message });
+    }
   }
 }
 

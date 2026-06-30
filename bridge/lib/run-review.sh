@@ -22,6 +22,38 @@
 #
 # Depends on sc_run_reaped (lib/reap.sh); the bridge sources reap.sh first.
 
+# _sc_lock_dir_safe DIR — return 0 iff DIR (or its nearest existing
+# ancestor) is owned by the current uid AND its other-write bit is clear.
+# Closes AUDIT-015 / IS-004 (CWE-59 + CWE-426): without this, a user who
+# sets SC_LOCK_DIR to a sticky-bit-only path like /tmp/sc/locks gives a
+# co-located unprivileged process the chance to plant a symlink at the
+# lock filename and have `exec 9>"${lock}"` truncate-open the symlink
+# target. Refusing the dir and falling back to ${HOME}/.cache/sc/sc/locks
+# eliminates the surface.
+#
+# stat(1) varies between coreutils (-c) and BSD (-f); on systems where
+# `stat -c` is unavailable we skip the check rather than block the bridge.
+_sc_lock_dir_safe() {
+  local dir="$1"
+  local parent="${dir}"
+  # Walk to nearest existing ancestor.
+  while [ ! -e "${parent}" ]; do
+    local up; up="$(dirname -- "${parent}")"
+    [ "${up}" = "${parent}" ] && return 1
+    parent="${up}"
+  done
+  local uid; uid="$(id -u)"
+  local owner mode
+  owner="$(stat -c '%u' "${parent}" 2>/dev/null)" || return 0
+  mode="$(stat -c '%a' "${parent}" 2>/dev/null)" || return 0
+  [ "${owner}" = "${uid}" ] || return 1
+  # Last digit of the octal mode is the other-perms triplet; bit 2 = world-write.
+  case "${mode: -1}" in
+    2|3|6|7) return 1 ;;
+  esac
+  return 0
+}
+
 # _sc_lock_path SERIALIZE LOCK_DIR PROJECT — resolve the lock file for the mode.
 # Empty output means "no lock" (serialize=off). The per-project key is derived from
 # the project's physical path so each repo gets its own queue.
@@ -55,6 +87,16 @@ sc_invoke_reviewer() {
   # Keep locks in a user-private dir (Rule 8): a shared /tmp path could be a planted
   # symlink that `exec 9>` would follow and truncate.
   local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache/sc}/sc/locks}"
+  local fallback_lock_dir="${HOME}/.cache/sc/sc/locks"
+
+  # AUDIT-015 / IS-004: refuse a lock dir whose parent isn't user-private.
+  # Fall back to the canonical user-private path and warn once per run.
+  if ! _sc_lock_dir_safe "${lock_dir}"; then
+    if [ "${lock_dir}" != "${fallback_lock_dir}" ]; then
+      echo "sc: SC_LOCK_DIR (${lock_dir}) is not user-private; falling back to ${fallback_lock_dir}." >&2
+      lock_dir="${fallback_lock_dir}"
+    fi
+  fi
 
   local lock
   lock="$(_sc_lock_path "${serialize}" "${lock_dir}" "${PROJECT_DIR:-${PWD}}")"
