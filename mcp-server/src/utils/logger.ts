@@ -175,7 +175,7 @@ if (config.logging.filePath) {
 }
 
 // Export convenience methods with proper typing
-export const logError = (error: Error | string, context?: Record<string, any>) => {
+export const logError = (error: Error | string, context?: Record<string, unknown>) => {
   if (error instanceof Error) {
     logger.error(error.message, {
       stack: error.stack,
@@ -187,20 +187,20 @@ export const logError = (error: Error | string, context?: Record<string, any>) =
   }
 };
 
-export const logInfo = (message: string, metadata?: Record<string, any>) => {
+export const logInfo = (message: string, metadata?: Record<string, unknown>) => {
   logger.info(message, metadata);
 };
 
-export const logWarning = (message: string, metadata?: Record<string, any>) => {
+export const logWarning = (message: string, metadata?: Record<string, unknown>) => {
   logger.warn(message, metadata);
 };
 
-export const logDebug = (message: string, metadata?: Record<string, any>) => {
+export const logDebug = (message: string, metadata?: Record<string, unknown>) => {
   logger.debug(message, metadata);
 };
 
 // Performance logging helper
-export const logPerformance = (operation: string, duration: number, metadata?: Record<string, any>) => {
+export const logPerformance = (operation: string, duration: number, metadata?: Record<string, unknown>) => {
   logger.info(`Performance: ${operation}`, {
     duration_ms: duration,
     ...metadata,

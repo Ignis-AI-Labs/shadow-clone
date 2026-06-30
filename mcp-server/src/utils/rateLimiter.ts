@@ -128,9 +128,9 @@ export const globalRateLimiter = new RateLimiter();
  * Express-style middleware for rate limiting
  */
 export function rateLimitMiddleware(
-  getClientId: (request: any) => string = () => 'global'
+  getClientId: (request: unknown) => string = () => 'global'
 ) {
-  return (request: any) => {
+  return (request: unknown) => {
     const clientId = getClientId(request);
     globalRateLimiter.check(clientId);
   };

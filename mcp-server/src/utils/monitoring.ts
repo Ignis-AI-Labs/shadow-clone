@@ -83,7 +83,7 @@ export class HealthMonitor {
   /**
    * Get metrics for monitoring
    */
-  getMetrics(): Record<string, any> {
+  getMetrics(): Record<string, unknown> {
     const memoryUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
     const rateLimitStats = globalRateLimiter.getStats();

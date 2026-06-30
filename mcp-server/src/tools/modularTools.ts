@@ -1,13 +1,54 @@
+import { z } from 'zod';
 import * as prompts from '../prompts/content/index.js';
+import {
+  deployAgentTeamSchema,
+  deploySpecialistAgentSchema,
+  quickFixSchema,
+  codeReviewTeamSchema,
+  generateTestsSchema,
+  executeSingleWaveSchema,
+  createDocumentationSchema,
+  architectureConsultantSchema,
+  showCommandsSchema,
+} from '../schemas/toolSchemas.js';
 
 interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: {
     type: string;
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
     required?: string[];
   };
+}
+
+interface TeamAgent {
+  role: string;
+  expertise: string;
+}
+
+interface SpecialistInfo {
+  title: string;
+  expertise: string;
+  description: string;
+}
+
+interface DocumentationConfig {
+  specialists: string[];
+  guidelines: string;
+  structure: string;
+}
+
+interface ConsultationConfig {
+  description: string;
+  experts: string[];
+  framework: string;
+}
+
+interface WaveConfiguration {
+  description: string;
+  agents: string[];
+  deliverables: string[];
 }
 
 export class ModularTools {
@@ -277,41 +318,44 @@ export class ModularTools {
     ];
   }
 
-  async executeTool(name: string, args: any): Promise<string> {
+  async executeTool(name: string, args: unknown): Promise<string> {
+    // args has been schema- and path-validated by validateToolInput in
+    // combinedTools.executeTool before reaching here; the casts below
+    // narrow to the per-handler inferred shape.
     switch (name) {
       case 'deploy_agent_team':
-        return this.deployAgentTeam(args);
-      
+        return this.deployAgentTeam(args as z.infer<typeof deployAgentTeamSchema>);
+
       case 'deploy_specialist_agent':
-        return this.deploySpecialistAgent(args);
-      
+        return this.deploySpecialistAgent(args as z.infer<typeof deploySpecialistAgentSchema>);
+
       case 'quick_fix':
-        return this.quickFix(args);
-      
+        return this.quickFix(args as z.infer<typeof quickFixSchema>);
+
       case 'code_review_team':
-        return this.codeReviewTeam(args);
-      
+        return this.codeReviewTeam(args as z.infer<typeof codeReviewTeamSchema>);
+
       case 'generate_tests':
-        return this.generateTests(args);
-      
+        return this.generateTests(args as z.infer<typeof generateTestsSchema>);
+
       case 'execute_single_wave':
-        return this.executeSingleWave(args);
-      
+        return this.executeSingleWave(args as z.infer<typeof executeSingleWaveSchema>);
+
       case 'create_documentation':
-        return this.createDocumentation(args);
-      
+        return this.createDocumentation(args as z.infer<typeof createDocumentationSchema>);
+
       case 'architecture_consultant':
-        return this.architectureConsultant(args);
-      
+        return this.architectureConsultant(args as z.infer<typeof architectureConsultantSchema>);
+
       case 'show_commands':
-        return this.showCommands(args);
-      
+        return this.showCommands(args as z.infer<typeof showCommandsSchema>);
+
       default:
         throw new Error(`Unknown modular tool: ${name}`);
     }
   }
 
-  private async deployAgentTeam(args: any): Promise<string> {
+  private async deployAgentTeam(args: z.infer<typeof deployAgentTeamSchema>): Promise<string> {
     const { teamType, task, outputDirectory, teamSize } = args;
     const directory = outputDirectory || './output/';
     const size = teamSize || 3;
@@ -361,7 +405,7 @@ Execute the task with the ${teamType} team working collaboratively.
     return prompt;
   }
 
-  private async deploySpecialistAgent(args: any): Promise<string> {
+  private async deploySpecialistAgent(args: z.infer<typeof deploySpecialistAgentSchema>): Promise<string> {
     const { specialization, task, context, deliverables } = args;
     
     const specialistInfo = this.getSpecialistInfo(specialization);
@@ -399,7 +443,7 @@ Execute the task using your ${specialization} expertise.
     return prompt;
   }
 
-  private async quickFix(args: any): Promise<string> {
+  private async quickFix(args: z.infer<typeof quickFixSchema>): Promise<string> {
     const { issueType, description, filePath, urgency } = args;
     
     const urgencyLevel = urgency || 'high';
@@ -442,7 +486,7 @@ Execute the quick fix immediately.
     return prompt;
   }
 
-  private async codeReviewTeam(args: any): Promise<string> {
+  private async codeReviewTeam(args: z.infer<typeof codeReviewTeamSchema>): Promise<string> {
     const { reviewType, files, standards } = args;
     
     const reviewFocus = this.getReviewFocus(reviewType);
@@ -494,7 +538,7 @@ Execute the ${reviewType} code review.
     return prompt;
   }
 
-  private async generateTests(args: any): Promise<string> {
+  private async generateTests(args: z.infer<typeof generateTestsSchema>): Promise<string> {
     const { testType, targetFiles, framework, coverage } = args;
     
     const testingFramework = framework || this.getDefaultFramework(testType);
@@ -540,8 +584,8 @@ Generate comprehensive ${testType} tests for the target files.
   }
 
   // Helper methods
-  private getTeamTemplates(teamType: string): any[] {
-    const templates: Record<string, any[]> = {
+  private getTeamTemplates(teamType: string): TeamAgent[] {
+    const templates: Record<string, TeamAgent[]> = {
       frontend: [
         { role: 'UI Component Expert', expertise: 'React/Vue/Angular components, state management' },
         { role: 'CSS Specialist', expertise: 'Responsive design, animations, styling systems' },
@@ -603,8 +647,8 @@ Generate comprehensive ${testType} tests for the target files.
     return templates[teamType] || templates.frontend;
   }
 
-  private getSpecialistInfo(specialization: string): any {
-    const specialists: Record<string, any> = {
+  private getSpecialistInfo(specialization: string): SpecialistInfo {
+    const specialists: Record<string, SpecialistInfo> = {
       react_expert: {
         title: 'React/Next.js Specialist',
         expertise: 'React, Next.js, hooks, performance optimization, component architecture',
@@ -811,7 +855,7 @@ Generate comprehensive ${testType} tests for the target files.
     return frameworks[testType] || 'jest';
   }
 
-  private async executeSingleWave(args: any): Promise<string> {
+  private async executeSingleWave(args: z.infer<typeof executeSingleWaveSchema>): Promise<string> {
     const { waveType, scope, inputs, maxAgents } = args;
     
     const agentCount = maxAgents || 4;
@@ -859,7 +903,7 @@ Execute the ${waveType} wave for the specified scope.
     return prompt;
   }
 
-  private async createDocumentation(args: any): Promise<string> {
+  private async createDocumentation(args: z.infer<typeof createDocumentationSchema>): Promise<string> {
     const { docType, scope, format, audience } = args;
     
     const outputFormat = format || 'markdown';
@@ -910,7 +954,7 @@ Generate ${docType} documentation in ${outputFormat} format.
     return prompt;
   }
 
-  private async architectureConsultant(args: any): Promise<string> {
+  private async architectureConsultant(args: z.infer<typeof architectureConsultantSchema>): Promise<string> {
     const { consultationType, context, constraints, goals } = args;
     
     const consultationGoals = goals ? goals.join('\n- ') : 'Provide comprehensive architectural guidance';
@@ -965,8 +1009,8 @@ Execute the ${consultationType} consultation.
   }
 
   // Additional helper methods for new tools
-  private getWaveConfiguration(waveType: string): any {
-    const configs: Record<string, any> = {
+  private getWaveConfiguration(waveType: string): WaveConfiguration {
+    const configs: Record<string, WaveConfiguration> = {
       research: {
         description: 'Deep analysis and investigation without making changes',
         agents: [
@@ -1062,8 +1106,8 @@ Execute the ${consultationType} consultation.
     return configs[waveType] || configs.research;
   }
 
-  private getDocumentationConfig(docType: string): any {
-    const configs: Record<string, any> = {
+  private getDocumentationConfig(docType: string): DocumentationConfig {
+    const configs: Record<string, DocumentationConfig> = {
       api: {
         specialists: [
           'API Documentation Expert - Creates clear endpoint documentation',
@@ -1174,8 +1218,8 @@ Execute the ${consultationType} consultation.
     return configs[docType] || configs.developer;
   }
 
-  private getConsultationConfig(consultationType: string): any {
-    const configs: Record<string, any> = {
+  private getConsultationConfig(consultationType: string): ConsultationConfig {
+    const configs: Record<string, ConsultationConfig> = {
       design_review: {
         description: 'Comprehensive review of system design and architecture',
         experts: [
@@ -1241,7 +1285,7 @@ Execute the ${consultationType} consultation.
     return configs[consultationType] || configs.design_review;
   }
 
-  private async showCommands(args: any): Promise<string> {
+  private async showCommands(args: z.infer<typeof showCommandsSchema>): Promise<string> {
     const category = args?.category || 'all';
     
     const commandReference = `<!--

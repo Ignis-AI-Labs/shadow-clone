@@ -256,12 +256,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Fix Description**: Deleted `mcp-server/src/auth/encryption.ts` (243 lines) and the `auth/` directory via `git rm -r`. Ran `npm uninstall dotenv` to drop the orphan prod dep (SC-002 from the AUDIT-026 aggregate; was unused since the auth removal). `npm run lint` (`tsc --noEmit`) passes. `mcp-server/package.json` now declares only `@modelcontextprotocol/sdk`, `winston`, `zod` as runtime deps.
 
 - **Issue ID**: AUDIT-022
+- **Status**: RESOLVED 2026-06-30 (P1 QA-007 typing pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-007
 - **Severity**: Medium
 - **Location**: 24 sites in `mcp-server/src/tools/{combinedTools,embeddedPromptTools,modularTools,workspaceInitializer}.ts` + `utils/{rateLimiter,monitoring}.ts` (full list in Wave 1 report)
 - **Description**: 24 unjustified `: any` in tool handlers despite zod schemas existing in `src/schemas/toolSchemas.ts`. Root architectural cause of AUDIT-001 — handlers receive `any`, re-look-up properties, never feel the type system. Violates AGENTS.md Rule 3 "No `any` without written justification." Mechanical fix. Recommended fix: replace `args: any` with `args: z.infer<typeof XSchema>` per tool; `catch (error: any)` → `catch (error: unknown)`.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: All `any` usages eliminated from `mcp-server/src/`. (a) **Handler signatures**: every tool handler in `modularTools.ts` (9 handlers: deployAgentTeam, deploySpecialistAgent, quickFix, codeReviewTeam, generateTests, executeSingleWave, createDocumentation, architectureConsultant, showCommands) and `embeddedPromptTools.ts` (3 handlers: executeOrchestration, executePlanning, getAgentTemplate) now takes `z.infer<typeof XSchema>` from the inferred zod types in `src/schemas/toolSchemas.ts`. (b) **Dispatch routers**: `executeTool(name: string, args: any)` → `args: unknown` in both modular/embedded routers and in `combinedTools.executeTool`; each route point narrows via `as z.infer<...>` (args were already schema- and path-validated by `validateToolInput` per Theme 2). (c) **Internal helpers**: replaced `any[]` / `Record<string, any>` returns with proper interfaces — `TeamAgent`, `SpecialistInfo`, `WaveConfiguration`, `DocumentationConfig`, `ConsultationConfig` in `modularTools.ts`; `PromptModule` in `embeddedPromptTools.ts`. (d) **Supporting modules**: `getMetrics()`, every `logger.ts` metadata parameter, `rateLimiter` middleware factory, and the three `properties: Record<string, any>` in `ToolDefinition` interfaces all converted to `Record<string, unknown>` / `unknown`. (e) **Catch blocks**: Theme 2 already converted `workspaceInitializer.ts`'s `catch (error: any)` to `unknown`; no other `catch (any)` remained. Final grep: `grep -rIn ': any\b\|: any\[\]\|<.*,\s*any>' mcp-server/src/ --include='*.ts'` returns 0 matches. `tsc --noEmit` passes.
 
 - **Issue ID**: AUDIT-023
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)

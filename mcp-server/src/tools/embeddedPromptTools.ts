@@ -1,14 +1,27 @@
+import { z } from 'zod';
 import * as prompts from '../prompts/content/index.js';
 import { validateString, validateEnum, validateNumber, validatePath } from '../utils/validation.js';
+import {
+  shadowCloneOrchestrateSchema,
+  shadowClonePlanSchema,
+  getAgentTemplateSchema,
+} from '../schemas/toolSchemas.js';
 
 interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: {
     type: string;
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
     required?: string[];
   };
+}
+
+// The content modules in prompts/content/*.ts all expose a `content`
+// string; widening to a structural type avoids `any` while still
+// matching every module without changing their public shape.
+interface PromptModule {
+  content: string;
 }
 
 export class EmbeddedPromptTools {
@@ -83,23 +96,28 @@ export class EmbeddedPromptTools {
     ];
   }
 
-  async executeTool(name: string, args: any): Promise<string> {
+  async executeTool(name: string, args: unknown): Promise<string> {
+    // args has been schema- and path-validated by validateToolInput in
+    // combinedTools.executeTool before reaching here; the casts below
+    // narrow to the per-handler inferred shape.
     switch (name) {
       case 'shadow_clone_orchestrate':
-        return this.executeOrchestration(args);
+        return this.executeOrchestration(args as z.infer<typeof shadowCloneOrchestrateSchema>);
 
       case 'shadow_clone_plan':
-        return this.executePlanning(args);
+        return this.executePlanning(args as z.infer<typeof shadowClonePlanSchema>);
 
-      case 'get_agent_template':
-        return this.getAgentTemplate(args?.templateType);
+      case 'get_agent_template': {
+        const a = args as z.infer<typeof getAgentTemplateSchema> | undefined;
+        return this.getAgentTemplate(a?.templateType);
+      }
 
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
   }
 
-  private async executeOrchestration(args: any): Promise<string> {
+  private async executeOrchestration(args: z.infer<typeof shadowCloneOrchestrateSchema>): Promise<string> {
     // Validate inputs
     const mode = validateEnum(args.mode, 'mode',
       ['plan', 'feature', 'debug', 'optimize', 'refactor', 'audit', 'research'] as const,
@@ -149,7 +167,7 @@ Execute the Shadow Clone orchestration system with the above parameters and proj
     return executionPrompt;
   }
 
-  private async executePlanning(args: any): Promise<string> {
+  private async executePlanning(args: z.infer<typeof shadowClonePlanSchema>): Promise<string> {
     // Validate inputs
     const projectVision = validateString(args.projectVision, 'projectVision', {
       required: true,
@@ -185,7 +203,7 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
   }
 
   private getModeConfig(mode: string): string {
-    const modeMap: Record<string, any> = {
+    const modeMap: Record<string, PromptModule> = {
       'plan': prompts.mode_plan,
       'feature': prompts.mode_feature,
       'debug': prompts.mode_debug,
@@ -209,7 +227,7 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
       ['core_rules', 'agent_template', 'team_templates'] as const,
       { required: true }
     )!;
-    const templateMap: Record<string, any> = {
+    const templateMap: Record<string, PromptModule> = {
       'core_rules': prompts.agent_core_rules,
       'agent_template': prompts.agent_agent_template,
       'team_templates': prompts.template_team_agent_templates,
