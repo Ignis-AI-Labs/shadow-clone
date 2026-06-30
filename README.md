@@ -96,7 +96,7 @@ Switch to Claude Code's window. In the chat box at the bottom, type:
 /sc-help
 ```
 
-and press Enter. You should see a list of all 14 Shadow Clone commands
+and press Enter. You should see a list of all 17 Shadow Clone commands
 with `✅ Available` next to each. That confirms everything is wired up.
 
 If you see `Unknown command: /sc-help`, restart Claude Code (close it
@@ -223,7 +223,7 @@ the doc to read next.
 
 ## The command surface
 
-13 commands. Run `/sc-help` for the full live catalog with statuses.
+16 `/sc-*` commands plus the `/sc` umbrella. Run `/sc-help` for the full live catalog with statuses.
 
 ### System
 

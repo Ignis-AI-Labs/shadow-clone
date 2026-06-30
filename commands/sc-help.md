@@ -42,13 +42,13 @@ deployed to `~/.claude/sc/protocols/` (see "Coding standards" below).
 
 ## Rapid utilities
 
-These are smaller, single-purpose helpers — still on the roadmap (not yet built).
+Smaller, single-purpose helpers for focused work that doesn't justify a full mode.
 
 | Command | What it does | Status |
 |---|---|---|
-| `/sc-quick-fix` | Targeted single-issue fix — minimal team, fastest path to a small, focused change. | 🚧 Phase C |
-| `/sc-tests` | Generate integration tests per `protocols/TESTING.md` for the work currently in scope. | 🚧 Phase C |
-| `/sc-docs` | Generate documentation per `protocols/WRITING.md` for the work currently in scope. | 🚧 Phase C |
+| `/sc-quick-fix` | Targeted single-issue fix — minimal team, no waves, fastest path to a small, focused change. Gnosis-gated diagnosis, scope-guarded edits, verification per the user's chosen rigor. | ✅ Available |
+| `/sc-tests` | Generate meaningful tests for the work currently in scope — surface-first contract discovery, framework-aware, no coverage theater. Cites `Testing & Quality Assurance Protocol.md`. | ✅ Available |
+| `/sc-docs` | Generate documentation for the work currently in scope — audience-aware, anti-marketing voice, source-of-truth-first. Cites `Documentation Standards for Software Teams.md`. | ✅ Available |
 
 ## Helper scripts (not slash commands)
 
@@ -91,7 +91,6 @@ Each mode's body lists its core + additional emphasis. When a `/sc-echo` review 
 ## Status legend
 
 - ✅ **Available** — installed by `bridge/install.sh` and ready to use.
-- 🚧 **Phase B / Phase C** — planned per `UNIFICATION_PLAN.md`, not yet built.
 
 For the latest list of *currently installed* slash commands on this machine, look at
 `~/.claude/commands/sc*.md`. Anything in that directory is invokable as
