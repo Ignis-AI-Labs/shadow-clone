@@ -204,7 +204,10 @@ check_lock_dir() {
     return
   fi
   local probe="${lock_dir}/.sc-doctor-probe-$$"
-  # Ensure the sentinel is removed even on partial failure / interrupt.
+  # Ensure the sentinel is removed on any normal return from this
+  # function (including `set -e` early-exit). RETURN does not fire on
+  # signal interrupts, but the success path removes the sentinel
+  # explicitly and `rm -f` is idempotent.
   # shellcheck disable=SC2064
   trap "rm -f '${probe}'" RETURN
   if : > "${probe}" 2>/dev/null; then

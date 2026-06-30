@@ -50,6 +50,17 @@ export class UpdateChecker {
         { timeout: 15_000, maxBuffer: 1 << 20 }
       );
       latestVersion = stdout.trim();
+      // Rule 8: validate the external response before using it.
+      // npm should return a single semver string; anything else means
+      // the registry payload is malformed or wrapped in extra output.
+      if (!/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/.test(latestVersion)) {
+        return `⚠️ The npm registry returned an unexpected payload. Could not verify the latest version.
+
+To manually update:
+\`\`\`bash
+npm update -g @shadow-clone/mcp-server
+\`\`\``;
+      }
     } catch {
       return `⚠️ Could not contact the npm registry to check for updates.
 
