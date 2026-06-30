@@ -1,6 +1,6 @@
 # Shadow Clone — Task Tracker
 
-**Last updated:** 2026-06-29
+**Last updated:** 2026-06-30
 
 Tasks are split into domain-specific files. Click below to find work:
 
@@ -9,7 +9,7 @@ Tasks are split into domain-specific files. Click below to find work:
 | Backend (MCP server) | [TASKS-backend.md](TASKS-backend.md) | `B-*` | `mcp-server/` — the secondary delivery surface |
 | Frontend (Web UI)    | [TASKS-frontend.md](TASKS-frontend.md) | `F-*` | `web/` — onboarding/marketing site |
 | Shared (Docs / Infra / CI) | [TASKS-shared.md](TASKS-shared.md) | `S-*` | Docs, CI/CD, install, distribution |
-| Plugin (slash commands)    | [TASKS-plugin.md](TASKS-plugin.md) | `P-*` | `claude/commands/`, `bridge/`, `protocols/` — the **primary** surface |
+| Plugin (slash commands)    | [TASKS-plugin.md](TASKS-plugin.md) | `P-*` | `commands/`, `bridge/`, `protocols/` — the **primary** surface |
 
 ## Task ID Format
 

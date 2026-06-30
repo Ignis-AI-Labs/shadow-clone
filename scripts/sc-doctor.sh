@@ -27,7 +27,7 @@ readonly BRIDGE_DIR="${HOME}/.claude/sc"
 readonly CONFIG_DIR="${HOME}/.config/sc"
 readonly CLAUDE_CMD_DIR="${HOME}/.claude/commands"
 readonly OPENCODE_DIR="${HOME}/.config/opencode"
-readonly CLAUDE_CMD_SRC="${REPO_ROOT}/claude/commands"
+readonly CLAUDE_CMD_SRC="${REPO_ROOT}/commands"
 readonly PROTOCOLS_SRC="${REPO_ROOT}/protocols"
 readonly PROTOCOLS_DEST="${HOME}/.claude/sc/protocols"
 

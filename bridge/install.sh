@@ -83,12 +83,15 @@ install -m 0644 "${HERE}/agent/sc-echo-reviewer.md" "${AGENT_DIR}/sc-echo-review
 echo "sc: installed reviewer agent -> ${AGENT_DIR}/sc-echo-reviewer.md"
 
 # --- /sc and /sc-* slash commands for Claude Code --------------------------
-# Source of truth is repo_root/claude/commands/sc*.md (umbrella /sc plus every
+# Source of truth is repo_root/commands/sc*.md (umbrella /sc plus every
 # /sc-<name>). Every file is copied to the user-level command directory so
 # Claude Code discovers them in any project. New commands deploy automatically
 # the moment a sc*.md file lands in the repo — no install.sh edit needed.
+# Path is repo-root /commands/ (not /claude/commands/) so this layout also
+# satisfies the Claude Code plugin loader's auto-discovery (it looks for
+# /commands at the plugin root).
 mkdir -p "${CLAUDE_CMD_DIR}"
-readonly CMD_SRC_DIR="${REPO_ROOT}/claude/commands"
+readonly CMD_SRC_DIR="${REPO_ROOT}/commands"
 sc_cmd_count=0
 if [ -d "${CMD_SRC_DIR}" ]; then
   # Glob "sc*.md" matches both the umbrella /sc and every /sc-<name>.

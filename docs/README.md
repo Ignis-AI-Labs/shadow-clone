@@ -13,6 +13,6 @@ The current user-facing documentation lives in:
 - **`CLAUDE.md`** / **`AGENTS.md`** — operating agreements for AI assistants
 - **`protocols/`** — the canonical engineering protocols (deployed to
   `~/.claude/sc/protocols/` by `bridge/install.sh`)
-- **`claude/commands/sc*.md`** — every Shadow Clone slash command, in source
+- **`commands/sc*.md`** — every Shadow Clone slash command, in source
   form (deployed to `~/.claude/commands/`)
 - **`/sc-help`** — run this command for the live catalog of all `/sc-*` commands

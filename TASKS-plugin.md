@@ -1,12 +1,12 @@
 # Tasks — Plugin (slash commands + bridge + protocols)
 
-**Last updated:** 2026-06-29
+**Last updated:** 2026-06-30
 
 The plugin surface lives at:
 
-- `claude/commands/sc*.md` — every `/sc-*` slash command
+- `commands/sc*.md` — every `/sc-*` slash command
 - `bridge/` — install + paired-review (`/sc-echo`) bridge
-- `protocols/` — the 14 canonical engineering protocols
+- `protocols/` — the 15 canonical engineering protocols
 - `opencode-plugin/sc-echo.js` — OpenCode counterpart for the reviewer
 - `scripts/` — `sc-doctor.sh`, `sc-last-verdict.sh`
 

@@ -3,7 +3,7 @@
 **Last updated:** 2026-06-29
 
 The MCP server at `mcp-server/` is the **secondary** delivery surface (the
-slash-command plugin in `claude/commands/` is primary). Work here keeps the
+slash-command plugin in `commands/` is primary). Work here keeps the
 MCP path functional for users on MCP-only environments (Claude Desktop,
 some VS Code setups, etc.).
 

@@ -15,8 +15,27 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
-The recommended path pins a signed release tag so what you install
-matches what the maintainers reviewed and signed:
+### Option 1 — Claude Code plugin (recommended)
+
+Shadow Clone is published as a discoverable Claude Code plugin. Inside
+Claude Code, add the marketplace and install the plugin:
+
+```
+/plugin marketplace add Ignis-AI-Labs/shadow-clone
+/plugin install shadow-clone@ignis-labs
+```
+
+Claude Code auto-discovers the `/sc-*` slash commands from `commands/` and
+loads the bridge helpers from `bridge/`. To use `/sc-echo` (the paired-
+review loop) you still need OpenCode on your PATH — see the **Optional**
+section below.
+
+### Option 2 — Source clone (full bridge install)
+
+Pins a signed release tag so what you install matches what the maintainers
+reviewed and signed. This path also lands the bridge scripts under
+`~/.claude/sc/`, the OpenCode reviewer persona, and the `sc-doctor.sh`
+health check:
 
 ```bash
 # Replace vX.Y.Z with the latest release tag from
@@ -46,7 +65,7 @@ cd shadow-clone && bash bridge/install.sh
 |---|---|
 | 13 slash commands (`sc*.md`) | `~/.claude/commands/` |
 | Bridge scripts + helpers     | `~/.claude/sc/` |
-| 14 canonical protocols       | `~/.claude/sc/protocols/` |
+| 15 canonical protocols       | `~/.claude/sc/protocols/` |
 | Paired-review reviewer agent | `~/.config/opencode/agent/sc-echo-reviewer.md` |
 | Bridge config (first run)    | `~/.config/sc/config` (from `config.example`) |
 
@@ -188,7 +207,7 @@ makes exactly one outbound call (`npm view`) when you invoke
 
 ## Protocols (engineering standards)
 
-14 canonical protocols live in `protocols/` and deploy to `~/.claude/sc/protocols/`.
+15 canonical protocols live in `protocols/` and deploy to `~/.claude/sc/protocols/`.
 Every mode references them by absolute path. The shortlist:
 
 **Core** (every mode):
@@ -198,6 +217,7 @@ Every mode references them by absolute path. The shortlist:
 - `SECURITY_CHECKLIST.md`
 - `Error Handling & Resilience Protocol.md`
 - `AI-Assisted Development Protocol.md`
+- `Gnosis Verification Protocol.md` — **load-bearing.** A bug that has not been verified is not a bug — it is a question. Every mode that produces findings (audit, code review, paired-review) must back each finding with a reproduction, a failing test, or a closed mechanical observation. Speculation goes in a `Research Questions` section that does NOT affect verdicts. Overrides any prior "flag-then-fix" guidance.
 
 **Operational** (how Shadow Clone runs):
 
@@ -223,7 +243,7 @@ Every mode references them by absolute path. The shortlist:
 
 ```
 shadow-clone/
-├── claude/commands/sc*.md      → deploys to ~/.claude/commands/
+├── commands/sc*.md      → deploys to ~/.claude/commands/
 ├── protocols/                  → deploys to ~/.claude/sc/protocols/
 ├── bridge/
 │   ├── install.sh              → the deploy entry point

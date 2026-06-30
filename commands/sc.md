@@ -102,7 +102,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
         - Repo summary: languages detected, build system, package manager, monorepo/single
         - Existing convention sources: paths to current CLAUDE.md, README, lint configs, etc., with the conventions they encode
         - Branching state: current branches (origin + local), and which conform to the authoritative branching standard (existing `AGENTS.md` Rule 2 if present, else the `Multi Agent Protocol §2` `<who>/dev` fallback)
-        - Protocol shortlist: which of the 14 protocols are most relevant given the user's Type / Stack / Stakes answers (cite each by filename)
+        - Protocol shortlist: which of the 15 protocols are most relevant given the user's Type / Stack / Stakes answers (cite each by filename)
         - Open questions to surface to the user before Wave 1 synthesizes
       </deliverable>
     </deliverables>
@@ -201,7 +201,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   </principle>
 
   <principle>
-    Reference protocols, don't paraphrase them. The 14 protocols at
+    Reference protocols, don't paraphrase them. The 15 protocols at
     `~/.claude/sc/protocols/` are the source of truth and they evolve. AGENTS.md
     references them by absolute path so it stays current automatically.
   </principle>

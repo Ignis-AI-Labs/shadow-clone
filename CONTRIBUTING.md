@@ -109,7 +109,7 @@ HTTPS without verifying the tag signature:
 # From the freshly checked-out tag.
 # Uses `shasum -a 256` (portable across Linux + macOS) rather than
 # `sha256sum` (GNU coreutils only — would fail on a stock macOS runner).
-find bridge claude/commands protocols scripts opencode-plugin \
+find bridge commands protocols scripts opencode-plugin \
   -type f \( -name '*.sh' -o -name '*.md' -o -name '*.js' \) \
   -exec shasum -a 256 {} + | LC_ALL=C sort > SHA256SUMS
 gpg --detach-sign --armor SHA256SUMS  # produces SHA256SUMS.asc
@@ -213,7 +213,7 @@ AI agents (Claude, Copilot, etc.) follow the same rules:
 
 ## Contributing slash commands (primary surface)
 
-The Shadow Clone command surface lives at `claude/commands/sc*.md`. Each
+The Shadow Clone command surface lives at `commands/sc*.md`. Each
 command is a single markdown file with frontmatter, an `AskUserQuestion`
 preamble batch, three waves of work, and a Standards block referencing
 `protocols/`. `bridge/install.sh` deploys every `sc*.md` automatically — add
@@ -222,8 +222,8 @@ a new file, re-run the installer, and it's live.
 ### Adding a new slash command
 
 1. Open a task in `TASKS-plugin.md` (prefix `P-*`).
-2. Create `claude/commands/sc-<your-mode>.md`. Use any existing command as a
-   structural template (e.g. `claude/commands/sc-feature.md`).
+2. Create `commands/sc-<your-mode>.md`. Use any existing command as a
+   structural template (e.g. `commands/sc-feature.md`).
 3. Each command should:
    - Start with a `---` frontmatter block including a one-line `description:`
    - Open with an `AskUserQuestion` preamble batch (3–5 context questions)
@@ -233,7 +233,7 @@ a new file, re-run the installer, and it's live.
    - End with a Closing block summarizing the final artifact
 4. Re-run `bash bridge/install.sh && bash scripts/sc-doctor.sh` to verify the
    command deploys and is healthy.
-5. Add an entry to `claude/commands/sc-help.md` so users can discover it.
+5. Add an entry to `commands/sc-help.md` so users can discover it.
 
 ### Improving existing slash commands
 
@@ -243,13 +243,13 @@ a new file, re-run the installer, and it's live.
 
 ## Contributing protocols
 
-The 14 canonical protocols in `protocols/` are the engineering standards
+The 15 canonical protocols in `protocols/` are the engineering standards
 every mode adheres to.
 
 1. Open a task in `TASKS-shared.md` (prefix `S-*`).
 2. New protocols go in `protocols/<Name> Protocol.md`. They deploy
    automatically to `~/.claude/sc/protocols/` on the next `install.sh` run.
-3. Update `claude/commands/sc-help.md` to list the new protocol under the
+3. Update `commands/sc-help.md` to list the new protocol under the
    appropriate tier (core / operational / additional).
 4. If the new protocol is a core standard, add it to every relevant mode's
    Standards block.
