@@ -1,24 +1,24 @@
-// Auto-generated prompt exports
-// DO NOT EDIT DIRECTLY
+// Shadow Clone — Prompt content exports
+// Source of truth: edit this file directly
 
-export * from './mainPrompt';
+export * from './main-prompt.js';
 
 // Mode configs
-export * as mode_audit from './mode_audit';
-export * as mode_debug from './mode_debug';
-export * as mode_feature from './mode_feature';
-export * as mode_optimize from './mode_optimize';
-export * as mode_plan from './mode_plan';
-export * as mode_refactor from './mode_refactor';
-export * as mode_research from './mode_research';
+export * as modeAudit from './mode-audit.js';
+export * as modeDebug from './mode-debug.js';
+export * as modeFeature from './mode-feature.js';
+export * as modeOptimize from './mode-optimize.js';
+export * as modePlan from './mode-plan.js';
+export * as modeRefactor from './mode-refactor.js';
+export * as modeResearch from './mode-research.js';
 
 // Agent rules
-export * as agent_agent_template from './agent_agent_template';
-export * as agent_core_rules from './agent_core_rules';
-export * as agent_README from './agent_README';
+export * as agentTemplate from './agent-template.js';
+export * as agentCoreRules from './agent-core-rules.js';
+export * as agentReadme from './agent-readme.js';
 
 // Templates
-export * as template_master_plan_template from './template_master_plan_template';
-export * as template_mode_completion_template from './template_mode_completion_template';
-export * as template_security_audit_report_template from './template_security_audit_report_template';
-export * as template_team_agent_templates from './template_team_agent_templates';
+export * as templateMasterPlan from './template-master-plan.js';
+export * as templateModeCompletion from './template-mode-completion.js';
+export * as templateSecurityAuditReport from './template-security-audit-report.js';
+export * as templateTeamAgents from './template-team-agents.js';

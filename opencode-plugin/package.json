@@ -1,0 +1,27 @@
+{
+  "name": "@shadow-clone/opencode-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenCode plugin that gives the GLM Builder a first-class sc_echo_review tool for the paired-review loop.",
+  "main": "sc-echo.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "*"
+  },
+  "files": [
+    "sc-echo.js",
+    "sc-echo.md",
+    "command",
+    "install.sh",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ignis-AI-Labs/shadow-clone.git",
+    "directory": "opencode-plugin"
+  },
+  "license": "MIT"
+}

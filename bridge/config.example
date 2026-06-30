@@ -1,0 +1,40 @@
+# Shadow Clone configuration — copied to ~/.config/sc/config by install.sh.
+#
+# This file is sourced by the review bridges. Use conditional assignment (:=) so
+# that values passed inline on the command line (e.g. SC_REVIEWER_MODEL=... )
+# still take precedence over what's set here.
+
+# --- Reviewer when Claude builds (ask-glm.sh, via OpenCode) ---
+# Any provider/model OpenCode can reach. Examples:
+#   zai-coding-plan/glm-5.2      (Z.AI)
+#   anthropic/claude-sonnet-4-6
+#   openai/gpt-5
+: "${SC_REVIEWER_MODEL:=zai-coding-plan/glm-5.2}"
+
+# OpenCode agent used for the review (read-only persona shipped with Shadow Clone).
+: "${SC_REVIEWER_AGENT:=sc-echo-reviewer}"
+
+# --- Reviewer when the other model builds (ask-claude.sh, via Claude Code) ---
+# A `claude --model` alias or full model id (e.g. opus, sonnet, claude-opus-4-8).
+: "${SC_CLAUDE_MODEL:=opus}"
+
+# --- Lifecycle: timeout, reaping, retries, and queueing ---
+# A review is bounded: after SC_TIMEOUT seconds the reviewer's whole process group
+# is terminated (SIGTERM, then SIGKILL after SC_KILL_GRACE) so nothing is orphaned,
+# and the bridge returns `VERDICT: ERROR` instead of hanging.
+: "${SC_TIMEOUT:=300}"
+: "${SC_KILL_GRACE:=10}"
+: "${SC_RETRIES:=1}"
+: "${SC_RETRY_DELAY:=3}"
+
+# Queueing across parallel work:
+#   project (default) — one review at a time PER repo; different repos run in parallel
+#   global            — one review at a time across the whole machine
+#   off               — no serialization (rely on per-run unique filenames only)
+: "${SC_SERIALIZE:=project}"
+# Max seconds to wait for a busy repo's review queue before giving up with ERROR.
+: "${SC_LOCK_TIMEOUT:=900}"
+
+export SC_REVIEWER_MODEL SC_REVIEWER_AGENT SC_CLAUDE_MODEL
+export SC_TIMEOUT SC_KILL_GRACE SC_RETRIES SC_RETRY_DELAY
+export SC_SERIALIZE SC_LOCK_TIMEOUT
