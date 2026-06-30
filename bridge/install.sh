@@ -130,4 +130,11 @@ else
   echo "sc: seeded config -> ${CONFIG_DIR}/config (mode 0600)"
 fi
 
+# Record where this install came from so `/sc-update` and
+# `scripts/sc-update.sh` can find the source clone later. Overwrites
+# cleanly on every re-run, so a moved/re-cloned source path just works.
+printf '%s\n' "${REPO_ROOT}" > "${DEST}/install-source"
+chmod 0600 "${DEST}/install-source"
+echo "sc: recorded install source -> ${DEST}/install-source"
+
 echo "sc: done. Bridge, reviewer agent, and config are consolidated under ${DEST}."
