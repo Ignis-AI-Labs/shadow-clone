@@ -111,7 +111,13 @@ fi
 # CWE-732).
 mkdir -p "${CONFIG_DIR}"
 chmod 0700 "${CONFIG_DIR}"
-if [ -f "${CONFIG_DIR}/config" ]; then
+if [ -L "${CONFIG_DIR}/config" ]; then
+  # `chmod` follows symlinks; refusing to operate on a symlinked
+  # config closes a CWE-59 inconsistency with the rest of this script.
+  echo "sc: ERROR — ${CONFIG_DIR}/config is a symlink; refusing to touch it." >&2
+  echo "sc:         Remove the symlink or replace it with a regular file, then re-run." >&2
+  exit 1
+elif [ -f "${CONFIG_DIR}/config" ]; then
   # Tighten the mode on an existing config too — users installed with the
   # prior version may have a 0644 file holding new secrets.
   chmod 0600 "${CONFIG_DIR}/config"

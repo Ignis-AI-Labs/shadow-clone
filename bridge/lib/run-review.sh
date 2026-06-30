@@ -22,6 +22,25 @@
 #
 # Depends on sc_run_reaped (lib/reap.sh); the bridge sources reap.sh first.
 
+# _sc_stat_form — detect which stat(1) flavour is available. GNU
+# coreutils uses `-c '%u'`; BSD/macOS uses `-f '%u'`. Result is cached
+# in SC_STAT_FORM so the probe only runs once per shell.
+#   gnu  → use `stat -c FMT`
+#   bsd  → use `stat -f FMT` (different format strings; see below)
+#   none → no usable stat (rare); callers must warn and skip the check.
+_sc_stat_form() {
+  if [ -n "${SC_STAT_FORM:-}" ]; then printf '%s' "${SC_STAT_FORM}"; return 0; fi
+  if stat -c '%u' . >/dev/null 2>&1; then
+    SC_STAT_FORM=gnu
+  elif stat -f '%u' . >/dev/null 2>&1; then
+    SC_STAT_FORM=bsd
+  else
+    SC_STAT_FORM=none
+  fi
+  export SC_STAT_FORM
+  printf '%s' "${SC_STAT_FORM}"
+}
+
 # _sc_lock_dir_safe DIR — return 0 iff DIR (or its nearest existing
 # ancestor) is owned by the current uid AND its other-write bit is clear.
 # Closes AUDIT-015 / IS-004 (CWE-59 + CWE-426): without this, a user who
@@ -31,21 +50,46 @@
 # target. Refusing the dir and falling back to ${HOME}/.cache/sc/sc/locks
 # eliminates the surface.
 #
-# stat(1) varies between coreutils (-c) and BSD (-f); on systems where
-# `stat -c` is unavailable we skip the check rather than block the bridge.
+# Trust model: we treat group-shared dirs as trusted on the assumption
+# that the user is the only member of the group (the typical case on
+# personal dev machines and home directories). Multi-user systems where
+# this assumption breaks should set SC_LOCK_DIR to a user-private path.
+#
+# Portability: GNU `stat -c` and BSD `stat -f` differ; _sc_stat_form
+# picks the right one. On exotic systems where neither form works the
+# check is skipped with a one-time stderr warning so operators know
+# the guard is off.
 _sc_lock_dir_safe() {
   local dir="$1"
   local parent="${dir}"
-  # Walk to nearest existing ancestor.
   while [ ! -e "${parent}" ]; do
     local up; up="$(dirname -- "${parent}")"
     [ "${up}" = "${parent}" ] && return 1
     parent="${up}"
   done
   local uid; uid="$(id -u)"
-  local owner mode
-  owner="$(stat -c '%u' "${parent}" 2>/dev/null)" || return 0
-  mode="$(stat -c '%a' "${parent}" 2>/dev/null)" || return 0
+  local form owner mode
+  form="$(_sc_stat_form)"
+  case "${form}" in
+    gnu)
+      owner="$(stat -c '%u' "${parent}" 2>/dev/null)" || return 0
+      mode="$(stat -c '%a' "${parent}" 2>/dev/null)" || return 0
+      ;;
+    bsd)
+      # BSD %p is full mode in octal (e.g. 100755); take the last 3 chars.
+      owner="$(stat -f '%u' "${parent}" 2>/dev/null)" || return 0
+      local fullmode; fullmode="$(stat -f '%Op' "${parent}" 2>/dev/null)" || return 0
+      mode="${fullmode: -3}"
+      ;;
+    *)
+      if [ -z "${SC_STAT_WARNED:-}" ]; then
+        echo "sc: WARN — no usable stat(1) form detected; SC_LOCK_DIR safety check is off." >&2
+        SC_STAT_WARNED=1
+        export SC_STAT_WARNED
+      fi
+      return 0
+      ;;
+  esac
   [ "${owner}" = "${uid}" ] || return 1
   # Last digit of the octal mode is the other-perms triplet; bit 2 = world-write.
   case "${mode: -1}" in
@@ -103,7 +147,14 @@ sc_invoke_reviewer() {
 
   if [ -n "${lock}" ]; then
     if command -v flock >/dev/null 2>&1; then
-      mkdir -p "${lock_dir}" 2>/dev/null || true
+      # If mkdir genuinely fails, fall through to the no-lock path
+      # rather than letting `set -e` abort the bridge before it can
+      # emit a VERDICT: ERROR block (the documented "always parseable"
+      # contract).
+      if ! mkdir -p "${lock_dir}" 2>/dev/null; then
+        echo "sc: could not create lock dir ${lock_dir}; running this review without serialization." >&2
+        lock=""
+      fi
     else
       echo "sc: 'flock' not found; reviews run without serialization (install util-linux)." >&2
       lock=""

@@ -143,10 +143,15 @@ export class WorkspaceInitializer {
       }
 
     } catch (error: unknown) {
-      // Do NOT echo raw fs error text back to the MCP client — it
-      // contains resolved absolute paths (CWE-209). Detail goes to
-      // server logs via winston; the client gets a generic
-      // remediation hint.
+      // Re-throw McpError(InvalidParams, ...) — those already carry a
+      // path-free, safe-to-disclose message (e.g. "destination
+      // directory exists as a symlink") so the MCP client can
+      // distinguish a planted-symlink refusal from a permission error.
+      // Only raw fs errors fall through to the generic CWE-209-safe
+      // message; their detail goes to server logs via winston.
+      if (error instanceof McpError) {
+        throw error;
+      }
       logger.error('initialize_workspace failed', {
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
@@ -436,7 +441,7 @@ This project uses Shadow Clone - a free, open-source prompt engineering macro sy
    */
   private async readNoFollow(filePath: string): Promise<string | null> {
     const flags = fsSync.constants.O_RDONLY | fsSync.constants.O_NOFOLLOW;
-    let handle;
+    let handle: import('fs/promises').FileHandle;
     try {
       handle = await fs.open(filePath, flags);
     } catch (err) {

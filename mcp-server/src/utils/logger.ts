@@ -4,6 +4,13 @@ import * as os from 'os';
 import * as path from 'path';
 import { config } from '../config/production.js';
 
+// Note (intentional restriction): allowed roots are user-private
+// directories only. `os.tmpdir()` was considered but excluded — on
+// some platforms it can be a multi-user world-writable location, and
+// winston opens the file without `O_NOFOLLOW`, leaving a TOCTOU window
+// between safeLogFilePath() validating and winston opening. Keeping
+// the roots inside ${HOME} and ${cwd} keeps that window single-user.
+
 /**
  * Resolve and validate a caller-supplied log file path. Closes AUDIT-016
  * (CWE-22 + CWE-73): the prior version handed LOG_FILE_PATH straight to
@@ -16,7 +23,6 @@ import { config } from '../config/production.js';
 function safeLogFilePath(input: string): string | null {
   const allowedRoots = [
     path.resolve(os.homedir(), '.cache', 'shadow-clone', 'logs'),
-    path.resolve(os.tmpdir(), 'shadow-clone'),
     path.resolve(process.cwd()),
   ];
 
