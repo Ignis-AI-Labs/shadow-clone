@@ -205,6 +205,20 @@ Then you're ready to use any other `/sc-*` mode.
 /sc-help        # catalog of every Shadow Clone command
 ```
 
+### Want to use Shadow Clone to its fullest?
+
+The [**User Guide**](docs/USER_GUIDE.md) is the deeper companion to this
+README. It covers:
+
+- What Shadow Clone actually is, in one screen
+- Your first 15 minutes — first project, first feature, first paired review
+- **Workflow recipes** — common journeys (greenfield, debugging, refactoring, security audit) showing which commands to chain
+- How the system works under the hood — waves, specialists, protocols, the paired-review loop
+- Power tips — mixing modes, customizing your `AGENTS.md`, adapting protocols to your stack
+
+If you're new and wondering *"what do I actually do with this?"*, that's
+the doc to read next.
+
 ---
 
 ## The command surface
