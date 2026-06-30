@@ -1,0 +1,17 @@
+{
+  "name": "ignis-labs",
+  "owner": {
+    "name": "Ignis AI Labs",
+    "url": "https://github.com/Ignis-AI-Labs"
+  },
+  "plugins": [
+    {
+      "name": "shadow-clone",
+      "source": {
+        "source": "github",
+        "repo": "Ignis-AI-Labs/shadow-clone"
+      },
+      "description": "AI orchestration delivered as Claude Code slash commands. Planning at three altitudes (sprint / plan / roadmap), focused execution modes (feature / refactor / debug / optimize / research / audit), and a paired-review loop driven by a second model. Free, open-source, no accounts, no cloud round-trip."
+    }
+  ]
+}

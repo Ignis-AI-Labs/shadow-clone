@@ -1,3 +1,4 @@
+import * as nodePath from 'path';
 import { config } from '../config/production.js';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 
@@ -88,14 +89,19 @@ export function validateString(
 }
 
 /**
- * Validates and sanitizes file paths
+ * Validates and sanitizes file paths.
+ *
+ * When `containedIn` is provided, the path is resolved against that root
+ * and the result must remain inside it. This blocks absolute paths
+ * (e.g. /etc, /home/user/.ssh) and `..` escapes alike — defense against
+ * AUDIT-001 (CWE-22 / CWE-73).
  */
 export function validatePath(
-  path: unknown,
+  pathValue: unknown,
   fieldName: string,
-  options: { required?: boolean } = {}
+  options: { required?: boolean; containedIn?: string } = {}
 ): string | undefined {
-  const sanitized = validateString(path, fieldName, {
+  const sanitized = validateString(pathValue, fieldName, {
     required: options.required,
     maxLength: config.paths.maxPathLength,
   });
@@ -115,12 +121,27 @@ export function validatePath(
     );
   }
 
-  // Prevent directory traversal
-  if (normalizedPath.includes('../') || normalizedPath.includes('..\\')) {
+  // Prevent directory traversal (normalizedPath has backslashes
+  // already mapped to forward slashes above, so '..\\' is unreachable).
+  if (normalizedPath.includes('../')) {
     throw new McpError(
       ErrorCode.InvalidParams,
       `${fieldName} cannot contain directory traversal`
     );
+  }
+
+  // Root-confinement check: reject absolute paths or paths that
+  // resolve outside the allowed root.
+  if (options.containedIn) {
+    const root = nodePath.resolve(options.containedIn);
+    const resolved = nodePath.resolve(root, sanitized);
+    const rel = nodePath.relative(root, resolved);
+    if (rel.startsWith('..') || nodePath.isAbsolute(rel)) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `${fieldName} resolves outside the allowed root`
+      );
+    }
   }
 
   return sanitized;
@@ -255,7 +276,8 @@ export function validateArray<T>(
   }
 
   if (options.validator) {
-    return value.map((item, index) => options.validator!(item, index));
+    const validator = options.validator;
+    return value.map((item, index) => validator(item, index));
   }
 
   return value as T[];
@@ -264,14 +286,17 @@ export function validateArray<T>(
 /**
  * Sanitizes objects by removing undefined and null values
  */
-export function sanitizeObject<T extends Record<string, any>>(obj: T): Partial<T> {
+export function sanitizeObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
   const result: Partial<T> = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null) {
-      result[key as keyof T] = value;
+      // `value` was narrowed from `unknown` (the generic constraint);
+      // the source object guarantees it belongs at this key, so the
+      // assertion is safe and preserves type inference at call sites.
+      result[key as keyof T] = value as T[keyof T];
     }
   }
-  
+
   return result;
 }

@@ -1,5 +1,5 @@
 import { config } from '../config/production.js';
-import { globalRateLimiter } from './rateLimiter.js';
+import { globalRateLimiter } from './rate-limiter.js';
 import { logInfo } from './logger.js';
 import os from 'os';
 
@@ -13,7 +13,6 @@ export interface HealthStatus {
     memory: HealthCheck;
     cpu: HealthCheck;
     rateLimit: HealthCheck;
-    authentication: HealthCheck;
   };
 }
 
@@ -30,17 +29,9 @@ export class HealthMonitor {
   private startTime: number;
   private requestCount: number = 0;
   private errorCount: number = 0;
-  private authCheckCallback?: () => Promise<boolean>;
 
   constructor() {
     this.startTime = Date.now();
-  }
-
-  /**
-   * Set authentication check callback
-   */
-  setAuthCheck(callback: () => Promise<boolean>): void {
-    this.authCheckCallback = callback;
   }
 
   /**
@@ -75,7 +66,6 @@ export class HealthMonitor {
         memory: this.checkMemory(memoryUsage),
         cpu: this.checkCPU(cpuUsage),
         rateLimit: this.checkRateLimit(),
-        authentication: await this.checkAuthentication(),
       },
     };
 
@@ -93,7 +83,7 @@ export class HealthMonitor {
   /**
    * Get metrics for monitoring
    */
-  getMetrics(): Record<string, any> {
+  getMetrics(): Record<string, unknown> {
     const memoryUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
     const rateLimitStats = globalRateLimiter.getStats();
@@ -218,28 +208,6 @@ export class HealthMonitor {
       message: `Rate limiting normal (${stats.activeClients} active clients)`,
       metric: stats.activeClients,
     };
-  }
-
-  private async checkAuthentication(): Promise<HealthCheck> {
-    if (!this.authCheckCallback) {
-      return {
-        status: 'pass',
-        message: 'Authentication service available',
-      };
-    }
-
-    try {
-      const isHealthy = await this.authCheckCallback();
-      return {
-        status: isHealthy ? 'pass' : 'warn',
-        message: isHealthy ? 'Authentication service healthy' : 'Authentication service degraded',
-      };
-    } catch (error) {
-      return {
-        status: 'fail',
-        message: `Authentication service error: ${error}`,
-      };
-    }
   }
 
   private calculateCPUPercent(usage: NodeJS.CpuUsage): number {

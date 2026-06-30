@@ -1,0 +1,22 @@
+{
+  "name": "shadow-clone",
+  "description": "AI orchestration delivered as Claude Code slash commands — planning, focused execution modes (feature / refactor / debug / optimize / research / audit), and a paired-review loop driven by a second model. No accounts, no API keys, no cloud round-trip.",
+  "version": "0.2.3",
+  "author": {
+    "name": "Ignis AI Labs",
+    "url": "https://github.com/Ignis-AI-Labs"
+  },
+  "homepage": "https://github.com/Ignis-AI-Labs/shadow-clone",
+  "repository": "https://github.com/Ignis-AI-Labs/shadow-clone",
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "orchestration",
+    "claude-code",
+    "slash-commands",
+    "paired-review",
+    "prompt-engineering",
+    "agent-team",
+    "wave-system"
+  ]
+}

@@ -1,119 +1,21 @@
-# SHADOW CLONE PROPRIETARY LICENSE AGREEMENT
+MIT License
 
-**Version 1.0 - Effective Date: January 27, 2025**
+Copyright (c) 2025 Ignis AI Labs LLC
 
-## IMPORTANT - READ CAREFULLY
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This Proprietary License Agreement ("Agreement") is a legal agreement between you (either an individual or a single entity) and Ignis AI Labs LLC ("Ignis AI Labs", "we", "us", or "our") for the Shadow Clone software, documentation, and related materials (collectively, the "Software").
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-**BY ACCESSING, DOWNLOADING, INSTALLING, OR USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS.**
-
-## 1. PROPRIETARY RIGHTS
-
-The Software is proprietary to Ignis AI Labs LLC and protected by copyright laws, international copyright treaties, trade secret laws, and other intellectual property laws and treaties. Ignis AI Labs retains all rights, title, and interest in and to the Software, including all intellectual property rights therein. This is NOT open source software.
-
-## 2. LICENSE GRANT
-
-Subject to your compliance with this Agreement and your status as an authorized collaborator, Ignis AI Labs grants you a limited, non-exclusive, non-transferable, revocable license to use the Software solely for authorized purposes as defined by your collaboration agreement with Ignis AI Labs.
-
-## 3. LICENSE RESTRICTIONS
-
-You SHALL NOT:
-- Copy, modify, adapt, translate, or create derivative works of the Software without explicit written permission
-- Reverse engineer, disassemble, decompile, or attempt to discover the source code beyond what is necessary for authorized collaboration
-- Distribute, sublicense, lease, rent, loan, or otherwise transfer the Software to any third party
-- Remove, alter, or obscure any proprietary notices on the Software
-- Use the Software to compete with Ignis AI Labs or create similar products
-- Share access credentials or allow unauthorized use of your license
-- Use the Software for any unlawful purpose
-- Make the Software publicly available or contribute it to open source projects
-- Fork, clone, or create copies of the repository without authorization
-
-## 4. COLLABORATOR OBLIGATIONS
-
-As an invited collaborator, you:
-- Must maintain strict confidentiality regarding all aspects of the Software
-- Are expected to respect the proprietary nature of this project
-- Must not share, distribute, or disclose any part of the Software outside of authorized channels
-- Acknowledge that violation of these terms will result in immediate removal from the project and legal consequences
-
-## 5. ENFORCEMENT AND PENALTIES
-
-### 5.1 Monitoring
-Ignis AI Labs reserves the right to monitor usage and audit compliance with this Agreement.
-
-### 5.2 Violations
-Any violation of this Agreement will result in:
-- Immediate termination of your access and collaboration privileges without notice
-- Legal action seeking injunctive relief and damages
-- Liability for actual damages, including lost profits and development costs
-- Payment of Ignis AI Labs's attorneys' fees and costs
-
-### 5.3 Liquidated Damages
-You agree that unauthorized use, distribution, or disclosure of the Software would cause irreparable harm to Ignis AI Labs. Therefore, you agree to pay liquidated damages of $500,000 USD per violation.
-
-## 6. CONFIDENTIALITY
-
-The Software contains valuable trade secrets and confidential information. You agree to:
-- Maintain the Software and all related information in strict confidence
-- Not disclose any portion of the Software to third parties
-- Implement reasonable security measures to protect the Software
-- Immediately notify Ignis AI Labs of any unauthorized access or use
-- Return or destroy all copies of confidential information upon request
-
-## 7. TERMINATION
-
-This license is effective until terminated. Ignis AI Labs may terminate this license immediately if you breach any provision of this Agreement. Upon termination, you must:
-- Cease all use of the Software
-- Destroy all copies of the Software in your possession or control
-- Remove any forks or clones of the repository
-- Certify in writing your compliance with these termination requirements
-
-## 8. NO WARRANTIES
-
-THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. IGNIS AI LABS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
-
-## 9. LIMITATION OF LIABILITY
-
-IN NO EVENT SHALL IGNIS AI LABS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, REGARDLESS OF THE THEORY OF LIABILITY, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-## 10. INDEMNIFICATION
-
-You agree to indemnify, defend, and hold harmless Ignis AI Labs LLC and its officers, directors, employees, and agents from any claims, damages, losses, and expenses (including attorneys' fees) arising from your use of the Software or violation of this Agreement.
-
-## 11. EXPORT COMPLIANCE
-
-You agree to comply with all applicable export and re-export control laws and regulations, including the Export Administration Regulations maintained by the U.S. Department of Commerce.
-
-## 12. GOVERNING LAW AND JURISDICTION
-
-This Agreement shall be governed by the laws of the Commonwealth of Puerto Rico, USA, without regard to conflict of law principles. Any disputes shall be resolved exclusively in the federal courts located in Puerto Rico, and you consent to personal jurisdiction in such courts.
-
-## 13. ENTIRE AGREEMENT
-
-This Agreement constitutes the entire agreement between you and Ignis AI Labs regarding the Software and supersedes all prior or contemporaneous understandings.
-
-## 14. SEVERABILITY
-
-If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall continue in full force and effect.
-
-## 15. NO WAIVER
-
-No waiver of any breach of this Agreement shall constitute a waiver of any other breach.
-
-## 16. CONTACT INFORMATION
-
-For questions about this Agreement or to report violations:
-
-**Ignis AI Labs LLC**  
-Legal Department  
-Puerto Rico, USA  
-Email: legal@ignislabs.ai  
-
-**Report License Violations**: abuse@ignislabs.ai
-
----
-
-**BY USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE BOUND BY ALL ITS TERMS AND CONDITIONS.**
-
-Copyright © 2025 Ignis AI Labs LLC. All Rights Reserved. Shadow Clone is a proprietary product of Ignis AI Labs LLC.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

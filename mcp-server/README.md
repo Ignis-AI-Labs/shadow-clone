@@ -1,6 +1,6 @@
 # Shadow Clone MCP Server
 
-**Prompt engineering macros for AI assistants.** Transform any AI into a team of specialized virtual agents through advanced prompt engineering.
+**Free, open-source prompt engineering macros for AI assistants.** Transform any AI into a team of specialized virtual agents through advanced prompt engineering.
 
 ## What is Shadow Clone?
 
@@ -13,7 +13,7 @@ Shadow Clone is a **prompt engineering macro system** that delivers sophisticate
 ### 1. Install
 
 ```bash
-npm install -g @anthropic-ai/shadow-clone-mcp-server
+npm install -g @shadow-clone/mcp-server
 ```
 
 ### 2. Configure
@@ -23,24 +23,26 @@ npm install -g @anthropic-ai/shadow-clone-mcp-server
 {
   "mcpServers": {
     "shadow-clone": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/shadow-clone-mcp-server"]
+      "command": "shadow-clone-mcp"
     }
   }
 }
 ```
 
-**Claude Desktop**: See [Installation Guide](../docs/getting-started/installation.md)
-
-### 3. Authenticate
-
-Get your API key from [dashboard.ignislabs.ai](https://dashboard.ignislabs.ai), then:
-
+**Claude Desktop** (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "shadow-clone": {
+      "command": "shadow-clone-mcp"
+    }
+  }
+}
 ```
-authenticate(apiKey: "ignis_YOUR_API_KEY")
-```
 
-### 4. Use
+### 3. Use
+
+No authentication needed. All tools are immediately available:
 
 ```
 shadow_clone_orchestrate(
@@ -49,36 +51,35 @@ shadow_clone_orchestrate(
 )
 ```
 
-## Available Tools
+## Available Tools (14)
 
 | Category | Tools |
 |----------|-------|
 | **Orchestration** | `shadow_clone_orchestrate`, `shadow_clone_plan` |
 | **Teams** | `deploy_agent_team`, `deploy_specialist_agent` |
-| **Rapid** | `quick_fix`, `code_review_team`, `generate_tests` |
-| **Utility** | `authenticate`, `api_key_status`, `check_for_updates` |
+| **Rapid** | `quick_fix`, `code_review_team`, `generate_tests`, `execute_single_wave` |
+| **Documentation** | `create_documentation`, `architecture_consultant` |
+| **Utility** | `initialize_workspace`, `check_for_updates`, `show_commands`, `get_agent_template` |
 
 ## Requirements
 
-- Node.js v18+
-- Shadow Clone NFT license ([dashboard.ignislabs.ai](https://dashboard.ignislabs.ai))
+- Node.js v16+
 
-## Documentation
+## Development
 
-- **[Quick Start Guide](QUICKSTART.md)** - 5-minute setup
-- **[Full Documentation](../docs/index.md)** - Complete guide
-- **[Tool Reference](../docs/reference/all-tools.md)** - All tools and parameters
-- **[Troubleshooting](../docs/troubleshooting/common-issues.md)** - Common issues
+```bash
+cd mcp-server
+npm install
+npm run build        # TypeScript compilation
+npm run dev          # Development mode with watch
+npm run lint         # Type checking
+npm test             # Run tests
+```
 
 ## License
 
-Requires active Shadow Clone NFT ownership. Verified in real-time - access is revoked if NFT is transferred.
-
-## Support
-
-- Dashboard: [dashboard.ignislabs.ai](https://dashboard.ignislabs.ai)
-- Documentation: See [docs/](../docs/)
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-© 2024 Ignis AI Labs LLC
+Built by [Ignis AI Labs](https://ignislabs.ai). Made with care for the AI developer community.
