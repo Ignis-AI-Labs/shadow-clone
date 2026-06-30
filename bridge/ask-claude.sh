@@ -152,6 +152,13 @@ sc_invoke_one() {
   # it is a bypass (the Theme 3 R1 reviewer caught the original
   # version which only listed Edit). Keep this list in sync with the
   # persona's `tools:` frontmatter; sc-doctor should diff them.
+  #
+  # Known residual (denylist limit): if the user has MCP servers
+  # configured for the host Claude, dynamically-named MCP tools
+  # (mcp__<server>__<tool>) are not covered by this denylist. Headless
+  # `claude -p` may or may not load MCP servers depending on user
+  # config. Future hardening: switch to --allowedTools (allowlist) so
+  # the contract can't be silently broadened by environment config.
   sc_invoke_reviewer "$2" "$1" -- \
     claude -p \
       --model "${REVIEWER_MODEL}" \

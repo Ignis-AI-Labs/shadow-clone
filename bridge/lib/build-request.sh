@@ -68,7 +68,8 @@ sc_build_request() {
         echo
         echo "<<<UNTRUSTED-GIT-DIFF>>>"
         echo "${dfence}diff"
-        echo "${diff}"
+        # Same option-safe rationale as CONTEXT above (R2-F6).
+        printf '%s\n' "${diff}"
         echo "${dfence}"
         echo "<<<END-UNTRUSTED-GIT-DIFF>>>"
         echo
