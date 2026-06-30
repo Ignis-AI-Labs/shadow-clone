@@ -7,12 +7,13 @@ import {
 } from '../schemas/toolSchemas.js';
 
 // Note: this file used to call utils/validation `validate*` helpers
-// inline. They're gone — zod validation runs centrally in
+// inline. They're gone — zod validation runs once, centrally, in
 // combinedTools.executeTool via validateToolInput, and the schema
 // types flow in through `z.infer<...>` on each handler. Local
-// re-validation would be redundant and would mask Rule 6
-// "no silent failures" by re-running the same checks against
-// already-narrowed data.
+// re-validation would add no safety (the same checks against
+// already-narrowed data) and adds maintenance burden if schemas
+// change. The single-validation-point pattern lives in the
+// combined dispatcher.
 
 interface ToolDefinition {
   name: string;
