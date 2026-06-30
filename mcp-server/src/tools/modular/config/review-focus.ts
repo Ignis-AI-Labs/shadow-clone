@@ -61,5 +61,8 @@ const REVIEW_FOCUSES: Record<string, string> = {
 - No mutable shared state across modules`,
 };
 
-export const getReviewFocus = (reviewType: string): string =>
-  REVIEW_FOCUSES[reviewType] ?? REVIEW_FOCUSES.quality;
+export const getReviewFocus = (reviewType: string): string => {
+  const value = REVIEW_FOCUSES[reviewType];
+  if (value === undefined) throw new Error(`Unknown reviewType: ${reviewType}`);
+  return value;
+};

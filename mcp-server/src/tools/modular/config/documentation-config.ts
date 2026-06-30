@@ -108,5 +108,8 @@ const DOC_CONFIGS: Record<string, DocumentationConfig> = {
   },
 };
 
-export const getDocumentationConfig = (docType: string): DocumentationConfig =>
-  DOC_CONFIGS[docType] ?? DOC_CONFIGS.developer;
+export const getDocumentationConfig = (docType: string): DocumentationConfig => {
+  const value = DOC_CONFIGS[docType];
+  if (!value) throw new Error(`Unknown docType: ${docType}`);
+  return value;
+};

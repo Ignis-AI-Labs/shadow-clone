@@ -43,5 +43,8 @@ const SPECIALISTS: Record<string, SpecialistInfo> = {
   },
 };
 
-export const getSpecialistInfo = (specialization: string): SpecialistInfo =>
-  SPECIALISTS[specialization] ?? SPECIALISTS.react_expert;
+export const getSpecialistInfo = (specialization: string): SpecialistInfo => {
+  const value = SPECIALISTS[specialization];
+  if (!value) throw new Error(`Unknown specialization: ${specialization}`);
+  return value;
+};

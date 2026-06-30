@@ -93,5 +93,8 @@ const WAVE_CONFIGS: Record<string, WaveConfiguration> = {
   },
 };
 
-export const getWaveConfiguration = (waveType: string): WaveConfiguration =>
-  WAVE_CONFIGS[waveType] ?? WAVE_CONFIGS.research;
+export const getWaveConfiguration = (waveType: string): WaveConfiguration => {
+  const value = WAVE_CONFIGS[waveType];
+  if (!value) throw new Error(`Unknown waveType: ${waveType}`);
+  return value;
+};

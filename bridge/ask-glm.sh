@@ -61,14 +61,6 @@ if _sc_source_config_safe "${SC_CONFIG}"; then
   [ -f "${SC_CONFIG}" ] && . "${SC_CONFIG}"
 fi
 
-readonly MODEL="${SC_REVIEWER_MODEL:-zai-coding-plan/glm-5.2}"
-readonly AGENT="${SC_REVIEWER_AGENT:-sc-echo-reviewer}"
-# Physical path (-P): the file-containment filter compares against realpath output,
-# so PROJECT_DIR must also be symlink-resolved or every file is wrongly skipped when
-# the project root is reached through a symlink.
-readonly PROJECT_DIR="$(pwd -P)"
-readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
-
 # shellcheck source=/dev/null
 . "${SCRIPT_DIR}/lib/guard.sh"
 # shellcheck source=/dev/null
@@ -79,6 +71,24 @@ readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
 . "${SCRIPT_DIR}/lib/run-review.sh"
 # shellcheck source=/dev/null
 . "${SCRIPT_DIR}/lib/chunk-review.sh"
+
+# AS-006 / AUDIT-027: refuse env-supplied values that contain unsupported
+# characters. Without this, a `~/.config/sc/config` author could prepend an
+# extra `--dangerous-flag` to the reviewer CLI argv.
+sc_assert_env_ident SC_REVIEWER_MODEL "${SC_REVIEWER_MODEL:-}" || exit 1
+sc_assert_env_ident SC_REVIEWER_AGENT "${SC_REVIEWER_AGENT:-}" || exit 1
+
+readonly MODEL="${SC_REVIEWER_MODEL:-zai-coding-plan/glm-5.2}"
+readonly AGENT="${SC_REVIEWER_AGENT:-sc-echo-reviewer}"
+# Physical path (-P): the file-containment filter compares against realpath output,
+# so PROJECT_DIR must also be symlink-resolved or every file is wrongly skipped when
+# the project root is reached through a symlink.
+readonly PROJECT_DIR="$(pwd -P)"
+readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
+
+# AS-009 / AUDIT-027: a `/` or bare `${HOME}` project root would let every
+# absolute path on the system through the containment filter.
+sc_assert_project_dir "${PROJECT_DIR}" || exit 1
 
 # A reviewer must never trigger another review. Refuse cleanly if we are nested.
 sc_assert_not_reentrant "ask-glm.sh" || exit 0

@@ -22,6 +22,26 @@
 #
 # Depends on sc_run_reaped (lib/reap.sh); the bridge sources reap.sh first.
 
+# _sc_uint_or NAME VALUE DEFAULT — echo VALUE if it is a non-empty
+# all-digits string; otherwise emit a one-line stderr warning and echo
+# DEFAULT instead. Closes IS-007 / AUDIT-025 (numeric env vars not
+# type-validated): without this, `SC_TIMEOUT=600s` would be passed
+# verbatim to `timeout(1)` and the bridge would crash with a confusing
+# usage error mid-review (self-DoS, not a security boundary). Always
+# returns 0 so the caller's `local x="$(_sc_uint_or ...)"` never aborts
+# under `set -e`.
+_sc_uint_or() {
+  local name="$1" value="$2" default="$3"
+  if [ -z "${value}" ]; then printf '%s' "${default}"; return 0; fi
+  case "${value}" in
+    *[!0-9]*)
+      echo "sc: ${name}=${value} is not a non-negative integer; using default ${default}." >&2
+      printf '%s' "${default}"
+      ;;
+    *) printf '%s' "${value}" ;;
+  esac
+}
+
 # _sc_stat_form — detect which stat(1) flavour is available. GNU
 # coreutils uses `-c '%u'`; BSD/macOS uses `-f '%u'`. Result is cached
 # in SC_STAT_FORM so the probe only runs once per shell.
@@ -122,12 +142,17 @@ sc_invoke_reviewer() {
   [ "${1:-}" = "--" ] && shift
   local -a cmd=( "$@" )
 
-  local timeout_s="${SC_TIMEOUT:-300}"
-  local grace="${SC_KILL_GRACE:-10}"
-  local retries="${SC_RETRIES:-1}"
-  local delay="${SC_RETRY_DELAY:-3}"
+  # IS-007: every numeric tunable is validated as a non-negative integer
+  # before being passed to timeout(1)/flock(1)/sleep(1). An invalid value
+  # falls back to the default with a stderr warning; the review still
+  # runs.
+  local timeout_s grace retries delay lock_timeout
+  timeout_s="$(_sc_uint_or SC_TIMEOUT "${SC_TIMEOUT:-}" 300)"
+  grace="$(_sc_uint_or SC_KILL_GRACE "${SC_KILL_GRACE:-}" 10)"
+  retries="$(_sc_uint_or SC_RETRIES "${SC_RETRIES:-}" 1)"
+  delay="$(_sc_uint_or SC_RETRY_DELAY "${SC_RETRY_DELAY:-}" 3)"
   local serialize="${SC_SERIALIZE:-project}"
-  local lock_timeout="${SC_LOCK_TIMEOUT:-900}"
+  lock_timeout="$(_sc_uint_or SC_LOCK_TIMEOUT "${SC_LOCK_TIMEOUT:-}" 900)"
   # Keep locks in a user-private dir (Rule 8): a shared /tmp path could be a planted
   # symlink that `exec 9>` would follow and truncate. When XDG_RUNTIME_DIR is unset
   # we fall back to ${HOME}/.cache (the XDG_CACHE_HOME default), then append

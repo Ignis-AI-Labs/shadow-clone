@@ -165,9 +165,37 @@ steps:
 - **Declarative over imperative**: `map`/`filter`/`reduce` over manual loops where clarity permits
 
 ### Size Limits
+
+**House overrides.** Shadow Clone runs *stricter* limits than the canonical
+`Comprehensive Code Quality and Consistency Protocol` (which sets 400 / 500
+as the line ceilings). The protocol is the floor every Shadow Clone project
+adheres to; this house standard is what *this* repo enforces on PRs.
+
 - **Functions**: 30 lines target, 50 lines hard ceiling
 - **Files**: 200 lines target, 300 lines hard ceiling
 - **Parameters**: Max 3-4 per function (use an options object beyond that)
+
+### Lockfile policy
+
+`package-lock.json` files are **authoritative** and committed to source.
+Use `npm ci` (not `npm install`) in CI to install from the lockfile
+verbatim. When a `npm audit fix` or intentional bump changes the lockfile,
+commit the diff in the same PR as the dependency change so reviewers can
+see what shifted. The lockfile, not `package.json`, decides what runs in
+production.
+
+### Bridge unit tests (bats)
+
+The bash bridge ships a minimal smoke suite at `bridge/tests/*.bats`
+covering the env / project-dir / numeric-env guards. Install
+[bats-core](https://bats-core.readthedocs.io) and run:
+
+```bash
+bats bridge/tests/
+```
+
+The tests source the library files directly (no subprocess spawn), so they
+complete in milliseconds and are safe to run as a pre-merge check.
 
 ### Task-First Requirement
 - A task must exist in `TASKS-plugin.md`, `TASKS-backend.md`, `TASKS-frontend.md`, or `TASKS-shared.md` before work begins

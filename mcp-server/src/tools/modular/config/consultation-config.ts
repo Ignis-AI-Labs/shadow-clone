@@ -63,5 +63,8 @@ const CONSULT_CONFIGS: Record<string, ConsultationConfig> = {
   },
 };
 
-export const getConsultationConfig = (consultationType: string): ConsultationConfig =>
-  CONSULT_CONFIGS[consultationType] ?? CONSULT_CONFIGS.design_review;
+export const getConsultationConfig = (consultationType: string): ConsultationConfig => {
+  const value = CONSULT_CONFIGS[consultationType];
+  if (!value) throw new Error(`Unknown consultationType: ${consultationType}`);
+  return value;
+};

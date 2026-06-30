@@ -35,5 +35,8 @@ const ISSUE_GUIDANCE: Record<string, string> = {
 - Consider security implications`,
 };
 
-export const getIssueGuidance = (issueType: string): string =>
-  ISSUE_GUIDANCE[issueType] ?? ISSUE_GUIDANCE.bug;
+export const getIssueGuidance = (issueType: string): string => {
+  const value = ISSUE_GUIDANCE[issueType];
+  if (value === undefined) throw new Error(`Unknown issueType: ${issueType}`);
+  return value;
+};

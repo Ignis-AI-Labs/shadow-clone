@@ -59,5 +59,8 @@ const TEAM_TEMPLATES: Record<string, TeamAgent[]> = {
   ],
 };
 
-export const getTeamTemplates = (teamType: string): TeamAgent[] =>
-  TEAM_TEMPLATES[teamType] ?? TEAM_TEMPLATES.frontend;
+export const getTeamTemplates = (teamType: string): TeamAgent[] => {
+  const value = TEAM_TEMPLATES[teamType];
+  if (!value) throw new Error(`Unknown teamType: ${teamType}`);
+  return value;
+};

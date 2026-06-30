@@ -43,8 +43,14 @@ const DEFAULT_FRAMEWORKS: Record<string, string> = {
   security: 'owasp-zap',
 };
 
-export const getTestingGuidelines = (testType: string): string =>
-  TESTING_GUIDELINES[testType] ?? TESTING_GUIDELINES.unit;
+export const getTestingGuidelines = (testType: string): string => {
+  const value = TESTING_GUIDELINES[testType];
+  if (value === undefined) throw new Error(`Unknown testType: ${testType}`);
+  return value;
+};
 
-export const getDefaultFramework = (testType: string): string =>
-  DEFAULT_FRAMEWORKS[testType] ?? 'jest';
+export const getDefaultFramework = (testType: string): string => {
+  const value = DEFAULT_FRAMEWORKS[testType];
+  if (value === undefined) throw new Error(`Unknown testType: ${testType}`);
+  return value;
+};

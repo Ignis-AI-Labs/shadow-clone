@@ -60,13 +60,6 @@ if _sc_source_config_safe "${SC_CONFIG}"; then
   [ -f "${SC_CONFIG}" ] && . "${SC_CONFIG}"
 fi
 
-readonly REVIEWER_MODEL="${SC_CLAUDE_MODEL:-opus}"
-# Physical path (-P): the file-containment filter compares against realpath output,
-# so PROJECT_DIR must also be symlink-resolved or every file is wrongly skipped when
-# the project root is reached through a symlink.
-readonly PROJECT_DIR="$(pwd -P)"
-readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
-
 # shellcheck source=/dev/null
 . "${SCRIPT_DIR}/lib/guard.sh"
 # shellcheck source=/dev/null
@@ -77,6 +70,21 @@ readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
 . "${SCRIPT_DIR}/lib/run-review.sh"
 # shellcheck source=/dev/null
 . "${SCRIPT_DIR}/lib/chunk-review.sh"
+
+# AS-006 / AUDIT-027: refuse env-supplied values with unsupported characters
+# before they reach the reviewer CLI argv.
+sc_assert_env_ident SC_CLAUDE_MODEL "${SC_CLAUDE_MODEL:-}" || exit 1
+
+readonly REVIEWER_MODEL="${SC_CLAUDE_MODEL:-opus}"
+# Physical path (-P): the file-containment filter compares against realpath output,
+# so PROJECT_DIR must also be symlink-resolved or every file is wrongly skipped when
+# the project root is reached through a symlink.
+readonly PROJECT_DIR="$(pwd -P)"
+readonly EXCHANGE_DIR="${PROJECT_DIR}/.sc/exchange"
+
+# AS-009 / AUDIT-027: refuse PROJECT_DIR='/' or '${HOME}' — the containment
+# filter would otherwise let every absolute path through.
+sc_assert_project_dir "${PROJECT_DIR}" || exit 1
 
 # A reviewer must never trigger another review. Refuse cleanly if we are nested.
 sc_assert_not_reentrant "ask-claude.sh" || exit 0
