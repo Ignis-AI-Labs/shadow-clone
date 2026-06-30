@@ -21,7 +21,7 @@ just want to type a couple of slash commands.
 
 > **Quickest path for power users:**
 > ```bash
-> git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
+> git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
 > cd shadow-clone && bash bridge/install.sh && bash scripts/sc-doctor.sh
 > ```
 > Then in Claude Code, run `/sc`. Skip the rest of this section.
@@ -67,7 +67,7 @@ Windows Git Bash use `Shift+Insert` or right-click → Paste; on Linux use
 `Ctrl+Shift+V`.
 
 ```bash
-git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
+git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 bash bridge/install.sh
 bash scripts/sc-doctor.sh
@@ -96,7 +96,7 @@ Switch to Claude Code's window. In the chat box at the bottom, type:
 /sc-help
 ```
 
-and press Enter. You should see a list of all 14 Shadow Clone commands
+and press Enter. You should see a list of all 17 Shadow Clone commands
 with `✅ Available` next to each. That confirms everything is wired up.
 
 If you see `Unknown command: /sc-help`, restart Claude Code (close it
@@ -223,7 +223,7 @@ the doc to read next.
 
 ## The command surface
 
-13 commands. Run `/sc-help` for the full live catalog with statuses.
+16 `/sc-*` commands plus the `/sc` umbrella. Run `/sc-help` for the full live catalog with statuses.
 
 ### System
 
