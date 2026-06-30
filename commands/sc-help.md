@@ -17,6 +17,7 @@ verifies the install.
 | Command | What it does | Status |
 |---|---|---|
 | `/sc` | Activate Shadow Clone — walks the user through project init: detects existing setup, asks Type / Stack / Team / Stakes, derives a protocol shortlist, and writes (with user-gated overwrites) `AGENTS.md`, `CLAUDE.md`, `docs/audit/ISSUE_TRACKER.md`, and the `.waves/` scaffold. Surfaces a branching migration plan if non-conforming branches exist. | ✅ Available |
+| `/sc-bootstrap` | Verify the install is complete (bridge + protocols + reviewer persona + OpenCode). Run once after `/plugin install shadow-clone@ignis-labs` to find out exactly what else you need to land for the full feature set. | ✅ Available |
 | `/sc-help` | Show this catalog. | ✅ Available |
 | `/sc-echo` | Enter paired-review mode — a second model reviews each completed work unit against `AGENTS.md`, returning `VERDICT: APPROVE \| REVISE \| BLOCK \| ERROR`. Loop up to 3 rounds per unit. | ✅ Available |
 
