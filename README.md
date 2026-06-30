@@ -21,7 +21,7 @@ just want to type a couple of slash commands.
 
 > **Quickest path for power users:**
 > ```bash
-> git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
+> git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
 > cd shadow-clone && bash bridge/install.sh && bash scripts/sc-doctor.sh
 > ```
 > Then in Claude Code, run `/sc`. Skip the rest of this section.
@@ -67,7 +67,7 @@ Windows Git Bash use `Shift+Insert` or right-click → Paste; on Linux use
 `Ctrl+Shift+V`.
 
 ```bash
-git clone --depth 1 --branch v0.2.5 https://github.com/Ignis-AI-Labs/shadow-clone.git
+git clone --depth 1 --branch v0.2.8 https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 bash bridge/install.sh
 bash scripts/sc-doctor.sh
