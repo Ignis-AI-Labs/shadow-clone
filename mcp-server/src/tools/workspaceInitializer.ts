@@ -390,6 +390,11 @@ This project uses Shadow Clone - a free, open-source prompt engineering macro sy
       }
       return;
     } catch (err) {
+      // Pass McpError straight through — without this guard, the
+      // string-vs-numeric `code` shape difference would silently
+      // route a symlink-rejection McpError into the mkdir fallback.
+      // Mirrors the R2-F8 pattern in the outer initializeWorkspace catch.
+      if (err instanceof McpError) throw err;
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
     }
     // Non-recursive: the parent must already exist (it's the validated
