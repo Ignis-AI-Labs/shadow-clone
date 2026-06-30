@@ -129,9 +129,12 @@ sc_invoke_reviewer() {
   local serialize="${SC_SERIALIZE:-project}"
   local lock_timeout="${SC_LOCK_TIMEOUT:-900}"
   # Keep locks in a user-private dir (Rule 8): a shared /tmp path could be a planted
-  # symlink that `exec 9>` would follow and truncate.
-  local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache/sc}/sc/locks}"
-  local fallback_lock_dir="${HOME}/.cache/sc/sc/locks"
+  # symlink that `exec 9>` would follow and truncate. When XDG_RUNTIME_DIR is unset
+  # we fall back to ${HOME}/.cache (the XDG_CACHE_HOME default), then append
+  # /sc/locks — the prior fallback used ${HOME}/.cache/sc which produced a doubled
+  # `/sc/sc/locks` segment (Theme 5 R2 review).
+  local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache}/sc/locks}"
+  local fallback_lock_dir="${HOME}/.cache/sc/locks"
 
   # AUDIT-015 / IS-004: refuse a lock dir whose parent isn't user-private.
   # Fall back to the canonical user-private path and warn once per run.

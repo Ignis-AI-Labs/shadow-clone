@@ -175,11 +175,17 @@ check_config_mode() {
     return
   fi
   case "${mode}" in
-    600|640|400|440)
+    600|400)
       report OK "config mode (${mode})"
       ;;
+    640|440)
+      # Group-readable is allowed by the bridge's _sc_source_config_safe
+      # guard, but install.sh writes 0600 — anything looser is drift
+      # worth surfacing.
+      printf '  WARN  config mode %s is looser than the installed default 0600 (still accepted by the bridge).\n' "${mode}"
+      ;;
     *)
-      printf '  WARN  config mode %s is too permissive (want 0600); run install.sh to normalize.\n' "${mode}"
+      printf '  WARN  config mode %s is too permissive (want 0600 or stricter); run install.sh to normalize.\n' "${mode}"
       ;;
   esac
 }
@@ -189,13 +195,20 @@ check_config_mode() {
 # is what would manifest as a "VERDICT: ERROR" on the first review —
 # catch it here instead.
 check_lock_dir() {
-  local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache/sc}/sc/locks}"
+  # Path expression must match bridge/lib/run-review.sh exactly — otherwise the
+  # doctor probes a directory the bridge never uses (and masks an IS-011 failure
+  # the doctor is here to catch).
+  local lock_dir="${SC_LOCK_DIR:-${XDG_RUNTIME_DIR:-${HOME}/.cache}/sc/locks}"
   if ! mkdir -p "${lock_dir}" 2>/dev/null; then
     report FAIL "lock dir writable" "mkdir failed for ${lock_dir}"
     return
   fi
   local probe="${lock_dir}/.sc-doctor-probe-$$"
-  if : > "${probe}" 2>/dev/null && rm -f "${probe}"; then
+  # Ensure the sentinel is removed even on partial failure / interrupt.
+  # shellcheck disable=SC2064
+  trap "rm -f '${probe}'" RETURN
+  if : > "${probe}" 2>/dev/null; then
+    rm -f "${probe}"
     report OK "lock dir writable (${lock_dir})"
   else
     report FAIL "lock dir writable" "cannot write to ${lock_dir}"

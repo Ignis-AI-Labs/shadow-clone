@@ -28,6 +28,7 @@ export class UpdateChecker {
     };
   }
 
+  // impure: shells out to npm; result depends on registry state.
   async checkForUpdates(): Promise<string> {
     const currentVersion = config.server.version;
 
@@ -38,9 +39,16 @@ export class UpdateChecker {
     // explicitly distinguished from "matched" — we surface a specific
     // "could not contact npm registry" message instead of masking it
     // as success.
+    //
+    // Theme 5 R2: bound the wait (15s) so a stalled-but-not-erroring
+    // socket doesn't hang the MCP tool indefinitely. Maxbuffer at 1 MiB
+    // is plenty for a single version string.
     let latestVersion: string;
     try {
-      const { stdout } = await execAsync('npm view @shadow-clone/mcp-server version');
+      const { stdout } = await execAsync(
+        'npm view @shadow-clone/mcp-server version',
+        { timeout: 15_000, maxBuffer: 1 << 20 }
+      );
       latestVersion = stdout.trim();
     } catch {
       return `⚠️ Could not contact the npm registry to check for updates.

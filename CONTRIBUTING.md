@@ -106,10 +106,12 @@ This is a small belt-and-suspenders check for users who clone over
 HTTPS without verifying the tag signature:
 
 ```bash
-# From the freshly checked-out tag:
+# From the freshly checked-out tag.
+# Uses `shasum -a 256` (portable across Linux + macOS) rather than
+# `sha256sum` (GNU coreutils only — would fail on a stock macOS runner).
 find bridge claude/commands protocols scripts opencode-plugin \
   -type f \( -name '*.sh' -o -name '*.md' -o -name '*.js' \) \
-  -exec sha256sum {} + | LC_ALL=C sort > SHA256SUMS
+  -exec shasum -a 256 {} + | LC_ALL=C sort > SHA256SUMS
 gpg --detach-sign --armor SHA256SUMS  # produces SHA256SUMS.asc
 # Attach SHA256SUMS and SHA256SUMS.asc to the GitHub release.
 ```
