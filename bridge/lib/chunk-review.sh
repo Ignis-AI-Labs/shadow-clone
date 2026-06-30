@@ -26,6 +26,26 @@ sc_verdict_of() {
   [ -n "${v}" ] && echo "${v}" || echo "ERROR"
 }
 
+# _sc_aggregate_verdict VERDICT [VERDICT...]  → echo the strictest one.
+# Precedence (strictest wins): ERROR > BLOCK > REVISE > APPROVE.
+# Extracted from sc_echo_review (AUDIT-026 / QA-010) so the main function
+# stays under the 50-line ceiling.
+_sc_aggregate_verdict() {
+  local v has_error=0 has_block=0 has_revise=0
+  for v in "$@"; do
+    case "${v}" in
+      ERROR)  has_error=1 ;;
+      BLOCK)  has_block=1 ;;
+      REVISE) has_revise=1 ;;
+    esac
+  done
+  if   [ "${has_error}"  = 1 ]; then echo ERROR
+  elif [ "${has_block}"  = 1 ]; then echo BLOCK
+  elif [ "${has_revise}" = 1 ]; then echo REVISE
+  else echo APPROVE
+  fi
+}
+
 # sc_echo_review: build + invoke, chunking by SC_MAX_CHARS when needed. Writes RESP.
 sc_echo_review() {
   local budget="${SC_MAX_CHARS:-200000}"
@@ -118,19 +138,7 @@ EOF
   done
   CONTEXT="${orig_context}"
 
-  # Aggregate: the strictest verdict wins.
-  local overall="APPROVE" has_error=0 has_block=0 has_revise=0
-  for v in "${verdicts[@]}"; do
-    case "${v}" in
-      ERROR)  has_error=1 ;;
-      BLOCK)  has_block=1 ;;
-      REVISE) has_revise=1 ;;
-    esac
-  done
-  if   [ "${has_error}"  = 1 ]; then overall="ERROR"
-  elif [ "${has_block}"  = 1 ]; then overall="BLOCK"
-  elif [ "${has_revise}" = 1 ]; then overall="REVISE"
-  fi
+  local overall; overall="$(_sc_aggregate_verdict "${verdicts[@]}")"
 
   {
     echo "## Echo Aggregate Verdict (${n} parts)"
