@@ -4,7 +4,8 @@ import {
   shadowCloneOrchestrateSchema,
   shadowClonePlanSchema,
   getAgentTemplateSchema,
-} from '../schemas/toolSchemas.js';
+} from '../schemas/tool-schemas.js';
+import type { ToolDefinition } from './modular/types.js';
 
 // Note: this file used to call utils/validation `validate*` helpers
 // inline. They're gone — zod validation runs once, centrally, in
@@ -14,16 +15,6 @@ import {
 // already-narrowed data) and adds maintenance burden if schemas
 // change. The single-validation-point pattern lives in the
 // combined dispatcher.
-
-interface ToolDefinition {
-  name: string;
-  description: string;
-  inputSchema: {
-    type: string;
-    properties: Record<string, unknown>;
-    required?: string[];
-  };
-}
 
 // The content modules in prompts/content/*.ts all expose a `content`
 // string; widening to a structural type avoids `any` while still
@@ -197,13 +188,13 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
 
   private getModeConfig(mode: string): string {
     const modeMap: Record<string, PromptModule> = {
-      'plan': prompts.mode_plan,
-      'feature': prompts.mode_feature,
-      'debug': prompts.mode_debug,
-      'optimize': prompts.mode_optimize,
-      'refactor': prompts.mode_refactor,
-      'audit': prompts.mode_audit,
-      'research': prompts.mode_research,
+      'plan': prompts.modePlan,
+      'feature': prompts.modeFeature,
+      'debug': prompts.modeDebug,
+      'optimize': prompts.modeOptimize,
+      'refactor': prompts.modeRefactor,
+      'audit': prompts.modeAudit,
+      'research': prompts.modeResearch,
     };
 
     const modeModule = modeMap[mode];
@@ -221,9 +212,9 @@ Execute Shadow Clone in Planning Mode to create a comprehensive project architec
       throw new Error('templateType is required');
     }
     const templateMap: Record<string, PromptModule> = {
-      'core_rules': prompts.agent_core_rules,
-      'agent_template': prompts.agent_agent_template,
-      'team_templates': prompts.template_team_agent_templates,
+      'core_rules': prompts.agentCoreRules,
+      'agent_template': prompts.agentTemplate,
+      'team_templates': prompts.templateTeamAgents,
     };
 
     const template = templateMap[templateType];

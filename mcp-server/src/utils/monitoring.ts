@@ -1,5 +1,5 @@
 import { config } from '../config/production.js';
-import { globalRateLimiter } from './rateLimiter.js';
+import { globalRateLimiter } from './rate-limiter.js';
 import { logInfo } from './logger.js';
 import os from 'os';
 

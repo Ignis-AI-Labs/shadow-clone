@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import * as schemas from './toolSchemas.js';
+import * as schemas from './tool-schemas.js';
 
 export const toolSchemaRegistry: Record<string, z.ZodSchema> = {
   // ModularTools
@@ -23,4 +23,4 @@ export const toolSchemaRegistry: Record<string, z.ZodSchema> = {
   'get_agent_template': schemas.getAgentTemplateSchema,
 };
 
-export * from './toolSchemas.js';
+export * from './tool-schemas.js';

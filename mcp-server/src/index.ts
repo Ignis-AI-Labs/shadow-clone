@@ -42,11 +42,11 @@ import {
   ErrorCode,
   McpError
 } from '@modelcontextprotocol/sdk/types.js';
-import { CombinedTools } from './tools/combinedTools.js';
+import { CombinedTools } from './tools/combined-tools.js';
 import { logger, logInfo, logError, logPerformance } from './utils/logger.js';
 import { config, validateConfig } from './config/production.js';
 import { validateToolName, sanitizeObject } from './utils/validation.js';
-import { globalRateLimiter } from './utils/rateLimiter.js';
+import { globalRateLimiter } from './utils/rate-limiter.js';
 import { healthMonitor } from './utils/monitoring.js';
 
 // Validate configuration on startup

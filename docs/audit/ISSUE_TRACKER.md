@@ -248,12 +248,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Fix Description**: Updated `CLAUDE.md` Task-First and Task Tracking sections: added `TASKS-plugin.md` to both bullet lists, reordered so plugin is first (as primary surface), changed task-ID example from `B-P1-01` to `P-P1-04`, marked backend as "secondary surface."
 
 - **Issue ID**: AUDIT-020
+- **Status**: RESOLVED 2026-06-30 (P2 QA-005/008/009 splits + renames pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-005
 - **Severity**: Medium
 - **Location**: `mcp-server/src/tools/modularTools.ts` (1352 lines)
 - **Description**: 4.5× the 300-line hard ceiling in `CLAUDE.md`/`CONTRIBUTING.md`. Contains 9 of the worst function-size violations (getToolDefinitions 264 lines, getDocumentationConfig 111, showCommands 109, getWaveConfiguration 96, etc.). Recommended fix: split per-tool files (`quick-fix.ts`, `code-review-team.ts`, etc.) and extract configuration lookups into a `config/` module of `as const` records.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: `modularTools.ts` (1400 lines after AUDIT-022 typing pass) decomposed into a `mcp-server/src/tools/modular/` package: 9 per-tool handler files (`deploy-agent-team.ts`, `deploy-specialist-agent.ts`, `quick-fix.ts`, `code-review-team.ts`, `generate-tests.ts`, `execute-single-wave.ts`, `create-documentation.ts`, `architecture-consultant.ts`, `show-commands.ts` — each 76–129 lines), 8 config tables under `modular/config/` (`team-templates.ts`, `specialist-info.ts`, `wave-configuration.ts`, `documentation-config.ts`, `consultation-config.ts`, `review-focus.ts`, `issue-guidance.ts`, `testing-guidelines.ts` — each 39–112 lines), and a `modular/types.ts` for shared interfaces. The remaining `modular-tools.ts` is now a 70-line dispatcher: imports, definition-list aggregation, and a switch-based router. Every new file is under the 200-line target. Tool definitions live next to their handler. `tsc --noEmit` and `tsc` (full build) both pass.
 
 - **Issue ID**: AUDIT-021
 - **Status**: RESOLVED 2026-06-30 (Theme 4 pivot-cleanup pass — also closes SC-002/dotenv from the AUDIT-026 aggregate)
@@ -281,20 +285,28 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Fix Description**: All `any` usages eliminated from `mcp-server/src/`. (a) **Handler signatures**: every tool handler in `modularTools.ts` (9 handlers: deployAgentTeam, deploySpecialistAgent, quickFix, codeReviewTeam, generateTests, executeSingleWave, createDocumentation, architectureConsultant, showCommands) and `embeddedPromptTools.ts` (3 handlers: executeOrchestration, executePlanning, getAgentTemplate) now takes `z.infer<typeof XSchema>` from the inferred zod types in `src/schemas/toolSchemas.ts`. (b) **Dispatch routers**: `executeTool(name: string, args: any)` → `args: unknown` in both modular/embedded routers and in `combinedTools.executeTool`; each route point narrows via `as z.infer<...>` (args were already schema- and path-validated by `validateToolInput` per Theme 2). (c) **Internal helpers**: replaced `any[]` / `Record<string, any>` returns with proper interfaces — `TeamAgent`, `SpecialistInfo`, `WaveConfiguration`, `DocumentationConfig`, `ConsultationConfig` in `modularTools.ts`; `PromptModule` in `embeddedPromptTools.ts`. (d) **Supporting modules**: `getMetrics()`, every `logger.ts` metadata parameter, `rateLimiter` middleware factory, and the three `properties: Record<string, any>` in `ToolDefinition` interfaces all converted to `Record<string, unknown>` / `unknown`. (e) **Catch blocks**: Theme 2 already converted `workspaceInitializer.ts`'s `catch (error: any)` to `unknown`; no other `catch (any)` remained. Final grep: `grep -rIn ': any\b\|: any\[\]\|<.*,\s*any>' mcp-server/src/ --include='*.ts'` returns 0 matches. `tsc --noEmit` passes.
 
 - **Issue ID**: AUDIT-023
+- **Status**: RESOLVED 2026-06-30 (P2 QA-005/008/009 splits + renames pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-008
 - **Severity**: Medium
 - **Location**: ~25 files under `mcp-server/src/` (full list in Wave 1 report)
 - **Description**: AGENTS.md Rule 3 requires kebab-case for non-component files. Bridge layer compliant; MCP server is not (`combinedTools.ts` should be `combined-tools.ts`, etc.). Recommended fix: single mechanical rename PR; update imports.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: All 24 non-conforming files renamed via `git mv` (history preserved). Tools: `combinedTools.ts` → `combined-tools.ts`, `embeddedPromptTools.ts` → `embedded-prompt-tools.ts`, `modularTools.ts` → `modular-tools.ts`, `updateChecker.ts` → `update-checker.ts`, `workspaceInitializer.ts` → `workspace-initializer.ts`. Utils: `rateLimiter.ts` → `rate-limiter.ts`, `zodValidation.ts` → `zod-validation.ts`. Schemas: `toolSchemas.ts` → `tool-schemas.ts`. All consumer imports patched. `tsc` passes.
 
 - **Issue ID**: AUDIT-024
+- **Status**: RESOLVED 2026-06-30 (P2 QA-005/008/009 splits + renames pass)
 - **Discovered By**: Reviewer (Quality / Protocol-Conformance, Wave 1)
 - **Date Discovered**: 2026-06-30
 - **Source**: `/sc-audit` Wave 1 Quality finding QA-009
 - **Severity**: Medium
 - **Location**: `mcp-server/src/prompts/content/`
 - **Description**: Directory mixes two non-conforming conventions: camelCase (`mainPrompt.ts`) next to snake_case (`agent_core_rules.ts`). Even ignoring the kebab-case rule, internal inconsistency. Recommended fix: normalize to project standard (kebab-case per AUDIT-023).
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-06-30
+- **Fix Description**: All 16 files in `prompts/content/` renamed to kebab-case. `mainPrompt.ts` → `main-prompt.ts`; `agent_*` → `agent-*` (with `agent_agent_template.ts` collapsing redundancy to `agent-template.ts`, `agent_README.ts` → `agent-readme.ts`); `mode_*` → `mode-*`; `template_*` files dropped redundant `_template` suffix (e.g. `template_master_plan_template.ts` → `template-master-plan.ts`, `template_team_agent_templates.ts` → `template-team-agents.ts`). The barrel `prompts/content/index.ts` re-exports each module under a camelCase namespace identifier (`modePlan`, `agentCoreRules`, `templateTeamAgents`, etc.) — TS convention for variable/namespace names. All consumer references updated (`prompts.agent_core_rules.content` → `prompts.agentCoreRules.content`, etc.). `tsc` passes.
 
 ### Aggregate LOW + INFO items (5 thematic entries)
 
@@ -338,6 +350,16 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 - **Severity**: Info (positive findings + observations)
 - **Location**: various
 - **Description**: Aggregates the audit's positive findings and observations that don't require code change: AS-013 re-entrancy guard verified correct; QA-012 `# impure:` annotations accurate; IS-008 cksum 32-bit lock-file naming — collision = perf-degradation only, no race (one-line code comment recommended); IS-011 sc-doctor missing lock-dir probe (covered by AUDIT-025); IS-012 sc-doctor doesn't print active umask (covered by AUDIT-025); AS-007 `--disallowedTools` argv syntax verified safe (claude CLI accepts `<tools...>` multi-positional — covered by AUDIT-027 with integration test); `hono@4.12.23` transitive cluster (CVSS 7.1) — vulnerable code paths unreachable from stdio MCP usage; recommend `npm audit fix → hono@4.12.25` for clean downstream audit output regardless.
+
+- **Issue ID**: AUDIT-030
+- **Discovered By**: Reviewer (echo paired-review, R2 of P2 splits + renames)
+- **Date Discovered**: 2026-06-30
+- **Source**: R1 of P2 QA-005/008/009 echo review
+- **Severity**: Low
+- **Location**: `mcp-server/src/tools/modular/config/{team-templates,specialist-info,wave-configuration,documentation-config,consultation-config,review-focus,issue-guidance,testing-guidelines}.ts`
+- **Status**: Deferred (acknowledged) 2026-06-30
+- **Description**: The 8 config lookup helpers (`getTeamTemplates`, `getSpecialistInfo`, `getWaveConfiguration`, `getDocumentationConfig`, `getConsultationConfig`, `getReviewFocus`, `getIssueGuidance`, `getTestingGuidelines`) all fall back to a default entry on unknown keys (`?? TEAM_TEMPLATES.frontend`, `?? ISSUE_GUIDANCE.bug`, etc.) rather than throwing. AGENTS.md Rule 1 / Rule 7 ("explicit errors, no silent failures") suggests these should throw, mirroring the `getModeConfig` / `getAgentTemplate` pattern in `embedded-prompt-tools.ts`. The behavior is unreachable in practice — every caller goes through `validateToolInput` which zod-enum-validates the key first — but the function signatures accept `string`, so the silent fallback is the only guard.
+- **Deferred (acknowledged)**: This behavior was preserved verbatim from the pre-split `modularTools.ts` (which used the `templates[teamType] || templates.frontend` idiom). The R1 reviewer flagged it during the P2 splits + renames pass; the Builder pushed back on closing it inside that commit because introducing semantic changes inside a pure rename/split would conflate two concerns and obscure the rename diff. Scheduled for the P3 hardening pass (alongside AUDIT-026 function-size refactor and AUDIT-027 env-var validation). Fix: change every `?? DEFAULT` to `throw new Error(\`Unknown <param>: ${key}\`)` and narrow parameter types to the validated unions where compile-time enforcement is possible.
 
 ---
 
