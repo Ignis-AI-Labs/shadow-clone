@@ -20,8 +20,43 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Optional config file. Use conditional assignment in it so inline env wins.
 SC_CONFIG="${SC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/sc/config}"
+# AUDIT-009 (CWE-427 + CWE-732): the config is sourced as shell, so anything
+# that can write it has RCE in the bridge process. Refuse to source unless
+# owner == current uid AND mode is 0600 or 0640 (no other-/group-write).
+_sc_source_config_safe() {
+  local cfg="$1"
+  [ -f "${cfg}" ] || return 0
+  if [ -L "${cfg}" ]; then
+    echo "sc: refusing to source ${cfg}: it is a symlink." >&2
+    return 1
+  fi
+  local owner mode uid
+  uid="$(id -u)"
+  if stat -c '%u' "${cfg}" >/dev/null 2>&1; then
+    owner="$(stat -c '%u' "${cfg}")"
+    mode="$(stat -c '%a' "${cfg}")"
+  elif stat -f '%u' "${cfg}" >/dev/null 2>&1; then
+    owner="$(stat -f '%u' "${cfg}")"
+    mode="$(stat -f '%Op' "${cfg}")"; mode="${mode: -3}"
+  else
+    echo "sc: WARN — cannot stat ${cfg}; skipping source as a precaution." >&2
+    return 1
+  fi
+  if [ "${owner}" != "${uid}" ]; then
+    echo "sc: refusing to source ${cfg}: not owned by uid ${uid}." >&2
+    return 1
+  fi
+  case "${mode}" in
+    600|640|400|440) ;;
+    *) echo "sc: refusing to source ${cfg}: mode ${mode} is too permissive (need 0600 or 0640)." >&2; return 1 ;;
+  esac
+  return 0
+}
 # shellcheck source=/dev/null
-[ -f "${SC_CONFIG}" ] && . "${SC_CONFIG}"
+if _sc_source_config_safe "${SC_CONFIG}"; then
+  # shellcheck source=/dev/null
+  [ -f "${SC_CONFIG}" ] && . "${SC_CONFIG}"
+fi
 
 readonly MODEL="${SC_REVIEWER_MODEL:-zai-coding-plan/glm-5.2}"
 readonly AGENT="${SC_REVIEWER_AGENT:-sc-echo-reviewer}"
@@ -55,6 +90,22 @@ shift || true
 FILES=("$@")
 
 mkdir -p "${EXCHANGE_DIR}"
+
+# AUDIT-010 (CWE-200): every review writes the full contents of the listed
+# files into ${EXCHANGE_DIR} and sends the same content to the configured
+# reviewer model's provider. If the user accidentally commits .sc/, that
+# data leaks. Emit a one-time warning when .sc/ is not gitignored in the
+# current repo. The warning is suppressed by SC_QUIET_GITIGNORE=1.
+if [ -z "${SC_QUIET_GITIGNORE:-}" ] \
+   && git -C "${PROJECT_DIR}" rev-parse --git-dir >/dev/null 2>&1; then
+  if ! git -C "${PROJECT_DIR}" check-ignore -q .sc/ 2>/dev/null; then
+    echo "sc: WARN — .sc/ is not gitignored in ${PROJECT_DIR}." >&2
+    echo "sc:        Review request/response files contain full file contents." >&2
+    echo "sc:        Add '.sc/' to .gitignore to keep them out of commits, or set" >&2
+    echo "sc:        SC_QUIET_GITIGNORE=1 to suppress this warning." >&2
+  fi
+fi
+
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 REQ="${EXCHANGE_DIR}/${STAMP}-request.md"
 RESP="${EXCHANGE_DIR}/${STAMP}-response.md"
@@ -83,5 +134,12 @@ sc_mark_in_review "ask-glm.sh"
 sc_echo_review
 
 # --- emit ------------------------------------------------------------------
+# AUDIT-006 (OWASP LLM01): the Builder reads this stdout. Wrap the reviewer's
+# free-text response in explicit data markers so a prompt-injected reviewer
+# cannot smuggle instructions into the Builder's next turn. The Builder
+# parses the final `VERDICT:` line as the only machine-actionable token;
+# everything between the markers is evidence, never instructions.
 echo "sc: review logged at ${RESP}" >&2
+echo "<<<UNTRUSTED-REVIEWER-OUTPUT>>>"
 cat "${RESP}"
+echo "<<<END-UNTRUSTED-REVIEWER-OUTPUT>>>"

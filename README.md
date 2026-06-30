@@ -131,6 +131,41 @@ Up to **3 rounds** per work unit. After 3 without `APPROVE`, open findings are
 logged to `docs/audit/ISSUE_TRACKER.md` (the live Rule-7 tracker) and reported
 to the user — no silent shipping.
 
+### Data egress and privacy (paired-review)
+
+When `/sc-echo` is active, every review sends a payload to whichever model
+provider the reviewer is configured for. That payload contains:
+
+- The **full text** of every file you list in the dispatch (`<paths>` arg)
+- The **`git diff HEAD`** of those files (uncommitted changes)
+- Your **project's `AGENTS.md`** (as the "law" the reviewer judges against)
+- The **`<context>`** string you wrote describing the work
+
+Where that payload lands:
+
+- **On disk** in `<project>/.sc/exchange/<timestamp>-request.md` (request) and
+  `<timestamp>-response.md` (reviewer reply). Both are full transcripts.
+- **In transit** to the provider running `SC_REVIEWER_MODEL` — by default
+  `zai-coding-plan/glm-5.2` via OpenCode (Z.AI), or Anthropic when you use
+  the Claude-as-reviewer path.
+
+Two practical consequences:
+
+1. **`.sc/` should be in your repo's `.gitignore`.** The bridge emits a one-time
+   warning if it isn't. Set `SC_QUIET_GITIGNORE=1` to silence the warning if
+   you've decided otherwise. The bundled `AGENTS.md` template ignores it for
+   you when you scaffold via `/sc`.
+2. **Files containing secrets shouldn't be reviewed.** A `.env` or a key file
+   sent through `/sc-echo` ends up in the request log and at the provider.
+   The file-containment filter blocks paths outside your project root, but
+   it does NOT redact secret-pattern strings — that's on you.
+
+Shadow Clone itself makes **no** outbound network calls in the bridge layer.
+The egress described above is via the reviewer CLIs (`opencode` / `claude`)
+that you installed separately; both are independent products. The MCP server
+makes exactly one outbound call (`npm view`) when you invoke
+`check_for_updates`, and never otherwise.
+
 ---
 
 ## Protocols (engineering standards)
