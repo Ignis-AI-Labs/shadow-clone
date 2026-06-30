@@ -15,27 +15,38 @@ cloud round-trip. Install once and it lives at `~/.claude/commands/`.
 
 ## Install
 
-### Option 1 — Claude Code plugin (recommended)
+Shadow Clone has two install paths and they're **complementary**, not
+alternatives. The plugin path gives you the slash commands; the source
+clone gives you the supporting infrastructure those commands rely on.
+For the full feature set you want both. For "just let me try the
+planning modes" the plugin alone is enough.
 
-Shadow Clone is published as a discoverable Claude Code plugin. Inside
-Claude Code, add the marketplace and install the plugin:
+| | Plugin install | Source clone | Why |
+|---|---|---|---|
+| 13 `/sc-*` slash commands | ✅ | ✅ | The user-facing surface |
+| 15 canonical protocols at `~/.claude/sc/protocols/` | ❌ | ✅ | The modes cite them by absolute path |
+| Bridge scripts at `~/.claude/sc/` | ❌ | ✅ | `ask-glm.sh`, `ask-claude.sh`, `sc-init.sh` |
+| `/sc-echo` paired review works | ❌ | ✅ | Driven by the bridge |
+| OpenCode reviewer persona | ❌ | ✅ | `~/.config/opencode/agent/sc-echo-reviewer.md` |
+| `sc-doctor.sh` health check | ❌ | ✅ | Source script |
+
+### Path A — Claude Code plugin (fastest)
+
+Inside Claude Code:
 
 ```
 /plugin marketplace add Ignis-AI-Labs/shadow-clone
 /plugin install shadow-clone@ignis-labs
+/sc-bootstrap
 ```
 
-Claude Code auto-discovers the `/sc-*` slash commands from `commands/` and
-loads the bridge helpers from `bridge/`. To use `/sc-echo` (the paired-
-review loop) you still need OpenCode on your PATH — see the **Optional**
-section below.
+`/sc-bootstrap` checks what landed and tells you exactly what's missing.
+If you only want planning/exec modes, you can stop here. If you want
+`/sc-echo` paired review, follow the source-clone path next.
 
-### Option 2 — Source clone (full bridge install)
+### Path B — Source clone (full install)
 
-Pins a signed release tag so what you install matches what the maintainers
-reviewed and signed. This path also lands the bridge scripts under
-`~/.claude/sc/`, the OpenCode reviewer persona, and the `sc-doctor.sh`
-health check:
+Pins a release tag so what you install matches what the maintainers shipped:
 
 ```bash
 # Replace vX.Y.Z with the latest release tag from
@@ -43,21 +54,32 @@ health check:
 git clone --depth 1 --branch vX.Y.Z https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone
 
-# Optional but recommended: verify the maintainer signature on the tag.
-# Requires the maintainer's public key in your gpg keyring.
-git verify-tag vX.Y.Z
+# Optional, recommended once signing is wired up:
+# git verify-tag vX.Y.Z
 
 bash bridge/install.sh
 bash scripts/sc-doctor.sh        # verify the install is healthy
 ```
 
 If you want to track `main` (contributors only — `main` may move in ways
-release tags don't), drop the `--branch` flag and skip `verify-tag`:
+release tags don't), drop the `--branch` flag:
 
 ```bash
 git clone https://github.com/Ignis-AI-Labs/shadow-clone.git
 cd shadow-clone && bash bridge/install.sh
 ```
+
+### Path C — Both (recommended for everyday use)
+
+Plugin first, then source clone. The plugin install is the discoverable,
+zero-shell front door; the source clone gives you the protocols and the
+echo loop. After both:
+
+```bash
+bash scripts/sc-doctor.sh    # all green
+```
+
+and `/sc-bootstrap` reports fully installed.
 
 `install.sh` deploys:
 
