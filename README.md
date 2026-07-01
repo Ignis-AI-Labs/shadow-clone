@@ -182,19 +182,88 @@ scaffold, and a `.waves/` directory. You're ready.
 
 #### Step 8 (optional) — Install OpenCode for `/sc-echo` paired review
 
-`/sc-echo` sends each completed unit of work to a second AI model for an
-independent review. It requires **OpenCode**, a separate free CLI.
+`/sc-echo` sends each completed unit of work to a second AI model for
+an independent review against your `AGENTS.md`. The reviewer runs
+inside **OpenCode**, a separate free CLI from
+[opencode.ai](https://opencode.ai). Skip this step if you don't want
+paired-review — every other `/sc-*` command works without it.
 
-**Paste this into the terminal** (not Claude Code):
+**8a — Install OpenCode**
+
+**Paste this into the terminal** (not Claude Code). It works on Linux,
+macOS, and Windows WSL:
 
 ```bash
 curl -fsSL https://opencode.ai/install | bash
+```
+
+**You'll see this when it worked:**
+
+```
+opencode installed -> ~/.opencode/bin/opencode
+```
+
+Now confirm the CLI is on your PATH:
+
+```bash
+opencode --version
+```
+
+You should see a version number. If `command not found`, close and
+reopen the terminal so the updated `PATH` takes effect, then try again.
+
+> **Windows native Git Bash users:** OpenCode targets Linux/macOS. Use
+> WSL (see Platform support above). Native Git Bash isn't a supported
+> OpenCode environment.
+
+**8b — Sign in to a model provider**
+
+OpenCode needs an account with a model provider — that's the AI that
+will run the reviews. Shadow Clone defaults to **Z.AI's GLM-5.2 coding
+plan**, which has a free tier. You can also wire it to Anthropic
+(Claude), OpenAI, or any other provider OpenCode supports.
+
+**Paste this into the terminal:**
+
+```bash
 opencode auth login
 ```
 
-Follow the login prompts. After this, `/sc-echo` works inside Claude
-Code. Skip this step if you don't want paired-review — every other
-`/sc-*` command works without it.
+You'll see a list of providers. Pick the one you have (or want) an
+account with:
+
+- **Z.AI (recommended, free tier)** — pick `Z.AI`. Sign up at
+  [z.ai](https://z.ai), grab an API key from your account dashboard,
+  paste it when prompted.
+- **Anthropic** — pick `Anthropic`. You'll need an API key from
+  [console.anthropic.com](https://console.anthropic.com).
+- **Other providers** — follow OpenCode's prompts; each one will ask
+  for the key or OAuth flow it needs.
+
+**You'll see this when it worked:**
+
+```
+authenticated as <provider>
+```
+
+**8c — Confirm `/sc-echo` is wired up**
+
+Back in Claude Code, type:
+
+```
+/sc-bootstrap
+```
+
+If it says **"Shadow Clone is fully installed"** with `OPENCODE_OK=yes`,
+you're done. Trigger a review with:
+
+```
+/sc-echo
+```
+
+Then make a small change and tell Claude Code it's a complete work unit
+— the reviewer will spawn and return a `VERDICT: APPROVE | REVISE |
+BLOCK | ERROR` line.
 
 ---
 
@@ -271,6 +340,29 @@ full feature set (see Platform support above).
 
 **`FAIL command "setsid" not on PATH`** (macOS)
 Comes with `util-linux` on Mac: `brew install util-linux`.
+
+**`opencode: command not found`** (after running the install script)
+The installer dropped the binary at `~/.opencode/bin/opencode` but your
+shell hasn't picked up the updated `PATH` yet. Close and reopen the
+terminal, then try `opencode --version` again. If it still fails, add
+the directory to your `PATH` manually:
+```bash
+echo 'export PATH="$HOME/.opencode/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+# zsh users (default on macOS):
+# echo 'export PATH="$HOME/.opencode/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+**`/sc-echo` says "OpenCode not found" or the bridge times out**
+Run `/sc-bootstrap` in Claude Code. It will tell you which of
+`BRIDGE_OK`, `PROTOCOLS_OK`, `REVIEWER_OK`, `OPENCODE_OK` is `no` and
+exactly which install step closes the gap.
+
+**`opencode auth login` succeeds but reviews error out**
+The bridge defaults to `zai-coding-plan/glm-5.2`. If you signed into a
+different provider, edit `~/.config/sc/config` and change the
+`MODEL=...` line to a model your provider supports (e.g.
+`MODEL=anthropic/claude-sonnet-4-6` if you signed into Anthropic).
 
 ---
 
