@@ -2,7 +2,7 @@
 description: Shadow Clone planning mode — produce a MASTER_PLAN through Wave-0 foundation, Wave-1 research, Wave-2 synthesis
 ---
 
-You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `.waves/wave-2/deliverables/MASTER_PLAN.md`. Plans sit in the middle of the Shadow Clone hierarchy: **sprint (one milestone) → plan (several phases / milestones to a project objective) → roadmap (sequenced milestones across an initiative)**. Every plan is a DAG of phases with explicit prerequisites, parallel branches, and load-bearing items — *not* a timeline. **Work gets done when it gets done**; the plan maps the path from point A → B → C → objective complete.
+You are now operating in **Shadow Clone Planning mode** for the rest of this session. The mode transforms an idea into an actionable MASTER_PLAN written to `<run-dir>/wave-2/deliverables/MASTER_PLAN.md`, where `<run-dir>` is this run's isolated directory (see Step 1.5). Plans sit in the middle of the Shadow Clone hierarchy: **sprint (one milestone) → plan (several phases / milestones to a project objective) → roadmap (sequenced milestones across an initiative)**. Every plan is a DAG of phases with explicit prerequisites, parallel branches, and load-bearing items — *not* a timeline. **Work gets done when it gets done**; the plan maps the path from point A → B → C → objective complete.
 
 ## Step 1 — Capture context (ask before starting)
 
@@ -15,7 +15,20 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 5. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`. Drives the per-wave subagent spawn cap (see the Subagents section below).
 
-Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0.
+Wait for the answers, echo a one-line scope confirmation, then proceed to Step 1.5.
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the Objective answer; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/` (or `<custom>/runs/<run-id>/` if the user chose a custom Output location in Step 1 — the `Default (.waves/)` vs `Custom path` question). Run `mkdir -p .waves/runs` then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every `.waves/wave-N/...` path in this mode body is shorthand for `<run-dir>/wave-N/...` — that is where files actually land.
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "plan"`, `objective`, `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before Wave 2 completes — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
+
+Then proceed to Wave 0.
 
 ## Step 2 — Run the methodology
 
@@ -41,16 +54,24 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
   </context>
   
   <critical_protocol>
+    <run_isolation>
+      CRITICAL: Every path below is relative to THIS run's directory,
+      <run-dir> = .waves/runs/<run-id>/ (minted in Step 1.5 per Protocol §2.5).
+      A bare .waves/wave-N/ path is shorthand for <run-dir>/wave-N/ — resolve it
+      before writing. This keeps concurrent runs in the same repo from colliding.
+    </run_isolation>
+
     <master_plan_location>
-      CRITICAL: The MASTER_PLAN.md MUST be created in .waves/wave-2/deliverables/MASTER_PLAN.md
-      This is the ONLY valid location for the master plan. Creating it elsewhere violates protocol.
+      CRITICAL: The MASTER_PLAN.md MUST be created in <run-dir>/wave-2/deliverables/MASTER_PLAN.md
+      This is the ONLY valid location for the master plan. Creating it outside this run's
+      wave-2 deliverables (e.g. in another run's directory or the project root) violates protocol.
     </master_plan_location>
     
     <file_organization>
       Planning mode uses EXACTLY 3 waves with ONE deliverable per wave:
-      - Wave 0: PROJECT_FOUNDATION.md in .waves/wave-0/deliverables/
-      - Wave 1: TECHNICAL_RESEARCH.md in .waves/wave-1/deliverables/
-      - Wave 2: MASTER_PLAN.md in .waves/wave-2/deliverables/
+      - Wave 0: PROJECT_FOUNDATION.md in <run-dir>/wave-0/deliverables/
+      - Wave 1: TECHNICAL_RESEARCH.md in <run-dir>/wave-1/deliverables/
+      - Wave 2: MASTER_PLAN.md in <run-dir>/wave-2/deliverables/
     </file_organization>
   </critical_protocol>
 </mode_overview>
@@ -71,7 +92,7 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
     
     <deliverables>
-      <deliverable path=".waves/wave-0/deliverables/PROJECT_FOUNDATION.md">
+      <deliverable path="<run-dir>/wave-0/deliverables/PROJECT_FOUNDATION.md">
         Single comprehensive document containing:
         - Project vision and goals
         - Core requirements (functional and non-functional)
@@ -105,7 +126,7 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
     
     <deliverables>
-      <deliverable path=".waves/wave-1/deliverables/TECHNICAL_RESEARCH.md">
+      <deliverable path="<run-dir>/wave-1/deliverables/TECHNICAL_RESEARCH.md">
         Consolidated research document containing:
         - Recommended architecture patterns
         - Technology stack evaluation
@@ -139,7 +160,7 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
     
     <deliverables>
-      <deliverable path=".waves/wave-2/deliverables/MASTER_PLAN.md">
+      <deliverable path="<run-dir>/wave-2/deliverables/MASTER_PLAN.md">
         CRITICAL: This is the ONLY valid location for MASTER_PLAN.md
         Complete project blueprint including:
         1. Executive Summary
@@ -205,20 +226,22 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
   <workspace_organization>
     <instruction>Maintain clean workspace structure for clarity</instruction>
     <structure>
-      .waves/wave-0/
-        deliverables/     # Contains ONLY PROJECT_FOUNDATION.md when complete
-        drafts/           # Work-in-progress content (cleared after wave completion)
-        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
-      
-      .waves/wave-1/
-        deliverables/     # Contains ONLY TECHNICAL_RESEARCH.md when complete
-        drafts/           # Work-in-progress content (cleared after wave completion)
-        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
-      
-      .waves/wave-2/
-        deliverables/     # Contains ONLY MASTER_PLAN.md when complete - THIS IS THE FINAL DELIVERABLE
-        drafts/           # Work-in-progress content (cleared after wave completion)
-        rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
+      .waves/
+        manifest.json     # Repo-level run index (§2.5) — this run appends/updates its own entry
+        runs/
+          <run-id>/       # THIS run's isolated directory = <run-dir>
+            wave-0/
+              deliverables/     # Contains ONLY PROJECT_FOUNDATION.md when complete
+              drafts/           # Work-in-progress content (cleared after wave completion)
+              rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
+            wave-1/
+              deliverables/     # Contains ONLY TECHNICAL_RESEARCH.md when complete
+              drafts/           # Work-in-progress content (cleared after wave completion)
+              rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
+            wave-2/
+              deliverables/     # Contains ONLY MASTER_PLAN.md when complete - THIS IS THE FINAL DELIVERABLE
+              drafts/           # Work-in-progress content (cleared after wave completion)
+              rk-operations/    # Contains ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
     </structure>
   </workspace_organization>
 </planning_guidelines>
@@ -231,23 +254,25 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
   </principle>
   
   <instructions>
-    1. Produce exactly one deliverable per wave in the EXACT location specified:
-       - Wave 0: .waves/wave-0/deliverables/PROJECT_FOUNDATION.md
-       - Wave 1: .waves/wave-1/deliverables/TECHNICAL_RESEARCH.md
-       - Wave 2: .waves/wave-2/deliverables/MASTER_PLAN.md
+    1. Produce exactly one deliverable per wave in the EXACT location specified (under <run-dir>):
+       - Wave 0: <run-dir>/wave-0/deliverables/PROJECT_FOUNDATION.md
+       - Wave 1: <run-dir>/wave-1/deliverables/TECHNICAL_RESEARCH.md
+       - Wave 2: <run-dir>/wave-2/deliverables/MASTER_PLAN.md
     2. Use drafts/ for work-in-progress content only
     3. Let Record Keeper manage rk-operations/ (maximum 3 files)
-    4. NEVER create files outside the designated wave structure
+    4. NEVER create files outside this run's wave structure
     5. NEVER create duplicate deliverables in other locations
-    6. Focus on quality over quantity of documentation
+    6. NEVER write to another run's directory or to a bare .waves/wave-N/ path
+    7. Focus on quality over quantity of documentation
   </instructions>
   
   <examples>
-    <good>Create PROJECT_FOUNDATION.md in .waves/wave-0/deliverables/</good>
-    <good>Create TECHNICAL_RESEARCH.md in .waves/wave-1/deliverables/</good>
-    <good>Create MASTER_PLAN.md in .waves/wave-2/deliverables/</good>
+    <good>Create PROJECT_FOUNDATION.md in <run-dir>/wave-0/deliverables/</good>
+    <good>Create TECHNICAL_RESEARCH.md in <run-dir>/wave-1/deliverables/</good>
+    <good>Create MASTER_PLAN.md in <run-dir>/wave-2/deliverables/</good>
     <bad>Creating MASTER_PLAN.md in project root</bad>
-    <bad>Creating planning documents outside .waves/ structure</bad>
+    <bad>Creating MASTER_PLAN.md in bare .waves/wave-2/ instead of under .waves/runs/<run-id>/</bad>
+    <bad>Creating planning documents outside this run's directory</bad>
     <bad>Creating multiple versions of deliverables</bad>
   </examples>
 </file_creation_discipline>
@@ -260,13 +285,13 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
   
   <flow>
     Wave 0: Establish foundation with PROJECT_FOUNDATION.md
-      Location: .waves/wave-0/deliverables/PROJECT_FOUNDATION.md
+      Location: <run-dir>/wave-0/deliverables/PROJECT_FOUNDATION.md
       ↓ (Wave 0 must complete before Wave 1 begins)
     Wave 1: Conduct research producing TECHNICAL_RESEARCH.md  
-      Location: .waves/wave-1/deliverables/TECHNICAL_RESEARCH.md
+      Location: <run-dir>/wave-1/deliverables/TECHNICAL_RESEARCH.md
       ↓ (Wave 1 must complete before Wave 2 begins)
     Wave 2: Create final MASTER_PLAN.md synthesizing all work
-      Location: .waves/wave-2/deliverables/MASTER_PLAN.md
+      Location: <run-dir>/wave-2/deliverables/MASTER_PLAN.md
       ↓
     Planning Complete: Ready for implementation mode
   </flow>
@@ -307,8 +332,9 @@ Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0
   Implementation begins only after MASTER_PLAN completion in subsequent feature waves.
   This separation ensures thorough planning before any code is written.
   
-  REMEMBER: The MASTER_PLAN.md location is .waves/wave-2/deliverables/MASTER_PLAN.md
-  This is non-negotiable and must be followed precisely.
+  REMEMBER: The MASTER_PLAN.md location is <run-dir>/wave-2/deliverables/MASTER_PLAN.md
+  (i.e. .waves/runs/<run-id>/wave-2/deliverables/MASTER_PLAN.md). This is non-negotiable
+  and must be followed precisely.
 </implementation_note>
 
 ---
@@ -354,7 +380,7 @@ Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 manda
 
 ## Closing each wave
 
-After each wave's deliverable is written, briefly report to the user: what was produced, where it landed, what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
 
 ---
 

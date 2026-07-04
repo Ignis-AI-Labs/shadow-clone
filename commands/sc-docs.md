@@ -21,7 +21,7 @@ section title. See `/sc-research` for narrative prose work and
 `/sc-feature` for shipping new capabilities.
 
 The deliverable is the doc file(s) themselves plus
-`.waves/wave-1/deliverables/DOCS_SUMMARY.md` describing what was
+`<run-dir>/wave-2/deliverables/DOCS_SUMMARY.md` describing what was
 written and what was deliberately left out.
 
 ---
@@ -51,9 +51,20 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
    `8+`. Drives spawn cap.
 
 Wait for answers. Echo a one-line scope confirmation, then proceed to
-Wave 0.
+Step 1.5 (run initialization).
 
 ---
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the docs scope captured in Step 1; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every wave deliverable and rk-operations file this mode produces lands under `<run-dir>/wave-N/...`, never a bare `.waves/wave-N/`. (The documentation files themselves still land at the Step 1 output location, in the repo — not under `<run-dir>`.)
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "docs"`, `objective` (the docs scope), `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before its summary lands — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
 
 ## Step 2 — Run the methodology
 
@@ -85,7 +96,7 @@ If you spawn specialists (per team-size), the roles are:
 - **Record Keeper**: writes `DOC_SOURCE.md` capturing all of the
   above as raw material for Wave 1.
 
-Deliverable: `.waves/wave-0/deliverables/DOC_SOURCE.md`.
+Deliverable: `<run-dir>/wave-0/deliverables/DOC_SOURCE.md`.
 
 ### Wave 1 — Write the docs
 
@@ -129,7 +140,7 @@ file's path in `DOCS_SUMMARY.md`.
 
 ### Wave 2 — Summary + honest gaps
 
-Write `.waves/wave-1/deliverables/DOCS_SUMMARY.md` with:
+Write `<run-dir>/wave-2/deliverables/DOCS_SUMMARY.md` with:
 
 - **Files written or updated** — path + one-line purpose per file.
 - **What's documented** — the contracts / concepts / steps covered.
@@ -151,7 +162,11 @@ get flagged.
 
 ---
 
-## Closing
+## Closing each wave
+
+As each wave's deliverable lands, update this run's manifest entry (§2.5):
+bump `waves.completed`, append the deliverable path to `deliverables`,
+refresh `updated`. When the summary lands, set `status` to `complete`.
 
 Tell the user what was documented, where it landed, and what
 deliberately wasn't covered. Suggest the user open the file and read
