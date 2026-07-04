@@ -26,7 +26,7 @@ Edit this file on `dev`. Put your handle in the **Assignee** column, flip status
 | P-P0-07 | Strip timelines; reframe planning around milestones + DAG | DONE | @eli | P-P0-05 | commit `3e5c9bc` |
 | P-P0-08 | Run-namespacing — isolate concurrent `/sc-*` runs under `.waves/runs/<run-id>/` + `.waves/manifest.json`; SCWS §2.5 (atomic `mkdir` claim), wired into all 11 wave modes | DONE | @eli | P-P0-04 | echo-approved |
 | P-P1-01 | End-to-end exercise every `/sc-*` mode on a real project (verify deliverables land correctly, AskUserQuestion paths work, `.waves/` scaffold is honored) | OPEN |  | P-P0-07 |  |
-| P-P1-02 | Security audit of the plugin surface itself — review `bridge/*.sh` for shell-quoting / re-entrancy / path-traversal; verify exchange logs have safe permissions; confirm no command leaks user input as code | OPEN |  | P-P0-01 |  |
+| P-P1-02 | Security audit of the plugin surface itself — review `bridge/*.sh` for shell-quoting / re-entrancy / path-traversal; verify exchange logs have safe permissions; confirm no command leaks user input as code | DONE | @eli | P-P0-01 | echo-approved; BRIDGE-003/004 fixed, 005 deferred |
 | P-P1-03 | `/sc-quick-fix` — targeted single-issue fix, minimal team | OPEN |  | — | rapid utility |
 | P-P1-04 | `/sc-tests` — generate integration tests per `protocols/Testing & Quality Assurance Protocol.md` | OPEN |  | — | rapid utility |
 | P-P1-05 | `/sc-docs` — generate documentation per `protocols/Documentation Standards for Software Teams.md` | OPEN |  | — | rapid utility |

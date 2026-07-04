@@ -14,6 +14,12 @@
 
 set -euo pipefail
 
+# BRIDGE-003 (CWE-200): every file this process creates — the exchange request/
+# response files (full source + diffs of the reviewed code) and the lock files —
+# must be owner-only, matching how install.sh hardens the config to 0600. Set a
+# private umask up front so nothing is born world-readable.
+umask 077
+
 # Locate the shared libraries relative to this script (works in the repo layout and
 # in the installed ~/.claude/sc layout — both keep ask-*.sh beside lib/).
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -99,6 +105,11 @@ shift || true
 FILES=("$@")
 
 mkdir -p "${EXCHANGE_DIR}"
+# Repair a .sc/.sc/exchange left world-traversable (0755) by an older bridge; the
+# umask above only governs newly created dirs. Owner-only dirs block other local
+# users from reaching the exchange files regardless of the files' own mode.
+chmod 700 "${PROJECT_DIR}/.sc" "${EXCHANGE_DIR}" 2>/dev/null \
+  || echo "sc: WARN — could not restrict ${EXCHANGE_DIR} to 0700; artifact filenames may be listable by other local users (file contents stay 0600 via umask)." >&2
 
 # AUDIT-010 (CWE-200): every review writes the full contents of the listed
 # files into ${EXCHANGE_DIR} and sends the same content to Anthropic via

@@ -393,6 +393,30 @@ _None yet._
 
 ## Resolved
 
+- **Issue ID**: BRIDGE-003
+- **Status**: RESOLVED 2026-07-05 (P-P1-02 bridge security audit)
+- **Discovered By**: Builder (Claude, empirical) + audit subagent (finding M-1)
+- **Date Discovered**: 2026-07-05
+- **Source**: P-P1-02 — security audit of the plugin surface
+- **Severity**: Medium (CWE-200, local information exposure)
+- **Location**: `bridge/ask-glm.sh` + `bridge/ask-claude.sh` (exchange dir/files); written by `bridge/lib/build-request.sh` + `bridge/lib/run-review.sh`
+- **Description / Evidence**: The bridge set no `umask`, so `.sc/exchange/` (0755) and every `*-request.md`/`*-response.md` (0644) were world-readable — verified empirically (`stat` showed 755/644). Those files hold the full contents + `git diff` of every reviewed file (an in-repo `.env` at 0600 would be copied into a 0644 exchange file). Inconsistent with `install.sh`, which hardens the config to 0600. Real local info-exposure on multi-user hosts.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-05
+- **Resolution**: `umask 077` at the top of both entrypoints (new exchange files born 0600, dirs 0700), plus an idempotent `chmod 700` on `.sc`/`.sc/exchange` to repair dirs left 0755 by an older bridge. Verified: dir 700, request file 600. Deployed live.
+
+- **Issue ID**: BRIDGE-004
+- **Status**: RESOLVED 2026-07-05 (P-P1-02 bridge security audit)
+- **Discovered By**: Audit subagent (finding M-2), Gnosis-verified by Builder
+- **Date Discovered**: 2026-07-05
+- **Source**: P-P1-02 — security audit of the plugin surface
+- **Severity**: Medium (review-integrity / prompt-injection, OWASP LLM01)
+- **Location**: `bridge/lib/build-request.sh` — CONTEXT emission + the `path="${f}"` marker line
+- **Description / Evidence**: The injection defense is the `<<<...>>>` boundary markers, and the diff/file/AGENTS regions each get an inner `sc_fence` computed longer than any backtick run so their content can't forge a closing marker. But (1) the Builder-supplied `CONTEXT` was printed raw between its markers with no fence, and (2) the caller-supplied path `${f}` was interpolated unescaped into the marker line (outside any fence). A CONTEXT (or a marker-named in-repo file) could emit a forged `<<<END-UNTRUSTED-...>>>` + `<<<TRUSTED-PROJECT-LAW>>>` and steer the reviewer toward a forged APPROVE. Verified: an adversarial CONTEXT reproduced the unfenced emission.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-05
+- **Resolution**: CONTEXT is now wrapped in an `sc_fence` exactly like the diff/file regions (forged markers stay structurally inside the code block). The untrusted path label is sanitized once at the top of the files loop (`fdisp` = `tr -d '\n\r<>\042\140'`) and used at **all five** out-of-fence display sites — the `### ` heading, the three skip messages, and the `path="..."` marker — after a first pass fixed only the `path` attribute and left the others (caught by the echo review, round 2). Resolution/containment still uses the raw `${f}`, so which file is read never changes. Verified end-to-end: a filename embedding a newline + `<<<TRUSTED-PROJECT-LAW>>>` renders as a single sanitized line with no forged marker.
+
 - **Issue ID**: BRIDGE-002
 - **Status**: RESOLVED 2026-07-05 (echo-reviewed alongside the window retune)
 - **Discovered By**: Reviewer (GLM, `/sc-echo`) — raised across two rounds (RQ then Medium once the retune added duplication)
@@ -634,6 +658,16 @@ _None yet._
 
 ## Deferred
 
+- **Issue ID**: BRIDGE-005
+- **Status**: DEFERRED 2026-07-05 (needs a scoped allowlist; own change)
+- **Discovered By**: Audit subagent (Info) — already self-documented in code
+- **Date Discovered**: 2026-07-05
+- **Severity**: Low (defense-in-depth)
+- **Location**: `bridge/ask-claude.sh` — reviewer confinement via `--disallowedTools` (denylist)
+- **Description**: The Claude-direction reviewer is confined with a tool denylist; dynamically-named `mcp__<server>__<tool>` tools are not covered if the host has MCP servers configured. Not independently exploitable without a pre-existing mutating MCP tool on the host, and the reviewer persona is read-only by instruction.
+- **Deferral reason**: Migrating to an `--allowedTools` allowlist needs a carefully chosen minimal tool set so reviews don't break; out of scope for this audit pass. Tracked for a focused follow-up.
+- **Suggested fix**: Replace `--disallowedTools` with an explicit `--allowedTools` allowlist (Read/Grep/Glob-class only).
+
 - **Issue ID**: PROC-001
 - **Discovered By**: User (Elijah)
 - **Date Discovered**: 2026-06-24
@@ -673,4 +707,9 @@ _None yet._
 
 ## False Positive
 
-_None yet._
+- **Issue ID**: BRIDGE-006
+- **Discovered By**: Audit subagent (finding L-1), reviewed by Builder
+- **Date**: 2026-07-05
+- **Severity**: Low → **not a vulnerability**
+- **Location**: `bridge/ask-glm.sh` / `bridge/ask-claude.sh` — `_sc_source_config_safe` then `.` source
+- **Description / Evidence**: The config is `stat`-checked then sourced (check-then-use / TOCTOU). Not a privilege boundary: the mode gate requires `owner == current uid`, so only the user themselves could win the race to swap their own config — no cross-user escalation exists. Closed as a non-issue; retained for the audit record.
