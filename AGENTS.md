@@ -159,6 +159,14 @@ it as APPROVE. Reviews are bounded, retried, and (optionally) serialized across
 concurrent projects so a hang can never stall the session; tune via `SC_TIMEOUT`,
 `SC_RETRIES`, and `SC_SERIALIZE`.
 
+A large work unit is split into passes that each fit `SC_MAX_CHARS` — a byte proxy
+for the reviewer's token window (tokens ≈ bytes/4) — so the Reviewer always sees
+every file **in full**. A pass that still cannot fit returns `VERDICT: ERROR` rather
+than being sent for a silently-truncated review, so the bridge never lets the
+reviewer judge content it could not fully see. If reviews come back shallow or miss
+obvious issues on large files, the budget is likely too small: raise `SC_MAX_CHARS`
+only if your reviewer model's token window genuinely accommodates more.
+
 ### The loop
 
 1. Builder completes a work unit and dispatches a review.

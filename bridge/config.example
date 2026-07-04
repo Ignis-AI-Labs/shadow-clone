@@ -35,6 +35,18 @@
 # Max seconds to wait for a busy repo's review queue before giving up with ERROR.
 : "${SC_LOCK_TIMEOUT:=900}"
 
+# --- Reviewer input window ---
+# Per-pass budget in bytes — a proxy for the reviewer's token window (tokens ≈
+# bytes/4, so keep it comfortably under the model's real token capacity). A large
+# work unit is packed into passes that each stay under this so the reviewer always
+# sees every file in full; a pass that still can't fit is returned as VERDICT: ERROR
+# rather than sent for a silently-truncated review. The default (1000000, ~250K
+# tokens) suits GLM 5.2 via OpenCode, whose context easily accommodates large
+# multi-file units — so normal work reviews in a single pass (AGENTS.md rides along
+# in every pass, so leave generous headroom). Lower it for a smaller-context
+# reviewer; raise it only if yours has a larger token window.
+: "${SC_MAX_CHARS:=1000000}"
+
 export SC_REVIEWER_MODEL SC_REVIEWER_AGENT SC_CLAUDE_MODEL
 export SC_TIMEOUT SC_KILL_GRACE SC_RETRIES SC_RETRY_DELAY
-export SC_SERIALIZE SC_LOCK_TIMEOUT
+export SC_SERIALIZE SC_LOCK_TIMEOUT SC_MAX_CHARS

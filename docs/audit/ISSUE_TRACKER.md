@@ -393,6 +393,97 @@ _None yet._
 
 ## Resolved
 
+- **Issue ID**: BRIDGE-002
+- **Status**: RESOLVED 2026-07-05 (echo-reviewed alongside the window retune)
+- **Discovered By**: Reviewer (GLM, `/sc-echo`) — raised across two rounds (RQ then Medium once the retune added duplication)
+- **Date Discovered**: 2026-07-04
+- **Severity**: Low→Medium (maintainability; escalated when the refuse logic was duplicated across both pass paths)
+- **Location**: `bridge/lib/chunk-review.sh` — `sc_echo_review`
+- **Description**: `sc_echo_review` was a ~116-line monolith (over the 50-line ceiling, Rule 1) and the window retune duplicated the build→measure→refuse-or-invoke block across the single-pass and multi-pass paths.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-05
+- **Resolution**: Extracted three helpers — `_sc_run_pass` (shared refuse-or-invoke, de-duplicates both paths), `_sc_plan_chunks` (greedy packing), `_sc_run_multipass` (per-part orchestration + aggregate). `sc_echo_review` shrank 116→34 lines; every function is now under the 50-line ceiling. Behavior verified byte-for-byte (single-pass, chunked, oversize-refuse, empty-FILES under `set -e`).
+
+- **Issue ID**: BRIDGE-001
+- **Status**: RESOLVED 2026-07-04 (echo-reviewed, APPROVE round 2)
+- **Discovered By**: User (Elijah) — recurring "reviewer can't see the full report" reports
+- **Date Discovered**: 2026-07-04
+- **Source**: Observed behavior in a downstream project (GLM-via-OpenCode reviewer)
+- **Severity**: High (review integrity — silent truncation yields verdicts on unseen code)
+- **Location**: `bridge/lib/chunk-review.sh` (shared by `ask-glm.sh` + `ask-claude.sh`)
+- **Description / Evidence**: The chunker's default per-pass budget (`SC_MAX_CHARS=200000`) exceeded the GLM-via-OpenCode reviewer's real input window (~50KB). Large multi-file packets therefore never triggered chunking; the single pass overflowed the model, which **silently truncated** the input and returned a substantive verdict (APPROVE/REVISE) on files it never fully saw. The bridge's only guard was a soft warning that fired at 200KB, never at the real ~50KB ceiling.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: (1) Default `SC_MAX_CHARS` set to **1000000** (~1 MB), sized for GLM 5.2 via OpenCode, whose context easily accommodates large multi-file units — so normal work reviews in a single pass. (An intermediate 48000 default over-corrected: because AGENTS.md rides along in every pass, it ERRORed legitimate large files; retuned to 1 MB per user direction.) (2) Soft "may truncate" warnings replaced with a **hard refuse**: any pass whose built request still exceeds the window returns `VERDICT: ERROR` (unreviewed → surfaced to the human per Rule 9) instead of being sent for a truncated review — new `_sc_refuse_oversize` helper, wired into both single-pass and multi-pass paths. Kept as a rarely-firing safety net at the large window. (3) Overhead slack 2000→4000. (4) Documented `SC_MAX_CHARS` in `config.example` and `AGENTS.md` Rule 9. Verified: 14-file unit→1 pass at default, chunks correctly at a small window, oversize→ERROR (not sent). Deployed live to `~/.claude/sc/lib/chunk-review.sh`.
+
+> Entries `CLEANER-001` through `CLEANER-005` were surfaced by the `/sc-echo`
+> paired-review loop on the new `/sc-cleaner` command. An initial 3-round loop hit
+> the round cap at `REVISE`; a **fresh review cycle** (per human direction to
+> resolve everything) then ran to a clean **`APPROVE`** — "No findings. Work meets
+> protocol." — after all findings were addressed and self-audited. Every finding
+> below is RESOLVED **and** re-reviewed. Full exchange record in
+> `.sc/exchange/20260704-16*`.
+
+- **Issue ID**: CLEANER-001
+- **Status**: RESOLVED 2026-07-04 (re-reviewed in fresh cycle → APPROVE)
+- **Discovered By**: Reviewer (GLM, `/sc-echo` round 3)
+- **Date Discovered**: 2026-07-04
+- **Source**: `/sc-echo` paired review of `/sc-cleaner`
+- **Severity**: Low
+- **Location**: `commands/sc-help.md` + `TASKS-plugin.md` taglines vs. `commands/sc-cleaner.md` Step 6.3
+- **Description / Evidence**: Catalog/task taglines said "never deletes" while the command body permits one `rmdir` on a pre-existing empty dir — a wording contradiction a user reads when selecting the command.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: Taglines tightened to "never deletes files (empty dirs only, gated)"; command phrase changed to "single permitted empty-dir removal — no file is ever deleted." Catalog and command now agree.
+
+- **Issue ID**: CLEANER-002
+- **Status**: RESOLVED 2026-07-04 (re-reviewed in fresh cycle → APPROVE)
+- **Discovered By**: Reviewer (GLM, `/sc-echo` round 3, filed as a Research Question)
+- **Date Discovered**: 2026-07-04
+- **Source**: `/sc-echo` paired review of `/sc-cleaner`
+- **Severity**: Low
+- **Location**: `commands/sc-cleaner.md` Step 6.1
+- **Description / Evidence**: Both Archive and Relocate routed through `git mv`, which errors (`fatal: not under version control`) on an untracked source — leaving an untracked misplaced file selected for Relocate with no handler.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: Step 6.1 now branches on tracked status — `git mv` for tracked sources, plain `mv` for untracked ones (no history to preserve, still reversible).
+
+- **Issue ID**: CLEANER-003
+- **Status**: RESOLVED 2026-07-04 (re-reviewed → APPROVE)
+- **Discovered By**: Builder self-audit + Reviewer (GLM, fresh cycle round 1)
+- **Date Discovered**: 2026-07-04
+- **Source**: `/sc-echo` paired review of `/sc-cleaner`
+- **Severity**: Low (security-gate portability)
+- **Location**: `commands/sc-cleaner.md` Step 2 secret scan; Step 6.1 collision rationale
+- **Description / Evidence**: (a) Secret-scan regex used `\s`, a GNU-grep extension that matches nothing on BSD/macOS grep — the security gate would silently no-op there. (b) The `test -e` collision pre-check rationale credited only `git mv`'s abort, silent on the untracked `mv` path where `mv` overwrites without error, making the pre-check the sole guard there.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: Regex switched to POSIX `[[:space:]]` (verified matching); pre-check rationale now names plain `mv`'s silent-overwrite as the reason it is load-bearing on the untracked path.
+
+- **Issue ID**: CLEANER-004
+- **Status**: RESOLVED 2026-07-04 (re-reviewed → APPROVE)
+- **Discovered By**: Reviewer (GLM, fresh cycle round 1, filed as Research Question)
+- **Date Discovered**: 2026-07-04
+- **Source**: `/sc-echo` paired review of `/sc-cleaner`
+- **Severity**: Low (reversibility guarantee)
+- **Location**: `commands/sc-cleaner.md` Step 6 precondition
+- **Description / Evidence**: If a consuming repo gitignores `archive/`, moving files there undermines the mode's guarantees — an untracked file `mv`'d in vanishes from git with no record; tracked-file behavior under `git mv` is git-version-dependent (empirically on git 2.54 the file stays tracked via index force-add, but lands in a half-ignored dir).
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: Added a Step 6 precondition running `git check-ignore archive/` before the first archive; if ignored, stop and get user approval for an un-ignored root. Rationale corrected to the empirically-verified mechanism.
+
+- **Issue ID**: CLEANER-005
+- **Status**: RESOLVED 2026-07-04 (re-reviewed → APPROVE)
+- **Discovered By**: Reviewer (GLM, fresh cycle round 2, Info)
+- **Date Discovered**: 2026-07-04
+- **Source**: `/sc-echo` paired review of `/sc-cleaner`
+- **Severity**: Info (spec/prose accuracy)
+- **Location**: `commands/sc-cleaner.md` Step 2 `find` command; frontmatter `description`; `sc-help.md` + `TASKS-plugin.md` blurbs
+- **Description / Evidence**: The empty-dir `find` command claimed "(excluding `.git`)" without encoding it; the frontmatter/blurbs said "via `git mv`" which oversimplifies the tracked/untracked two-track move semantics.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-04
+- **Resolution**: `find` now carries `-not -path '*/.git/*'`; description softened to "fully reversible"; catalog/task blurbs scope `git mv` to tracked files.
+
 - **Issue ID**: INFRA-001
 - **Discovered By**: Builder (Claude) — from the live process table
 - **Date Discovered**: 2026-06-24
