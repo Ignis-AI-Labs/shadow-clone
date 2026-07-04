@@ -50,6 +50,7 @@ Smaller, single-purpose helpers for focused work that doesn't justify a full mod
 | `/sc-quick-fix` | Targeted single-issue fix — minimal team, no waves, fastest path to a small, focused change. Gnosis-gated diagnosis, scope-guarded edits, verification per the user's chosen rigor. | ✅ Available |
 | `/sc-tests` | Generate meaningful tests for the work currently in scope — surface-first contract discovery, framework-aware, no coverage theater. Cites `Testing & Quality Assurance Protocol.md`. | ✅ Available |
 | `/sc-docs` | Generate documentation for the work currently in scope — audience-aware, anti-marketing voice, source-of-truth-first. Cites `Documentation Standards for Software Teams.md`. | ✅ Available |
+| `/sc-cleaner` | Repo organization + archival sweep — evidence-gated, plan-first. Inventories stale/backup/misplaced files, writes `CLEANUP_PLAN.md`, and on approval moves them into `archive/` (mirroring structure; `git mv` for tracked files, preserving history). Never deletes files (empty dirs only, gated); fully reversible. | ✅ Available |
 
 ## Helper scripts (not slash commands)
 
