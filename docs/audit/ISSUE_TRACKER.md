@@ -659,14 +659,22 @@ _None yet._
 ## Deferred
 
 - **Issue ID**: BRIDGE-005
-- **Status**: DEFERRED 2026-07-05 (needs a scoped allowlist; own change)
+- **Status**: Resolved 2026-07-05 (commit pending) — closed via `--strict-mcp-config`, NOT an allowlist
 - **Discovered By**: Audit subagent (Info) — already self-documented in code
 - **Date Discovered**: 2026-07-05
 - **Severity**: Low (defense-in-depth)
 - **Location**: `bridge/ask-claude.sh` — reviewer confinement via `--disallowedTools` (denylist)
 - **Description**: The Claude-direction reviewer is confined with a tool denylist; dynamically-named `mcp__<server>__<tool>` tools are not covered if the host has MCP servers configured. Not independently exploitable without a pre-existing mutating MCP tool on the host, and the reviewer persona is read-only by instruction.
-- **Deferral reason**: Migrating to an `--allowedTools` allowlist needs a carefully chosen minimal tool set so reviews don't break; out of scope for this audit pass. Tracked for a focused follow-up.
-- **Suggested fix**: Replace `--disallowedTools` with an explicit `--allowedTools` allowlist (Read/Grep/Glob-class only).
+- **Fix (shipped)**: Added `--strict-mcp-config` (with no `--mcp-config`) to the `claude -p` invocation. This loads **zero** MCP servers, so no `mcp__<server>__<tool>` tool can exist in the reviewer process — the gap is closed at the source rather than chased per-name. The proven `--disallowedTools` denylist is retained for built-in tools.
+- **Original suggested fix (`--allowedTools` allowlist) REJECTED on evidence.** Gnosis reproduction against `claude -p --model haiku` (unguessable-token probe, 2026-07-05):
+  - Headless `claude -p` **auto-executes** tools by default (baseline probe read the token).
+  - `--allowedTools ""` (empty allowlist) is a **no-op** — the model still read the token. An allowlist migration built on an empty set would have *silently removed all confinement*.
+  - `--allowedTools "Glob"` (non-empty, Read/Bash omitted) enforced only **intermittently** — blocked in one run, leaked in an identical earlier run.
+  - The `--disallowedTools` denylist naming Read/Bash/Grep/Glob **blocked reliably** across runs, including alongside `--strict-mcp-config`.
+  - Conclusion: for this CLI the denylist is the load-bearing control and the allowlist is strictly worse; the only real gap was MCP loading, which `--strict-mcp-config` removes.
+- **Verified**: exact deployed flag set (`--strict-mcp-config` + full denylist) BLOCKS the unguessable-token read AND still emits a parseable `VERDICT:` line. Deployed live to `~/.claude/sc/ask-claude.sh`.
+- **Residual (cosmetic, non-security)**: three denylist names (`MultiEdit`, `NotebookRead`, `TodoRead`) are unknown to the current Claude Code build and print `matches no known tool` on **stderr** only (routed to `${resp}.err` by `sc_run_reaped`, never into the review). Kept as a harmless forward-compatible superset; the security-relevant mutating tools (`Write`/`Edit`/`Bash`) are valid names and block. The `ask-claude.sh` code comment was reconciled to state this (was previously asserting `MultiEdit` is a live distinct tool — echo review round 1 flagged the contradiction).
+- **Follow-up research questions (from echo review, non-blocking)**: (1) Confirm `--strict-mcp-config` with no `--mcp-config` loads zero MCP servers *on a host that actually has MCP servers configured* (the closure rests on this flag's semantics; a CLI update could reopen the gap silently since the denylist can't cover `mcp__*` names). (2) Consider a claude-CLI-version assertion in `sc-doctor.sh` so a future change to `--strict-mcp-config` semantics is detected rather than failing open.
 
 - **Issue ID**: PROC-001
 - **Discovered By**: User (Elijah)
