@@ -676,6 +676,16 @@ _None yet._
 - **Residual (cosmetic, non-security)**: three denylist names (`MultiEdit`, `NotebookRead`, `TodoRead`) are unknown to the current Claude Code build and print `matches no known tool` on **stderr** only (routed to `${resp}.err` by `sc_run_reaped`, never into the review). Kept as a harmless forward-compatible superset; the security-relevant mutating tools (`Write`/`Edit`/`Bash`) are valid names and block. The `ask-claude.sh` code comment was reconciled to state this (was previously asserting `MultiEdit` is a live distinct tool — echo review round 1 flagged the contradiction).
 - **Follow-up research questions (from echo review, non-blocking)**: (1) Confirm `--strict-mcp-config` with no `--mcp-config` loads zero MCP servers *on a host that actually has MCP servers configured* (the closure rests on this flag's semantics; a CLI update could reopen the gap silently since the denylist can't cover `mcp__*` names). (2) Consider a claude-CLI-version assertion in `sc-doctor.sh` so a future change to `--strict-mcp-config` semantics is detected rather than failing open.
 
+- **Issue ID**: CMD-001
+- **Status**: Open 2026-07-05 (low-priority consistency follow-up)
+- **Discovered By**: Echo reviewer (finalization review of rapid-utility commands, Low)
+- **Date Discovered**: 2026-07-05
+- **Severity**: Low (clarity/consistency, non-security)
+- **Location**: `commands/sc-*.md` Step 1.5 #2 — the shared run-namespacing clause
+- **Description**: The clause "Every wave deliverable and rk-operations file this mode produces lands under `<run-dir>/wave-N/...`" uses the term `rk-operations` without defining it inline. The term IS defined in the canonical Wave & Subagent Coordination Protocol §2.5 (dir tree + audit-trail section), and the clause is byte-identical across all wave modes — so it is protocol-backed and consistent, but a receiving AI that hasn't read the protocol cannot act on the term from the command file alone.
+- **Partial fix (shipped)**: `sc-tests.md` and `sc-docs.md` now carry a self-contained parenthetical: "rk-operations file (the Record Keeper's run-coordination audit trail, defined in the Wave & Subagent Coordination Protocol §2.5)". Echo-approved (finalization review round 2).
+- **Remaining**: Propagate the same parenthetical to the other 9 wave modes that share the clause (`sc-feature`, `sc-debug`, `sc-refactor`, `sc-research`, `sc-audit`, `sc-optimize`, `sc-plan`, `sc-sprint`, `sc-roadmap`) so the inline clarification is consistent everywhere. Purely additive; no behavior change.
+
 - **Issue ID**: PROC-001
 - **Discovered By**: User (Elijah)
 - **Date Discovered**: 2026-06-24

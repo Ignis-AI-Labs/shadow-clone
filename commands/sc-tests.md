@@ -58,7 +58,7 @@ Step 1.5 (run initialization).
 Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
 
 1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the test scope captured in Step 1; generate a 4-char base36 `<shortid>`.
-2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every wave deliverable and rk-operations file this mode produces lands under `<run-dir>/wave-N/...`, never a bare `.waves/wave-N/`. (The test files themselves still land at the framework's conventional location in the repo — not under `<run-dir>`.)
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every wave deliverable and rk-operations file (the Record Keeper's run-coordination audit trail, defined in the Wave & Subagent Coordination Protocol §2.5) this mode produces lands under `<run-dir>/wave-N/...`, never a bare `.waves/wave-N/`. (The test files themselves still land at the framework's conventional location in the repo — not under `<run-dir>`.)
 3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "tests"`, `objective` (the test scope), `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
 4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
 
@@ -79,6 +79,13 @@ method), capture:
 - **Security-relevant paths** — input validation, authorization
   checks, secret handling, anything the SECURITY_CHECKLIST flags.
 - **Existing tests** — what's already covered. Don't duplicate.
+
+Apply the Gnosis Verification Protocol's anti-speculation discipline:
+every contract claim above must be grounded in code you actually read.
+If a behavior can't be confirmed from source, mark it *unverified* in
+`TEST_CONTRACTS.md` rather than asserting it — a test written against a
+guessed contract only proves the guess, which is the exact failure mode
+this gate exists to prevent.
 
 Deliverable: `<run-dir>/wave-0/deliverables/TEST_CONTRACTS.md` — one
 section per entry point with the contract + edge case list.
