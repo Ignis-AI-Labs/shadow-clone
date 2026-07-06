@@ -155,6 +155,36 @@ check_realpath_gnu_m() {
   fi
 }
 
+# BRIDGE-005: the Claude-direction reviewer (bridge/ask-claude.sh) relies on
+# `--strict-mcp-config` to load zero MCP servers, which is what closes the
+# dynamically-named mcp__<server>__<tool> gap the --disallowedTools denylist
+# cannot cover. If a future `claude` CLI drops or renames this flag, the
+# confinement fails OPEN silently — mcp__* tools could load into the reviewer.
+# Assert the flag is still recognized so the drift surfaces here, at doctor
+# time, rather than as an unnoticed hole at review time.
+check_reviewer_mcp_flag() {
+  if ! command -v claude >/dev/null 2>&1; then
+    return  # 'claude on PATH' failure already reported by check_cmd
+  fi
+  # Capture the help text first, decoupled from claude's --help exit status:
+  # this script runs under `set -o pipefail`, so a `claude --help | grep`
+  # pipeline would inherit a non-zero help exit (some CLIs exit non-zero on
+  # --help) and wrongly FAIL a healthy install.
+  local help_out; help_out="$(claude --help 2>&1)" || true
+  # Anchor the flag as a whole token. A bare substring match would also accept
+  # a future renamed/suffixed variant such as `--strict-mcp-config-legacy` and
+  # wrongly report OK while the enabling flag is gone (verified: bare grep does
+  # match that suffixed form). Require the token to be bounded by start/space on
+  # the left and space/`=`/`,`/end on the right.
+  if printf '%s\n' "${help_out}" \
+       | grep -qE -- '(^|[[:space:]])--strict-mcp-config([[:space:]]|=|,|$)'; then
+    report OK "claude supports --strict-mcp-config (BRIDGE-005)"
+  else
+    report FAIL "claude supports --strict-mcp-config (BRIDGE-005)" \
+      "flag absent from 'claude --help' — reviewer MCP confinement has regressed; mcp__* tools may load. Pin/upgrade the claude CLI or re-harden bridge/ask-claude.sh."
+  fi
+}
+
 # IS-010: warn if ~/.config/sc/config is more permissive than 0600.
 # Pairs with the install.sh chmod 0600 from Theme 1 and the bridge's
 # _sc_source_config_safe guard from Theme 3 — surface drift early
@@ -270,6 +300,7 @@ check_path() {
     check_cmd "${c}"
   done
   check_realpath_gnu_m
+  check_reviewer_mcp_flag
 }
 
 check_runtime() {

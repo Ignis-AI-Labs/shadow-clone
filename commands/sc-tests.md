@@ -19,7 +19,7 @@ not produce coverage percentages, and does not generate placeholder
 tests to satisfy a lint rule. See `/sc-test-audit` for diagnosis.
 
 The deliverable is the test files themselves plus
-`.waves/wave-1/deliverables/TESTS_SUMMARY.md` describing what was added,
+`<run-dir>/wave-2/deliverables/TESTS_SUMMARY.md` describing what was added,
 what was deliberately not tested, and why.
 
 ---
@@ -49,9 +49,20 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
    bigger scopes benefit from parallel specialists.
 
 Wait for answers. Echo a one-line scope confirmation, then proceed to
-Wave 0.
+Step 1.5 (run initialization).
 
 ---
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the test scope captured in Step 1; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every wave deliverable and rk-operations file (the Record Keeper's run-coordination audit trail, defined in the Wave & Subagent Coordination Protocol §2.5) this mode produces lands under `<run-dir>/wave-N/...`, never a bare `.waves/wave-N/`. (The test files themselves still land at the framework's conventional location in the repo — not under `<run-dir>`.)
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "tests"`, `objective` (the test scope), `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before its summary lands — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
 
 ## Step 2 — Run the methodology
 
@@ -69,7 +80,14 @@ method), capture:
   checks, secret handling, anything the SECURITY_CHECKLIST flags.
 - **Existing tests** — what's already covered. Don't duplicate.
 
-Deliverable: `.waves/wave-0/deliverables/TEST_CONTRACTS.md` — one
+Apply the Gnosis Verification Protocol's anti-speculation discipline:
+every contract claim above must be grounded in code you actually read.
+If a behavior can't be confirmed from source, mark it *unverified* in
+`TEST_CONTRACTS.md` rather than asserting it — a test written against a
+guessed contract only proves the guess, which is the exact failure mode
+this gate exists to prevent.
+
+Deliverable: `<run-dir>/wave-0/deliverables/TEST_CONTRACTS.md` — one
 section per entry point with the contract + edge case list.
 
 If you spawn specialists (per the team-size answer), the roles are:
@@ -118,7 +136,7 @@ etc.). Cite each file's path in `TESTS_SUMMARY.md`.
 
 ### Wave 2 — Summarize + flag what's not tested
 
-Write `.waves/wave-1/deliverables/TESTS_SUMMARY.md` with:
+Write `<run-dir>/wave-2/deliverables/TESTS_SUMMARY.md` with:
 
 - **Files added** — path + one-line purpose per file.
 - **Contracts covered** — list from `TEST_CONTRACTS.md` and which test
@@ -135,7 +153,11 @@ the same paired review.
 
 ---
 
-## Closing
+## Closing each wave
+
+As each wave's deliverable lands, update this run's manifest entry (§2.5):
+bump `waves.completed`, append the deliverable path to `deliverables`,
+refresh `updated`. When the summary lands, set `status` to `complete`.
 
 Tell the user what was generated, where it landed, and what wasn't
 tested with the reason. Suggest running the test suite (you don't run

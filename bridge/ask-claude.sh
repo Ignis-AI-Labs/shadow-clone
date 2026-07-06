@@ -14,6 +14,12 @@
 
 set -euo pipefail
 
+# BRIDGE-003 (CWE-200): every file this process creates — the exchange request/
+# response files (full source + diffs of the reviewed code) and the lock files —
+# must be owner-only, matching how install.sh hardens the config to 0600. Set a
+# private umask up front so nothing is born world-readable.
+umask 077
+
 # Locate the shared libraries relative to this script (works in the repo layout and
 # in the installed ~/.claude/sc layout — both keep ask-*.sh beside lib/).
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -99,6 +105,11 @@ shift || true
 FILES=("$@")
 
 mkdir -p "${EXCHANGE_DIR}"
+# Repair a .sc/.sc/exchange left world-traversable (0755) by an older bridge; the
+# umask above only governs newly created dirs. Owner-only dirs block other local
+# users from reaching the exchange files regardless of the files' own mode.
+chmod 700 "${PROJECT_DIR}/.sc" "${EXCHANGE_DIR}" 2>/dev/null \
+  || echo "sc: WARN — could not restrict ${EXCHANGE_DIR} to 0700; artifact filenames may be listable by other local users (file contents stay 0600 via umask)." >&2
 
 # AUDIT-010 (CWE-200): every review writes the full contents of the listed
 # files into ${EXCHANGE_DIR} and sends the same content to Anthropic via
@@ -156,21 +167,33 @@ sc_invoke_one() {
   #   Network:      WebFetch, WebSearch
   #   FS read:      Read, Grep, Glob, NotebookRead
   #   Agentic:      Task, TodoRead, TodoWrite
-  # MultiEdit is a SEPARATE tool from Edit in Claude Code — omitting
-  # it is a bypass (the Theme 3 R1 reviewer caught the original
-  # version which only listed Edit). Keep this list in sync with the
-  # persona's `tools:` frontmatter; sc-doctor should diff them.
+  # This list is a forward-compatible SUPERSET. Three names — MultiEdit,
+  # NotebookRead, TodoRead — are NOT registered in the currently-installed
+  # Claude Code build and print "matches no known tool" on stderr (routed
+  # to ${resp}.err by sc_run_reaped, never into the review). They are kept
+  # so confinement still holds if a build reintroduces them: MultiEdit was
+  # historically a distinct write tool (the Theme 3 R1 reviewer caught an
+  # earlier version that listed only Edit), which is why it stays. The
+  # security-relevant mutating tools — Write, Edit, Bash — ARE valid names
+  # in this build and block reliably (verified 2026-07-05, BRIDGE-005).
+  # Keep this list in sync with the persona's `tools:` frontmatter;
+  # sc-doctor should diff them.
   #
-  # Known residual (denylist limit): if the user has MCP servers
-  # configured for the host Claude, dynamically-named MCP tools
-  # (mcp__<server>__<tool>) are not covered by this denylist. Headless
-  # `claude -p` may or may not load MCP servers depending on user
-  # config. Future hardening: switch to --allowedTools (allowlist) so
-  # the contract can't be silently broadened by environment config.
+  # BRIDGE-005 (OWASP LLM06 / CWE-732): a denylist cannot enumerate
+  # dynamically-named MCP tools (mcp__<server>__<tool>), so a host with
+  # MCP servers configured could hand the reviewer tools this list never
+  # names. --strict-mcp-config with NO --mcp-config loads ZERO MCP
+  # servers, so no mcp__ tool can exist in the reviewer process — the gap
+  # is closed at the source instead of chased per-name. An --allowedTools
+  # allowlist was evaluated and REJECTED on evidence: in headless
+  # `claude -p` an empty allowlist is a no-op (allow-all) and a non-empty
+  # one enforced only intermittently under test, whereas the denylist
+  # below blocked Read/Bash/Grep/Glob reliably. See ISSUE_TRACKER BRIDGE-005.
   sc_invoke_reviewer "$2" "$1" -- \
     claude -p \
       --model "${REVIEWER_MODEL}" \
       --append-system-prompt "${SYS}" \
+      --strict-mcp-config \
       --disallowedTools \
         "Write" "Edit" "MultiEdit" "NotebookEdit" "NotebookRead" "Bash" \
         "WebFetch" "WebSearch" \

@@ -12,7 +12,7 @@ It is the right mode when:
 
 It is **not** the right mode for greenfield project planning (use `/sc-plan`) or for a single upcoming sprint (use `/sc-sprint`).
 
-The deliverable is `.waves/wave-2/deliverables/ROADMAP.md`.
+The deliverable is `<run-dir>/wave-2/deliverables/ROADMAP.md`, where `<run-dir>` is this run's isolated directory (see Step 1.5).
 
 ## Step 1 — Capture context (ask before starting)
 
@@ -25,7 +25,18 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 5. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`. Drives the per-wave subagent spawn cap (see the Subagents section below).
 
-Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0.
+Wait for the answers. Echo a one-line scope confirmation, then proceed to Step 1.5 (run initialization).
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the strategic objective captured in Step 1; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every `<run-dir>/wave-N/...` path in this mode body is where files actually land — never a bare `.waves/wave-N/`.
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "roadmap"`, `objective` (the strategic objective), `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before its final deliverable lands — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
 
 ## Step 2 — Run the methodology
 
@@ -47,16 +58,22 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   </why_important>
 
   <critical_protocol>
+    <run_isolation>
+      CRITICAL: Every path below resolves under this run's directory,
+      <run-dir> = .waves/runs/<run-id>/ (claimed in Step 1.5 per Protocol §2.5).
+      Concurrent runs in the same repo each get their own <run-dir>, so their
+      deliverables and audit trails never collide.
+    </run_isolation>
     <roadmap_location>
       CRITICAL: ROADMAP.md MUST be created at
-      .waves/wave-2/deliverables/ROADMAP.md. This is the only valid location.
+      <run-dir>/wave-2/deliverables/ROADMAP.md. This is the only valid location.
     </roadmap_location>
 
     <file_organization>
       Roadmap Mode uses EXACTLY 3 waves with ONE deliverable per wave:
-      - Wave 0: STRATEGIC_CONTEXT.md  in .waves/wave-0/deliverables/
-      - Wave 1: WORKSTREAMS.md        in .waves/wave-1/deliverables/
-      - Wave 2: ROADMAP.md            in .waves/wave-2/deliverables/
+      - Wave 0: STRATEGIC_CONTEXT.md  in <run-dir>/wave-0/deliverables/
+      - Wave 1: WORKSTREAMS.md        in <run-dir>/wave-1/deliverables/
+      - Wave 2: ROADMAP.md            in <run-dir>/wave-2/deliverables/
     </file_organization>
   </critical_protocol>
 </mode_overview>
@@ -79,7 +96,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-0/deliverables/STRATEGIC_CONTEXT.md">
+      <deliverable path="<run-dir>/wave-0/deliverables/STRATEGIC_CONTEXT.md">
         Single document capturing:
         - The system map at roadmap-relevant granularity (services, data flow, key integrations)
         - Recent activity: major shipped initiatives in the last 1-3 months (matches the State-of-the-Union Reader's window above), in-flight refactors, known tech debt
@@ -114,7 +131,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-1/deliverables/WORKSTREAMS.md">
+      <deliverable path="<run-dir>/wave-1/deliverables/WORKSTREAMS.md">
         Consolidated document containing:
         - Workstream table: ID, name, objective, success criteria, owner, milestone list (the ordered milestones inside this workstream), prerequisites (workstream IDs that must complete first), parallel-with (workstream IDs that can run alongside), load-bearing flag
         - Pipeline diagram (mermaid `graph LR` or text-flow) showing the milestone DAG with parallel branches and the critical path highlighted
@@ -150,7 +167,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-2/deliverables/ROADMAP.md">
+      <deliverable path="<run-dir>/wave-2/deliverables/ROADMAP.md">
         CRITICAL: The only valid location for ROADMAP.md.
         Complete roadmap including:
         1. Strategic Objective (one paragraph)
@@ -212,17 +229,17 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
   <workspace_organization>
     <structure>
-      .waves/wave-0/
+      <run-dir>/wave-0/
         deliverables/     # ONLY STRATEGIC_CONTEXT.md
         drafts/
         rk-operations/    # ONLY: AGENT_ASSIGNMENTS.md, RECORD_KEEPER_LOG.md, WAVE_COMPLETE.md
 
-      .waves/wave-1/
+      <run-dir>/wave-1/
         deliverables/     # ONLY WORKSTREAMS.md
         drafts/
         rk-operations/
 
-      .waves/wave-2/
+      <run-dir>/wave-2/
         deliverables/     # ONLY ROADMAP.md — final deliverable
         drafts/
         rk-operations/
@@ -297,7 +314,7 @@ Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 manda
 
 ## Closing each wave
 
-After each wave's deliverable is written, briefly report to the user: what was produced, where it landed, what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
 
 ---
 
