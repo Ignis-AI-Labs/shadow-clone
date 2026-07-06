@@ -24,11 +24,13 @@ Edit this file on `dev`. Put your handle in the **Assignee** column, flip status
 | P-P0-05 | `/sc-sprint` + `/sc-roadmap` (active-codebase planning) | DONE | @eli | P-P0-03 | commit `9de3ed5` |
 | P-P0-06 | `/sc-test-audit` diagnostic | DONE | @eli | P-P0-03 | commit `8d78cd3` |
 | P-P0-07 | Strip timelines; reframe planning around milestones + DAG | DONE | @eli | P-P0-05 | commit `3e5c9bc` |
+| P-P0-08 | Run-namespacing — isolate concurrent `/sc-*` runs under `.waves/runs/<run-id>/` + `.waves/manifest.json`; SCWS §2.5 (atomic `mkdir` claim), wired into all 11 wave modes | DONE | @eli | P-P0-04 | echo-approved |
 | P-P1-01 | End-to-end exercise every `/sc-*` mode on a real project (verify deliverables land correctly, AskUserQuestion paths work, `.waves/` scaffold is honored) | OPEN |  | P-P0-07 |  |
-| P-P1-02 | Security audit of the plugin surface itself — review `bridge/*.sh` for shell-quoting / re-entrancy / path-traversal; verify exchange logs have safe permissions; confirm no command leaks user input as code | OPEN |  | P-P0-01 |  |
-| P-P1-03 | `/sc-quick-fix` — targeted single-issue fix, minimal team | OPEN |  | — | rapid utility |
-| P-P1-04 | `/sc-tests` — generate integration tests per `protocols/Testing & Quality Assurance Protocol.md` | OPEN |  | — | rapid utility |
-| P-P1-05 | `/sc-docs` — generate documentation per `protocols/Documentation Standards for Software Teams.md` | OPEN |  | — | rapid utility |
+| P-P1-02 | Security audit of the plugin surface itself — review `bridge/*.sh` for shell-quoting / re-entrancy / path-traversal; verify exchange logs have safe permissions; confirm no command leaks user input as code | DONE | @eli | P-P0-01 | echo-approved; BRIDGE-003/004 fixed, 005 deferred |
+| P-P1-03 | `/sc-quick-fix` — targeted single-issue fix, minimal team | DONE | @eli | — | built + deployed + help-registered; finalization-verified 2026-07-05 |
+| P-P1-04 | `/sc-tests` — generate integration tests per `protocols/Testing & Quality Assurance Protocol.md` | DONE | @eli | — | echo-approved finalization review; Gnosis gate added to Wave 0 |
+| P-P1-05 | `/sc-docs` — generate documentation per `protocols/Documentation Standards for Software Teams.md` | DONE | @eli | — | echo-approved finalization review 2026-07-05 |
+| P-P1-06 | `/sc-cleaner` — repo organization + archival sweep; evidence-gated, plan→approve→move into `archive/` (`git mv` for tracked), never deletes files | DONE | @eli | — | echo-approved |
 | P-P2-01 | Workflow continuity — `/sc-resume` (pick up mid-wave from `.waves/` audit), `/sc-abort` (clean teardown) | OPEN |  | P-P0-07 |  |
 | P-P2-02 | Closing-layer commands — `/sc-ship` (release-prep + rollback plan), `/sc-retro` (retrospective on completed sprint/plan) | OPEN |  | P-P0-05 |  |
 | P-P3-01 | Swarm tier — exhaustive multi-agent commands (`/sc-swarm-search`, `/sc-swarm-research`, `/sc-swarm-audit`) running multiple waves in parallel for up to ~100 subagents. Requires a Swarm Coordination Protocol that supplements SCWS-v1.0. | OPEN |  | P-P0-04, P-P1-02 |  |

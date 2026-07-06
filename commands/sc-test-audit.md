@@ -6,7 +6,7 @@ You are now operating in **Shadow Clone Test-Audit mode** for the rest of this s
 
 It is **not** a test generator (that is `/sc-tests`, coming in Phase C) and not a test runner. It reads what exists, cross-references against the source surface, and flags meaningful gaps.
 
-The deliverable is `.waves/wave-2/deliverables/TEST_AUDIT.md`.
+The deliverable is `<run-dir>/wave-2/deliverables/TEST_AUDIT.md`, where `<run-dir>` is this run's isolated directory (see Step 1.5).
 
 ---
 
@@ -26,9 +26,20 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
 4. **Emphasis** (header `Emphasis`) — options: `Coverage breadth`, `Integration depth`, `Security paths`, `Balanced`. Drives which gaps get spotlighted.
 5. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`. Drives the per-wave subagent spawn cap (see the Subagents section below).
 
-Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0.
+Wait for the answers. Echo a one-line scope confirmation, then proceed to Step 1.5 (run initialization).
 
 ---
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the audit scope captured in Step 1; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every `<run-dir>/wave-N/...` path in this mode body is where files actually land — never a bare `.waves/wave-N/`.
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "test-audit"`, `objective` (the audit scope), `status: "active"`, `created`/`updated` (session date), `waves: { total: 3, completed: 0 }`, `deliverables: []`.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before its final deliverable lands — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
 
 ## Step 2 — Run the methodology
 
@@ -52,16 +63,22 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   </why_important>
 
   <critical_protocol>
+    <run_isolation>
+      CRITICAL: Every path below resolves under this run's directory,
+      <run-dir> = .waves/runs/<run-id>/ (claimed in Step 1.5 per Protocol §2.5).
+      Concurrent runs in the same repo each get their own <run-dir>, so their
+      deliverables and audit trails never collide.
+    </run_isolation>
     <deliverable_location>
       CRITICAL: TEST_AUDIT.md MUST land at
-      `.waves/wave-2/deliverables/TEST_AUDIT.md`. This is the only valid location.
+      `<run-dir>/wave-2/deliverables/TEST_AUDIT.md`. This is the only valid location.
     </deliverable_location>
 
     <three_waves>
       Test-Audit uses EXACTLY 3 waves with ONE deliverable per wave:
-      - Wave 0: SURFACE_MAP.md       in `.waves/wave-0/deliverables/`
-      - Wave 1: GAP_ANALYSIS.md      in `.waves/wave-1/deliverables/`
-      - Wave 2: TEST_AUDIT.md        in `.waves/wave-2/deliverables/`
+      - Wave 0: SURFACE_MAP.md       in `<run-dir>/wave-0/deliverables/`
+      - Wave 1: GAP_ANALYSIS.md      in `<run-dir>/wave-1/deliverables/`
+      - Wave 2: TEST_AUDIT.md        in `<run-dir>/wave-2/deliverables/`
     </three_waves>
 
     <no_test_execution>
@@ -89,7 +106,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-0/deliverables/SURFACE_MAP.md">
+      <deliverable path="<run-dir>/wave-0/deliverables/SURFACE_MAP.md">
         Single document containing:
         - Source surface table: ID, kind (HTTP route / CLI / library API / event handler / etc.), location (file:lines), stakes (security / data / external / cosmetic)
         - Security-sensitive paths called out separately with their auth/authz/secret/value-moving classification
@@ -126,7 +143,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-1/deliverables/GAP_ANALYSIS.md">
+      <deliverable path="<run-dir>/wave-1/deliverables/GAP_ANALYSIS.md">
         Consolidated document containing:
         - Coverage matrix: surface ID × test IDs, with "covered / partially / uncovered" status per cell
         - Integration gaps: multi-component flows that need an integration test that doesn't exist; each entry cites the unit tests that exist and what they're NOT proving together
@@ -161,7 +178,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
     </team_composition>
 
     <deliverables>
-      <deliverable path=".waves/wave-2/deliverables/TEST_AUDIT.md">
+      <deliverable path="<run-dir>/wave-2/deliverables/TEST_AUDIT.md">
         CRITICAL: The only valid location for TEST_AUDIT.md.
         Complete audit report including:
         1. Preamble: scope, framework, emphasis, severity floor, standards applied
@@ -268,7 +285,7 @@ Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 manda
 
 ## Closing each wave
 
-After each wave's deliverable is written, briefly report to the user: what was produced, where it landed, what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
 
 ---
 

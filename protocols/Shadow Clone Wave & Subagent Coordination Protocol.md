@@ -1,8 +1,8 @@
 # Shadow Clone Wave & Subagent Coordination Protocol
 
-**Protocol:** `SCWS-PROTOCOL-v1.0`
-**Effective Date:** 2026-06-29
-**Applicability:** Every `/sc-*` mode command in Shadow Clone (`/sc-plan`, `/sc-sprint`, `/sc-roadmap`, `/sc-feature`, `/sc-refactor`, `/sc-debug`, `/sc-optimize`, `/sc-research`, `/sc-audit`).
+**Protocol:** `SCWS-PROTOCOL-v1.1`
+**Effective Date:** 2026-07-04
+**Applicability:** Every `/sc-*` mode command in Shadow Clone that runs waves (`/sc-plan`, `/sc-sprint`, `/sc-roadmap`, `/sc-feature`, `/sc-refactor`, `/sc-debug`, `/sc-optimize`, `/sc-research`, `/sc-audit`, `/sc-docs`, `/sc-tests`). The `/sc` activation flow also runs waves but is a once-per-project singleton — run namespacing (§2.5) is optional there.
 
 This is a Shadow-Clone-specific operational extension of the canonical `Multi Agent Protocol.md`. The Multi Agent Protocol covers *why* orchestrator-worker is the right pattern and the hard numeric limits. This protocol covers *how* Shadow Clone implements it: wave coordination, role-to-subagent mapping, team-size capping, standards passing, and communication contracts.
 
@@ -40,7 +40,7 @@ Every mode declares its wave structure in the mode body. This protocol enforces 
 2. **Spawn role clones** in parallel using the Task tool (see §3 for spawn rules).
 3. **Wait for all role clones to return** before spawning the Record Keeper.
 4. **Spawn the Record Keeper** (or play it yourself; see §4) to aggregate the role outputs into the wave's `<deliverable>`.
-5. **Write the deliverable** to the path declared in the mode body (e.g., `.waves/wave-0/deliverables/<NAME>.md`).
+5. **Write the deliverable** to the path declared in the mode body, resolved under this run's directory (§2.5), e.g., `<run-dir>/wave-0/deliverables/<NAME>.md`.
 6. **Close the wave per the mode body's `## Closing each wave` section** — that section is the single source of truth for wave-close behavior (user-facing summary + `/sc-echo` dispatch when active).
 
 ### Checklist: wave coordination
@@ -49,6 +49,92 @@ Every mode declares its wave structure in the mode body. This protocol enforces 
 - [ ] **Sequential waves only.** Even if waves are independent, run them in order — the mode body's wave count is the contract.
 - [ ] **Deliverable path is mandatory.** The deliverable lands at the path declared in the mode body. Anywhere else is a protocol violation.
 - [ ] **Max 5 waves.** If the work needs more, split into multiple sprint runs of the same mode — don't extend a single mode invocation past 5 waves.
+
+---
+
+## 2.5 Run namespacing (concurrent-run isolation)
+
+A single repository may host **multiple `/sc-*` runs at once** — a plan for the kitchen while a feature run rebuilds the living room. Runs must never share wave directories, or their deliverables and audit trails overwrite each other. Every run therefore isolates its entire wave tree under a unique **run directory**, and registers itself in a repo-level **manifest** so other runs (and future sessions) can see it.
+
+### The run identifier
+
+At the very start of a mode invocation — **before opening Wave 0** — the lead mints a `run-id`:
+
+```
+<run-id>  =  <slug>-<shortid>
+```
+
+- **`<slug>`** — kebab-case, derived from the run's objective/goal, **max 4 words / 32 chars**. Lowercase; strip punctuation; collapse whitespace to single hyphens. Example: objective "Refactor the kitchen module for testability" → `refactor-kitchen`.
+- **`<shortid>`** — a 4-character base36 token (`[a-z0-9]`) that disambiguates runs sharing a slug. The lead generates it however it likes; uniqueness is guaranteed by the **atomic directory claim** below, not by the token's origin.
+
+The `run-id` is fixed for the life of the run. Never rename it mid-run.
+
+### The run directory — the atomic isolation primitive
+
+Every path the mode body declares as `.waves/wave-N/...` resolves under the run directory:
+
+```
+<run-dir>  =  .waves/runs/<run-id>/
+
+<run-dir>/wave-0/deliverables/     <run-dir>/wave-0/rk-operations/
+<run-dir>/wave-1/deliverables/     <run-dir>/wave-1/rk-operations/
+<run-dir>/wave-2/deliverables/     <run-dir>/wave-2/rk-operations/
+```
+
+A mode body that says "write MASTER_PLAN.md to `.waves/wave-2/deliverables/`" means `<run-dir>/wave-2/deliverables/MASTER_PLAN.md`. The bare `.waves/wave-N/...` form is shorthand for "under this run"; it is **never** a literal on-disk path.
+
+**Claiming the run directory is what makes a run unique — not the manifest.** Isolation is load-bearing, so the claim must be atomic and cannot depend on a read-then-write of a shared file (two leads reading the manifest at the same instant would both pass a check and collide). The lead claims its directory with a single atomic create:
+
+```bash
+mkdir -p .waves/runs                       # ensure the parent exists (idempotent)
+mkdir .waves/runs/<run-id>                 # ATOMIC claim — no -p on this line
+```
+
+- Plain `mkdir` (without `-p`) **fails if the directory already exists**. That failure *is* the collision signal: another run — `active` **or** already `complete` — owns that `run-id`. On failure, regenerate `<shortid>` and retry, so a new run can never overwrite a finished run's deliverables.
+- Only after the claim succeeds does the lead create the `wave-N/` subtrees and register in the manifest.
+- This makes the on-disk directory, not the manifest, the source of truth for "does this run-id exist." The manifest is a convenience index layered on top (below).
+
+> **Custom output location.** If the user chose a custom output path in the mode preamble, substitute it for `.waves/` — the run directory becomes `<custom>/runs/<run-id>/`. Namespacing is preserved regardless of root.
+
+### The manifest
+
+The repo-level index lives at `.waves/manifest.json`. It is a **best-effort convenience index** for humans and future sessions — "what runs exist and where." It is **not** the isolation mechanism; the atomic directory claim above is. If the manifest and the `.waves/runs/` directories ever disagree, the directories win. The lead **creates the manifest if absent** and appends its run on start (after the directory claim succeeds):
+
+```json
+{
+  "version": 1,
+  "runs": [
+    {
+      "id": "refactor-kitchen-a3f9",
+      "mode": "plan",
+      "objective": "Refactor the kitchen module for testability",
+      "status": "active",
+      "created": "2026-07-04",
+      "updated": "2026-07-04",
+      "waves": { "total": 3, "completed": 0 },
+      "deliverables": []
+    }
+  ]
+}
+```
+
+- `status` ∈ `active` · `complete` · `aborted`.
+  - **`active`** — set on registration.
+  - **`complete`** — set on the final wave-close.
+  - **`aborted`** — set when the run ends without producing its final deliverable: the user aborts, or a wave fails past the §7 retry/escalation and the user chooses to abort. Before exiting, the lead sets `status: aborted` and refreshes `updated`, so a dead run is never left looking `active`. (The directory is left in place for inspection; because collisions are detected by directory existence, an aborted run's `run-id` stays claimed and is not silently reused.)
+- `created` / `updated` use the session's current date (from the harness context). The lead does not invent timestamps.
+- The lead **rewrites its own run entry** at each wave-close: bump `waves.completed`, append the wave's deliverable path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`.
+- **Dynamic-wave modes** register `waves.total` as `null` because their wave count is not known at run start. As soon as the wave plan is fixed (typically at the first wave-close, after Wave 0 has scoped the run), set `total` to the concrete count. Do not leave it `null` past the point the plan is known.
+- The lead only ever touches **its own** run entry. Reading sibling entries (to report what else is active) is allowed; editing them is not.
+
+### Checklist: run namespacing
+
+- [ ] `run-id` minted before Wave 0 and echoed to the user in the scope confirmation.
+- [ ] `<run-dir>` claimed with a plain `mkdir` (no `-p`); on failure, `<shortid>` regenerated and retried until the claim succeeds. The claim happens BEFORE any wave subtree or manifest write.
+- [ ] Every wave path resolves under `<run-dir>`; no bare `.waves/wave-N/...` is written to disk.
+- [ ] `.waves/manifest.json` created if absent; this run appended on start (best-effort index — directories are the source of truth).
+- [ ] The run entry is updated at each wave-close and marked `complete` at the end, or `aborted` if the run ends early (§7).
+- [ ] The lead edits only its own manifest entry.
 
 ---
 
@@ -92,7 +178,7 @@ A spawned clone receives a self-contained briefing — it cannot see the lead's 
 1. **Identity:** "You are the `<Role Name>` in Wave `<N>` of Shadow Clone `<mode>` mode."
 2. **Wave purpose:** The `<purpose>` block from the mode body for this wave.
 3. **Role responsibilities:** The role's line from `<team_composition>`.
-4. **Prior-wave context:** Absolute paths to prior deliverables (`.waves/wave-0/deliverables/<NAME>.md`, etc.). The clone reads them itself with the Read tool — do NOT paste their content into the prompt (token cost).
+4. **Prior-wave context:** Absolute paths to prior deliverables under this run's directory (`<run-dir>/wave-0/deliverables/<NAME>.md`, etc.; see §2.5). The clone reads them itself with the Read tool — do NOT paste their content into the prompt (token cost). Because a clone cannot see the lead's conversation, the resolved `<run-dir>` **must be spelled out in full** in the prompt — a clone that only gets `.waves/wave-0/...` will read the wrong (or a colliding) run's files.
 5. **Standards:** The full `## Standards` block from the mode body. The clone judges its own work against the same protocols the lead does.
 6. **Expected output:** Exactly what the clone returns — a markdown section, a structured list, a file written to `drafts/`. Specify the structure and length.
 7. **Boundary:** Tool budget (`Multi Agent Protocol §2`: simple tasks 3-10 tool calls, moderate 10-15). State the budget explicitly so the clone self-caps.
@@ -210,7 +296,7 @@ Spawning has overhead. Skip the clone fleet when:
 
 ## 9. Telemetry & audit
 
-Every wave produces audit trail under `.waves/wave-N/rk-operations/`:
+Every wave produces audit trail under this run's directory (§2.5) at `<run-dir>/wave-N/rk-operations/`:
 
 - `AGENT_ASSIGNMENTS.md` — one line per spawned clone: role, time, tool budget, return summary.
 - `RECORD_KEEPER_LOG.md` — the Record Keeper's reasoning trace for the aggregation step.
@@ -229,6 +315,13 @@ If `/sc-echo` is active, the wave-close review attaches these audit files to the
 ## 10. Quick reference
 
 ```
+Run starts (before Wave 0)
+  → Lead mints run-id = <slug>-<shortid> (§2.5)
+  → Lead claims <run-dir> atomically: `mkdir .waves/runs/<run-id>` (no -p)
+      on failure (dir exists) → regenerate <shortid>, retry until claim succeeds
+  → Lead creates .waves/manifest.json if absent, appends this run (status: active)
+  → Lead echoes run-id to the user; all wave paths now resolve under <run-dir>
+
 Wave N opens
   → Lead reads team-size cap from Step 1 preamble
   → Lead reads <team_composition> from mode body
@@ -238,8 +331,13 @@ Wave N opens
   → Lead spawns (or plays) Record Keeper
       Record Keeper aggregates specialist outputs into the wave deliverable
   → Lead writes deliverable, logs audit, closes wave with user-facing summary
+  → Lead updates its manifest entry (waves.completed++, deliverable path, updated date)
   → If /sc-echo active: dispatch review
   → Wave N+1 opens
+
+Run ends
+  → Normal: Lead marks its manifest entry status: complete on the final wave-close
+  → Early exit (user abort, or wave fails past §7 retry): status: aborted, updated refreshed
 ```
 
 This protocol IS the gnosis layer. Every clone, every wave, every deliverable owes its shape to the rules above. When in doubt, cite §number.

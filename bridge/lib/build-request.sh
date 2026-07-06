@@ -75,9 +75,16 @@ sc_build_request() {
     echo "## Builder context (what was done and why)"
     echo
     echo "<<<UNTRUSTED-BUILDER-CONTEXT>>>"
-    # printf is option-safe — `echo "${CONTEXT}"` would mis-interpret
-    # a CONTEXT starting with `-n`/`-e`/`-E` as a builtin flag.
+    # Fence the context exactly like the diff/file regions (BRIDGE-004): the fence
+    # is computed longer than any backtick run in the text, so a CONTEXT that embeds
+    # a forged `<<<END-...>>>` or `<<<TRUSTED-PROJECT-LAW>>>` marker stays structurally
+    # inside its code block and cannot spoof a trusted region to steer the verdict.
+    # printf is option-safe — `echo "${CONTEXT}"` would mis-interpret a CONTEXT
+    # starting with `-n`/`-e`/`-E` as a builtin flag.
+    local cfence; cfence="$(printf '%s' "${CONTEXT}" | sc_fence -)"
+    echo "${cfence}"
     printf '%s\n' "${CONTEXT}"
+    echo "${cfence}"
     echo "<<<END-UNTRUSTED-BUILDER-CONTEXT>>>"
     echo
 
@@ -109,7 +116,14 @@ sc_build_request() {
       local f rp fence abs
       for f in "${FILES[@]}"; do
         echo
-        echo "### ${f}"
+        # Sanitize the display label ONCE (BRIDGE-004): every echo of the path below
+        # sits OUTSIDE a fence, and a Unix filename may contain newlines or <>"` — so
+        # strip those before displaying, to stop a crafted filename from forging a
+        # boundary marker at line-start (e.g. a name embedding a newline +
+        # `<<<TRUSTED-PROJECT-LAW>>>`). Resolution/containment below uses the RAW
+        # ${f}, so sanitizing the label never changes which file is read.
+        local fdisp; fdisp="$(printf '%s' "${f}" | tr -d '\n\r<>\042\140')"
+        echo "### ${fdisp}"
         # Untrusted input (Rule 8): the file list comes from the agent. Only read
         # files inside the project root, so a confused or prompt-injected agent
         # can't exfiltrate secrets (e.g. ~/.ssh/id_rsa, .env) to the reviewer model.
@@ -122,22 +136,22 @@ sc_build_request() {
         # path would let a `../` escape slip through the case match,
         # defeating the defense-in-depth guarantee this filter exists for.
         if ! rp="$(realpath -m -- "${abs}" 2>/dev/null)" || [ -z "${rp}" ]; then
-          echo "_(skipped, realpath unavailable for: ${f})_"
+          echo "_(skipped, realpath unavailable for: ${fdisp})_"
           continue
         fi
         case "${rp}" in
           "${PROJECT_DIR}"|"${PROJECT_DIR}"/*) : ;;
-          *) echo "_(skipped, outside project root: ${f})_"; continue ;;
+          *) echo "_(skipped, outside project root: ${fdisp})_"; continue ;;
         esac
         if [ -f "${rp}" ]; then
           fence="$(sc_fence "${rp}")"
-          echo "<<<UNTRUSTED-FILE-CONTENT path=\"${f}\">>>"
+          echo "<<<UNTRUSTED-FILE-CONTENT path=\"${fdisp}\">>>"
           echo "${fence}"
           cat "${rp}"
           echo "${fence}"
           echo "<<<END-UNTRUSTED-FILE-CONTENT>>>"
         else
-          echo "_(file not found: ${f})_"
+          echo "_(file not found: ${fdisp})_"
         fi
       done
       echo

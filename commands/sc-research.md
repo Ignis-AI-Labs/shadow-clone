@@ -15,7 +15,18 @@ Use the **AskUserQuestion** tool to ask the user, in one batch:
 
 5. **Team size** (header `Team`) — options: `Solo`, `2-3`, `4-7`, `8+`. Drives the per-wave subagent spawn cap (see the Subagents section below).
 
-Wait for the answers, echo a one-line scope confirmation, then proceed to Wave 0.
+Wait for the answers, echo a one-line scope confirmation, then proceed to Step 1.5 (run initialization).
+
+## Step 1.5 — Initialize the run (before Wave 0)
+
+Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+
+1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the run's scope captured in Step 1; generate a 4-char base36 `<shortid>`.
+2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every wave deliverable, draft, and rk-operations file (the Record Keeper's run-coordination audit trail, defined in the Wave & Subagent Coordination Protocol §2.5) this mode produces lands under `<run-dir>/wave-N/...`, never a bare `.waves/wave-N/`.
+3. **Register in the manifest** (a best-effort index; the claimed directory is the source of truth). Read `.waves/manifest.json` (create it with `{ "version": 1, "runs": [] }` if absent). Append this run's entry: `id`, `mode: "research"`, `objective` (the run's scope), `status: "active"`, `created`/`updated` (session date), `waves: { total: null, completed: 0 }`, `deliverables: []`. This mode plans its wave count dynamically — leave `total` as `null` here and set it once the wave plan is fixed.
+4. **Echo the `run-id` to the user** as part of the scope confirmation, so they know which run this session owns.
+
+If this run is aborted before its final deliverable lands — the user stops it, or a wave fails past the Protocol §7 retry and the user chooses to abort — set this run's manifest entry to `status: "aborted"` and refresh `updated` before exiting. The directory stays in place for inspection.
 
 ## Step 2 — Run the methodology
 
@@ -331,7 +342,7 @@ Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 manda
 
 ## Closing each wave
 
-After each wave's deliverable is written, briefly report to the user: what was produced, where it landed, what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
 
 ---
 
