@@ -198,7 +198,13 @@ sc_echo_review() {
   [ -f "${PROJECT_DIR}/AGENTS.md" ] && overhead=$(( overhead + $(wc -c < "${PROJECT_DIR}/AGENTS.md" 2>/dev/null || echo 0) ))
   overhead=$(( overhead + ${#CONTEXT} ))
   local avail=$(( budget - overhead ))
-  [ "${avail}" -lt 20000 ] && avail=20000   # always leave room for at least one file
+  # Floor so a pass always has room for at least one reasonable file. Default
+  # 20000 suits large-window reviewers (GLM); a small-window backend that
+  # truncates real content at a low size (grok) lowers it via SC_MIN_PASS_AVAIL
+  # so its passes stay inside its retention window instead of being forced large.
+  local floor="${SC_MIN_PASS_AVAIL:-20000}"
+  case "${floor}" in ''|*[!0-9]*) floor=20000 ;; esac
+  [ "${avail}" -lt "${floor}" ] && avail="${floor}"
 
   [ "${overhead}" -gt "${budget}" ] && echo "sc: WARNING — AGENTS.md + context (${overhead}B) alone exceeds SC_MAX_CHARS (${budget}B); every pass will be refused with VERDICT: ERROR. Raise SC_MAX_CHARS or shrink AGENTS.md." >&2
 

@@ -4,7 +4,18 @@
 # that values passed inline on the command line (e.g. SC_REVIEWER_MODEL=... )
 # still take precedence over what's set here.
 
-# --- Reviewer when Claude builds (ask-glm.sh, via OpenCode) ---
+# --- Which reviewer backend runs when Claude builds ---
+# Selects the ask-*.sh the /sc-echo loop dispatches to:
+#   opencode  ask-glm.sh   — GLM (or any provider OpenCode reaches). Default.
+#   grok      ask-grok.sh  — Grok via its own CLI (headless single-turn).
+#   both      — run BOTH per work unit as two independent audit lenses (≈2x time;
+#              different models catch different issues). Grok's size ERROR does not
+#              block in this mode — it's reported as a coverage gap.
+# A backend passed on the /sc-echo command line (e.g. `/sc-echo both`) overrides
+# this for the session.
+: "${SC_REVIEWER_BACKEND:=opencode}"
+
+# --- Reviewer when Claude builds via OpenCode (ask-glm.sh) ---
 # Any provider/model OpenCode can reach. Examples:
 #   zai-coding-plan/glm-5.2      (Z.AI)
 #   anthropic/claude-sonnet-4-6
@@ -13,6 +24,32 @@
 
 # OpenCode agent used for the review (read-only persona shipped with Shadow Clone).
 : "${SC_REVIEWER_AGENT:=sc-echo-reviewer}"
+
+# --- Reviewer when Claude builds via Grok (ask-grok.sh) ---
+# Model id for the Grok reviewer. Leave empty to use grok's own configured
+# default (no --model is passed). See `grok models` for available ids.
+: "${SC_GROK_MODEL:=}"
+# Optional grok --sandbox profile (filesystem + network confinement). Leave
+# empty to omit the flag; set only to a profile name grok accepts, or every
+# review will error.
+: "${SC_GROK_SANDBOX:=}"
+# The Grok backend refuses to dispatch when any Grok MCP server is configured
+# (it has no --strict-mcp-config; the reviewer must have no MCP tools in reach).
+# Set to an explicit true value (1/true/yes) to accept the risk and skip that
+# fail-closed pre-flight. Any other value — including 0/false/no — keeps it on.
+: "${SC_GROK_ALLOW_MCP:=}"
+# Per-pass byte budget for the GROK backend ONLY (overrides SC_MAX_CHARS below
+# for ask-grok.sh). Grok truncates dense content near ~25KB per request, so its
+# effective window is much smaller than GLM's — the grok backend suits SMALL work
+# units. The default keeps each pass small enough that grok sees every file in
+# full; the chunker splits larger work across passes (or returns VERDICT: ERROR
+# for a single file too big to fit). Hard-clamped at 32000 by ask-grok.sh.
+: "${SC_GROK_MAX_CHARS:=24000}"
+# The GROK backend passes the review request to grok on the command line, so its
+# contents are briefly visible to other local users via /proc while a review runs
+# (grok offers no non-truncating secure channel — see GROK-002 in the tracker).
+# ask-grok.sh prints a one-time NOTE about this; export SC_QUIET_ARGV=1 to silence
+# it. On a shared/multi-user host, prefer the opencode or claude reviewer backend.
 
 # --- Reviewer when the other model builds (ask-claude.sh, via Claude Code) ---
 # A `claude --model` alias or full model id (e.g. opus, sonnet, claude-opus-4-8).
@@ -47,6 +84,7 @@
 # reviewer; raise it only if yours has a larger token window.
 : "${SC_MAX_CHARS:=1000000}"
 
-export SC_REVIEWER_MODEL SC_REVIEWER_AGENT SC_CLAUDE_MODEL
+export SC_REVIEWER_BACKEND SC_REVIEWER_MODEL SC_REVIEWER_AGENT SC_CLAUDE_MODEL
+export SC_GROK_MODEL SC_GROK_SANDBOX SC_GROK_ALLOW_MCP SC_GROK_MAX_CHARS
 export SC_TIMEOUT SC_KILL_GRACE SC_RETRIES SC_RETRY_DELAY
 export SC_SERIALIZE SC_LOCK_TIMEOUT SC_MAX_CHARS

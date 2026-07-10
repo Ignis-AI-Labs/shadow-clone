@@ -7,7 +7,8 @@ directory is the **single source of truth**; `install.sh` deploys it.
 
 ```
 bridge/
-  ask-glm.sh        Claude builds → GLM (OpenCode) reviews
+  ask-glm.sh        Claude builds → GLM (OpenCode) reviews   [default backend]
+  ask-grok.sh       Claude builds → Grok (grok CLI) reviews  [SC_REVIEWER_BACKEND=grok / /sc-echo grok]
   ask-claude.sh     other model builds → Claude (claude -p) reviews
   sc-init.sh       scaffold AGENTS.md + CLAUDE.md into a project
   install.sh        deploy everything (see below)
