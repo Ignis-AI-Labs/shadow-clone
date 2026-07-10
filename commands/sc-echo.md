@@ -1,11 +1,77 @@
 ---
-description: Enter echo paired-review mode — a second model (default: GLM via OpenCode) reviews each completed work unit
+description: Enter echo paired-review mode — GLM via OpenCode and/or Grok review each completed work unit (use "both" for two independent lenses)
+argument-hint: "[opencode|grok|both]"
 ---
 
 You are now operating in **echo paired-review mode** for the rest of this session.
-You are the **Builder**. A second model — by default **GLM 5.2** via OpenCode,
-running read-only — is the **Reviewer**. The governing protocol is `AGENTS.md` at
-the project root (read it now if you have not). Rule 9 defines this loop.
+You are the **Builder**. A second model, running read-only, is the **Reviewer**.
+The governing protocol is `AGENTS.md` at the project root (read it now if you have
+not). Rule 9 defines this loop.
+
+## Choose the reviewer backend
+
+Echo can route each review through GLM (via OpenCode), Grok (via its own CLI), or
+**both at once**. Resolve which is active for this session **once, now**, in this
+order:
+
+1. If the user passed an argument to this command (`$ARGUMENTS`), use it:
+   - `grok` → the **Grok** reviewer via `ask-grok.sh`.
+   - `opencode` (or `glm`) → the **GLM via OpenCode** reviewer via `ask-glm.sh`.
+   - `both` (or `all`) → **both** reviewers per work unit (see "Two lenses" below).
+2. Otherwise use the configured default: read `SC_REVIEWER_BACKEND` from
+   `~/.config/sc/config` (`opencode` if unset). `both` is also valid there.
+
+Announce the resolved backend when you acknowledge echo mode, and use the same
+choice for **every** review this session. If the user names an unrecognized
+backend, tell them the valid choices (`opencode`, `grok`, `both`) and ask which
+they want before continuing.
+
+The Reviewer is the same read-only persona regardless of backend — only the model
+and CLI differ. GLM via OpenCode is the default; Grok reviews through its own CLI.
+
+## Two lenses (the `both` backend)
+
+`both` sends every work unit to **each** reviewer independently and treats their
+responses as **two separate audit perspectives** — like handing the same change to
+two auditors from different backgrounds. Different models miss different things, so
+two lenses surface issues neither would catch alone and harden the repo from more
+angles. It costs roughly double the review time, so it's opt-in — for when the user
+has the capacity for it.
+
+When the backend is `both`, for each work unit:
+
+1. Dispatch to **both** scripts (order doesn't matter):
+   ```
+   bash ~/.claude/sc/ask-glm.sh  "<context>" <paths...>
+   bash ~/.claude/sc/ask-grok.sh "<context>" <paths...>
+   ```
+2. Read **both** full responses and both `VERDICT:` lines.
+3. **Combine the verdicts** (worst wins): the unit is done only when *both* say
+   `APPROVE`. If either says `REVISE`/`BLOCK`, address **every** finding from
+   **both** reviewers (they are peers — see Pushback), then re-dispatch to **both**.
+   That pair of dispatches counts as **one** round.
+4. **Grok size limit vs. other errors:** Grok suits small work units and returns
+   `VERDICT: ERROR` for a file too large for its window. Distinguish the two kinds
+   of `ERROR` by reading the bridge output:
+   - **Size/truncation ERROR** (the output mentions the reviewer window,
+     `SC_GROK_MAX_CHARS`, a payload exceeding budget, or truncation): treat it as a
+     non-blocking **coverage gap** — note that Grok could not review this unit
+     because it was too large, and let GLM's verdict carry the unit. Not a finding
+     to fix.
+   - **Any other ERROR** (timeout, missing CLI, lock contention, re-entrancy): the
+     work was **not judged** by that lens for an operational reason — apply the
+     general `ERROR` contract below (surface the bridge output to the user, ask how
+     to proceed). Do **not** silently proceed as if it were a size gap.
+5. **If GLM (or either reviewer) returns a non-size `ERROR`**, apply the general
+   `ERROR` contract below — surface it and ask how to proceed; do not quietly
+   collapse `both` to a single lens.
+6. Attribute findings to their reviewer when you report (GLM vs Grok), so the user
+   sees which lens caught what.
+
+An `ERROR` from either lens (size or operational) is **never** a `REVISE`/`BLOCK`,
+so it never triggers a fix-and-re-dispatch round on its own — only a *content*
+verdict does. If both lenses `ERROR` operationally in the same round, follow the
+general `ERROR` contract for both (surface, ask how to proceed) and do not loop.
 
 ## Precondition
 
@@ -34,10 +100,12 @@ that and do not dispatch. Otherwise, dispatch before you tell them the unit is d
 
 ## Dispatch
 
-Call the Bash tool with exactly this shape:
+Call the Bash tool with exactly this shape, using the script for the backend you
+resolved above (`ask-glm.sh` for opencode, `ask-grok.sh` for grok):
 
 ```
-bash ~/.claude/sc/ask-glm.sh "<context>" <path1> <path2> ...
+bash ~/.claude/sc/ask-glm.sh  "<context>" <path1> <path2> ...   # opencode backend
+bash ~/.claude/sc/ask-grok.sh "<context>" <path1> <path2> ...   # grok backend
 ```
 
 - `<context>` — one quoted argument: a concise description of what changed and why.
@@ -90,10 +158,14 @@ finding, not with the loop.
 When a work unit closes, report:
 
 1. The final verdict (`APPROVE`, or `REVISE`/`BLOCK` after 3 rounds, or `ERROR`).
+   In `both` mode, report **each** reviewer's final verdict separately (e.g.
+   "GLM: APPROVE · Grok: APPROVE"), plus the combined outcome.
 2. How many rounds it took.
-3. Any findings that remain open (with severity and location).
+3. Any findings that remain open (with severity, location, and — in `both` mode —
+   which lens raised them). If Grok returned `ERROR` (size), say so: that lens did
+   not cover this unit.
 
-Do not silently ship work the Reviewer flagged.
+Do not silently ship work a Reviewer flagged.
 
 ---
 

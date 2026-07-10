@@ -20,7 +20,7 @@ verifies the install.
 | `/sc-bootstrap` | Verify the install is complete (bridge + protocols + reviewer persona + OpenCode). Run once after `/plugin install shadow-clone@ignis-labs` to find out exactly what else you need to land for the full feature set. | ✅ Available |
 | `/sc-update` | Check for and apply Shadow Clone updates — detects whether you installed from source clone or the Claude Code plugin and walks you through the right update path. | ✅ Available |
 | `/sc-help` | Show this catalog. | ✅ Available |
-| `/sc-echo` | Enter paired-review mode — a second model reviews each completed work unit against `AGENTS.md`, returning `VERDICT: APPROVE \| REVISE \| BLOCK \| ERROR`. Loop up to 3 rounds per unit. | ✅ Available |
+| `/sc-echo [opencode\|grok\|both]` | Enter paired-review mode — a second model reviews each completed work unit against `AGENTS.md`, returning `VERDICT: APPROVE \| REVISE \| BLOCK \| ERROR`. Loop up to 3 rounds per unit. Pick the reviewer backend (GLM via OpenCode, Grok, or `both` for two independent lenses). | ✅ Available |
 
 ## Orchestration modes
 

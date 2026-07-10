@@ -36,6 +36,7 @@ readonly PROTOCOLS_DEST="${HOME}/.claude/sc/protocols"
 readonly BRIDGE_EXEC_FILES=(
   "ask-glm.sh"
   "ask-claude.sh"
+  "ask-grok.sh"
   "sc-init.sh"
 )
 
@@ -170,7 +171,28 @@ check_reviewer_mcp_flag() {
   # this script runs under `set -o pipefail`, so a `claude --help | grep`
   # pipeline would inherit a non-zero help exit (some CLIs exit non-zero on
   # --help) and wrongly FAIL a healthy install.
-  local help_out; help_out="$(claude --help 2>&1)" || true
+  #
+  # Cold-start guard: the FIRST `claude` invocation in an environment can emit
+  # first-run init / update-check output instead of (or before) the full help,
+  # which would make this gate spuriously FAIL and cry a BRIDGE-005 regression
+  # that isn't real (observed 2026-07-10). Use the help HEADER (`Usage:`) as the
+  # sentinel that we captured usable help — it is MCP-independent, so even a
+  # future CLI that overhauls MCP flags still renders it, and a genuine removal of
+  # --strict-mcp-config then correctly FAILs (a MCP-flag sentinel would instead
+  # fail OPEN in that case). Retry once; if help still won't render cleanly, WARN
+  # and skip rather than FAIL — absence of readable help is not evidence the flag
+  # was removed.
+  # (Verified 2026-07-10, claude 2.1.206: `claude --help` line 1 is
+  # "Usage: claude [options] [command] [prompt]", so `^Usage:` matches.)
+  local help_out attempt
+  for attempt in 1 2; do
+    help_out="$(claude --help 2>&1)" || true
+    printf '%s\n' "${help_out}" | grep -qE -- '^Usage:' && break
+  done
+  if ! printf '%s\n' "${help_out}" | grep -qE -- '^Usage:'; then
+    printf '  WARN  could not read a valid "claude --help" (no Usage: header); skipping the --strict-mcp-config check. Re-run sc-doctor.\n'
+    return
+  fi
   # Anchor the flag as a whole token. A bare substring match would also accept
   # a future renamed/suffixed variant such as `--strict-mcp-config-legacy` and
   # wrongly report OK while the enabling flag is gone (verified: bare grep does
@@ -294,6 +316,29 @@ check_opencode() {
   done
 }
 
+# Grok is an OPTIONAL third reviewer backend (ask-grok.sh). This check never
+# FAILs — a user who only ever runs the OpenCode backend has no reason to
+# install grok. It only reports what's available so `/sc-echo grok` users know
+# their backend is ready, and it surfaces the MCP-confinement posture the
+# fail-closed pre-flight in ask-grok.sh depends on.
+check_grok_backend() {
+  printf '\nGrok reviewer backend (optional):\n'
+  if ! command -v grok >/dev/null 2>&1; then
+    printf '  INFO  grok not on PATH — the /sc-echo grok backend is unavailable (OpenCode backend unaffected).\n'
+    return
+  fi
+  report OK "grok on PATH"
+  # ask-grok.sh refuses to dispatch unless `grok mcp list` prints this exact
+  # sentinel (empty set). Mirror that parse here so a grok CLI wording change
+  # OR pre-configured MCP servers surface at doctor time, not mid-review.
+  local mcp_out; mcp_out="$(grok mcp list 2>/dev/null || true)"
+  if printf '%s' "${mcp_out}" | grep -qi "No MCP servers configured"; then
+    printf '  OK    grok has no MCP servers configured (reviewer stays unconfined-tool-free).\n'
+  else
+    printf '  WARN  grok MCP servers are configured (or sentinel wording changed): the grok backend will fail-closed with VERDICT: ERROR unless you remove them or set SC_GROK_ALLOW_MCP=1.\n'
+  fi
+}
+
 check_path() {
   printf '\nRequired commands on PATH:\n'
   for c in "${REQUIRED_CMDS[@]}"; do
@@ -361,6 +406,7 @@ check_bridge
 check_config
 check_claude_commands
 check_opencode
+check_grok_backend
 check_path
 check_protocols
 check_runtime
