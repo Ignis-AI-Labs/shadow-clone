@@ -29,7 +29,7 @@ the **Builder**; the other agent is the **Reviewer**. Review is **bidirectional*
 
 | Direction               | Builder            | Reviewer           | Bridge                |
 | ----------------------- | ------------------ | ------------------ | --------------------- |
-| Claude is working       | Claude Code        | GLM via OpenCode (default) or Grok | `~/.claude/sc/ask-glm.sh` / `~/.claude/sc/ask-grok.sh` |
+| Claude is working       | Claude Code        | GLM via OpenCode (default), Grok, or both | `~/.claude/sc/ask-glm.sh` / `~/.claude/sc/ask-grok.sh` |
 | second model is working | configurable (default GLM) | Claude Code        | `~/.claude/sc/ask-claude.sh`|
 
 Models are configurable (see the repo README). Both roles are bound by every rule

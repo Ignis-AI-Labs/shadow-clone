@@ -8,7 +8,10 @@
 # Selects the ask-*.sh the /sc-echo loop dispatches to:
 #   opencode  ask-glm.sh   — GLM (or any provider OpenCode reaches). Default.
 #   grok      ask-grok.sh  — Grok via its own CLI (headless single-turn).
-# A backend passed on the /sc-echo command line (e.g. `/sc-echo grok`) overrides
+#   both      — run BOTH per work unit as two independent audit lenses (≈2x time;
+#              different models catch different issues). Grok's size ERROR does not
+#              block in this mode — it's reported as a coverage gap.
+# A backend passed on the /sc-echo command line (e.g. `/sc-echo both`) overrides
 # this for the session.
 : "${SC_REVIEWER_BACKEND:=opencode}"
 

@@ -485,8 +485,19 @@ way — only the model and CLI differ:
 ```
 /sc-echo grok        ← this session's reviews run through Grok
 /sc-echo opencode    ← this session's reviews run through GLM (the default)
+/sc-echo both        ← run BOTH reviewers on every unit — two independent lenses
 /sc-echo             ← uses your configured default
 ```
+
+**`both` — two auditors, two backgrounds.** If you have the capacity for it,
+`/sc-echo both` sends each work unit to GLM *and* Grok independently and reports
+both verdicts. Different models are blind to different things, so two lenses catch
+issues neither would alone — like having auditors from different fields look at
+your repo, securing it from more angles. It costs roughly double the review time.
+A unit passes only when both reviewers approve; findings are attributed to the lens
+that raised them. (Grok suits small units — if a file is too big for its window it
+returns `ERROR`; in `both` mode that's reported as a coverage gap, not a blocker,
+and GLM's verdict carries the unit.)
 
 **Set a lasting default** — add one line to `~/.config/sc/config` (the file the
 installer seeded). Open it in any text editor and set:
