@@ -29,7 +29,7 @@ the **Builder**; the other agent is the **Reviewer**. Review is **bidirectional*
 
 | Direction               | Builder            | Reviewer           | Bridge                |
 | ----------------------- | ------------------ | ------------------ | --------------------- |
-| Claude is working       | Claude Code        | configurable (default GLM) | `~/.claude/sc/ask-glm.sh`   |
+| Claude is working       | Claude Code        | GLM via OpenCode (default) or Grok | `~/.claude/sc/ask-glm.sh` / `~/.claude/sc/ask-grok.sh` |
 | second model is working | configurable (default GLM) | Claude Code        | `~/.claude/sc/ask-claude.sh`|
 
 Models are configurable (see the repo README). Both roles are bound by every rule
@@ -132,8 +132,9 @@ self-contained change (feature, fix, module, refactor). Trivial non-code edits
 ### The exchange
 
 - Reviews are dispatched by the direction-appropriate bridge: `~/.claude/sc/ask-glm.sh`
-  (Claude → second model) or `~/.claude/sc/ask-claude.sh` (second model → Claude). On the
-  OpenCode side the `sc_echo_review` tool wraps the bridge.
+  or `~/.claude/sc/ask-grok.sh` (Claude → second model, backend chosen by
+  `SC_REVIEWER_BACKEND` or `/sc-echo <backend>`) or `~/.claude/sc/ask-claude.sh`
+  (second model → Claude). On the OpenCode side the `sc_echo_review` tool wraps the bridge.
 - Each exchange is logged under `.sc/exchange/` as a timestamped
   `*-request.md` / `*-response.md` pair — a durable, auditable record.
 - The Reviewer receives: the Builder's context, the git diff, the full text of the

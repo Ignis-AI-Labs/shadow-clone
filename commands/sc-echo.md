@@ -1,11 +1,31 @@
 ---
-description: Enter echo paired-review mode — a second model (default: GLM via OpenCode) reviews each completed work unit
+description: Enter echo paired-review mode — a second model (GLM via OpenCode, or Grok) reviews each completed work unit
+argument-hint: "[opencode|grok]"
 ---
 
 You are now operating in **echo paired-review mode** for the rest of this session.
-You are the **Builder**. A second model — by default **GLM 5.2** via OpenCode,
-running read-only — is the **Reviewer**. The governing protocol is `AGENTS.md` at
-the project root (read it now if you have not). Rule 9 defines this loop.
+You are the **Builder**. A second model, running read-only, is the **Reviewer**.
+The governing protocol is `AGENTS.md` at the project root (read it now if you have
+not). Rule 9 defines this loop.
+
+## Choose the reviewer backend
+
+Echo can route each review through one of two backends. Resolve which one is
+active for this session **once, now**, in this order:
+
+1. If the user passed an argument to this command (`$ARGUMENTS`), use it:
+   - `grok` → the **Grok** reviewer via `ask-grok.sh`.
+   - `opencode` (or `glm`) → the **GLM via OpenCode** reviewer via `ask-glm.sh`.
+2. Otherwise use the configured default: read `SC_REVIEWER_BACKEND` from
+   `~/.config/sc/config` (`opencode` if unset).
+
+Announce the resolved backend when you acknowledge echo mode, and use the
+matching dispatch script for **every** review this session. If the user names an
+unrecognized backend, tell them the valid choices (`opencode`, `grok`) and ask
+which they want before continuing.
+
+The Reviewer is the same read-only persona regardless of backend — only the model
+and CLI differ. GLM via OpenCode is the default; Grok reviews through its own CLI.
 
 ## Precondition
 
@@ -34,10 +54,12 @@ that and do not dispatch. Otherwise, dispatch before you tell them the unit is d
 
 ## Dispatch
 
-Call the Bash tool with exactly this shape:
+Call the Bash tool with exactly this shape, using the script for the backend you
+resolved above (`ask-glm.sh` for opencode, `ask-grok.sh` for grok):
 
 ```
-bash ~/.claude/sc/ask-glm.sh "<context>" <path1> <path2> ...
+bash ~/.claude/sc/ask-glm.sh  "<context>" <path1> <path2> ...   # opencode backend
+bash ~/.claude/sc/ask-grok.sh "<context>" <path1> <path2> ...   # grok backend
 ```
 
 - `<context>` — one quoted argument: a concise description of what changed and why.

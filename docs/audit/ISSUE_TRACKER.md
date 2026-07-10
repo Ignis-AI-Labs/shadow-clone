@@ -8,6 +8,119 @@ States: **Open** · **In Progress** · **Resolved** · **Deferred** · **False P
 
 ## Open
 
+- **Issue ID**: GROK-001
+- **Status**: RESOLVED 2026-07-10 (same change that introduced the Grok backend)
+- **Discovered By**: Builder (Claude) — direct confinement probe while building `bridge/ask-grok.sh`
+- **Date Discovered**: 2026-07-10
+- **Source**: Live confinement test of the Grok reviewer backend before first commit
+- **Severity**: High (CWE-732 / OWASP LLM06) — reviewer read-only boundary not enforced
+- **Location**: `bridge/ask-grok.sh` — `sc_invoke_one` confinement flags
+- **Description**: The first draft confined the Grok reviewer with `--tools ""`
+  (intended empty allowlist) plus `--disallowed-tools "<names>"`. Both are
+  **no-ops** in grok's headless `--prompt-file` mode. A read-only reviewer could
+  therefore use grok's file/shell tools to read files never included in the
+  review payload (secrets, `~/.ssh`, etc.), breaking the AGENTS.md reviewer
+  contract ("reasons over the provided context", read-only).
+- **Evidence (reproduction)**: A reviewer invoked with those flags was handed a
+  prompt to read an off-payload file `…/grok_probe_secret.txt` containing
+  `PROBE_TOKEN_ZX99=hunter2`. It **read the file and printed the token**.
+  Repeated with Claude-style capitalized `--disallowed-tools` names and with
+  `--permission-mode plan` — both still leaked the token. Only grok's permission
+  **deny rules** blocked it: `--deny "*"` (and a named `--deny Read/--deny Bash`
+  list) returned `NO FILE ACCESS`, while a full deny still let a normal no-tool
+  review respond (`--deny "*"` + "reply READY" → `READY`). grok's own `--help`
+  documents `--deny` as the Claude Code `--disallowedTools` equivalent; the
+  `--disallowed-tools` flag is a different, ineffective (here) mechanism.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-10
+- **Fix Description**: Replaced `--tools ""` / `--disallowed-tools` with
+  permission deny rules: `--deny "*"` (wildcard, load-bearing) plus a
+  forward-compatible named superset (`Read Write Edit MultiEdit NotebookEdit
+  Bash Grep Glob WebFetch WebSearch Task`) so the critical tools stay denied even
+  if wildcard semantics change. `--disable-web-search` and `--no-subagents`
+  retained as documented reinforcement; MCP tools remain foreclosed by the
+  fail-closed `grok mcp list` pre-flight. Re-probed after the fix: off-payload
+  read returns `NO FILE ACCESS`, and a real `/sc-echo grok` review still runs.
+- **Research Question (resolved by this entry)**: "Does `grok --tools \"\"` yield
+  a zero-tool allowlist?" — No. Empirically a no-op in `--prompt-file` mode.
+- **Verified against**: grok CLI `0.2.93` [stable] (from `grok inspect`). The
+  confinement rests on `--deny` semantics holding; `scripts/sc-doctor.sh`
+  reports the grok backend status, and this probe should be re-run if the grok
+  CLI is upgraded past 0.2.93.
+
+- **Issue ID**: GROK-002
+- **Status**: RESOLVED 2026-07-10 (same change that introduced the Grok backend)
+- **Discovered By**: Builder (Claude) — a full-change-set `/sc-echo grok` review returned BLOCK on truncation
+- **Date Discovered**: 2026-07-10
+- **Source**: Comprehensive pre-commit review of the Grok backend change set
+- **Severity**: High (silent-truncation → unreviewed content judged as reviewed; violates AGENTS.md Rule 9 / chunk-review.sh contract)
+- **Location**: `bridge/ask-grok.sh` — per-pass budget vs. `bridge/lib/chunk-review.sh` (`SC_MAX_CHARS`)
+- **Description**: grok's headless `--prompt-file` OFFLOADS a large prompt to a
+  file and shows the model only a head+tail inline slice, truncating the middle.
+  Because the reviewer denies all tools (GROK-001), it cannot read the offloaded
+  full text, so the middle of an over-large request is silently lost to it. The
+  bridge's default `SC_MAX_CHARS` (1,000,000 — tuned for GLM's large window) let
+  a single 183KB pass reach grok, which then judged truncated content. This is
+  exactly the silent truncation `chunk-review.sh` exists to prevent — but it was
+  defeated because grok truncates far below the bridge's byte budget.
+- **Evidence (reproduction)**: A 9-file review built a 183,031-byte request (the
+  request file on disk contained NO bridge truncation markers — the bridge sent
+  it whole). grok's review reported `…[middle truncated — full text in the
+  offloaded file]…` and returned `VERDICT: BLOCK` citing an incomplete payload.
+  Probes: single-file requests ~30KB were reviewed in full (grok found a real
+  mid-file bug across 3 rounds); grok referenced "the offloaded prompt" for
+  inputs from ~30–40KB up, keeping head+tail intact.
+- **Fixed By**: Builder (Claude)
+- **Date Fixed**: 2026-07-10
+- **Fix Description**: All three grok input channels were measured; each has a
+  hard limitation, so the fix is the least-bad channel plus layered safety nets.
+  (a) **stdin** — grok refuses a piped prompt ("No such device or address"),
+  ruled out. (b) **`--prompt-file`** — keeps the body in the 0600 file (secure)
+  but grok offloads large inputs to a tool-readable file and truncates the inline
+  MIDDLE from ~25KB up; the reviewer denies all tools (GROK-001) so it cannot read
+  the offload. Because AGENTS.md (~9KB) rides every pass and `chunk-review.sh`
+  floors a pass at ~20KB of files, the minimum request is ~33KB — already in
+  grok's truncation zone — so `--prompt-file` reviews dropped the middle of even
+  a single moderate file. Ruled out: a review tool that silently omits the code
+  under review is the worse failure. (c) **inline `-p`** (chosen) — the whole
+  request reaches the model (retains a mid-file canary past 40KB, well above the
+  ~33KB pass), so reviews are complete. Its cost is CWE-200: the request body
+  sits on the process argv (`/proc/<pid>/cmdline`), readable by other local users
+  for the review's lifetime. Accepted as a **documented, warned exception** — the
+  exposure is local and transient, the identical bytes already egress to xAI over
+  the network, and no non-truncating secure channel exists. Mitigations:
+  (1) a one-time stderr NOTE on every grok review recommending the opencode/claude
+  backend on shared hosts (suppress `SC_QUIET_ARGV=1`); (2) the grok-specific
+  budget `export SC_MAX_CHARS="${SC_GROK_MAX_CHARS:-24000}"` (digits validated,
+  **hard-clamped at 32000**) plus a lowered chunker floor `SC_MIN_PASS_AVAIL=8000`
+  (the shared 20000 floor otherwise forces ~33KB passes — already past grok's
+  point) keep each pass near ~21KB, and split large units or return
+  `VERDICT: ERROR` for a single file too big to fit; (3) a deterministic
+  post-review truncation detector — if grok's offload markers ("middle truncated"
+  / "offloaded prompt|file") appear in the response, the bridge overwrites it with
+  `VERDICT: ERROR`, so a partial view can never become a false APPROVE independent
+  of the model's own behavior (rare false-positive when the reviewed code itself
+  discusses truncation is fail-safe — it asks for a re-review, never approves).
+  Documented as `SC_GROK_MAX_CHARS` / `SC_QUIET_ARGV` in `config.example` and the
+  script header.
+- **R3 follow-up (High, fixed)**: the echo review (claude backend) caught that the
+  reviewer persona is sent to grok via `--rules` as a SEPARATE payload the chunker's
+  overhead math never counted, so grok's true prompt was `REQ + persona` (~5.5KB
+  over budget every pass) — pushing nominally-in-budget passes past the truncation
+  point and into ERROR, defeating the backend. Fixed by debiting the persona from
+  the request budget once it is measured: `export SC_MAX_CHARS=$((_sc_grok_budget -
+  sys_bytes - 500))` (floored), with `SC_MIN_PASS_AVAIL=5000`. Verified: persona
+  5479B → SC_MAX_CHARS 18021, a small file reviews APPROVE with no truncation.
+- **Known limitation**: grok truncates DENSE content by token count (~25KB of real
+  code per request, well below the ~40KB that sparse filler tolerated), and a
+  tool-denied reviewer cannot recover the offload. With AGENTS.md (~9KB) + persona
+  (~5.5KB) + slack riding every pass, only ~5–6KB of file content fits per pass, so
+  the grok backend is for SMALL work units; a single file that cannot fit returns
+  `VERDICT: ERROR` (fail-safe). Large files → use the opencode or claude backend.
+  This is a grok CLI constraint, not a bridge defect.
+- **Verified against**: grok CLI `0.2.93`. Re-run the size probes if grok's
+  `--prompt-file` offload/truncation behavior changes.
+
 > Entries `AUDIT-001` through `AUDIT-029` were filed by the `/sc-audit` whole-repo audit on 2026-06-30. Full context lives in `.waves/wave-2/deliverables/SECURITY_AUDIT_REPORT.md` and `.waves/wave-2/deliverables/VULNERABILITY_REGISTER.md`.
 
 ### HIGH severity (5)

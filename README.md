@@ -461,6 +461,52 @@ Up to **3 rounds** per work unit. After 3 without `APPROVE`, open findings are
 logged to `docs/audit/ISSUE_TRACKER.md` (the live Rule-7 tracker) and reported
 to the user — no silent shipping.
 
+### Choosing a reviewer backend (OpenCode or Grok)
+
+When Claude is the Builder, the review can run through one of two backends. The
+Reviewer is the same read-only persona and returns the same verdict line either
+way — only the model and CLI differ:
+
+| Backend    | Reviewer model      | You need                                   |
+| ---------- | ------------------- | ------------------------------------------ |
+| `opencode` | GLM 5.2 (default)   | OpenCode installed (Step 8 above)          |
+| `grok`     | Grok (xAI)          | the `grok` CLI installed and signed in     |
+
+> **Grok backend — best for small work units.** Grok's CLI, run as a locked-down
+> read-only reviewer, truncates large inputs (its window is much smaller than
+> GLM's), so the bridge keeps each pass small and returns `VERDICT: ERROR` rather
+> than a partial review when a single file is too big. For large files or
+> sweeping multi-file changes, use the `opencode` or `claude` reviewer. The Grok
+> backend also passes the request on the command line, so on a shared/multi-user
+> host prefer another backend (see the `SC_QUIET_ARGV` note in `config.example`).
+
+**Pick it per session** — type the backend after the command:
+
+```
+/sc-echo grok        ← this session's reviews run through Grok
+/sc-echo opencode    ← this session's reviews run through GLM (the default)
+/sc-echo             ← uses your configured default
+```
+
+**Set a lasting default** — add one line to `~/.config/sc/config` (the file the
+installer seeded). Open it in any text editor and set:
+
+```
+SC_REVIEWER_BACKEND=grok
+```
+
+Grok tunables in the same file: `SC_GROK_MODEL` (leave empty to use grok's own
+default model), `SC_GROK_SANDBOX` (optional OS sandbox profile). See
+`bridge/config.example` for the full annotated list.
+
+> **Grok and MCP servers.** The Claude reviewer confines its tool surface with
+> `--strict-mcp-config`; the `grok` CLI has no equivalent flag. So the Grok
+> backend **refuses to run** (returns `VERDICT: ERROR`) if you have any Grok MCP
+> servers configured, rather than hand the reviewer tools it can't confine.
+> Remove them with `grok mcp remove`, use the OpenCode backend, or set
+> `SC_GROK_ALLOW_MCP=1` to accept the risk. Run `bash scripts/sc-doctor.sh` to
+> see your current Grok backend status.
+
 ### Data egress and privacy (paired-review)
 
 When `/sc-echo` is active, every review sends a payload to whichever model
