@@ -8,6 +8,7 @@
 # Selects the ask-*.sh the /sc-echo loop dispatches to:
 #   opencode  ask-glm.sh   — GLM (or any provider OpenCode reaches). Default.
 #   grok      ask-grok.sh  — Grok via its own CLI (headless single-turn).
+#   kimi      ask-kimi.sh  — Kimi via its own CLI (headless `kimi -p`).
 #   both      — run BOTH per work unit as two independent audit lenses (≈2x time;
 #              different models catch different issues). Grok's size ERROR does not
 #              block in this mode — it's reported as a coverage gap.
@@ -51,6 +52,21 @@
 # ask-grok.sh prints a one-time NOTE about this; export SC_QUIET_ARGV=1 to silence
 # it. On a shared/multi-user host, prefer the opencode or claude reviewer backend.
 
+# --- Reviewer when Claude builds via Kimi (ask-kimi.sh) ---
+# Model alias for the Kimi reviewer. Leave empty to use kimi's own configured
+# default_model (no -m is passed).
+: "${SC_KIMI_MODEL:=}"
+# Per-pass byte budget for the KIMI backend ONLY (overrides SC_MAX_CHARS below
+# for ask-kimi.sh). Conservative under a ~256K-token window (tokens ≈ bytes/4);
+# the reviewer persona rides inline in the same prompt and is debited from this
+# budget by ask-kimi.sh. Hard-clamped at 800000.
+: "${SC_KIMI_MAX_CHARS:=240000}"
+# KIMI-001: kimi's headless mode has no per-run tool/MCP restriction flags, so
+# reviewer confinement is prompt-only. On a host with kimi MCP servers
+# configured, prefer the claude or grok backend. Like grok, the kimi backend
+# passes the request on the command line (visible via /proc) — SC_QUIET_ARGV=1
+# silences the one-time NOTE.
+
 # --- Reviewer when the other model builds (ask-claude.sh, via Claude Code) ---
 # A `claude --model` alias or full model id (e.g. opus, sonnet, claude-opus-4-8).
 : "${SC_CLAUDE_MODEL:=opus}"
@@ -86,5 +102,6 @@
 
 export SC_REVIEWER_BACKEND SC_REVIEWER_MODEL SC_REVIEWER_AGENT SC_CLAUDE_MODEL
 export SC_GROK_MODEL SC_GROK_SANDBOX SC_GROK_ALLOW_MCP SC_GROK_MAX_CHARS
+export SC_KIMI_MODEL SC_KIMI_MAX_CHARS
 export SC_TIMEOUT SC_KILL_GRACE SC_RETRIES SC_RETRY_DELAY
 export SC_SERIALIZE SC_LOCK_TIMEOUT SC_MAX_CHARS

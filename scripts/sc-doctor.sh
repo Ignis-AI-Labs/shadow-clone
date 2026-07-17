@@ -30,6 +30,8 @@ readonly OPENCODE_DIR="${HOME}/.config/opencode"
 readonly CLAUDE_CMD_SRC="${REPO_ROOT}/commands"
 readonly PROTOCOLS_SRC="${REPO_ROOT}/protocols"
 readonly PROTOCOLS_DEST="${HOME}/.claude/sc/protocols"
+readonly KIMI_SKILLS_SRC="${REPO_ROOT}/kimi/skills"
+readonly KIMI_SKILLS_DST="${KIMI_CODE_HOME:-${HOME}/.kimi-code}/skills"
 
 # Top-level bridge scripts that get invoked as commands — must be +x.
 # (bridge/install.sh chmods exactly these.)
@@ -37,6 +39,7 @@ readonly BRIDGE_EXEC_FILES=(
   "ask-glm.sh"
   "ask-claude.sh"
   "ask-grok.sh"
+  "ask-kimi.sh"
   "sc-init.sh"
 )
 
@@ -339,6 +342,41 @@ check_grok_backend() {
   fi
 }
 
+# Kimi is an OPTIONAL fourth reviewer backend (ask-kimi.sh) AND an optional
+# Builder surface (skills under kimi/skills/). This check never FAILs — a user
+# who never runs the kimi backend or Kimi CLI has no reason to install either.
+# It only reports what's available so `/sc-echo kimi` users and Kimi CLI users
+# know their side is ready.
+check_kimi_backend() {
+  printf '\nKimi reviewer backend + skills (optional):\n'
+  if command -v kimi >/dev/null 2>&1; then
+    report OK "kimi on PATH"
+  else
+    printf '  INFO  kimi not on PATH — the /sc-echo kimi reviewer backend is unavailable (other backends unaffected).\n'
+  fi
+  if [ ! -d "${KIMI_SKILLS_SRC}" ]; then
+    printf '  WARN  kimi skills source dir missing from repo: %s\n' "${KIMI_SKILLS_SRC}"
+    return
+  fi
+  # Derive the expected skill list from the canonical source so the doctor
+  # stays in lockstep with kimi/install.sh — no hardcoded list to drift.
+  local any=0
+  for src in "${KIMI_SKILLS_SRC}"/*/SKILL.md; do
+    [ -e "${src}" ] || continue
+    any=1
+    local name; name="$(basename "$(dirname "${src}")")"
+    if [ -f "${KIMI_SKILLS_DST}/${name}/SKILL.md" ]; then
+      report OK "skill ${name} deployed"
+    else
+      printf '  INFO  skill %s not deployed (%s/%s/SKILL.md) — run kimi/install.sh to enable /skill:%s.\n' \
+        "${name}" "${KIMI_SKILLS_DST}" "${name}" "${name}"
+    fi
+  done
+  if [ "${any}" -eq 0 ]; then
+    printf '  WARN  no skills found in %s\n' "${KIMI_SKILLS_SRC}"
+  fi
+}
+
 check_path() {
   printf '\nRequired commands on PATH:\n'
   for c in "${REQUIRED_CMDS[@]}"; do
@@ -407,6 +445,7 @@ check_config
 check_claude_commands
 check_opencode
 check_grok_backend
+check_kimi_backend
 check_path
 check_protocols
 check_runtime
