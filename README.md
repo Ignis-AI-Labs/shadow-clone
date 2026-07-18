@@ -461,16 +461,17 @@ Up to **3 rounds** per work unit. After 3 without `APPROVE`, open findings are
 logged to `docs/audit/ISSUE_TRACKER.md` (the live Rule-7 tracker) and reported
 to the user — no silent shipping.
 
-### Choosing a reviewer backend (OpenCode or Grok)
+### Choosing a reviewer backend (OpenCode, Grok, or Kimi)
 
-When Claude is the Builder, the review can run through one of two backends. The
-Reviewer is the same read-only persona and returns the same verdict line either
-way — only the model and CLI differ:
+When Claude is the Builder, the review can run through one of three backends.
+The Reviewer is the same read-only persona and returns the same verdict line
+either way — only the model and CLI differ:
 
 | Backend    | Reviewer model      | You need                                   |
 | ---------- | ------------------- | ------------------------------------------ |
 | `opencode` | GLM 5.2 (default)   | OpenCode installed (Step 8 above)          |
 | `grok`     | Grok (xAI)          | the `grok` CLI installed and signed in     |
+| `kimi`     | Kimi (Moonshot)     | the `kimi` CLI installed and logged in     |
 
 > **Grok backend — best for small work units.** Grok's CLI, run as a locked-down
 > read-only reviewer, truncates large inputs (its window is much smaller than
@@ -484,6 +485,7 @@ way — only the model and CLI differ:
 
 ```
 /sc-echo grok        ← this session's reviews run through Grok
+/sc-echo kimi        ← this session's reviews run through Kimi
 /sc-echo opencode    ← this session's reviews run through GLM (the default)
 /sc-echo both        ← run BOTH reviewers on every unit — two independent lenses
 /sc-echo             ← uses your configured default
@@ -507,7 +509,8 @@ SC_REVIEWER_BACKEND=grok
 ```
 
 Grok tunables in the same file: `SC_GROK_MODEL` (leave empty to use grok's own
-default model), `SC_GROK_SANDBOX` (optional OS sandbox profile). See
+default model), `SC_GROK_SANDBOX` (optional OS sandbox profile). Kimi tunables:
+`SC_KIMI_MODEL`, `SC_KIMI_MAX_CHARS`. See
 `bridge/config.example` for the full annotated list.
 
 > **Grok and MCP servers.** The Claude reviewer confines its tool surface with
@@ -517,6 +520,23 @@ default model), `SC_GROK_SANDBOX` (optional OS sandbox profile). See
 > Remove them with `grok mcp remove`, use the OpenCode backend, or set
 > `SC_GROK_ALLOW_MCP=1` to accept the risk. Run `bash scripts/sc-doctor.sh` to
 > see your current Grok backend status.
+
+> **Kimi backend — prompt-only confinement.** `kimi -p` has no per-invocation
+> tool-restriction flags, so a Kimi reviewer's read-only contract is enforced by
+> the persona, not the process (KIMI-001), and any kimi MCP servers are reachable
+> to it. Like Grok, the request is passed on the command line (visible via
+> /proc). On a host where that matters, prefer the `opencode` or `claude`
+> backend.
+
+### Kimi Code CLI as the Builder (skills)
+
+Shadow Clone's **entire command surface** also ships as **Kimi skills** so the
+system works end-to-end when Kimi Code CLI — not Claude Code — is the one
+writing code. `kimi/install.sh` deploys every `/skill:sc-*` skill (the umbrella
+`/skill:sc`, all orchestration modes, the rapid utilities, and the echo
+paired-review loop) to `~/.kimi-code/skills/` — the same waves, protocols, and
+verdict contract as the Claude Code commands (default reviewer when Kimi
+builds: Claude). See [`kimi/README.md`](kimi/README.md) and `/skill:sc-help`.
 
 ### Data egress and privacy (paired-review)
 
@@ -599,11 +619,14 @@ shadow-clone/
 │   ├── install.sh              → the deploy entry point
 │   ├── ask-glm.sh              → Claude → second-model review bridge
 │   ├── ask-claude.sh           → second-model → Claude review bridge
+│   ├── ask-grok.sh             → * → Grok review bridge
+│   ├── ask-kimi.sh             → * → Kimi review bridge
 │   ├── sc-init.sh              → per-project AGENTS.md / CLAUDE.md scaffold
 │   ├── lib/                    → bridge internals (guards, reapers, chunking)
 │   ├── templates/              → AGENTS.md / CLAUDE.md / ISSUE_TRACKER.md seeds
 │   └── agent/sc-echo-reviewer.md → OpenCode reviewer persona
 ├── opencode-plugin/sc-echo.js  → OpenCode plugin counterpart (registers sc_echo_review tool)
+├── kimi/                       → Kimi Code CLI skills (/skill:sc-*) + their installer
 ├── scripts/
 │   ├── sc-doctor.sh            → source-driven health check
 │   └── sc-last-verdict.sh      → print latest /sc-echo verdict

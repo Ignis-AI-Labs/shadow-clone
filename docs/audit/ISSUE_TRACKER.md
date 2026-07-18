@@ -506,6 +506,18 @@ _None yet._
 
 ## Resolved
 
+- **Issue ID**: KIMI-002
+- **Status**: RESOLVED 2026-07-16 (fixed after the echo loop closed at 3 rounds; NOT re-reviewed — the 3-round dispatch limit was reached, so this final fix is unreviewed by the Reviewer)
+- **Discovered By**: Reviewer (Claude, `ask-claude.sh` echo round 3)
+- **Date Discovered**: 2026-07-16
+- **Source**: Rule 9 echo review of the Kimi integration work unit
+- **Severity**: Low
+- **Location**: `kimi/skills/sc-bootstrap/SKILL.md` — Step 2, Cases B and D
+- **Description / Evidence**: Case B (skills present, bridge/protocols missing) and Case D (no reviewer CLI) had overlapping conditions with no precedence rule, so a state matching both produced nondeterministic — and, if B was chosen, incomplete — guidance. Mechanical observation by the Reviewer: `{KIMI_SKILLS_OK=yes, BRIDGE_OK=no, REVIEWER_CLI=none}` satisfies both case headers simultaneously.
+- **Fixed By**: Builder (Kimi)
+- **Date Fixed**: 2026-07-16
+- **Resolution**: Step 2 now mandates deterministic first-match precedence ("evaluate in the order listed A → B → C → D → E, emit the first whose conditions match"), and Cases B and C each carry a cross-reference line pointing to Case D when `REVIEWER_CLI=none` was also detected, closing the incomplete-guidance gap. Redeployed via `kimi/install.sh`; `sc-doctor` all green.
+
 - **Issue ID**: BRIDGE-003
 - **Status**: RESOLVED 2026-07-05 (P-P1-02 bridge security audit)
 - **Discovered By**: Builder (Claude, empirical) + audit subagent (finding M-1)
@@ -770,6 +782,16 @@ _None yet._
 ---
 
 ## Deferred
+
+- **Issue ID**: KIMI-001
+- **Status**: Deferred 2026-07-16 (accepted risk, documented in code + `kimi/README.md`; revisit if the Kimi CLI adds per-invocation tool/MCP restriction flags)
+- **Discovered By**: Builder (Kimi) — design-time limitation of the `kimi -p` headless mode
+- **Date Discovered**: 2026-07-16
+- **Source**: Kimi integration work — `bridge/ask-kimi.sh`
+- **Severity**: Medium (CWE-732 / OWASP LLM06) — reviewer read-only boundary not process-enforced
+- **Location**: `bridge/ask-kimi.sh` — `sc_invoke_one`
+- **Description / Evidence**: Unlike `claude -p` (`--disallowedTools` + `--strict-mcp-config`, BRIDGE-005) and `grok -p` (`--deny`, GROK-001), `kimi -p` exposes no per-invocation flags to disable tools or MCP servers (verified against the official CLI reference, 2026-07-16). A Kimi reviewer's read-only contract is therefore prompt-only: the shared persona orders a read-only review, but the process does not enforce it, and any MCP servers configured for kimi are reachable to the reviewer. Like the grok backend, the request also travels on the process argv (CWE-200, warned via the `SC_QUIET_ARGV` note).
+- **Mitigation**: The bridge wraps all reviewer output as `<<<UNTRUSTED-REVIEWER-OUTPUT>>>` and treats only the final `VERDICT:` line as machine-actionable (AUDIT-006), so a tool-using or injected reviewer cannot smuggle instructions to the Builder. Users on hosts where enforced confinement matters are directed to the `claude` or `grok` backend (README, config.example, script header).
 
 - **Issue ID**: BRIDGE-005
 - **Status**: Resolved 2026-07-05 (commit pending) — closed via `--strict-mcp-config`, NOT an allowlist
