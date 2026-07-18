@@ -530,13 +530,13 @@ default model), `SC_GROK_SANDBOX` (optional OS sandbox profile). Kimi tunables:
 
 ### Kimi Code CLI as the Builder (skills)
 
-Shadow Clone also ships a **Kimi skill surface** so the loop works when Kimi
-Code CLI — not Claude Code — is the one writing code. `kimi/install.sh` deploys
-`/skill:sc-echo`, `/skill:sc-bootstrap`, `/skill:sc-update`, and
-`/skill:sc-help` to `~/.kimi-code/skills/`; from a Kimi session,
-`/skill:sc-echo` turns on the same paired-review loop with the same bridge and
-verdict contract (default reviewer when Kimi builds: Claude). See
-[`kimi/README.md`](kimi/README.md).
+Shadow Clone's **entire command surface** also ships as **Kimi skills** so the
+system works end-to-end when Kimi Code CLI — not Claude Code — is the one
+writing code. `kimi/install.sh` deploys every `/skill:sc-*` skill (the umbrella
+`/skill:sc`, all orchestration modes, the rapid utilities, and the echo
+paired-review loop) to `~/.kimi-code/skills/` — the same waves, protocols, and
+verdict contract as the Claude Code commands (default reviewer when Kimi
+builds: Claude). See [`kimi/README.md`](kimi/README.md) and `/skill:sc-help`.
 
 ### Data egress and privacy (paired-review)
 

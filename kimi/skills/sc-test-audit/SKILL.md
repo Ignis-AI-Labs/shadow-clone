@@ -1,10 +1,13 @@
 ---
-description: Shadow Clone test-audit mode — diagnose test-suite coverage gaps in an existing project, flag missing integration tests where they make sense, and surface security-sensitive paths without coverage
+name: sc-test-audit
+description: "Shadow Clone test-audit mode — diagnose test-suite coverage gaps in an existing project, flag missing integration tests where they make sense, and surface security-sensitive paths without coverage"
+type: prompt
+whenToUse: When the user asks to audit test coverage, diagnose test-suite gaps, or check whether critical or security-sensitive paths have test coverage in an existing project
 ---
 
 You are now operating in **Shadow Clone Test-Audit mode** for the rest of this session. This mode produces a structured diagnostic of an existing project's test suite — not a pass/fail metric, but a prioritized gap report grounded in real code. The output answers the user's underlying question: *do we have enough coverage to prove the system works and is secure?*
 
-It is **not** a test generator (that is `/sc-tests`) and not a test runner. It reads what exists, cross-references against the source surface, and flags meaningful gaps.
+It is **not** a test generator (that is `/skill:sc-tests`) and not a test runner. It reads what exists, cross-references against the source surface, and flags meaningful gaps.
 
 The deliverable is `<run-dir>/wave-2/deliverables/TEST_AUDIT.md`, where `<run-dir>` is this run's isolated directory (see Step 1.5).
 
@@ -12,7 +15,7 @@ The deliverable is `<run-dir>/wave-2/deliverables/TEST_AUDIT.md`, where `<run-di
 
 ## Step 0 — Precondition
 
-The audit benchmarks the project against the user's own standards. If `AGENTS.md` does not exist at the repo root, suggest running `/sc` first — without it, the auditor falls back to generic protocol defaults and the report will be less specific. If the user wants to proceed anyway, that's fine; note "no project-local standards" in the report's preamble.
+The audit benchmarks the project against the user's own standards. If `AGENTS.md` does not exist at the repo root, suggest running `/skill:sc` first — without it, the auditor falls back to generic protocol defaults and the report will be less specific. If the user wants to proceed anyway, that's fine; note "no project-local standards" in the report's preamble.
 
 ---
 
@@ -32,7 +35,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Step 1
 
 ## Step 1.5 — Initialize the run (before Wave 0)
 
-Isolate this run so it cannot collide with any other `/sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
+Isolate this run so it cannot collide with any other `/skill:sc-*` run in the same repo. Follow **Wave & Subagent Coordination Protocol §2.5** exactly:
 
 1. **Mint the `run-id`** = `<slug>-<shortid>`. Derive `<slug>` (kebab-case, ≤4 words / 32 chars) from the audit scope captured in Step 1; generate a 4-char base36 `<shortid>`.
 2. **Claim `<run-dir>` atomically** = `.waves/runs/<run-id>/`. Run `mkdir -p .waves/runs`, then `mkdir .waves/runs/<run-id>` — **plain `mkdir`, no `-p` on the second call**. If it fails, the id is taken (by an active *or* completed run); regenerate `<shortid>` and retry until it succeeds. This atomic claim — not the manifest — is what guarantees isolation (Protocol §2.5). Every `<run-dir>/wave-N/...` path in this mode body is where files actually land — never a bare `.waves/wave-N/`.
@@ -82,7 +85,7 @@ If this run is aborted before its final deliverable lands — the user stops it,
     </three_waves>
 
     <no_test_execution>
-      This mode does NOT run the test suite. Running tests is the user's job (or a future `/sc-test-run` command's). If the user wants execution + coverage numbers, suggest they run their framework's coverage tool and feed the output back into a fresh `/sc-test-audit` for re-grounded analysis.
+      This mode does NOT run the test suite. Running tests is the user's job (or a future `/skill:sc-test-run` skill's). If the user wants execution + coverage numbers, suggest they run their framework's coverage tool and feed the output back into a fresh `/skill:sc-test-audit` for re-grounded analysis.
     </no_test_execution>
   </critical_protocol>
 </mode_overview>
@@ -187,7 +190,7 @@ If this run is aborted before its final deliverable lands — the user stops it,
         4. Full gap list (everything above the severity floor, sorted by priority)
         5. Per-gap recommendation: severity, location, what kind of test fits, the contract to assert, the entry point to exercise
         6. Exclusions ("doesn't need a test"): surfaces deliberately not flagged, with one-line reasons
-        7. Suggested next steps: which `/sc-tests` invocations would fill the top gaps
+        7. Suggested next steps: which `/skill:sc-tests` invocations would fill the top gaps
         8. If the user confirms (in this wave's `AskUserQuestion` ask) that gaps should be logged as Rule-7 entries: a "logged" section listing the IDs written to `docs/audit/ISSUE_TRACKER.md`. Otherwise: a one-line note that issue-tracker logging was declined.
       </deliverable>
     </deliverables>
@@ -197,7 +200,7 @@ If this run is aborted before its final deliverable lands — the user stops it,
       2. Top gaps are the report's center of gravity. Don't bury the lede — the user must be able to know what to fix from the first screen.
       3. Recommendations are concrete. "Add an integration test for the checkout flow" is too vague. "Add an integration test exercising POST /checkout that asserts (a) inventory decremented, (b) payment recorded, (c) email queued; use a real DB, mock only the payment provider" is concrete enough to act on.
       4. Issue-tracker entries (if requested) use the exact Rule 7 format from `AGENTS.md`. Ask the user before writing them — they land in a tracked file.
-      5. Suggested next steps point at other Shadow Clone modes where useful: `/sc-tests` to generate from the prescriptions; `/sc-audit` for adjacent security audits; `/sc-debug` if any uncovered code is also a known bug.
+      5. Suggested next steps point at other Shadow Clone modes where useful: `/skill:sc-tests` to generate from the prescriptions; `/skill:sc-audit` for adjacent security audits; `/skill:sc-debug` if any uncovered code is also a known bug.
     </instructions>
   </wave_2>
 </wave_structure>
@@ -230,7 +233,7 @@ If this run is aborted before its final deliverable lands — the user stops it,
 
   <principle>
     The auditor is not the test author. This mode produces prescriptions, not
-    test code. Generation is a separate concern (`/sc-tests`).
+    test code. Generation is a separate concern (`/skill:sc-tests`).
   </principle>
 </audit_guidelines>
 
@@ -285,7 +288,7 @@ Per-wave lifecycle (§2), role-to-clone mapping under the cap (§3), the 8 manda
 
 ## Closing each wave
 
-After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/sc-echo` is active in the session, dispatch a review before declaring the wave done.
+After each wave's deliverable is written, **update this run's manifest entry** (§2.5): bump `waves.completed`, append the deliverable's path to `deliverables`, refresh `updated`. On the final wave-close, set `status` to `complete`. Then briefly report to the user: what was produced, where it landed (the full `<run-dir>`-resolved path), what the next wave will do. If `/skill:sc-echo` is active in the session, dispatch a review before declaring the wave done.
 
 ---
 
