@@ -73,6 +73,7 @@ The canonical engineering standards live in `protocols/` in the repo and are dep
 - `SECURITY_CHECKLIST.md`
 - `Error Handling & Resilience Protocol.md`
 - `AI-Assisted Development Protocol.md`
+- `Gnosis Verification Protocol.md` — **load-bearing** evidence gate: a bug that has not been verified is not a bug
 
 **Operational protocols (govern HOW Shadow Clone runs):**
 

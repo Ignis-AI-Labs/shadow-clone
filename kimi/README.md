@@ -27,14 +27,20 @@ under `kimi/skills/`.
 
 ## Use
 
-In a Kimi session:
+In a Kimi session — the full Shadow Clone surface is available as skills:
 
 ```
+/skill:sc                 # activate Shadow Clone in a project (init walkthrough)
+/skill:sc-plan            # greenfield planning
+/skill:sc-sprint          # active-codebase sprint
+/skill:sc-feature         # feature mode (also: refactor, debug, optimize,
+                          # research, audit, test-audit, roadmap)
+/skill:sc-quick-fix       # rapid utilities (also: sc-tests, sc-docs, sc-cleaner)
 /skill:sc-echo            # paired review, default reviewer (Claude)
 /skill:sc-echo grok       # pick a reviewer backend: claude|opencode|grok|kimi
 /skill:sc-bootstrap       # verify the install is complete
 /skill:sc-update          # check for / apply updates
-/skill:sc-help            # the skill catalog
+/skill:sc-help            # the full skill catalog
 ```
 
 To have **Kimi review** work built by another agent, point that agent at the
@@ -59,7 +65,13 @@ data. On hosts where enforced confinement matters, prefer the `claude` or
 kimi/
   install.sh                   deploy the skills (this directory -> ~/.kimi-code/skills/)
   skills/
+    sc/SKILL.md                umbrella init walkthrough
     sc-echo/SKILL.md           paired-review loop (Builder side)
+    sc-plan/ sc-sprint/ sc-roadmap/        planning altitudes
+    sc-feature/ sc-refactor/ sc-debug/ sc-optimize/ sc-research/ sc-audit/ sc-test-audit/
+                               orchestration modes
+    sc-quick-fix/ sc-tests/ sc-docs/ sc-cleaner/
+                               rapid utilities
     sc-bootstrap/SKILL.md      install verification walkthrough
     sc-update/SKILL.md         update walkthrough
     sc-help/SKILL.md           skill catalog
