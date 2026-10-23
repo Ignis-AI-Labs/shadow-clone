@@ -79,14 +79,14 @@ function ToolWorkspaceInner({ tool }: { tool: ToolConfig }) {
       <div className="mb-6 flex items-center justify-between gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded-sm"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 rounded-xs"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           All tools
         </Link>
         <Link
           href="/how-it-works"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded-sm"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 rounded-xs"
         >
           <BookOpen className="h-4 w-4" aria-hidden />
           How it works

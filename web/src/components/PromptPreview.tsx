@@ -20,7 +20,7 @@ export function PromptPreview({ content, toolbar }: Props) {
         </div>
         {toolbar}
       </header>
-      <pre className="max-h-[60vh] overflow-auto whitespace-pre-wrap break-words px-4 py-3 font-mono text-xs text-slate-800">
+      <pre className="max-h-[60vh] overflow-auto whitespace-pre-wrap wrap-break-word px-4 py-3 font-mono text-xs text-slate-800">
         {content}
       </pre>
     </section>

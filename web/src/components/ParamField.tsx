@@ -10,7 +10,7 @@ interface Props {
 }
 
 const inputClasses =
-  'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200';
+  'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:outline-hidden focus:ring-2 focus:ring-slate-200';
 
 export function ParamField({ config, value, onChange, showRequiredHint }: Props) {
   const fieldId = `field-${config.name}`;

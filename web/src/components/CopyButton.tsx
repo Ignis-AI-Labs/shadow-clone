@@ -59,7 +59,7 @@ export function CopyButton({ text, label = 'Copy prompt', variant = 'primary' }:
     <button
       type="button"
       onClick={handleClick}
-      className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 ${classes}`}
+      className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150 focus-visible:outline-hidden focus-visible:ring-2 ${classes}`}
     >
       {copied ? (
         <>

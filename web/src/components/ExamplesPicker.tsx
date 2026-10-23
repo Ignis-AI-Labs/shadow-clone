@@ -37,7 +37,7 @@ export function ExamplesPicker({ examples, onLoad }: Props) {
             key={example.label}
             type="button"
             onClick={() => handleLoad(example)}
-            className="group flex items-start justify-between gap-3 rounded-md border border-slate-200 px-3 py-2 text-left transition-colors duration-150 hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+            className="group flex items-start justify-between gap-3 rounded-md border border-slate-200 px-3 py-2 text-left transition-colors duration-150 hover:border-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300"
           >
             <span>
               <span className="block text-sm font-medium text-slate-900">
@@ -49,7 +49,7 @@ export function ExamplesPicker({ examples, onLoad }: Props) {
                 </span>
               )}
             </span>
-            <span className="mt-0.5 flex-shrink-0 text-xs font-medium text-slate-500 group-hover:text-slate-900">
+            <span className="mt-0.5 shrink-0 text-xs font-medium text-slate-500 group-hover:text-slate-900">
               {loadedLabel === example.label ? (
                 <span className="inline-flex items-center gap-1 text-emerald-600">
                   <Check className="h-3.5 w-3.5" aria-hidden /> Loaded
