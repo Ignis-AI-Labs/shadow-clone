@@ -1,6 +1,6 @@
-import { content as mainPromptContent } from '@prompts/mainPrompt';
-import { content as agentCoreRules } from '@prompts/agent_core_rules';
-import { content as modePlanContent } from '@prompts/mode_plan';
+import { content as mainPromptContent } from '@prompts/main-prompt';
+import { content as agentCoreRules } from '@prompts/agent-core-rules';
+import { content as modePlanContent } from '@prompts/mode-plan';
 import type { ToolConfig, ParamsRecord } from './types';
 import {
   asString,

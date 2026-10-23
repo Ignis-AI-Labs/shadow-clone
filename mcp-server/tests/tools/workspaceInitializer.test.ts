@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'bun:test';
-import { WorkspaceInitializer } from '../../src/tools/workspaceInitializer';
+import { WorkspaceInitializer } from '../../src/tools/workspace-initializer';
 
 /**
  * Tests for WorkspaceInitializer
