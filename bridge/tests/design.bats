@@ -9,9 +9,9 @@ setup() {
   PROTOCOL="${REPO}/protocols/Design Protocol.md"
 }
 
-@test "the Design Protocol carries the three glossed principles and the less-to-read rule" {
+@test "the Design Protocol carries the three glossed principles and the less-text-not-less-data rule" {
   for term in 'SHINKEI 真計' 'JŌHŌ SEKKEI 情報設計' 'CHOKKAN 直感' \
-    '**Less to read, same information**' 'Density is never decoration.' 'the stranger test'; do
+    '**Less text, not less data**' 'Every number the person needs stays on screen' 'Density is never decoration.' 'the stranger test'; do
     grep -qF -- "${term}" "${PROTOCOL}"
   done
 }

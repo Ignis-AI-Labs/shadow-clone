@@ -102,7 +102,7 @@ Deliverable: `<run-dir>/wave-0/deliverables/DOC_SOURCE.md`.
 
 Use `DOC_SOURCE.md` as the raw material. Apply the protocol at
 `~/.claude/sc/protocols/Documentation Standards for Software Teams.md`,
-`~/.claude/sc/protocols/Design Protocol.md` (less to read, same information),
+`~/.claude/sc/protocols/Design Protocol.md` (less text, not less data),
 and the Gnosis Verification Protocol's anti-speculation discipline:
 
 **Voice and structure rules**:

@@ -151,7 +151,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
     <instructions>
       1. The AGENTS.md is the project's law. It must REFERENCE the canonical protocols at `~/.claude/sc/protocols/<filename>` by absolute path, not paraphrase them. Bare paraphrase drifts; references stay current.
-      2. Rules section structure: 10 rules following the established convention (Functional, Branching, Code Structure, Dependencies, PR Output, Self-Check, Audit Trail, Security First, Multi-Agent Review, Design). Rule 10 (Design) names the `Design Protocol.md` principles — SHINKEI, JŌHŌ SEKKEI, CHOKKAN, and less to read for the same information — in a few lines, references the protocol by path, and lists the project's own surfaces (UI, CLI, docs, reports); it is never dropped. Tailor the content per shortlisted protocols + user Custom answer.
+      2. Rules section structure: 10 rules following the established convention (Functional, Branching, Code Structure, Dependencies, PR Output, Self-Check, Audit Trail, Security First, Multi-Agent Review, Design). Rule 10 (Design) names the `Design Protocol.md` principles — SHINKEI, JŌHŌ SEKKEI, CHOKKAN, and less text, not less data — in a few lines, references the protocol by path, and lists the project's own surfaces (UI, CLI, docs, reports); it is never dropped. Tailor the content per shortlisted protocols + user Custom answer.
       3. The CLAUDE.md is a thin pointer: read AGENTS.md, no rules duplicated. If existing CLAUDE.md has user content, preserve it; only append the AGENTS.md pointer if missing.
       4. Branching migration plan is per-branch: archive-tag → cherry-pick if anything is salvageable → delete from origin. NEVER include `git push --delete` in the plan without explicit user confirmation. The plan describes; Wave 2 applies after the user signs off.
       5. The blueprint must be reviewable in one read — keep it under 500 lines total.
@@ -245,7 +245,7 @@ Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/`
 - `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
 - `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
 - `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
-- `Design Protocol.md` — true, information-first, intuitive; less to read, same information — every UI, output, report and message a person reads
+- `Design Protocol.md` — true, information-first, intuitive; less text, not less data — every UI, output, report and message a person reads
 
 **Additional emphasis for this mode:**
 

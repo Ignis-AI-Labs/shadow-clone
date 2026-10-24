@@ -2,7 +2,7 @@
 
 **Software documentation failures are the root cause of most onboarding delays, incident escalation times, and integration failures in modern development organizations.** This research compiles current industry best practices (2024–2026) across all ten critical documentation domains, drawing from Google SRE, Stripe, Spotify, AWS, the Diátaxis framework, and emerging AI-agent standards. Each section provides enforceable checklist criteria, recommended tools, measurable metrics, anti-patterns, and cross-language applicability — everything needed to construct a rigorous, auditable documentation protocol with severity-based classification.
 
-**Design binds every document.** Read `Design Protocol.md` with this one: true measure (SHINKEI), overview first (JŌHŌ SEKKEI), understood at a glance (CHOKKAN), and less to read for the same information.
+**Design binds every document.** Read `Design Protocol.md` with this one: true measure (SHINKEI), overview first (JŌHŌ SEKKEI), understood at a glance (CHOKKAN), and less text, not less data.
 
 ---
 

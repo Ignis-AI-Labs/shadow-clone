@@ -194,9 +194,10 @@ reports, and every message an agent writes to a person — follows
   then detail; every count filters.
 - **CHOKKAN 直感** (intuition): understood without being told; the next step
   and the way back are the plainest things on screen.
-- **Less to read, same information:** the fewest words and marks that carry all
-  of it; detail on demand, never by default; density is never decoration; never
-  make the person say what the system already knows.
+- **Less text, not less data:** every number the person needs stays on screen;
+  marks (gauges, bars, shade, position, icons) carry what words used to; one
+  shared legend or unit, not repeated labels; human names, not codes; only
+  genuine noise folds, one press away and marked; density is never decoration.
 
 A surface that fails the protocol's review checklist or its stranger test is not
 ready.
