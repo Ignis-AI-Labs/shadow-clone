@@ -241,7 +241,7 @@ beyond that you get noise.
 
 ### Protocols
 
-The 15 canonical protocols at `~/.claude/sc/protocols/` are the
+The 16 canonical protocols at `~/.claude/sc/protocols/` are the
 engineering standards every mode adheres to. They're not advice — they're
 load-bearing. The Reviewer judges against them. Key ones:
 
@@ -329,7 +329,7 @@ larger team sizes are richer for complex multi-domain work.
 | **`/sc-help`** (run it in Claude Code) | Live catalog of all commands with status |
 | **[README](../README.md)** | Install guide + system overview + repo layout |
 | **[commands/sc-*.md](../commands/)** | Source of truth for every command — read these to see exactly what each mode does |
-| **[protocols/*.md](../protocols/)** | The 15 engineering standards every mode cites |
+| **[protocols/*.md](../protocols/)** | The 16 engineering standards every mode cites |
 | **[Gnosis Verification Protocol](../protocols/Gnosis%20Verification%20Protocol.md)** | The verification discipline that makes the review loop trustworthy |
 | **[CONTRIBUTING.md](../CONTRIBUTING.md)** | How to add your own modes, contribute protocols, or improve existing commands |
 | **[docs/audit/POSITIVE_FINDINGS.md](audit/POSITIVE_FINDINGS.md)** | Verified-correct design properties — read these to understand what's load-bearing |

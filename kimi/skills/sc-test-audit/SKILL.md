@@ -257,6 +257,7 @@ Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/`
 - `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
 - `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
 - `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
+- `Design Protocol.md` — true, information-first, intuitive; less to read, same information — every UI, output, report and message a person reads
 
 **Additional emphasis for this mode:**
 

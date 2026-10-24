@@ -577,7 +577,7 @@ makes exactly one outbound call (`npm view`) when you invoke
 
 ## Protocols (engineering standards)
 
-15 canonical protocols live in `protocols/` and deploy to `~/.claude/sc/protocols/`.
+16 canonical protocols live in `protocols/` and deploy to `~/.claude/sc/protocols/`.
 Every mode references them by absolute path. The shortlist:
 
 **Core** (every mode):
@@ -587,6 +587,7 @@ Every mode references them by absolute path. The shortlist:
 - `SECURITY_CHECKLIST.md`
 - `Error Handling & Resilience Protocol.md`
 - `AI-Assisted Development Protocol.md`
+- `Design Protocol.md` — SHINKEI (true measure), JŌHŌ SEKKEI (information design), CHOKKAN (intuition), and less to read for the same information: everything a person sees or reads
 - `Gnosis Verification Protocol.md` — **load-bearing.** A bug that has not been verified is not a bug — it is a question. Every mode that produces findings (audit, code review, paired-review) must back each finding with a reproduction, a failing test, or a closed mechanical observation. Speculation goes in a `Research Questions` section that does NOT affect verdicts. Overrides any prior "flag-then-fix" guidance.
 
 **Operational** (how Shadow Clone runs):

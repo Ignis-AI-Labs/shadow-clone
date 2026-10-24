@@ -35,7 +35,7 @@ verbatim, then **stop**. Do not chain into another command.
 > ✅ Shadow Clone is fully installed.
 >
 > - Bridge scripts at `~/.claude/sc/` — ready
-> - 15 canonical protocols deployed — ready
+> - 16 canonical protocols deployed — ready
 > - Echo reviewer persona registered with OpenCode — ready
 > - OpenCode CLI on PATH — ready
 >
@@ -59,7 +59,7 @@ verbatim, then **stop**. Do not chain into another command.
 ### C. Plugin-only install — bridge missing (BRIDGE_OK=no OR PROTOCOLS_OK=no)
 
 > ⚠ The `/sc-*` slash commands are installed (via the Claude Code plugin),
-> but the bridge scripts, the 15 canonical protocols, and the reviewer
+> but the bridge scripts, the 16 canonical protocols, and the reviewer
 > persona are NOT on disk. That means:
 >
 > - Planning, feature, refactor, debug, optimize, research, audit modes — these work, but they cite protocols at `~/.claude/sc/protocols/` that don't exist yet

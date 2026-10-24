@@ -77,6 +77,8 @@ worse than no fix. Recommend `/sc-debug` instead.
      silent failures.
    - `SECURITY_CHECKLIST.md` — if the fix touches input handling,
      filesystem, network, or auth.
+   - `Design Protocol.md` — if the fix touches anything a person sees:
+     UI, CLI output, errors, docs.
 
 If the scope guard from Step 1 is violated mid-fix (e.g. the issue
 turned out to need 4 files instead of 3), **stop and escalate** to the
