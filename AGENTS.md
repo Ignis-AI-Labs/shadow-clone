@@ -195,9 +195,14 @@ reports, and every message an agent writes to a person — follows
 - **CHOKKAN 直感** (intuition): understood without being told; the next step
   and the way back are the plainest things on screen.
 - **Less text, not less data:** every number the person needs stays on screen;
-  marks (gauges, bars, shade, position, icons) carry what words used to; one
-  shared legend or unit, not repeated labels; human names, not codes; only
+  one shared legend or unit, not repeated labels; human names, not codes; only
   genuine noise folds, one press away and marked; density is never decoration.
+- **Show, don't tell:** a mark before a word; text only where no mark can, in
+  the fewest words, once. Lists are for inventory, not status: fine status is
+  one mark per item; only what needs attention opens. Every problem is a door
+  to where it is fixed; setup is a guided path, never prose directions. A fix
+  an agent can do is one press to hand over, prompt drafted, the person in
+  command.
 
 A surface that fails the protocol's review checklist or its stranger test is not
 ready.
