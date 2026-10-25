@@ -22,7 +22,7 @@ export function AdvancedTemplateEditor({ assembled, overridePrompt, onChange }: 
           Editing here replaces what the Copy and Open-in-AI buttons send. Reset to go back to form-driven output.
         </p>
         <textarea
-          className="h-72 w-full rounded-md border border-slate-300 bg-white p-3 font-mono text-xs text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          className="h-72 w-full rounded-md border border-slate-300 bg-white p-3 font-mono text-xs text-slate-800 focus:border-slate-900 focus:outline-hidden focus:ring-2 focus:ring-slate-200"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -31,7 +31,7 @@ export function AdvancedTemplateEditor({ assembled, overridePrompt, onChange }: 
             type="button"
             onClick={() => onChange(null)}
             disabled={!isOverridden}
-            className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+            className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
           >
             Reset to template
           </button>

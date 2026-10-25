@@ -10,7 +10,7 @@ point here. Do not duplicate rules elsewhere; amend them here.
 > root to scaffold this file (and a `CLAUDE.md` pointer), or copy it manually — then
 > adapt it. **Rules 1–8 are an example starter set** — change them to match your stack and
 > standards. **Rule 9 is the echo review protocol** — keep it; it is what the loop
-> runs on. The Reviewer judges your work against whatever this file says, so the
+> runs on. **Rule 10 is the design standard** — keep it too. The Reviewer judges your work against whatever this file says, so the
 > stronger and more specific your rules, the sharper the review.
 
 ---
@@ -172,6 +172,31 @@ concurrent projects so a hang can never stall the session; tune via `SC_TIMEOUT`
 
 The Reviewer is a peer, not an oracle: a wrong finding may be rebutted with reasoning,
 but every genuine defect must be addressed.
+
+## RULE 10: DESIGN
+
+Everything a person sees or uses — UI, CLI output, errors and refusals, docs,
+reports, and every message an agent writes to a person — follows
+`~/.claude/sc/protocols/Design Protocol.md` (Ignis coding-standards DESIGN):
+
+- **SHINKEI 真計** (true measure): every mark that looks like data measures
+  something real; a missing reading shows `—`.
+- **JŌHŌ SEKKEI 情報設計** (information design): overview first, then filter,
+  then detail; every count filters.
+- **CHOKKAN 直感** (intuition): understood without being told; the next step
+  and the way back are the plainest things on screen.
+- **Less text, not less data:** every number the person needs stays on screen;
+  one shared legend or unit, not repeated labels; human names, not codes; only
+  genuine noise folds, one press away and marked; density is never decoration.
+- **Show, don't tell:** a mark before a word; text only where no mark can, in
+  the fewest words, once. Lists are for inventory, not status: fine status is
+  one mark per item; only what needs attention opens. Every problem is a door
+  to where it is fixed; setup is a guided path, never prose directions. A fix
+  an agent can do is one press to hand over, prompt drafted, the person in
+  command.
+
+A surface that fails the protocol's review checklist or its stranger test is not
+ready.
 
 ---
 

@@ -12,7 +12,7 @@ export default function NotFound() {
       <p className="mt-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-400"
         >
           Back to all tools
         </Link>

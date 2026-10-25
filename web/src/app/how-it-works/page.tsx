@@ -37,7 +37,7 @@ export default function HowItWorks() {
       <div className="mb-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 rounded-sm"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300 rounded-xs"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           All tools
@@ -50,7 +50,7 @@ export default function HowItWorks() {
         </h1>
         <p className="mt-3 text-lg text-slate-600">
           Read this once and nothing the AI does will surprise you. When you watch
-          it spin up &ldquo;waves&rdquo; and write files to a <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-base">.waves/</code>{' '}
+          it spin up &ldquo;waves&rdquo; and write files to a <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-base">.waves/</code>{' '}
           folder, you&rsquo;ll know exactly why — and that it&rsquo;s working as intended.
         </p>
       </header>
@@ -119,7 +119,7 @@ export default function HowItWorks() {
           <div className="rounded-lg border border-slate-200 bg-white p-5">
             <ol className="relative space-y-5 border-l-2 border-slate-200 pl-6">
               <li className="relative">
-                <span className="absolute -left-[31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white" aria-hidden>0</span>
+                <span className="absolute left-[-31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white" aria-hidden>0</span>
                 <h3 className="text-sm font-semibold text-slate-900">Wave 0 — Planning</h3>
                 <p className="mt-0.5 text-sm text-slate-600">
                   Always first. The AI sets objectives, breaks down the work, and decides who does
@@ -127,7 +127,7 @@ export default function HowItWorks() {
                 </p>
               </li>
               <li className="relative">
-                <span className="absolute -left-[31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white" aria-hidden>N</span>
+                <span className="absolute left-[-31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white" aria-hidden>N</span>
                 <h3 className="text-sm font-semibold text-slate-900">Waves 1, 2, 3… — Doing the work</h3>
                 <p className="mt-0.5 text-sm text-slate-600">
                   Each wave tackles a phase. The AI can simulate up to 10 specialist agents working
@@ -136,7 +136,7 @@ export default function HowItWorks() {
                 </p>
               </li>
               <li className="relative">
-                <span className="absolute -left-[31px] flex h-5 w-5 items-center justify-center rounded-full bg-slate-400 text-[10px] font-semibold text-white" aria-hidden>✓</span>
+                <span className="absolute left-[-31px] flex h-5 w-5 items-center justify-center rounded-full bg-slate-400 text-[10px] font-semibold text-white" aria-hidden>✓</span>
                 <h3 className="text-sm font-semibold text-slate-900">Final wave — Validation</h3>
                 <p className="mt-0.5 text-sm text-slate-600">
                   The last wave checks the work: tests, security, documentation, and a summary of
@@ -147,9 +147,9 @@ export default function HowItWorks() {
           </div>
           <p className="text-sm text-slate-600">
             If a wave needs more than 10 agents, it splits into sub-waves named{' '}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">1a</code>,{' '}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">1b</code>,{' '}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">1c</code> that run
+            <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-xs">1a</code>,{' '}
+            <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-xs">1b</code>,{' '}
+            <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-xs">1c</code> that run
             back to back. Same idea, just more hands.
           </p>
         </section>
@@ -174,7 +174,7 @@ export default function HowItWorks() {
         <section className="space-y-3">
           <SectionHeading icon={FolderTree}>Where your work lands</SectionHeading>
           <p className="text-slate-700">
-            Multi-wave tools write their output to a <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-base">.waves/</code>{' '}
+            Multi-wave tools write their output to a <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-base">.waves/</code>{' '}
             folder in your project, one subfolder per wave. You&rsquo;ll see files appear there as
             the AI works — that&rsquo;s your deliverables being saved, not clutter:
           </p>
@@ -192,7 +192,7 @@ export default function HowItWorks() {
           </pre>
           <p className="text-sm text-slate-600">
             The exact files depend on the tool — each tool page lists what it produces. Everything
-            stays inside <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">.waves/</code>{' '}
+            stays inside <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-xs">.waves/</code>{' '}
             so it never mixes with your real source code.
           </p>
         </section>
@@ -224,7 +224,7 @@ export default function HowItWorks() {
           </p>
           <ol className="list-inside list-decimal space-y-1.5 text-slate-700 marker:text-slate-400">
             <li>Announce it&rsquo;s entering Wave 0 and set up the plan.</li>
-            <li>Create the <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">.waves/</code> folder and write the first deliverable.</li>
+            <li>Create the <code className="rounded-sm bg-slate-100 px-1 py-0.5 font-mono text-xs">.waves/</code> folder and write the first deliverable.</li>
             <li>Move through each wave, narrating what the Record Keeper and agents are doing.</li>
             <li>Save a document at the end of each wave.</li>
             <li>Finish with a summary of everything it produced and where to find it.</li>
@@ -239,7 +239,7 @@ export default function HowItWorks() {
       <div className="mt-12 border-t border-slate-200 pt-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-400"
         >
           Browse the tools
         </Link>

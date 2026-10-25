@@ -118,7 +118,7 @@ export function OpenInAIButton({ text }: { text: string }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+        className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-300"
       >
         <ExternalLink className="h-4 w-4" aria-hidden />
         <span>Open in AI</span>
@@ -135,7 +135,7 @@ export function OpenInAIButton({ text }: { text: string }) {
               type="button"
               role="menuitem"
               onClick={() => handleSelect(t.value)}
-              className="block w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:bg-slate-50"
+              className="block w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-hidden focus-visible:bg-slate-50"
             >
               {t.label}
             </button>

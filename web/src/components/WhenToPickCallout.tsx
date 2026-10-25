@@ -18,7 +18,7 @@ export function WhenToPickCallout({ whenToPick, whenNotToPick }: Props) {
           <ul className="space-y-1.5">
             {whenToPick.map((item) => (
               <li key={item} className="flex gap-2 text-sm text-emerald-900/90">
-                <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" aria-hidden />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
                 <span>{item}</span>
               </li>
             ))}
@@ -33,7 +33,7 @@ export function WhenToPickCallout({ whenToPick, whenNotToPick }: Props) {
           <ul className="space-y-1.5">
             {whenNotToPick.map((item) => (
               <li key={item} className="flex gap-2 text-sm text-slate-600">
-                <X className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400" aria-hidden />
+                <X className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                 <span>{item}</span>
               </li>
             ))}

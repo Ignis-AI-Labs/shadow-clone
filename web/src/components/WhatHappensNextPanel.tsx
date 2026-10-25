@@ -28,7 +28,7 @@ function WavesTimeline({ waves }: { waves: NonNullable<WhatHappensNext['waves']>
       {waves.map((wave, idx) => (
         <li key={wave.label} className="relative">
           <span
-            className="absolute -left-[31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white"
+            className="absolute left-[-31px] flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white"
             aria-hidden
           >
             {idx}
@@ -40,7 +40,7 @@ function WavesTimeline({ waves }: { waves: NonNullable<WhatHappensNext['waves']>
               {wave.deliverables.map((file) => (
                 <span
                   key={file}
-                  className="inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[11px] text-slate-600"
+                  className="inline-flex items-center gap-1 rounded-sm border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[11px] text-slate-600"
                 >
                   <FileText className="h-3 w-3 text-slate-400" aria-hidden />
                   {file}
@@ -79,10 +79,10 @@ export function WhatHappensNextPanel({ info }: { info?: WhatHappensNext }) {
 
       {info.deliverablesDirectory && (
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-          <FolderTree className="h-4 w-4 flex-shrink-0 text-slate-400" aria-hidden />
+          <FolderTree className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
           <span>
             Outputs land in{' '}
-            <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs text-slate-700">
+            <span className="rounded-sm bg-slate-100 px-1.5 py-0.5 font-mono text-xs text-slate-700">
               {info.deliverablesDirectory}
             </span>
           </span>
@@ -91,7 +91,7 @@ export function WhatHappensNextPanel({ info }: { info?: WhatHappensNext }) {
 
       {info.caveat && (
         <div className="mt-4 flex gap-2 rounded-md border border-amber-200 bg-amber-50/70 p-3">
-          <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600" aria-hidden />
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden />
           <p className="text-sm text-amber-900/90">{info.caveat}</p>
         </div>
       )}

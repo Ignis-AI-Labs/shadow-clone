@@ -275,6 +275,7 @@ Core protocols at `~/.claude/sc/protocols/`:
   no dead code left behind.
 - `Documentation Standards for Software Teams.md` — `CLEANUP_PLAN.md` and
   `archive/README.md` are written for the person who reads them later.
+- `Design Protocol.md` — the plan and the report: less text, not less data; show, don't tell.
 
 When a `/sc-echo` review flags a violation, it cites the protocol filename so
 you can verify.

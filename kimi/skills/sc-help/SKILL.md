@@ -80,6 +80,7 @@ violation, the finding cites the protocol filename.
 - `Error Handling & Resilience Protocol.md`
 - `AI-Assisted Development Protocol.md`
 - `Gnosis Verification Protocol.md` — **load-bearing** evidence gate: a bug that has not been verified is not a bug
+- `Design Protocol.md` — SHINKEI (true measure), JŌHŌ SEKKEI (information design), CHOKKAN (intuition), less text, not less data, and show, don't tell: everything a person sees or reads
 
 **Operational protocols (govern HOW Shadow Clone runs):**
 

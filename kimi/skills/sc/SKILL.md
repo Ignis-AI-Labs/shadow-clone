@@ -105,7 +105,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
         - Repo summary: languages detected, build system, package manager, monorepo/single
         - Existing convention sources: paths to current CLAUDE.md, README, lint configs, etc., with the conventions they encode
         - Branching state: current branches (origin + local), and which conform to the authoritative branching standard (existing `AGENTS.md` Rule 2 if present, else the `Multi Agent Protocol §2` `<who>/dev` fallback)
-        - Protocol shortlist: which of the 15 protocols are most relevant given the user's Type / Stack / Stakes answers (cite each by filename)
+        - Protocol shortlist: which of the 16 protocols are most relevant given the user's Type / Stack / Stakes answers (cite each by filename)
         - Open questions to surface to the user before Wave 1 synthesizes
       </deliverable>
     </deliverables>
@@ -114,7 +114,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
       1. Use the **Glob** and **Read** tools first, not assumptions. Cite real paths.
       2. Detect package managers by file presence: `package.json` → npm/yarn/pnpm, `pyproject.toml` → Python, `go.mod` → Go, `Cargo.toml` → Rust, etc.
       3. If a CLAUDE.md already exists, read it fully — its conventions take priority over generic protocol defaults.
-      4. The protocol shortlist always includes the 5 core protocols (Functional, Quality, Security/`SECURITY_CHECKLIST`, Error Handling, AI-Assisted Development) plus emphasis based on Type/Stack/Stakes. The emphasis list is **additive over the core**; do not repeat core entries:
+      4. The protocol shortlist always includes the 6 core protocols (Functional, Quality, Security/`SECURITY_CHECKLIST`, Error Handling, AI-Assisted Development, Design) plus emphasis based on Type/Stack/Stakes. The emphasis list is **additive over the core**; do not repeat core entries:
          - **Web app + Yes** → add `Architecture & System Design`, `Testing & Quality Assurance`, `DevOps & Deployment`, `Dependency & Supply Chain`.
          - **Library** → add `Architecture & System Design`, `Documentation Standards`, `Testing & Quality Assurance`, `Code Efficiency & Performance`.
          - **CLI tool** → add `Documentation Standards`, `Testing & Quality Assurance`.
@@ -154,7 +154,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 
     <instructions>
       1. The AGENTS.md is the project's law. It must REFERENCE the canonical protocols at `~/.claude/sc/protocols/<filename>` by absolute path, not paraphrase them. Bare paraphrase drifts; references stay current.
-      2. Rules section structure: 9 rules following the established convention (Functional, Branching, Code Structure, Dependencies, PR Output, Self-Check, Audit Trail, Security First, Multi-Agent Review). Tailor the content per shortlisted protocols + user Custom answer.
+      2. Rules section structure: 10 rules following the established convention (Functional, Branching, Code Structure, Dependencies, PR Output, Self-Check, Audit Trail, Security First, Multi-Agent Review, Design). Rule 10 (Design) names the `Design Protocol.md` principles — SHINKEI, JŌHŌ SEKKEI, CHOKKAN, less text, not less data, and show, don't tell — in a few lines, references the protocol by path, and lists the project's own surfaces (UI, CLI, docs, reports); it is never dropped. Tailor the content per shortlisted protocols + user Custom answer.
       3. The CLAUDE.md is a thin pointer: read AGENTS.md, no rules duplicated. If existing CLAUDE.md has user content, preserve it; only append the AGENTS.md pointer if missing.
       4. Branching migration plan is per-branch: archive-tag → cherry-pick if anything is salvageable → delete from origin. NEVER include `git push --delete` in the plan without explicit user confirmation. The plan describes; Wave 2 applies after the user signs off.
       5. The blueprint must be reviewable in one read — keep it under 500 lines total.
@@ -204,7 +204,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
   </principle>
 
   <principle>
-    Reference protocols, don't paraphrase them. The 15 protocols at
+    Reference protocols, don't paraphrase them. The 16 protocols at
     `~/.claude/sc/protocols/` are the source of truth and they evolve. AGENTS.md
     references them by absolute path so it stays current automatically.
   </principle>
@@ -228,7 +228,7 @@ Wait for the answers. Echo a one-line scope confirmation, then proceed to Wave 0
 </init_guidelines>
 
 <success_criteria>
-  <criterion>AGENTS.md exists at repo root with 9 rules adapted from the shortlisted protocols</criterion>
+  <criterion>AGENTS.md exists at repo root with 10 rules adapted from the shortlisted protocols, Rule 10 being Design</criterion>
   <criterion>CLAUDE.md exists (or has the AGENTS.md pointer appended) without losing prior user content</criterion>
   <criterion>docs/audit/ISSUE_TRACKER.md is in place with the standard 4-state scaffold</criterion>
   <criterion>.waves/ tree exists with a README explaining the wave structure</criterion>
@@ -248,6 +248,7 @@ Shadow Clone's canonical engineering standards live in `~/.claude/sc/protocols/`
 - `SECURITY_CHECKLIST.md` — security-first per AGENTS.md Rule 8
 - `Error Handling & Resilience Protocol.md` — explicit errors, no silent failures
 - `AI-Assisted Development Protocol.md` — verification rigor on AI-generated work
+- `Design Protocol.md` — true, information-first, intuitive; less text, not less data; show, don't tell — every UI, output, report and message a person reads
 
 **Additional emphasis for this mode:**
 

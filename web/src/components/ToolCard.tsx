@@ -13,7 +13,7 @@ export function ToolCard({ tool }: { tool: ToolConfig }) {
   return (
     <Link
       href={`/tools/${tool.id}`}
-      className="group block rounded-lg border border-slate-200 bg-white p-5 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+      className="group block rounded-lg border border-slate-200 bg-white p-5 transition-colors duration-150 hover:border-slate-900 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-400"
     >
       <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
         {CATEGORY_LABELS[tool.category] ?? tool.category}

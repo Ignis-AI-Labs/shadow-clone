@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'bun:test';
-import { validateToolInput, createSafeValidationError } from '../../src/utils/zodValidation';
+import { validateToolInput, createSafeValidationError } from '../../src/utils/zod-validation';
 import { z } from 'zod';
 
 describe('Tool Schema Validation', () => {
